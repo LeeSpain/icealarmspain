@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from "react";
-import { BellRing, PlusSquare, ActivitySquare, ShoppingBag } from "lucide-react";
+import { BellRing, PlusSquare, ActivitySquare, ShoppingBag, Info } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
 import DeviceCard from "./DeviceCard";
 import ShoppingCartComponent from "./ShoppingCart";
@@ -154,6 +154,15 @@ const DeviceShowcase: React.FC = () => {
               ? "Select the devices you need below. AI Guardian service is automatically included." 
               : "Seleccione los dispositivos que necesita a continuación. El servicio AI Guardian se incluye automáticamente."}
           </p>
+          
+          <div className="mt-4 bg-gray-50 p-4 rounded-lg text-sm flex items-start max-w-xl mx-auto">
+            <Info size={18} className="text-ice-600 mr-2 mt-0.5 flex-shrink-0" />
+            <div className="text-left">
+              {language === 'en' 
+                ? "All prices are subject to IVA (taxes). One-time purchases are subject to 21% IVA, monthly subscription fees are subject to 10% IVA. Free shipping on all orders."
+                : "Todos los precios están sujetos a IVA. Las compras únicas están sujetas al 21% de IVA, las cuotas de suscripción mensual están sujetas al 10% de IVA. Envío gratuito en todos los pedidos."}
+            </div>
+          </div>
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">

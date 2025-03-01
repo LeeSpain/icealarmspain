@@ -1,6 +1,6 @@
 
 import React from "react";
-import { CheckCircle, ArrowRight } from "lucide-react";
+import { CheckCircle, ArrowRight, Info } from "lucide-react";
 import { ButtonCustom } from "./ui/button-custom";
 import { useLanguage } from "@/context/LanguageContext";
 
@@ -49,10 +49,18 @@ const DeviceCard: React.FC<DeviceCardProps> = ({
         />
       </div>
       
-      <p className="text-2xl font-bold text-orange-600 mb-4">€{price.toFixed(2)}</p>
-      <p className="text-sm text-orange-700 mb-4">
+      <p className="text-2xl font-bold text-orange-600 mb-1">€{price.toFixed(2)}</p>
+      <p className="text-xs text-muted-foreground mb-2">
+        {language === 'en' ? "One-time purchase (excl. 21% IVA)" : "Compra única (sin 21% IVA)"}
+      </p>
+      
+      <p className="text-sm text-orange-700 mb-1">
         {language === 'en' ? "+ €" : "+ €"}{monthlyPrice.toFixed(2)} {language === 'en' ? "monthly" : "mensual"}
       </p>
+      <p className="text-xs text-muted-foreground mb-4">
+        {language === 'en' ? "(excl. 10% IVA)" : "(sin 10% IVA)"}
+      </p>
+      
       <p className="text-muted-foreground text-sm text-center mb-6">
         {description}
       </p>

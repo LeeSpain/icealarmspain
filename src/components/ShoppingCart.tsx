@@ -1,7 +1,7 @@
 
 import React from "react";
 import { ButtonCustom } from "./ui/button-custom";
-import { ShoppingCart, CreditCard } from "lucide-react";
+import { ShoppingCart, CreditCard, Info } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
 import { Link } from "react-router-dom";
 
@@ -33,6 +33,16 @@ const ShoppingCartComponent: React.FC<ShoppingCartProps> = ({
   if (selectedDevices.length === 0) {
     return null;
   }
+  
+  // Calculate taxes
+  const productTaxRate = 0.21; // 21% IVA for products
+  const monthlyTaxRate = 0.10; // 10% IVA for monthly services
+  
+  const productTax = totalOneTime * productTaxRate;
+  const monthlyTax = totalMonthly * monthlyTaxRate;
+  
+  const totalWithProductTax = totalOneTime + productTax;
+  const totalWithMonthlyTax = totalMonthly + monthlyTax;
   
   return (
     <div className="mt-12 p-6 bg-white rounded-xl shadow-lg max-w-3xl mx-auto animate-fade-in">
@@ -95,9 +105,37 @@ const ShoppingCartComponent: React.FC<ShoppingCartProps> = ({
         
         <div className="flex justify-between mb-2">
           <span className="text-muted-foreground">
+            {language === 'en' ? "IVA (21%)" : "IVA (21%)"}:
+          </span>
+          <span className="font-medium">€{productTax.toFixed(2)}</span>
+        </div>
+        
+        <div className="flex justify-between mb-4 border-t border-gray-100 pt-2">
+          <span className="font-medium">
+            {language === 'en' ? "Total one-time cost" : "Costo único total"}:
+          </span>
+          <span className="font-bold">€{totalWithProductTax.toFixed(2)}</span>
+        </div>
+        
+        <div className="flex justify-between mb-2">
+          <span className="text-muted-foreground">
             {language === 'en' ? "Monthly subscription" : "Suscripción mensual"}:
           </span>
           <span className="font-medium">€{totalMonthly.toFixed(2)}</span>
+        </div>
+        
+        <div className="flex justify-between mb-2">
+          <span className="text-muted-foreground">
+            {language === 'en' ? "IVA (10%)" : "IVA (10%)"}:
+          </span>
+          <span className="font-medium">€{monthlyTax.toFixed(2)}</span>
+        </div>
+        
+        <div className="flex justify-between mb-2 border-t border-gray-100 pt-2">
+          <span className="font-medium">
+            {language === 'en' ? "Total monthly cost" : "Costo mensual total"}:
+          </span>
+          <span className="font-bold">€{totalWithMonthlyTax.toFixed(2)}</span>
         </div>
         
         {selectedDevices.length > 1 && (
@@ -107,6 +145,15 @@ const ShoppingCartComponent: React.FC<ShoppingCartProps> = ({
               : (language === 'en' ? "20% discount applied!" : "¡Descuento del 20% aplicado!")}
           </div>
         )}
+        
+        <div className="bg-gray-50 p-3 text-xs rounded-lg mb-4 flex items-start">
+          <Info size={14} className="text-ice-600 mr-2 mt-0.5 flex-shrink-0" />
+          <span>
+            {language === 'en' 
+              ? "All prices are subject to IVA. One-time purchases include 21% IVA, monthly fees include 10% IVA. Free shipping on all orders." 
+              : "Todos los precios incluyen IVA. Las compras únicas incluyen 21% de IVA, las cuotas mensuales incluyen 10% de IVA. Envío gratuito en todos los pedidos."}
+          </span>
+        </div>
         
         <Link to="/join">
           <ButtonCustom className="w-full mt-4 flex items-center justify-center">
