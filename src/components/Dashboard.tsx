@@ -49,8 +49,11 @@ const Dashboard: React.FC = () => {
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
             ICE Members Dashboard
           </h2>
-          <p className="text-muted-foreground text-lg">
-            Monitor health data in real-time and receive AI-driven insights for proactive care.
+          <p className="text-muted-foreground text-lg mb-4">
+            Monitor health data in real-time and receive AI-driven insights for proactive care. Our comprehensive health monitoring system provides peace of mind for you and your loved ones.
+          </p>
+          <p className="text-muted-foreground">
+            The ICE Members Dashboard connects seamlessly with all our smart devices, providing a centralized hub for managing health metrics, medication schedules, and emergency responses. With intuitive visualizations and personalized alerts, staying on top of your health has never been easier.
           </p>
         </div>
         
@@ -147,6 +150,23 @@ const Dashboard: React.FC = () => {
               <p className="text-sm text-amber-700">
                 Your next medication dose is in 45 minutes. The Medical Dispenser is prepared.
               </p>
+            </div>
+
+            <div className="mt-8 text-center">
+              <p className="text-sm text-muted-foreground mb-4">
+                Experience the full benefits of the ICE Members Dashboard with our complete range of smart devices.
+              </p>
+              <div className="flex justify-center gap-4 flex-wrap">
+                <a href="/products" className="inline-block px-4 py-2 bg-ice-600 text-white rounded-md hover:bg-ice-700 transition-colors text-sm font-medium">
+                  Explore Our Products
+                </a>
+                <a href="/join" className="inline-block px-4 py-2 bg-white border border-ice-600 text-ice-600 rounded-md hover:bg-ice-50 transition-colors text-sm font-medium">
+                  Become a Member
+                </a>
+                <a href="/demo" className="inline-block px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors text-sm font-medium">
+                  Request Live Demo
+                </a>
+              </div>
             </div>
           </div>
         </div>
