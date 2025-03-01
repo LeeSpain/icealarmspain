@@ -4,7 +4,7 @@ import TicketingSystem from "../ticketing/TicketingSystem";
 import ClientDetails from "../ClientDetails";
 import CallStats from "../stats/CallStats";
 import PlaceholderSection from "../../admin/PlaceholderSection";
-import { Bell, User } from "lucide-react";
+import { Bell, User, Calendar, ClipboardList, Users, BarChart3, Clock } from "lucide-react";
 
 interface DashboardContentProps {
   activeSection: string;
@@ -31,8 +31,48 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
                />;
       case "clients":
         return <ClientDetails selectedClientId={selectedClient} />;
+      case "clients-alerts":
+        return (
+          <PlaceholderSection 
+            title="Client Alerts" 
+            description="Monitor critical alerts and warnings for all clients" 
+            icon={<Bell className="h-5 w-5" />} 
+          />
+        );
+      case "clients-history":
+        return (
+          <PlaceholderSection 
+            title="Interaction History" 
+            description="View complete history of client interactions" 
+            icon={<Clock className="h-5 w-5" />} 
+          />
+        );
       case "stats":
         return <CallStats />;
+      case "stats-performance":
+        return (
+          <PlaceholderSection 
+            title="Agent Performance" 
+            description="Track individual and team performance metrics" 
+            icon={<BarChart3 className="h-5 w-5" />} 
+          />
+        );
+      case "schedule":
+        return (
+          <PlaceholderSection 
+            title="Agent Schedule" 
+            description="View and manage your call center schedule" 
+            icon={<Calendar className="h-5 w-5" />} 
+          />
+        );
+      case "knowledge":
+        return (
+          <PlaceholderSection 
+            title="Knowledge Base" 
+            description="Access product information and troubleshooting guides" 
+            icon={<ClipboardList className="h-5 w-5" />} 
+          />
+        );
       case "notifications":
         return (
           <PlaceholderSection 

@@ -32,14 +32,27 @@ const Header: React.FC<HeaderProps> = ({
   formatNotificationTime,
   user
 }) => {
+  // Get the title based on the active section
+  const getSectionTitle = () => {
+    switch (activeSection) {
+      case "tickets": return "Support Tickets";
+      case "clients": return "Client Information";
+      case "clients-alerts": return "Client Alerts";
+      case "clients-history": return "Interaction History";
+      case "stats": return "Call Center Statistics";
+      case "stats-performance": return "Agent Performance";
+      case "schedule": return "Agent Schedule";
+      case "knowledge": return "Knowledge Base";
+      case "notifications": return "Notifications";
+      case "profile": return "Agent Profile";
+      default: return "Support Tickets";
+    }
+  };
+
   return (
     <header className="sticky top-0 z-10 bg-gradient-to-r from-blue-700 to-indigo-800 text-white border-b px-6 py-4 flex justify-between items-center shadow-md">
       <h1 className="text-2xl font-bold">
-        {activeSection === "tickets" && "Support Tickets"}
-        {activeSection === "clients" && "Client Information"}
-        {activeSection === "stats" && "Call Center Statistics"}
-        {activeSection === "notifications" && "Notifications"}
-        {activeSection === "profile" && "Agent Profile"}
+        {getSectionTitle()}
       </h1>
       
       <div className="flex items-center gap-4">
