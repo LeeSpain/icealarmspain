@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { ButtonCustom } from "@/components/ui/button-custom";
@@ -8,10 +7,11 @@ import { Link } from "react-router-dom";
 
 interface AuthFormProps {
   mode: "login" | "signup";
-  onSuccess?: () => void;
+  onSuccess?: (email: string, password: string) => void;
+  isLoading?: boolean;
 }
 
-const AuthForm: React.FC<AuthFormProps> = ({ mode, onSuccess }) => {
+const AuthForm: React.FC<AuthFormProps> = ({ mode, onSuccess, isLoading: externalLoading }) => {
   const { language } = useLanguage();
   const { toast } = useToast();
   const [formData, setFormData] = useState({
@@ -23,8 +23,10 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onSuccess }) => {
   });
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [internalLoading, setInternalLoading] = useState(false);
   const [errors, setErrors] = useState<{[key: string]: string}>({});
+  
+  const isLoading = externalLoading !== undefined ? externalLoading : internalLoading;
 
   const validateForm = () => {
     const newErrors: {[key: string]: string} = {};
@@ -63,7 +65,6 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onSuccess }) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
     
-    // Clear error when user types
     if (errors[name]) {
       setErrors(prev => ({ ...prev, [name]: "" }));
     }
@@ -74,34 +75,37 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onSuccess }) => {
     
     if (!validateForm()) return;
     
-    setIsLoading(true);
+    if (externalLoading === undefined) {
+      setInternalLoading(true);
+    }
     
-    // This would be replaced with actual authentication logic
-    setTimeout(() => {
-      setIsLoading(false);
-      
-      if (mode === "login") {
-        toast({
-          title: language === 'en' ? "Login successful!" : "¡Inicio de sesión exitoso!",
-          description: language === 'en' 
-            ? "Welcome back to ICE Alarm España." 
-            : "Bienvenido de nuevo a ICE Alarm España.",
-          variant: "default",
-        });
-      } else {
-        toast({
-          title: language === 'en' ? "Account created!" : "¡Cuenta creada!",
-          description: language === 'en' 
-            ? "Welcome to ICE Alarm España." 
-            : "Bienvenido a ICE Alarm España.",
-          variant: "default",
-        });
-      }
-      
-      if (onSuccess) {
-        onSuccess();
-      }
-    }, 2000);
+    if (onSuccess) {
+      onSuccess(formData.email, formData.password);
+    } else {
+      setTimeout(() => {
+        if (externalLoading === undefined) {
+          setInternalLoading(false);
+        }
+        
+        if (mode === "login") {
+          toast({
+            title: language === 'en' ? "Login successful!" : "¡Inicio de sesión exitoso!",
+            description: language === 'en' 
+              ? "Welcome back to ICE Alarm España." 
+              : "Bienvenido de nuevo a ICE Alarm España.",
+            variant: "default",
+          });
+        } else {
+          toast({
+            title: language === 'en' ? "Account created!" : "¡Cuenta creada!",
+            description: language === 'en' 
+              ? "Welcome to ICE Alarm España." 
+              : "Bienvenido a ICE Alarm España.",
+            variant: "default",
+          });
+        }
+      }, 2000);
+    }
   };
 
   return (

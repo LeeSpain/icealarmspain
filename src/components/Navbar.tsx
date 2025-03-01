@@ -1,16 +1,18 @@
-
 import React, { useState, useEffect } from "react";
-import { Menu, X } from "lucide-react";
+import { Menu, X, LogOut } from "lucide-react";
 import Logo from "./Logo";
 import { ButtonCustom } from "./ui/button-custom";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import LanguageSwitcher from "./LanguageSwitcher";
 import { useLanguage } from "@/context/LanguageContext";
+import { useAuth } from "@/context/AuthContext";
 
 const Navbar: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { t } = useLanguage();
+  const { user, logout, isAuthenticated } = useAuth();
+  const navigate = useNavigate();
   
   console.log("Navbar component rendering");
   
@@ -29,9 +31,20 @@ const Navbar: React.FC = () => {
     };
   }, []);
   
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+    setIsMobileMenuOpen(false);
+  };
+  
+  const getDashboardLink = () => {
+    if (!isAuthenticated) return "/login";
+    return user?.role === 'admin' ? "/admin" : "/dashboard";
+  };
+  
   const navLinks = [
     { name: t("nav.home"), href: "/", isAnchor: false },
-    { name: t("nav.dashboard"), href: "/dashboard", isAnchor: false },
+    { name: t("nav.dashboard"), href: getDashboardLink(), isAnchor: false },
     { name: t("nav.devices"), href: "/products", isAnchor: false },
     { name: t("nav.pricing"), href: "/join", isAnchor: false },
   ];
@@ -83,16 +96,31 @@ const Navbar: React.FC = () => {
           
           <div className="hidden md:flex items-center space-x-4">
             <LanguageSwitcher />
-            <Link to="/login">
-              <ButtonCustom variant="ghost" size="sm">
-                {t("nav.login")}
-              </ButtonCustom>
-            </Link>
-            <Link to="/join">
-              <ButtonCustom>
-                {t("nav.signup")}
-              </ButtonCustom>
-            </Link>
+            
+            {isAuthenticated ? (
+              <div className="flex items-center space-x-2">
+                <span className="text-sm font-medium text-gray-700">
+                  {user?.name}
+                </span>
+                <ButtonCustom variant="ghost" size="sm" onClick={handleLogout}>
+                  <LogOut className="w-4 h-4 mr-1" />
+                  {t("nav.logout")}
+                </ButtonCustom>
+              </div>
+            ) : (
+              <>
+                <Link to="/login">
+                  <ButtonCustom variant="ghost" size="sm">
+                    {t("nav.login")}
+                  </ButtonCustom>
+                </Link>
+                <Link to="/join">
+                  <ButtonCustom>
+                    {t("nav.signup")}
+                  </ButtonCustom>
+                </Link>
+              </>
+            )}
           </div>
           
           {/* Mobile Menu Button */}
@@ -123,16 +151,25 @@ const Navbar: React.FC = () => {
               </div>
             ))}
             <div className="pt-4 flex flex-col space-y-3">
-              <Link to="/login" onClick={() => setIsMobileMenuOpen(false)}>
-                <ButtonCustom variant="outline" size="sm" className="w-full">
-                  {t("nav.login")}
+              {isAuthenticated ? (
+                <ButtonCustom onClick={handleLogout} className="w-full">
+                  <LogOut className="w-4 h-4 mr-2" />
+                  {t("nav.logout")}
                 </ButtonCustom>
-              </Link>
-              <Link to="/join" onClick={() => setIsMobileMenuOpen(false)}>
-                <ButtonCustom className="w-full">
-                  {t("nav.signup")}
-                </ButtonCustom>
-              </Link>
+              ) : (
+                <>
+                  <Link to="/login" onClick={() => setIsMobileMenuOpen(false)}>
+                    <ButtonCustom variant="outline" size="sm" className="w-full">
+                      {t("nav.login")}
+                    </ButtonCustom>
+                  </Link>
+                  <Link to="/join" onClick={() => setIsMobileMenuOpen(false)}>
+                    <ButtonCustom className="w-full">
+                      {t("nav.signup")}
+                    </ButtonCustom>
+                  </Link>
+                </>
+              )}
             </div>
           </div>
         </div>
