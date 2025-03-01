@@ -1,186 +1,151 @@
 
 import React from "react";
 import {
-  BarChart3,
-  Phone,
-  MessageSquare,
-  Smartphone,
-  TicketIcon,
-  Clock,
-  AlertTriangle,
+  Bell,
+  Settings,
+  Activity,
+  Heart,
   CheckCircle2,
-  Users,
-  Bell
+  AlertTriangle,
+  CalendarClock,
+  Cog,
+  LogOut,
 } from "lucide-react";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { mockCallData } from "../stats/mock-data";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
 
 const AgentDashboard: React.FC = () => {
-  // Mock data for the agent dashboard
-  const dashboardMetrics = {
-    totalCalls: "243",
-    resolvedTickets: "187",
-    openTickets: "14",
-    averageHandlingTime: "4m 32s",
-    responseRate: "98%",
-    customerSatisfaction: "92%",
-    callsByType: [
-      { name: "Technical Support", value: 45 },
-      { name: "Billing Questions", value: 25 },
-      { name: "New Orders", value: 15 },
-      { name: "General Inquiries", value: 15 },
-    ],
-    recentActivities: [
-      { id: 1, type: "SOS Alert", clientName: "Hotel Barcelona", description: "SOS button activated in room 506", time: "5 mins ago", priority: "high" },
-      { id: 2, type: "Ticket", clientName: "Residencia Madrid", description: "Device offline in common area", time: "32 mins ago", priority: "medium" },
-      { id: 3, type: "Call", clientName: "Apartamentos Valencia", description: "Billing inquiry resolved", time: "1 hour ago", priority: "low" },
-      { id: 4, type: "Alert", clientName: "Hotel Barcelona", description: "Multiple devices showing connection issues", time: "3 hours ago", priority: "medium" },
-      { id: 5, type: "Ticket", clientName: "Residencia Sevilla", description: "New installation request processed", time: "Yesterday", priority: "low" },
-    ]
-  };
-
-  // Function to render the priority icon
-  const renderPriorityIcon = (priority: string) => {
-    switch (priority) {
-      case "high":
-        return <AlertTriangle className="h-4 w-4 text-destructive" />;
-      case "medium":
-        return <Clock className="h-4 w-4 text-amber-500" />;
-      case "low":
-        return <CheckCircle2 className="h-4 w-4 text-green-500" />;
-      default:
-        return <Clock className="h-4 w-4 text-muted-foreground" />;
-    }
-  };
-
-  // Function to render the activity type icon
-  const renderActivityIcon = (type: string) => {
-    switch (type) {
-      case "SOS Alert":
-        return <AlertTriangle className="h-4 w-4 text-destructive" />;
-      case "Ticket":
-        return <TicketIcon className="h-4 w-4 text-primary" />;
-      case "Call":
-        return <Phone className="h-4 w-4 text-primary" />;
-      case "Alert":
-        return <Bell className="h-4 w-4 text-amber-500" />;
-      default:
-        return <MessageSquare className="h-4 w-4 text-primary" />;
-    }
-  };
+  // Mock data for the Call Center Agent dashboard
+  const devices = [
+    { id: 1, name: "SOS Pendant - Room 103", status: "Active", lastChecked: "Yesterday", battery: "92%" },
+    { id: 2, name: "Fall Detector - Common Area", status: "Active", lastChecked: "Today", battery: "78%" },
+  ];
 
   return (
-    <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Total Calls</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{dashboardMetrics.totalCalls}</div>
-            <p className="text-xs text-muted-foreground">+12.3% from last week</p>
-            <Progress className="mt-3" value={78} />
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Resolved Tickets</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{dashboardMetrics.resolvedTickets}</div>
-            <p className="text-xs text-muted-foreground">+8.1% from last week</p>
-            <Progress className="mt-3" value={84} />
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Open Tickets</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{dashboardMetrics.openTickets}</div>
-            <p className="text-xs text-muted-foreground">-3.4% from last week</p>
-            <Progress className="mt-3" value={34} />
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Avg. Handling Time</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{dashboardMetrics.averageHandlingTime}</div>
-            <p className="text-xs text-muted-foreground">-0.5m from last week</p>
-            <Progress className="mt-3" value={65} />
-          </CardContent>
-        </Card>
-      </div>
+    <div className="space-y-8">
+      {/* Welcome Banner */}
+      <Card className="bg-orange-50 border-orange-100">
+        <CardContent className="p-6">
+          <div className="flex justify-between items-start">
+            <div>
+              <h2 className="text-3xl font-bold text-amber-900 mb-2">Welcome, Call Center Agent!</h2>
+              <p className="text-amber-800">
+                Manage your ICE Alarm devices and explore new products to enhance your safety system.
+              </p>
+              
+              <div className="flex gap-4 mt-6">
+                <Button className="bg-orange-600 hover:bg-orange-700">
+                  Explore Products
+                </Button>
+                <Button variant="outline" className="bg-white border-gray-200 text-gray-700 hover:bg-gray-50 flex items-center gap-2">
+                  <Bell className="h-4 w-4" />
+                  Test Alarm
+                </Button>
+                <Button variant="outline" className="bg-white border-gray-200 text-gray-700 hover:bg-gray-50 flex items-center gap-2">
+                  <Settings className="h-4 w-4" />
+                  Settings
+                </Button>
+              </div>
+            </div>
+            
+            <Button variant="ghost" className="text-gray-700 hover:bg-gray-100">
+              <LogOut className="h-4 w-4 mr-2" />
+              Log Out
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card className="col-span-1">
-          <CardHeader>
-            <CardTitle>Call Distribution</CardTitle>
-            <CardDescription>Breakdown by call category</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="h-80 flex items-center justify-center">
-              <div className="w-full max-w-md">
-                {dashboardMetrics.callsByType.map((category, i) => (
-                  <div key={category.name} className="mb-4">
-                    <div className="flex items-center justify-between mb-1">
-                      <span className="text-sm font-medium">{category.name}</span>
-                      <span className="text-sm font-medium">{category.value}%</span>
-                    </div>
-                    <Progress value={category.value} className="h-2" />
-                  </div>
-                ))}
+      {/* Metrics Overview */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <Card>
+          <CardContent className="p-6">
+            <div className="flex justify-between items-start">
+              <div>
+                <p className="text-gray-500 mb-1">Active Devices</p>
+                <h3 className="text-4xl font-bold">2</h3>
+              </div>
+              <div className="bg-primary/10 p-2 rounded-full">
+                <Activity className="h-6 w-6 text-primary" />
               </div>
             </div>
           </CardContent>
         </Card>
-
-        <Card className="col-span-1">
-          <CardHeader>
-            <CardTitle>Recent Activity</CardTitle>
-            <CardDescription>Latest client interactions</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <ScrollArea className="h-80">
-              <div className="space-y-4">
-                {dashboardMetrics.recentActivities.map((activity) => (
-                  <div key={activity.id} className="flex items-start pb-4 border-b last:border-0">
-                    <div className="mr-4 mt-1">
-                      <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
-                        {renderActivityIcon(activity.type)}
-                      </div>
-                    </div>
-                    <div className="flex-1">
-                      <div className="flex items-center justify-between">
-                        <p className="text-sm font-medium">
-                          {activity.clientName}
-                        </p>
-                        <div className="flex items-center">
-                          {renderPriorityIcon(activity.priority)}
-                          <span className="text-xs text-muted-foreground ml-1">
-                            {activity.time}
-                          </span>
-                        </div>
-                      </div>
-                      <p className="text-sm">{activity.description}</p>
-                    </div>
-                  </div>
-                ))}
+        
+        <Card>
+          <CardContent className="p-6">
+            <div className="flex justify-between items-start">
+              <div>
+                <p className="text-gray-500 mb-1">Alert Status</p>
+                <h3 className="text-4xl font-bold">All Clear</h3>
               </div>
-            </ScrollArea>
+              <div className="bg-green-100 p-2 rounded-full">
+                <Bell className="h-6 w-6 text-green-600" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardContent className="p-6">
+            <div className="flex justify-between items-start">
+              <div>
+                <p className="text-gray-500 mb-1">Next Check-up</p>
+                <h3 className="text-4xl font-bold">17/03/2025</h3>
+                <p className="text-amber-500 text-sm mt-1">Needs attention</p>
+              </div>
+              <div className="bg-amber-100 p-2 rounded-full">
+                <CalendarClock className="h-6 w-6 text-amber-600" />
+              </div>
+            </div>
           </CardContent>
         </Card>
       </div>
+
+      {/* Devices List */}
+      <Card>
+        <CardHeader className="pb-0">
+          <div className="flex justify-between items-center">
+            <div className="flex items-center gap-2">
+              <Heart className="text-orange-500 h-5 w-5" />
+              <CardTitle className="text-xl">My Devices</CardTitle>
+            </div>
+            <Button variant="outline" className="flex items-center gap-2">
+              <Cog className="h-4 w-4" />
+              Manage Devices
+            </Button>
+          </div>
+          <p className="text-muted-foreground mt-2">Manage your connected ICE Alarm devices</p>
+        </CardHeader>
+        <CardContent className="pt-4">
+          <div className="rounded-md border">
+            <div className="grid grid-cols-4 bg-muted/50 p-4 text-sm font-medium">
+              <div>Device</div>
+              <div>Status</div>
+              <div>Last Checked</div>
+              <div>Battery</div>
+            </div>
+            <Separator />
+            {devices.map((device) => (
+              <div key={device.id} className="grid grid-cols-4 p-4 text-sm items-center border-t first:border-t-0">
+                <div>{device.name}</div>
+                <div className="flex items-center">
+                  <CheckCircle2 className="mr-2 h-4 w-4 text-green-500" />
+                  {device.status}
+                </div>
+                <div>{device.lastChecked}</div>
+                <div>{device.battery}</div>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 };
