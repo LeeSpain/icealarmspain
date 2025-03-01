@@ -1,8 +1,9 @@
 
 import React, { useState, useEffect } from "react";
 import { ButtonCustom } from "./ui/button-custom";
-import { BellRing, PlusSquare, ActivitySquare, ArrowRight, CheckCircle, ShoppingCart } from "lucide-react";
+import { BellRing, PlusSquare, ActivitySquare, ArrowRight, CheckCircle, ShoppingCart, CreditCard } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
+import { Link } from "react-router-dom";
 
 const DeviceShowcase: React.FC = () => {
   const { language } = useLanguage();
@@ -17,6 +18,7 @@ const DeviceShowcase: React.FC = () => {
       price: 110.00,
       monthlyPrice: 24.99,
       icon: <BellRing className="w-12 h-12 text-orange-500" />,
+      image: "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d",
       features: language === 'en' ? [
         "One-touch emergency call",
         "GPS tracking",
@@ -40,6 +42,7 @@ const DeviceShowcase: React.FC = () => {
       price: 249.99,
       monthlyPrice: 24.99,
       icon: <PlusSquare className="w-12 h-12 text-guardian-500" />,
+      image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158",
       features: language === 'en' ? [
         "Automated pill dispensing",
         "Missed dose notifications",
@@ -63,6 +66,7 @@ const DeviceShowcase: React.FC = () => {
       price: 149.99,
       monthlyPrice: 24.99,
       icon: <ActivitySquare className="w-12 h-12 text-orange-500" />,
+      image: "https://images.unsplash.com/photo-1487058792275-0ad4aaf24ca7",
       features: language === 'en' ? [
         "Continuous glucose monitoring",
         "AI trend analysis",
@@ -138,6 +142,10 @@ const DeviceShowcase: React.FC = () => {
     <section id="devices" className="py-20">
       <div className="container mx-auto px-4 md:px-6">
         <div className="text-center max-w-3xl mx-auto mb-16 animate-slide-down">
+          <div className="inline-flex items-center px-3 py-1 rounded-full bg-ice-50 border border-ice-200 text-ice-600 text-sm font-medium mb-4">
+            <ShoppingCart size={16} className="mr-2" />
+            {language === 'en' ? 'SHOP NOW & BUY TODAY' : 'COMPRE AHORA Y HOY MISMO'}
+          </div>
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
             {language === 'en' ? "Integrated Smart Devices" : "Dispositivos Inteligentes Integrados"}
           </h2>
@@ -146,10 +154,10 @@ const DeviceShowcase: React.FC = () => {
               ? "Our comprehensive ecosystem of health monitoring devices works seamlessly with the AI Guardian." 
               : "Nuestro ecosistema integral de dispositivos de monitoreo de salud funciona a la perfección con el Guardián de IA."}
           </p>
-          <p className="text-muted-foreground mt-2">
+          <p className="text-muted-foreground mt-2 font-medium text-ice-600">
             {language === 'en' 
-              ? "Select the devices you need for your personalized protection plan." 
-              : "Seleccione los dispositivos que necesita para su plan de protección personalizado."}
+              ? "Select the devices you need below and checkout today to start your personalized protection plan." 
+              : "Seleccione los dispositivos que necesita a continuación y finalice la compra hoy para comenzar su plan de protección personalizado."}
           </p>
         </div>
         
@@ -162,8 +170,18 @@ const DeviceShowcase: React.FC = () => {
               }`}
               style={{ animationDelay: `${(index + 1) * 0.1}s` }}
             >
-              <div className="mb-6">{device.icon}</div>
+              <div className="mb-4">{device.icon}</div>
               <h3 className="text-xl font-semibold mb-2">{device.name}</h3>
+              
+              {/* Device Image */}
+              <div className="mb-4 overflow-hidden rounded-lg h-40">
+                <img 
+                  src={`${device.image}?w=400&h=300&fit=crop&crop=entropy&auto=compress`} 
+                  alt={device.name}
+                  className="w-full h-full object-cover transition-transform hover:scale-105"
+                />
+              </div>
+              
               <p className="text-2xl font-bold text-orange-600 mb-4">€{device.price.toFixed(2)}</p>
               <p className="text-sm text-orange-700 mb-4">
                 {language === 'en' ? "+ €" : "+ €"}{device.monthlyPrice.toFixed(2)} {language === 'en' ? "monthly" : "mensual"}
@@ -256,9 +274,12 @@ const DeviceShowcase: React.FC = () => {
                 </div>
               )}
               
-              <ButtonCustom className="w-full mt-4">
-                {language === 'en' ? "Proceed to Checkout" : "Proceder al Pago"}
-              </ButtonCustom>
+              <Link to="/join">
+                <ButtonCustom className="w-full mt-4 flex items-center justify-center">
+                  <CreditCard className="mr-2" />
+                  {language === 'en' ? "Proceed to Checkout" : "Proceder al Pago"}
+                </ButtonCustom>
+              </Link>
               
               <p className="text-xs text-muted-foreground mt-4 text-center">
                 {language === 'en' 
