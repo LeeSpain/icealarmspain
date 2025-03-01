@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useState } from "react";
 import {
   Users,
   TicketIcon,
@@ -7,7 +7,12 @@ import {
   Bell,
   User,
   Calendar,
-  ClipboardList
+  ClipboardList,
+  ChevronRight,
+  ChevronLeft,
+  Clock,
+  Smartphone,
+  AlertTriangle
 } from "lucide-react";
 import SidebarItem from "./SidebarItem";
 

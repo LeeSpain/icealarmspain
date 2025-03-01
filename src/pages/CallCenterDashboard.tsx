@@ -12,7 +12,7 @@ import { getMockNotifications } from "@/components/callcenter/notifications/mock
 import { formatNotificationTime } from "@/components/callcenter/dashboard/util";
 
 const CallCenterDashboard: React.FC = () => {
-  const [activeSection, setActiveSection] = useState<string>("tickets");
+  const [activeSection, setActiveSection] = useState<string>("dashboard");
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [selectedClient, setSelectedClient] = useState<number | null>(null);
   const [notifications, setNotifications] = useState<Notification[]>([]);
@@ -79,6 +79,7 @@ const CallCenterDashboard: React.FC = () => {
   // Get the title based on the active section
   const getSectionTitle = () => {
     switch (activeSection) {
+      case "dashboard": return "Dashboard";
       case "tickets": return "Support Tickets";
       case "all-clients": return "All Clients";
       case "clients": return "Client Information";
@@ -91,7 +92,7 @@ const CallCenterDashboard: React.FC = () => {
       case "knowledge": return "Knowledge Base";
       case "notifications": return "Notifications";
       case "profile": return "Agent Profile";
-      default: return "Support Tickets";
+      default: return "Dashboard";
     }
   };
 

@@ -1,10 +1,27 @@
 
 import React from "react";
-import { ChevronRight, ChevronLeft, Ticket, Users, Phone, Calendar, ClipboardList, Bell, User, BarChart3 } from "lucide-react";
+import {
+  Users,
+  TicketIcon,
+  BarChart3,
+  Bell,
+  User,
+  Calendar,
+  ClipboardList,
+  ChevronRight,
+  ChevronLeft,
+  LogOut,
+  Phone,
+  Clock,
+  Smartphone,
+  AlertTriangle
+} from "lucide-react";
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from "@/context/AuthContext";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { ModeToggle } from "@/components/mode-toggle";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import SidebarNavigation from "./sidebar/SidebarNavigation";
 import UserProfile from "./sidebar/UserProfile";
 
@@ -35,10 +52,10 @@ const Sidebar: React.FC<SidebarProps> = ({
 
   return (
     <div className={cn(
-      "flex flex-col h-screen bg-background border-r transition-all duration-300",
+      "flex flex-col h-screen bg-background border-r transition-all duration-300 p-4",
       collapsed ? "w-20" : "w-64"
     )}>
-      <div className="flex items-center justify-between p-4 border-b">
+      <div className="flex items-center justify-between mb-8">
         {!collapsed && <h2 className="text-xl font-bold">Call Center</h2>}
         <Button 
           variant="ghost" 
@@ -50,7 +67,7 @@ const Sidebar: React.FC<SidebarProps> = ({
         </Button>
       </div>
 
-      <div className="flex-1 overflow-y-auto py-4">
+      <div className="flex-1 overflow-y-auto">
         <SidebarNavigation
           activeSection={activeSection}
           setActiveSection={setActiveSection}
@@ -58,7 +75,7 @@ const Sidebar: React.FC<SidebarProps> = ({
         />
       </div>
 
-      <div className="p-4 border-t">
+      <div className="mt-auto pt-4 border-t">
         <UserProfile 
           user={user} 
           collapsed={collapsed} 

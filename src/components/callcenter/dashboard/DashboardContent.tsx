@@ -1,10 +1,23 @@
 
 import React from "react";
+import { 
+  Users, 
+  TicketIcon,
+  BarChart3,
+  Bell,
+  User,
+  Calendar,
+  ClipboardList,
+  Clock,
+  Smartphone,
+  AlertTriangle,
+  Phone
+} from "lucide-react";
 import TicketingSystem from "../ticketing/TicketingSystem";
 import ClientDetails from "../ClientDetails";
 import CallStats from "../stats/CallStats";
 import PlaceholderSection from "../../admin/PlaceholderSection";
-import { Bell, User, Calendar, ClipboardList, Users, BarChart3, Clock, Smartphone, AlertTriangle } from "lucide-react";
+import AgentDashboard from "./AgentDashboard";
 
 interface DashboardContentProps {
   activeSection: string;
@@ -22,6 +35,8 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
   // Render the appropriate section based on activeSection
   const renderActiveSection = () => {
     switch (activeSection) {
+      case "dashboard":
+        return <AgentDashboard />;
       case "tickets":
         return <TicketingSystem 
                  onClientSelect={(clientId) => {
@@ -106,12 +121,7 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
           />
         );
       default:
-        return <TicketingSystem 
-                 onClientSelect={(clientId) => {
-                   setSelectedClient(clientId);
-                   if (clientId) setActiveSection("clients");
-                 }} 
-               />;
+        return <AgentDashboard />;
     }
   };
   
