@@ -1,28 +1,17 @@
 
-import React, { useState, useEffect } from "react";
-import { BellRing, PlusSquare, ActivitySquare, ShoppingBag, Info } from "lucide-react";
+import React from "react";
+import { BellRing, PlusSquare, ActivitySquare, ShoppingBag, Info, ArrowRight } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
-import DeviceCard from "./DeviceCard";
-import ShoppingCartComponent from "./ShoppingCart";
-
-interface SelectedDevice {
-  id: string;
-  quantity: number;
-}
+import { Link } from "react-router-dom";
+import { ButtonCustom } from "./ui/button-custom";
 
 const DeviceShowcase: React.FC = () => {
   const { language } = useLanguage();
-  const [selectedDevices, setSelectedDevices] = useState<SelectedDevice[]>([]);
-  const [totalMonthly, setTotalMonthly] = useState<number>(0);
-  const [totalOneTime, setTotalOneTime] = useState<number>(0);
-  const [shippingCost, setShippingCost] = useState<number>(0);
 
   const devices = [
     {
       id: "sos",
       name: language === 'en' ? "SOS Pendant" : "Colgante SOS",
-      price: 110.00,
-      monthlyPrice: 24.99,
       icon: <BellRing className="w-12 h-12 text-orange-500" />,
       image: "/lovable-uploads/ad65a632-e7ef-4c61-a20e-7b6ff282a87a.png",
       features: language === 'en' ? [
@@ -45,8 +34,6 @@ const DeviceShowcase: React.FC = () => {
     {
       id: "dispenser",
       name: language === 'en' ? "Medical Dispenser" : "Dispensador Médico",
-      price: 249.99,
-      monthlyPrice: 24.99,
       icon: <PlusSquare className="w-12 h-12 text-guardian-500" />,
       image: "/lovable-uploads/5e439305-cf63-4080-962e-52657e864050.png",
       features: language === 'en' ? [
@@ -69,8 +56,6 @@ const DeviceShowcase: React.FC = () => {
     {
       id: "glucose",
       name: language === 'en' ? "Glucose Monitor" : "Monitor de Glucosa",
-      price: 149.99,
-      monthlyPrice: 24.99,
       icon: <ActivitySquare className="w-12 h-12 text-orange-500" />,
       image: "/lovable-uploads/6eb6b5d1-34a3-4236-ac3a-351d6c22de7e.png",
       features: language === 'en' ? [
@@ -92,79 +77,16 @@ const DeviceShowcase: React.FC = () => {
     }
   ];
 
-  useEffect(() => {
-    if (selectedDevices.length === 0) {
-      setTotalMonthly(0);
-      setTotalOneTime(0);
-      setShippingCost(0);
-      return;
-    }
-
-    let oneTimeTotal = 0;
-    let baseMonthly = 0;
-    let totalDeviceCount = 0;
-
-    // Calculate one-time device costs
-    selectedDevices.forEach(selectedDevice => {
-      const device = devices.find(d => d.id === selectedDevice.id);
-      if (device) {
-        oneTimeTotal += device.price * selectedDevice.quantity;
-        baseMonthly += device.monthlyPrice * selectedDevice.quantity;
-        totalDeviceCount += selectedDevice.quantity;
-      }
-    });
-
-    // Calculate shipping cost (€14.99 per device)
-    const baseShipping = totalDeviceCount * 14.99;
-    setShippingCost(baseShipping);
-
-    // Add base AI Guardian service automatically (€49.99)
-    const aiGuardianMonthly = 49.99;
-    baseMonthly += aiGuardianMonthly;
-
-    // Apply discounts based on number of devices
-    let discountedMonthly = baseMonthly;
-    if (totalDeviceCount === 2) {
-      // 10% discount for 2 devices
-      discountedMonthly = baseMonthly * 0.9;
-    } else if (totalDeviceCount >= 3) {
-      // 20% discount for 3 or more devices
-      discountedMonthly = baseMonthly * 0.8;
-    }
-
-    setTotalMonthly(discountedMonthly);
-    setTotalOneTime(oneTimeTotal);
-  }, [selectedDevices]);
-
-  const toggleDeviceSelection = (deviceId: string) => {
-    setSelectedDevices(prev => {
-      const isSelected = prev.some(item => item.id === deviceId);
-      if (isSelected) {
-        return prev.filter(item => item.id !== deviceId);
-      } else {
-        return [...prev, { id: deviceId, quantity: 1 }];
-      }
-    });
-  };
-
-  const updateDeviceQuantity = (deviceId: string, newQuantity: number) => {
-    setSelectedDevices(prev => 
-      prev.map(item => 
-        item.id === deviceId ? { ...item, quantity: newQuantity } : item
-      )
-    );
-  };
-
   return (
     <section id="devices" className="py-20 bg-white">
       <div className="container mx-auto px-4 md:px-6">
         <div className="text-center max-w-3xl mx-auto mb-16 animate-slide-down">
           <div className="inline-flex items-center px-3 py-1 rounded-full bg-ice-50 border border-ice-200 text-ice-600 text-sm font-medium mb-4">
             <ShoppingBag size={16} className="mr-2" />
-            {language === 'en' ? 'SHOP NOW & BUY TODAY' : 'COMPRE AHORA Y HOY MISMO'}
+            {language === 'en' ? 'INNOVATIVE MONITORING DEVICES' : 'DISPOSITIVOS DE MONITOREO INNOVADORES'}
           </div>
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
-            {language === 'en' ? "Shop Smart Devices" : "Comprar Dispositivos Inteligentes"}
+            {language === 'en' ? "Smart Health Monitoring Devices" : "Dispositivos Inteligentes de Monitoreo de Salud"}
           </h2>
           <p className="text-muted-foreground text-lg">
             {language === 'en' 
@@ -173,55 +95,92 @@ const DeviceShowcase: React.FC = () => {
           </p>
           <p className="text-ice-600 mt-2 font-medium">
             {language === 'en' 
-              ? "Select the devices you need below. AI Guardian service is automatically included." 
-              : "Seleccione los dispositivos que necesita a continuación. El servicio AI Guardian se incluye automáticamente."}
+              ? "Learn more about our innovative devices below and how they integrate with our service." 
+              : "Aprenda más sobre nuestros dispositivos innovadores a continuación y cómo se integran con nuestro servicio."}
           </p>
           
           <div className="mt-4 bg-gray-50 p-4 rounded-lg text-sm flex items-start max-w-xl mx-auto">
             <Info size={18} className="text-ice-600 mr-2 mt-0.5 flex-shrink-0" />
             <div className="text-left">
               {language === 'en' 
-                ? "All prices are subject to IVA (taxes). One-time purchases are subject to 21% IVA, monthly subscription fees are subject to 10% IVA. Shipping fee of €14.99 applies per device."
-                : "Todos los precios están sujetos a IVA. Las compras únicas están sujetas al 21% de IVA, las cuotas de suscripción mensual están sujetas al 10% de IVA. Se aplica una tarifa de envío de €14.99 por dispositivo."}
+                ? "Our devices are designed to be easy to use and provide continuous monitoring with instant alerts to caregivers and emergency services when needed."
+                : "Nuestros dispositivos están diseñados para ser fáciles de usar y proporcionar monitoreo continuo con alertas instantáneas a cuidadores y servicios de emergencia cuando sea necesario."}
             </div>
           </div>
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-          {devices.map((device, index) => {
-            const selectedDevice = selectedDevices.find(item => item.id === device.id);
-            const isSelected = !!selectedDevice;
-            const quantity = selectedDevice?.quantity || 1;
-            
-            return (
-              <DeviceCard
-                key={device.id}
-                id={device.id}
-                name={device.name}
-                price={device.price}
-                monthlyPrice={device.monthlyPrice}
-                icon={device.icon}
-                image={device.image}
-                features={device.features}
-                description={device.description}
-                isSelected={isSelected}
-                quantity={quantity}
-                onSelect={toggleDeviceSelection}
-                onUpdateQuantity={updateDeviceQuantity}
-              />
-            );
-          })}
+          {devices.map((device, index) => (
+            <div 
+              key={device.id}
+              className="bg-white rounded-3xl shadow-subtle border border-gray-100 overflow-hidden transition-all duration-300 hover:shadow-lg animate-slide-up"
+              style={{ animationDelay: `${(index + 1) * 0.1}s` }}
+            >
+              <div className="p-6">
+                <div className="mb-4">{device.icon}</div>
+                <h3 className="text-xl font-semibold mb-2">{device.name}</h3>
+                
+                {/* Device Image */}
+                <div className="mb-4 overflow-hidden rounded-lg h-48">
+                  <img 
+                    src={device.image}
+                    alt={device.name}
+                    className="w-full h-full object-contain transition-transform hover:scale-105"
+                  />
+                </div>
+                
+                <p className="text-muted-foreground text-sm text-center mb-6">
+                  {device.description}
+                </p>
+                
+                <div className="w-full border-t border-gray-100 pt-4 mb-6">
+                  <h4 className="font-medium mb-2 text-sm text-ice-600">
+                    {language === 'en' ? "Key Features:" : "Características Principales:"}
+                  </h4>
+                  <ul className="space-y-2">
+                    {device.features.map((feature, idx) => (
+                      <li key={idx} className="flex items-center text-sm">
+                        <Check size={16} className="text-green-500 mr-2 flex-shrink-0" />
+                        <span>{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                
+                <Link to={`/products#${device.id}`}>
+                  <ButtonCustom 
+                    variant="outline" 
+                    className="mt-auto w-full group"
+                  >
+                    {language === 'en' ? "Learn More" : "Más Información"}
+                    <ArrowRight size={16} className="ml-2 group-hover:translate-x-1 transition-transform" />
+                  </ButtonCustom>
+                </Link>
+              </div>
+            </div>
+          ))}
         </div>
         
-        <ShoppingCartComponent
-          selectedDevices={selectedDevices}
-          devices={devices}
-          totalMonthly={totalMonthly}
-          totalOneTime={totalOneTime}
-          shippingCost={shippingCost}
-          onRemoveDevice={toggleDeviceSelection}
-          onUpdateQuantity={updateDeviceQuantity}
-        />
+        <div className="text-center mt-12">
+          <p className="text-muted-foreground mb-4">
+            {language === 'en'
+              ? "Our devices are designed to work together to provide comprehensive health monitoring and emergency response."
+              : "Nuestros dispositivos están diseñados para trabajar juntos para proporcionar monitoreo de salud integral y respuesta de emergencia."}
+          </p>
+          
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-8">
+            <Link to="/products">
+              <ButtonCustom variant="outline" size="lg">
+                {language === 'en' ? "Explore All Devices" : "Explorar Todos los Dispositivos"}
+              </ButtonCustom>
+            </Link>
+            <Link to="/join">
+              <ButtonCustom variant="primary" size="lg">
+                {language === 'en' ? "Get Started Today" : "Comience Hoy"}
+              </ButtonCustom>
+            </Link>
+          </div>
+        </div>
       </div>
     </section>
   );

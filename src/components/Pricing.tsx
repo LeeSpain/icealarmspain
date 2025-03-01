@@ -1,6 +1,6 @@
 
 import React from "react";
-import { Check, Truck, Shield, Users, User, Heart, Home, UserCog } from "lucide-react";
+import { Check, Truck, Shield } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
 import { Link } from "react-router-dom";
 import { ButtonCustom } from "./ui/button-custom";
@@ -11,8 +11,6 @@ const Pricing: React.FC = () => {
   const plans = [
     {
       title: language === 'en' ? "Single Device" : "Dispositivo Único",
-      price: "€24.99",
-      period: language === 'en' ? "per month" : "por mes",
       description: language === 'en' 
         ? "Basic monitoring with a single device of your choice." 
         : "Monitoreo básico con un solo dispositivo de su elección.",
@@ -31,15 +29,9 @@ const Pricing: React.FC = () => {
             "Acceso al panel para la familia",
             "Informes de salud mensuales"
           ],
-      icon: <User className="h-12 w-12 p-2 bg-orange-100 text-orange-500 rounded-full" />,
-      isPopular: false
     },
     {
       title: language === 'en' ? "Dual Protection" : "Protección Dual",
-      price: "€44.98",
-      period: language === 'en' ? "per month" : "por mes",
-      originalPrice: "€49.98",
-      savings: language === 'en' ? "Save 10%" : "Ahorre 10%",
       description: language === 'en'
         ? "Enhanced protection with two integrated devices."
         : "Protección mejorada con dos dispositivos integrados.",
@@ -62,15 +54,10 @@ const Pricing: React.FC = () => {
             "Recordatorios de medicación",
             "Consultas de bienestar"
           ],
-      icon: <Heart className="h-12 w-12 p-2 bg-orange-100 text-orange-500 rounded-full" />,
       isPopular: true
     },
     {
       title: language === 'en' ? "Complete Guardian" : "Guardian Completo",
-      price: "€59.97",
-      period: language === 'en' ? "per month" : "por mes",
-      originalPrice: "€74.97",
-      savings: language === 'en' ? "Save 20%" : "Ahorre 20%",
       description: language === 'en'
         ? "Comprehensive health monitoring with all three devices."
         : "Monitoreo de salud integral con los tres dispositivos.",
@@ -95,35 +82,6 @@ const Pricing: React.FC = () => {
             "Soporte técnico prioritario",
             "Gestión avanzada de medicamentos"
           ],
-      icon: <Home className="h-12 w-12 p-2 bg-orange-100 text-orange-500 rounded-full" />,
-      isPopular: false
-    }
-  ];
-  
-  const membershipTypes = [
-    {
-      id: "individual",
-      icon: <User className="h-16 w-16 p-3 bg-gradient-to-br from-ice-50 to-ice-100 text-ice-600 rounded-full shadow-subtle animate-float" />,
-      title: language === 'en' ? "Individual" : "Individual",
-      subtitle: language === 'en' ? "For a single person" : "Para una persona"
-    },
-    {
-      id: "couple",
-      icon: <Heart className="h-16 w-16 p-3 bg-gradient-to-br from-ice-50 to-ice-100 text-ice-600 rounded-full shadow-subtle animate-float" />,
-      title: language === 'en' ? "Couple" : "Pareja",
-      subtitle: language === 'en' ? "For partners or spouses" : "Para parejas o cónyuges"
-    },
-    {
-      id: "family",
-      icon: <Home className="h-16 w-16 p-3 bg-gradient-to-br from-ice-50 to-ice-100 text-ice-600 rounded-full shadow-subtle animate-float" />,
-      title: language === 'en' ? "Family" : "Familia",
-      subtitle: language === 'en' ? "For family members" : "Para miembros de la familia"
-    },
-    {
-      id: "caregiver",
-      icon: <UserCog className="h-16 w-16 p-3 bg-gradient-to-br from-ice-50 to-ice-100 text-ice-600 rounded-full shadow-subtle animate-float" />,
-      title: language === 'en' ? "Caregiver" : "Cuidador",
-      subtitle: language === 'en' ? "For caregivers" : "Para cuidadores"
     }
   ];
   
@@ -132,42 +90,22 @@ const Pricing: React.FC = () => {
       <div className="container mx-auto px-4 md:px-6">
         <div className="text-center max-w-3xl mx-auto mb-16 animate-slide-down">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
-            {language === 'en' ? "Subscription Packages & Information" : "Paquetes de Suscripción e Información"}
+            {language === 'en' ? "Service Packages & Options" : "Paquetes de Servicio y Opciones"}
           </h2>
           <p className="text-muted-foreground text-lg">
             {language === 'en'
-              ? "Learn about our monitoring services and subscription options. No leasing, no hidden fees."
-              : "Conozca nuestros servicios de monitoreo y opciones de suscripción. Sin arrendamiento, sin tarifas ocultas."}
+              ? "Learn about our comprehensive monitoring services and package options designed to fit your needs."
+              : "Conozca nuestros servicios integrales de monitoreo y opciones de paquetes diseñados para adaptarse a sus necesidades."}
           </p>
           <p className="text-ice-600 mt-4">
             {language === 'en'
-              ? "Review our packages below and visit our Products page to learn more about our devices."
-              : "Revise nuestros paquetes a continuación y visite nuestra página de Productos para obtener más información sobre nuestros dispositivos."}
+              ? "Explore our service packages below and visit our Products page to learn more about our innovative devices."
+              : "Explore nuestros paquetes de servicio a continuación y visite nuestra página de Productos para obtener más información sobre nuestros dispositivos innovadores."}
           </p>
         </div>
         
-        {/* Package For Section - Now centered and with improved icons */}
-        <div className="max-w-4xl mx-auto mb-16">
-          <h2 className="text-2xl font-semibold mb-8 text-center flex items-center justify-center text-ice-600">
-            <Shield className="mr-3 h-6 w-6" />
-            {language === 'en' ? "Who Is This Package For?" : "¿Para Quién Es Este Paquete?"}
-          </h2>
-          
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {membershipTypes.map(type => (
-              <div 
-                key={type.id}
-                className="p-6 rounded-xl border border-ice-100 bg-white shadow-subtle hover:shadow-md transition-all duration-300 flex flex-col items-center text-center"
-              >
-                <div className="mb-4">{type.icon}</div>
-                <h3 className="font-semibold text-lg mb-1">{type.title}</h3>
-                <p className="text-sm text-muted-foreground">{type.subtitle}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+        {/* Service Packages Section */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto mb-16">
           {plans.map((plan, index) => (
             <div 
               key={index}
@@ -178,29 +116,12 @@ const Pricing: React.FC = () => {
             >
               {plan.isPopular && (
                 <div className="absolute top-0 right-0 bg-ice-500 text-white px-3 py-1 text-xs font-medium rounded-bl-lg">
-                  {language === 'en' ? "Most Popular" : "Más Popular"}
+                  {language === 'en' ? "Recommended" : "Recomendado"}
                 </div>
               )}
               
               <div className="p-6">
-                <div className="flex items-center mb-2">
-                  {plan.icon}
-                  <h3 className="text-xl font-semibold ml-3">{plan.title}</h3>
-                </div>
-                
-                <div className="mb-4">
-                  <span className="text-3xl font-bold">{plan.price}</span>
-                  <span className="text-muted-foreground ml-1">{plan.period}</span>
-                </div>
-                
-                {(plan.originalPrice && plan.savings) && (
-                  <div className="flex items-center gap-2 mb-4">
-                    <span className="text-sm text-muted-foreground line-through">{plan.originalPrice}</span>
-                    <span className="text-xs font-medium bg-green-50 text-green-600 px-2 py-0.5 rounded-full">
-                      {plan.savings}
-                    </span>
-                  </div>
-                )}
+                <h3 className="text-xl font-semibold mb-2">{plan.title}</h3>
                 
                 <p className="text-muted-foreground text-sm mb-6">
                   {plan.description}
@@ -218,12 +139,12 @@ const Pricing: React.FC = () => {
                 <div className="flex flex-col gap-3">
                   <Link to="/products">
                     <ButtonCustom variant="outline" className="w-full">
-                      {language === 'en' ? "Learn More" : "Obtener Más Información"}
+                      {language === 'en' ? "View Devices" : "Ver Dispositivos"}
                     </ButtonCustom>
                   </Link>
                   <Link to="/join">
                     <ButtonCustom className="w-full">
-                      {language === 'en' ? "Subscribe Now" : "Suscribirse Ahora"}
+                      {language === 'en' ? "Learn More" : "Más Información"}
                     </ButtonCustom>
                   </Link>
                 </div>
@@ -232,18 +153,24 @@ const Pricing: React.FC = () => {
           ))}
         </div>
         
-        <div className="mt-12 text-center">
-          <p className="text-muted-foreground mb-4">
-            {language === 'en'
-              ? "All plans include device purchase. Additional fees apply for device replacement."
-              : "Todos los planes incluyen la compra del dispositivo. Se aplican tarifas adicionales para el reemplazo del dispositivo."}
-          </p>
-          <div className="flex items-center justify-center text-ice-600 font-medium animate-pulse">
+        <div className="text-center max-w-3xl mx-auto mt-12">
+          <div className="mb-8">
+            <h3 className="text-xl font-semibold mb-2">
+              {language === 'en' ? "How Our Service Works" : "Cómo Funciona Nuestro Servicio"}
+            </h3>
+            <p className="text-muted-foreground">
+              {language === 'en'
+                ? "Our AI Guardian service combines smart devices with 24/7 monitoring for comprehensive protection."
+                : "Nuestro servicio AI Guardian combina dispositivos inteligentes con monitoreo 24/7 para una protección integral."}
+            </p>
+          </div>
+          
+          <div className="flex items-center justify-center text-ice-600 font-medium mb-8">
             <Truck className="mr-2 h-5 w-5" />
             <p>
               {language === 'en'
-                ? "Shipping fee of €14.99 applies per device"
-                : "Se aplica una tarifa de envío de €14.99 por dispositivo"}
+                ? "Devices are shipped directly to your door with easy setup instructions"
+                : "Los dispositivos se envían directamente a su puerta con instrucciones de configuración sencillas"}
             </p>
           </div>
           
@@ -255,7 +182,7 @@ const Pricing: React.FC = () => {
             </Link>
             <Link to="/join">
               <ButtonCustom variant="primary" size="lg">
-                {language === 'en' ? "Subscribe Now" : "Suscribirse Ahora"}
+                {language === 'en' ? "Get Started Today" : "Comience Hoy"}
               </ButtonCustom>
             </Link>
           </div>

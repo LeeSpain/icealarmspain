@@ -1,4 +1,3 @@
-
 import React, { useEffect } from "react";
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
@@ -85,9 +84,9 @@ const Index: React.FC = () => {
           <div className="absolute left-0 right-0 h-24 bg-gradient-to-b from-ice-50/50 to-white -top-24 z-10"></div>
         </div>
         
-        <Pricing />
-        
         <DeviceShowcase />
+        
+        <Pricing />
         
         {/* Section Divider */}
         <div className="relative">
