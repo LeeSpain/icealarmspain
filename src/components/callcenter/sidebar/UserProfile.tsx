@@ -12,16 +12,21 @@ import { useNavigate } from "react-router-dom";
 interface UserProfileProps {
   user: User | null;
   collapsed: boolean;
+  handleLogout?: () => Promise<void>;
 }
 
-const UserProfile: React.FC<UserProfileProps> = ({ user, collapsed }) => {
+const UserProfile: React.FC<UserProfileProps> = ({ user, collapsed, handleLogout }) => {
   const { logout } = useAuth();
   const navigate = useNavigate();
 
   // Function to handle logout
-  const handleLogout = async () => {
-    await logout();
-    navigate('/login');
+  const handleLogoutAction = async () => {
+    if (handleLogout) {
+      await handleLogout();
+    } else {
+      await logout();
+      navigate('/login');
+    }
   };
 
   // Get initials for avatar
@@ -51,7 +56,7 @@ const UserProfile: React.FC<UserProfileProps> = ({ user, collapsed }) => {
           <AvatarFallback>{user?.name ? getInitials(user.name) : 'A'}</AvatarFallback>
         </Avatar>
         <ModeToggle />
-        <Button variant="ghost" size="icon" onClick={handleLogout}>
+        <Button variant="ghost" size="icon" onClick={handleLogoutAction}>
           <LogOut className="h-4 w-4" />
         </Button>
       </div>
@@ -75,7 +80,7 @@ const UserProfile: React.FC<UserProfileProps> = ({ user, collapsed }) => {
         {user?.role && getRoleBadge(user.role)}
         <div className="flex items-center gap-2">
           <ModeToggle />
-          <Button variant="ghost" size="icon" onClick={handleLogout}>
+          <Button variant="ghost" size="icon" onClick={handleLogoutAction}>
             <LogOut className="h-4 w-4" />
           </Button>
         </div>

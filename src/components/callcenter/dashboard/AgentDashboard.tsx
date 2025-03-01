@@ -30,7 +30,7 @@ const AgentDashboard: React.FC = () => {
   }).format(currentDate);
   
   // Filter tickets for pending and critical tickets
-  const pendingTickets = mockTickets.filter(ticket => ticket.status === 'open' || ticket.status === 'in-progress');
+  const pendingTickets = mockTickets.filter(ticket => ticket.status === 'open' || ticket.status === 'pending');
   const criticalTickets = mockTickets.filter(ticket => ticket.priority === 'high');
   
   // Mock data for recent calls
@@ -160,17 +160,17 @@ const AgentDashboard: React.FC = () => {
               {pendingTickets.slice(0, 3).map(ticket => (
                 <div key={ticket.id} className="border-l-4 border-amber-500 bg-amber-50 p-4 rounded-md">
                   <div className="flex justify-between">
-                    <h3 className="font-medium">{ticket.title}</h3>
+                    <h3 className="font-medium">{ticket.subject}</h3>
                     <Badge variant={ticket.priority === 'high' ? 'destructive' : 'outline'}>
                       {ticket.priority}
                     </Badge>
                   </div>
                   <p className="text-sm text-muted-foreground mt-1">
-                    Client: {ticket.client}
+                    Client: {ticket.clientName}
                   </p>
                   <div className="flex justify-between items-center mt-3">
                     <span className="text-xs text-muted-foreground">
-                      Created: {ticket.createdAt}
+                      Created: {ticket.created}
                     </span>
                     <Button size="sm">
                       View Details

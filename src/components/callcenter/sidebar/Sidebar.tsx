@@ -62,7 +62,7 @@ const Sidebar: React.FC<SidebarProps> = ({
         <UserProfile 
           user={user} 
           collapsed={collapsed} 
-          handleLogout={handleLogout} 
+          handleLogout={handleLogout}
         />
       </div>
     </div>
