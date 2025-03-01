@@ -132,17 +132,17 @@ const Pricing: React.FC = () => {
       <div className="container mx-auto px-4 md:px-6">
         <div className="text-center max-w-3xl mx-auto mb-16 animate-slide-down">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
-            {language === 'en' ? "Simple, Transparent Pricing" : "Precios Simples y Transparentes"}
+            {language === 'en' ? "Subscription Packages & Information" : "Paquetes de Suscripción e Información"}
           </h2>
           <p className="text-muted-foreground text-lg">
             {language === 'en'
-              ? "Purchase your devices and subscribe to our monitoring services. No leasing, no hidden fees."
-              : "Compre sus dispositivos y suscríbase a nuestros servicios de monitoreo. Sin arrendamiento, sin tarifas ocultas."}
+              ? "Learn about our monitoring services and subscription options. No leasing, no hidden fees."
+              : "Conozca nuestros servicios de monitoreo y opciones de suscripción. Sin arrendamiento, sin tarifas ocultas."}
           </p>
           <p className="text-ice-600 mt-4">
             {language === 'en'
-              ? "Scroll down to select the devices you want to purchase and see your personalized pricing."
-              : "Desplácese hacia abajo para seleccionar los dispositivos que desea comprar y ver sus precios personalizados."}
+              ? "Review our packages below and visit our Products page to learn more about our devices."
+              : "Revise nuestros paquetes a continuación y visite nuestra página de Productos para obtener más información sobre nuestros dispositivos."}
           </p>
         </div>
         
@@ -215,11 +215,18 @@ const Pricing: React.FC = () => {
                   ))}
                 </ul>
                 
-                <Link to="/#devices">
-                  <ButtonCustom className="w-full">
-                    {language === 'en' ? "Select Devices" : "Seleccionar Dispositivos"}
-                  </ButtonCustom>
-                </Link>
+                <div className="flex flex-col gap-3">
+                  <Link to="/products">
+                    <ButtonCustom variant="outline" className="w-full">
+                      {language === 'en' ? "Learn More" : "Obtener Más Información"}
+                    </ButtonCustom>
+                  </Link>
+                  <Link to="/join">
+                    <ButtonCustom className="w-full">
+                      {language === 'en' ? "Subscribe Now" : "Suscribirse Ahora"}
+                    </ButtonCustom>
+                  </Link>
+                </div>
               </div>
             </div>
           ))}
@@ -239,17 +246,19 @@ const Pricing: React.FC = () => {
                 : "Se aplica una tarifa de envío de €14.99 por dispositivo"}
             </p>
           </div>
-          <p className="text-ice-600 font-medium mt-4 animate-pulse">
-            {language === 'en'
-              ? "Select your devices below to create your personalized package"
-              : "Seleccione sus dispositivos a continuación para crear su paquete personalizado"}
-          </p>
           
-          <Link to="/#devices" className="inline-block mt-6">
-            <ButtonCustom variant="primary" size="lg">
-              {language === 'en' ? "Shop Devices Now" : "Comprar Dispositivos Ahora"}
-            </ButtonCustom>
-          </Link>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-8">
+            <Link to="/products">
+              <ButtonCustom variant="outline" size="lg">
+                {language === 'en' ? "View Device Information" : "Ver Información de Dispositivos"}
+              </ButtonCustom>
+            </Link>
+            <Link to="/join">
+              <ButtonCustom variant="primary" size="lg">
+                {language === 'en' ? "Subscribe Now" : "Suscribirse Ahora"}
+              </ButtonCustom>
+            </Link>
+          </div>
         </div>
       </div>
     </section>
