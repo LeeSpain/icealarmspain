@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { BellRing, PlusSquare, ActivitySquare, ShoppingBag } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
@@ -125,7 +126,7 @@ const DeviceShowcase: React.FC = () => {
   };
 
   return (
-    <section id="devices" className="py-20">
+    <section id="devices" className="py-20 bg-white">
       <div className="container mx-auto px-4 md:px-6">
         <div className="text-center max-w-3xl mx-auto mb-16 animate-slide-down">
           <div className="inline-flex items-center px-3 py-1 rounded-full bg-ice-50 border border-ice-200 text-ice-600 text-sm font-medium mb-4">
@@ -133,17 +134,17 @@ const DeviceShowcase: React.FC = () => {
             {language === 'en' ? 'SHOP NOW & BUY TODAY' : 'COMPRE AHORA Y HOY MISMO'}
           </div>
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
-            {language === 'en' ? "Integrated Smart Devices" : "Dispositivos Inteligentes Integrados"}
+            {language === 'en' ? "Shop Smart Devices" : "Comprar Dispositivos Inteligentes"}
           </h2>
           <p className="text-muted-foreground text-lg">
             {language === 'en' 
               ? "Our comprehensive ecosystem of health monitoring devices works seamlessly with the AI Guardian." 
               : "Nuestro ecosistema integral de dispositivos de monitoreo de salud funciona a la perfección con el Guardián de IA."}
           </p>
-          <p className="text-muted-foreground mt-2 font-medium text-ice-600">
+          <p className="text-ice-600 mt-2 font-medium">
             {language === 'en' 
-              ? "Select the devices you need below and checkout today to start your personalized protection plan." 
-              : "Seleccione los dispositivos que necesita a continuación y finalice la compra hoy para comenzar su plan de protección personalizado."}
+              ? "Select the devices you need below to see your customized pricing." 
+              : "Seleccione los dispositivos que necesita a continuación para ver sus precios personalizados."}
           </p>
         </div>
         

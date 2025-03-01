@@ -1,4 +1,3 @@
-
 import React, { useEffect } from "react";
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
@@ -41,8 +40,8 @@ const Index: React.FC = () => {
       <main className="flex-grow">
         <Hero />
         <Dashboard />
-        <DeviceShowcase />
         <Pricing />
+        <DeviceShowcase />
         <ExpatInfo />
       </main>
       <Footer />
