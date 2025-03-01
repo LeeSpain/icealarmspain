@@ -1,20 +1,43 @@
-
+<lov-code>
 import React, { useState, useEffect } from "react";
 import { 
   Users, 
-  Bell, 
-  Activity, 
-  CalendarIcon, 
   BarChart3, 
-  Settings, 
   Search,
   Check,
-  X
+  X,
+  Home,
+  FileText,
+  Briefcase,
+  DollarSign,
+  ShoppingCart,
+  Layers,
+  Settings,
+  Bell,
+  MessageSquare,
+  HelpCircle,
+  LogOut,
+  ChevronRight,
+  ChevronLeft,
+  PieChart,
+  Calendar,
+  Smartphone,
+  ServerIcon,
+  BarChart,
+  TrendingUp,
+  CreditCard,
+  Shield,
+  ArrowUpDown,
+  Database,
+  Send
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { useNavigate } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { useLanguage } from "@/context/LanguageContext";
+
+// Import UI components
 import {
   Table,
   TableBody,
@@ -23,7 +46,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"
+} from "@/components/ui/table";
 import {
   Card,
   CardContent,
@@ -31,17 +54,17 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
+} from "@/components/ui/select";
 import {
   Dialog,
   DialogContent,
@@ -50,45 +73,10 @@ import {
   DialogTitle,
   DialogTrigger,
   DialogFooter,
-} from "@/components/ui/dialog"
-import { Textarea } from "@/components/ui/textarea"
-import { Switch } from "@/components/ui/switch"
-import { Progress } from "@/components/ui/progress"
-import { Separator } from "@/components/ui/separator"
-import { Badge } from "@/components/ui/badge"
-import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { Calendar } from "@/components/ui/calendar"
-import { cn } from "@/lib/utils"
-import { format } from "date-fns"
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-  CommandSeparator,
-} from "@/components/ui/command"
-import {
-  Drawer,
-  DrawerClose,
-  DrawerContent,
-  DrawerDescription,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerTrigger,
-} from "@/components/ui/drawer"
-import { Slider } from "@/components/ui/slider"
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Skeleton } from "@/components/ui/skeleton"
-import { AspectRatio } from "@/components/ui/aspect-ratio"
-import { Progress as ProgressDemo } from "@/components/ui/progress"
-import { ModeToggle } from "@/components/mode-toggle"
-import { useToast } from "@/components/ui/use-toast"
-import { ToastAction } from "@/components/ui/toast"
+} from "@/components/ui/dialog";
+import { Progress } from "@/components/ui/progress";
+import { Separator } from "@/components/ui/separator";
+import { Badge } from "@/components/ui/badge";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -99,28 +87,30 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog"
+} from "@/components/ui/alert-dialog";
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from "@/components/ui/drawer";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
-  DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuRadioGroup,
-  DropdownMenuRadioItem,
   DropdownMenuSeparator,
-  DropdownMenuShortcut,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import {
-  ResizableHandle,
-  ResizablePanel,
-  ResizablePanelGroup,
-} from "@/components/ui/resizable"
-import { useLanguage } from "@/context/LanguageContext";
+} from "@/components/ui/dropdown-menu";
+import { ModeToggle } from "@/components/mode-toggle";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface User {
   id: string;
@@ -130,11 +120,63 @@ interface User {
   status: string;
 }
 
+interface SidebarItemProps {
+  icon: React.ElementType;
+  label: string;
+  isActive?: boolean;
+  onClick?: () => void;
+  children?: React.ReactNode;
+}
+
+const SidebarItem: React.FC<SidebarItemProps> = ({ 
+  icon: Icon, 
+  label, 
+  isActive = false, 
+  onClick, 
+  children 
+}) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const hasChildren = children !== undefined;
+
+  return (
+    <div className="mb-1">
+      <div 
+        className={`flex items-center justify-between px-3 py-2 rounded-md cursor-pointer ${
+          isActive ? "bg-primary/10 text-primary" : "hover:bg-accent"
+        }`}
+        onClick={() => {
+          if (hasChildren) {
+            setIsOpen(!isOpen);
+          } else if (onClick) {
+            onClick();
+          }
+        }}
+      >
+        <div className="flex items-center">
+          <Icon className="mr-2 h-5 w-5" />
+          <span className="text-sm font-medium">{label}</span>
+        </div>
+        {hasChildren && (
+          <div>
+            {isOpen ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
+          </div>
+        )}
+      </div>
+      {hasChildren && isOpen && (
+        <div className="ml-6 mt-1 space-y-1">
+          {children}
+        </div>
+      )}
+    </div>
+  );
+};
+
 const AdminDashboard: React.FC = () => {
+  const [activeSection, setActiveSection] = useState<string>("dashboard");
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const { logout } = useAuth();
+  const { logout, user } = useAuth();
   const navigate = useNavigate();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [newUserName, setNewUserName] = useState('');
@@ -162,6 +204,28 @@ const AdminDashboard: React.FC = () => {
   const [isAllSelected, setIsAllSelected] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const usersPerPage = 5;
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  // Dummy data for dashboard metrics
+  const dashboardMetrics = {
+    totalRevenue: "€2,543,960",
+    totalCustomers: "1,429",
+    activeDevices: "3,892",
+    pendingOrders: "47",
+    monthlyGrowth: "+12.5%",
+    customerSatisfaction: "94%",
+    revenueByProduct: [
+      { name: "IceAlarm Pro", value: 45 },
+      { name: "IceAlarm Standard", value: 30 },
+      { name: "IceAlarm Basic", value: 25 },
+    ],
+    recentActivities: [
+      { id: 1, type: "New Order", description: "New order #37429 from Empresa de Madrid", time: "2 hours ago" },
+      { id: 2, type: "Support", description: "Support ticket #2947 resolved", time: "4 hours ago" },
+      { id: 3, type: "Device", description: "28 new devices activated in Barcelona region", time: "Yesterday" },
+      { id: 4, type: "Payment", description: "Payment of €34,500 received from Hotel Group", time: "Yesterday" },
+      { id: 5, type: "Maintenance", description: "Scheduled maintenance completed for 156 devices", time: "2 days ago" },
+    ]
+  };
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -473,14 +537,109 @@ const AdminDashboard: React.FC = () => {
     setCurrentPage(newPage);
   };
 
-  return (
-    <div className="container mx-auto py-10">
-      <ToastContainer />
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-semibold">{t("adminDashboard.title")}</h1>
-        <Button onClick={handleLogout}>{t("adminDashboard.logout")}</Button>
+  const renderDashboard = () => (
+    <div className="space-y-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground">Total Revenue</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{dashboardMetrics.totalRevenue}</div>
+            <p className="text-xs text-muted-foreground">+20.1% from last month</p>
+            <Progress className="mt-3" value={75} />
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground">Total Customers</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{dashboardMetrics.totalCustomers}</div>
+            <p className="text-xs text-muted-foreground">+5.4% from last month</p>
+            <Progress className="mt-3" value={65} />
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground">Active Devices</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{dashboardMetrics.activeDevices}</div>
+            <p className="text-xs text-muted-foreground">+12.3% from last month</p>
+            <Progress className="mt-3" value={85} />
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground">Pending Orders</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{dashboardMetrics.pendingOrders}</div>
+            <p className="text-xs text-muted-foreground">-2.3% from last week</p>
+            <Progress className="mt-3" value={40} />
+          </CardContent>
+        </Card>
       </div>
 
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <Card className="col-span-1">
+          <CardHeader>
+            <CardTitle>Revenue Distribution</CardTitle>
+            <CardDescription>Product revenue breakdown</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="h-80 flex items-center justify-center">
+              <div className="w-full max-w-md">
+                {dashboardMetrics.revenueByProduct.map((product, i) => (
+                  <div key={product.name} className="mb-4">
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-sm font-medium">{product.name}</span>
+                      <span className="text-sm font-medium">{product.value}%</span>
+                    </div>
+                    <Progress value={product.value} className="h-2" />
+                  </div>
+                ))}
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="col-span-1">
+          <CardHeader>
+            <CardTitle>Recent Activity</CardTitle>
+            <CardDescription>Latest system activities</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <ScrollArea className="h-80">
+              <div className="space-y-4">
+                {dashboardMetrics.recentActivities.map((activity) => (
+                  <div key={activity.id} className="flex items-start pb-4 border-b last:border-0">
+                    <div className="mr-4 mt-1">
+                      <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
+                        {activity.type === "New Order" && <ShoppingCart className="h-4 w-4 text-primary" />}
+                        {activity.type === "Support" && <MessageSquare className="h-4 w-4 text-primary" />}
+                        {activity.type === "Device" && <Smartphone className="h-4 w-4 text-primary" />}
+                        {activity.type === "Payment" && <DollarSign className="h-4 w-4 text-primary" />}
+                        {activity.type === "Maintenance" && <Settings className="h-4 w-4 text-primary" />}
+                      </div>
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium">{activity.description}</p>
+                      <p className="text-xs text-muted-foreground">{activity.time}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </ScrollArea>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  );
+
+  const renderUserManagement = () => (
+    <div className="space-y-4">
       <div className="flex justify-between items-center mb-4">
         <Input
           type="text"
@@ -499,7 +658,7 @@ const AdminDashboard: React.FC = () => {
             <SelectItem value="inactive">{t("adminDashboard.inactive")}</SelectItem>
           </SelectContent>
         </Select>
-        <Button onClick={openCreateUserDialog}>{t("adminDashboard.createUser")}</Button>
+        <Button onClick={() => setIsDialogOpen(true)}>{t("adminDashboard.createUser")}</Button>
       </div>
 
       {loading ? (
@@ -590,7 +749,7 @@ const AdminDashboard: React.FC = () => {
 
           <div className="flex justify-between items-center mt-4">
             <Button
-              onClick={openBulkEditDrawer}
+              onClick={() => setIsBulkEditDrawerOpen(true)}
               disabled={selectedUserIds.length === 0}
             >
               {t("adminDashboard.bulkEdit")}
@@ -763,76 +922,4 @@ const AdminDashboard: React.FC = () => {
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="role" className="text-right">
                 {t("adminDashboard.role")}
-              </Label>
-              <Select value={bulkEditRole} onValueChange={setBulkEditRole}>
-                <SelectTrigger className="col-span-3">
-                  <SelectValue placeholder={t("adminDashboard.selectRole")} />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="admin">{t("adminDashboard.admin")}</SelectItem>
-                  <SelectItem value="editor">{t("adminDashboard.editor")}</SelectItem>
-                  <SelectItem value="user">{t("adminDashboard.user")}</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="status" className="text-right">
-                {t("adminDashboard.status")}
-              </Label>
-              <Select value={bulkEditStatus} onValueChange={setBulkEditStatus}>
-                <SelectTrigger className="col-span-3">
-                  <SelectValue placeholder={t("adminDashboard.selectStatus")} />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="active">{t("adminDashboard.active")}</SelectItem>
-                  <SelectItem value="inactive">{t("adminDashboard.inactive")}</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-          <DrawerFooter>
-            <Button variant="outline" onClick={closeBulkEditDrawer}>
-              {t("adminDashboard.cancel")}
-            </Button>
-            <Button onClick={handleBulkUpdate}>{t("adminDashboard.update")}</Button>
-            <Button variant="destructive" onClick={handleBulkDelete}>{t("adminDashboard.delete")}</Button>
-          </DrawerFooter>
-        </DrawerContent>
-      </Drawer>
-
-      {/* Bulk Update Confirmation Dialog */}
-      <AlertDialog open={isBulkUpdateConfirmationOpen} onOpenChange={setIsBulkUpdateConfirmationOpen}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>{t("adminDashboard.bulkUpdateConfirmation")}</AlertDialogTitle>
-            <AlertDialogDescription>
-              {t("adminDashboard.bulkUpdateConfirmationDescription")}
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel onClick={cancelBulkUpdate}>{t("adminDashboard.cancel")}</AlertDialogCancel>
-            <AlertDialogAction onClick={confirmBulkUpdate}>{t("adminDashboard.update")}</AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-
-      {/* Bulk Delete Confirmation Dialog */}
-      <AlertDialog open={isBulkDeleteConfirmationOpen} onOpenChange={setIsBulkDeleteConfirmationOpen}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>{t("adminDashboard.bulkDeleteConfirmation")}</AlertDialogTitle>
-            <AlertDialogDescription>
-              {t("adminDashboard.bulkDeleteConfirmationDescription")}
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel onClick={cancelBulkDelete}>{t("adminDashboard.cancel")}</AlertDialogCancel>
-            <AlertDialogAction onClick={confirmBulkDelete}>{t("adminDashboard.delete")}</AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-    </div>
-  );
-};
-
-export default AdminDashboard;
+              </Label
