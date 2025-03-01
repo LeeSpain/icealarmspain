@@ -56,6 +56,11 @@ const Index: React.FC = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
   
+  // Add effect for scrolling to top on mount
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+  
   const scrollToTop = () => {
     window.scrollTo({
       top: 0,

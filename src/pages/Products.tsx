@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useEffect } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import DeviceShowcase from "@/components/DeviceShowcase";
@@ -10,6 +10,11 @@ import { Link } from "react-router-dom";
 
 const Products: React.FC = () => {
   const { t, language } = useLanguage();
+
+  // Add effect for scrolling to top on mount
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   const featuresList = language === 'en' ? [
     "Real-time health monitoring",
@@ -37,10 +42,10 @@ const Products: React.FC = () => {
         <section className="bg-ice-50 py-20">
           <div className="container mx-auto px-4 md:px-6">
             <div className="max-w-4xl mx-auto text-center">
-              <h1 className="text-4xl md:text-5xl font-bold mb-6">
+              <h1 className="text-4xl md:text-5xl font-bold mb-6 mx-auto">
                 {language === 'en' ? "Our Smart Health Monitoring Devices" : "Nuestros Dispositivos Inteligentes de Monitoreo de Salud"}
               </h1>
-              <p className="text-lg text-muted-foreground mb-8">
+              <p className="text-lg text-muted-foreground mb-8 max-w-3xl mx-auto">
                 {language === 'en' 
                   ? "Discover our comprehensive range of AI-powered health monitoring devices designed to provide peace of mind and enhanced care for you and your loved ones."
                   : "Descubra nuestra amplia gama de dispositivos de monitoreo de salud impulsados por IA diseñados para brindar tranquilidad y atención mejorada para usted y sus seres queridos."}
@@ -71,7 +76,7 @@ const Products: React.FC = () => {
               <h2 className="text-3xl font-bold mb-4">
                 {language === 'en' ? "Why Choose ICE Alarm España" : "Por Qué Elegir ICE Alarm España"}
               </h2>
-              <p className="text-muted-foreground">
+              <p className="text-muted-foreground max-w-2xl mx-auto">
                 {language === 'en'
                   ? "Our integrated ecosystem provides comprehensive protection and monitoring, with multilingual support designed specifically for residents of Spain."
                   : "Nuestro ecosistema integrado proporciona protección y monitoreo integrales, con soporte multilingüe diseñado específicamente para residentes de España."}

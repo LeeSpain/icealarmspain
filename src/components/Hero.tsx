@@ -31,7 +31,7 @@ const Hero: React.FC = () => {
               </span>
             </div>
             
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-balance leading-tight font-playfair">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight font-playfair mx-auto max-w-4xl">
               <span className="bg-gradient-to-r from-gray-900 via-ice-950 to-guardian-900 bg-clip-text text-transparent inline-block">
                 {language === 'en' 
                   ? 'Intelligent Health Monitoring & Emergency Response' 
@@ -39,7 +39,7 @@ const Hero: React.FC = () => {
               </span>
             </h1>
             
-            <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto text-balance">
+            <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto">
               {language === 'en' 
                 ? 'Our AI Guardian provides 24/7 monitoring and emergency support, integrating smart devices for real-time health tracking and instant response.' 
                 : 'Nuestro Guardián de IA proporciona monitoreo 24/7 y soporte de emergencia, integrando dispositivos inteligentes para seguimiento de salud en tiempo real.'}

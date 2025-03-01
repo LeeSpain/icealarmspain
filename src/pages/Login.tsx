@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useEffect } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import AuthForm from "@/components/AuthForm";
@@ -9,6 +9,11 @@ import { useNavigate } from "react-router-dom";
 const Login: React.FC = () => {
   const { language } = useLanguage();
   const navigate = useNavigate();
+  
+  // Add effect for scrolling to top on mount
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
   
   const handleLoginSuccess = () => {
     // Redirect to dashboard or home after successful login
