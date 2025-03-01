@@ -9,6 +9,15 @@ export interface Ticket {
   priority: 'high' | 'medium' | 'low';
   created: string;
   lastUpdated: string;
+  internalNotes?: InternalNote[];
+}
+
+export interface InternalNote {
+  id: number;
+  ticketId: number;
+  agentName: string;
+  content: string;
+  timestamp: string;
 }
 
 export interface Message {

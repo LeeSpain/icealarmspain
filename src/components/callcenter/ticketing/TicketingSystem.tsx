@@ -7,7 +7,7 @@ import TicketDetail from "./TicketDetail";
 import CreateTicketDialog from "./CreateTicketDialog";
 import NoTicketSelected from "./NoTicketSelected";
 import { mockTickets, mockMessages } from "./mock-data";
-import { Ticket, NewTicketForm } from "./types";
+import { Ticket, NewTicketForm, InternalNote } from "./types";
 
 interface TicketingSystemProps {
   onClientSelect: (clientId: number | null) => void;
@@ -30,6 +30,9 @@ const TicketingSystem: React.FC<TicketingSystemProps> = ({ onClientSelect }) => 
   const [priorityFilter, setPriorityFilter] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>("");
   
+  // Internal notes state
+  const [internalNotes, setInternalNotes] = useState<InternalNote[]>([]);
+  
   // Get the selected ticket details
   const ticketDetails = selectedTicket 
     ? tickets.find(ticket => ticket.id === selectedTicket) 
@@ -38,6 +41,11 @@ const TicketingSystem: React.FC<TicketingSystemProps> = ({ onClientSelect }) => 
   // Get messages for the selected ticket
   const ticketMessages = selectedTicket 
     ? mockMessages.filter(message => message.ticketId === selectedTicket)
+    : [];
+    
+  // Get internal notes for the selected ticket
+  const ticketInternalNotes = selectedTicket
+    ? internalNotes.filter(note => note.ticketId === selectedTicket)
     : [];
   
   // Apply filters to tickets
@@ -103,6 +111,20 @@ const TicketingSystem: React.FC<TicketingSystemProps> = ({ onClientSelect }) => 
     toast.success("Ticket closed successfully");
   };
   
+  // Handle adding an internal note
+  const handleAddInternalNote = (ticketId: number, content: string) => {
+    const newNote: InternalNote = {
+      id: internalNotes.length + 1,
+      ticketId: ticketId,
+      agentName: "Support Agent", // This would typically come from the logged-in user
+      content: content,
+      timestamp: new Date().toISOString()
+    };
+    
+    setInternalNotes([...internalNotes, newNote]);
+    toast.success("Internal note added");
+  };
+  
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-full">
       {/* Tickets List Panel */}
@@ -126,8 +148,10 @@ const TicketingSystem: React.FC<TicketingSystemProps> = ({ onClientSelect }) => 
           <TicketDetail 
             ticket={ticketDetails}
             messages={ticketMessages}
+            internalNotes={ticketInternalNotes}
             onCloseTicket={handleCloseTicket}
             onViewClient={(clientId) => onClientSelect(clientId)}
+            onAddInternalNote={handleAddInternalNote}
           />
         ) : (
           <NoTicketSelected 
