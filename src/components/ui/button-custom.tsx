@@ -24,7 +24,7 @@ const ButtonCustom = React.forwardRef<HTMLButtonElement, ButtonProps>(
     const baseClasses = "inline-flex items-center justify-center rounded-full font-medium transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none";
     
     const variants = {
-      primary: "bg-ice-600 text-white hover:bg-ice-700 focus:ring-ice-500",
+      primary: "bg-ice-500 text-white hover:bg-ice-600 focus:ring-ice-400",
       secondary: "bg-secondary text-foreground hover:bg-secondary/80 focus:ring-secondary",
       outline: "border border-input bg-background hover:bg-secondary focus:ring-primary",
       ghost: "hover:bg-secondary focus:ring-primary",

@@ -14,9 +14,9 @@ const Logo: React.FC<LogoProps> = ({ className }) => {
         <div className="absolute inset-[5px] bg-ice-500 rounded-sm rotate-45 transform origin-center"></div>
       </div>
       <div className="font-semibold text-xl">
-        <span className="text-ice-700">ICE</span>
-        <span className="text-gray-700"> Alarm</span>
-        <span className="text-guardian-700"> España</span>
+        <span className="text-ice-500">ICE</span>
+        <span className="text-gray-800"> Alarm</span>
+        <span className="text-guardian-500"> España</span>
       </div>
     </div>
   );
