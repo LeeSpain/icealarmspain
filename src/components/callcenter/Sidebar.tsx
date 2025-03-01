@@ -1,6 +1,6 @@
 
 import React from "react";
-import { ChevronRight, ChevronLeft } from "lucide-react";
+import { ChevronRight, ChevronLeft, Ticket, Users, Phone, Calendar, ClipboardList, Bell, User, BarChart3 } from "lucide-react";
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from "@/context/AuthContext";
 import { cn } from "@/lib/utils";
@@ -35,27 +35,30 @@ const Sidebar: React.FC<SidebarProps> = ({
 
   return (
     <div className={cn(
-      "flex flex-col h-screen bg-background border-r p-4 transition-all duration-300",
+      "flex flex-col h-screen bg-background border-r transition-all duration-300",
       collapsed ? "w-20" : "w-64"
     )}>
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex items-center justify-between p-4 border-b">
         {!collapsed && <h2 className="text-xl font-bold">Call Center</h2>}
         <Button 
           variant="ghost" 
           size="icon"
           onClick={() => setCollapsed(!collapsed)}
+          className={collapsed ? "mx-auto" : ""}
         >
           {collapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
         </Button>
       </div>
 
-      <SidebarNavigation
-        activeSection={activeSection}
-        setActiveSection={setActiveSection}
-        collapsed={collapsed}
-      />
+      <div className="flex-1 overflow-y-auto py-4">
+        <SidebarNavigation
+          activeSection={activeSection}
+          setActiveSection={setActiveSection}
+          collapsed={collapsed}
+        />
+      </div>
 
-      <div className="mt-auto pt-4 border-t">
+      <div className="p-4 border-t">
         <UserProfile 
           user={user} 
           collapsed={collapsed} 

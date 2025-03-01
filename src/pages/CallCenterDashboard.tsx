@@ -1,12 +1,11 @@
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useAuth } from "@/context/AuthContext";
 
-// Import refactored components
+// Import components
 import Sidebar from "@/components/callcenter/Sidebar";
-import Header from "@/components/callcenter/dashboard/Header";
 import DashboardContent from "@/components/callcenter/dashboard/DashboardContent";
 import { Notification } from "@/components/callcenter/notifications/NotificationTypes";
 import { getMockNotifications } from "@/components/callcenter/notifications/mock-notifications";
@@ -17,12 +16,11 @@ const CallCenterDashboard: React.FC = () => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [selectedClient, setSelectedClient] = useState<number | null>(null);
   const [notifications, setNotifications] = useState<Notification[]>([]);
-  const [showNotifications, setShowNotifications] = useState(false);
   const [hasUnreadNotifications, setHasUnreadNotifications] = useState(false);
   const { user } = useAuth();
 
   // Set up notifications
-  useEffect(() => {
+  React.useEffect(() => {
     // Get mock notifications
     const mockNotifications = getMockNotifications();
     setNotifications(mockNotifications);
@@ -66,7 +64,6 @@ const CallCenterDashboard: React.FC = () => {
     setSelectedClient(clientId);
     setActiveSection("clients");
     markAsRead(notificationId);
-    setShowNotifications(false);
   };
 
   // Handle client service readiness check
@@ -79,8 +76,27 @@ const CallCenterDashboard: React.FC = () => {
     });
   };
 
+  // Get the title based on the active section
+  const getSectionTitle = () => {
+    switch (activeSection) {
+      case "tickets": return "Support Tickets";
+      case "all-clients": return "All Clients";
+      case "clients": return "Client Information";
+      case "clients-alerts": return "Client Alerts";
+      case "clients-history": return "Interaction History";
+      case "clients-devices": return "Client Devices";
+      case "stats": return "Call Center Statistics";
+      case "stats-performance": return "Agent Performance";
+      case "schedule": return "Agent Schedule";
+      case "knowledge": return "Knowledge Base";
+      case "notifications": return "Notifications";
+      case "profile": return "Agent Profile";
+      default: return "Support Tickets";
+    }
+  };
+
   return (
-    <div className="flex h-screen overflow-hidden bg-slate-50 dark:bg-slate-900">
+    <div className="flex h-screen overflow-hidden bg-background">
       <ToastContainer />
       
       {/* Sidebar */}
@@ -92,27 +108,21 @@ const CallCenterDashboard: React.FC = () => {
       />
       
       {/* Main Content */}
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <Header 
-          activeSection={activeSection}
-          hasUnreadNotifications={hasUnreadNotifications}
-          showNotifications={showNotifications}
-          setShowNotifications={setShowNotifications}
-          notifications={notifications}
-          viewClientFromNotification={viewClientFromNotification}
-          checkClientServiceReadiness={checkClientServiceReadiness}
-          markAsRead={markAsRead}
-          setActiveSection={setActiveSection}
-          formatNotificationTime={formatNotificationTime}
-          user={user}
-        />
+      <div className="flex-1 overflow-auto">
+        <header className="sticky top-0 z-10 bg-background border-b px-6 py-4">
+          <h1 className="text-2xl font-bold">
+            {getSectionTitle()}
+          </h1>
+        </header>
         
-        <DashboardContent 
-          activeSection={activeSection}
-          selectedClient={selectedClient}
-          setSelectedClient={setSelectedClient}
-          setActiveSection={setActiveSection}
-        />
+        <main className="p-6">
+          <DashboardContent 
+            activeSection={activeSection}
+            selectedClient={selectedClient}
+            setSelectedClient={setSelectedClient}
+            setActiveSection={setActiveSection}
+          />
+        </main>
       </div>
     </div>
   );

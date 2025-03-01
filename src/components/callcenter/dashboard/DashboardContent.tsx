@@ -116,9 +116,9 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
   };
   
   return (
-    <main className="flex-1 overflow-y-auto p-6 bg-background">
+    <div className="grid grid-cols-1 gap-6">
       {renderActiveSection()}
-    </main>
+    </div>
   );
 };
 
