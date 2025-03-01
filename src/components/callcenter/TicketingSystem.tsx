@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { 
   Card, 
@@ -392,7 +391,6 @@ const TicketingSystem: React.FC<TicketingSystemProps> = ({ onClientSelect }) => 
                     size="sm"
                     onClick={() => {
                       onClientSelect(ticketDetails?.clientId || null);
-                      setActiveSection('clients');
                     }}
                   >
                     <UserCircle className="h-4 w-4 mr-1" />

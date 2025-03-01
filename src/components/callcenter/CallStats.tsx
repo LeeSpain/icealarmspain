@@ -7,7 +7,21 @@ import {
   CardHeader, 
   CardTitle 
 } from "@/components/ui/card";
-import { BarChart, LineChart, PieChart } from "@/components/ui/chart"; // Assume these are your chart components
+import { 
+  BarChart, 
+  LineChart, 
+  PieChart, 
+  Bar, 
+  Line, 
+  Pie, 
+  XAxis, 
+  YAxis, 
+  CartesianGrid, 
+  Tooltip, 
+  Legend, 
+  ResponsiveContainer, 
+  Cell 
+} from "recharts";
 import { 
   BarChart3, 
   TrendingUp, 
@@ -23,40 +37,19 @@ import {
 const mockCallData = {
   dailyCalls: {
     labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
-    datasets: [
-      {
-        label: "Number of Calls",
-        data: [48, 62, 54, 57, 65, 30, 22],
-        backgroundColor: "rgba(24, 144, 255, 0.6)",
-      }
-    ]
+    data: [48, 62, 54, 57, 65, 30, 22],
   },
-  ticketResolution: {
-    labels: ["Resolved", "Pending", "Escalated"],
-    datasets: [
-      {
-        label: "Ticket Status",
-        data: [65, 28, 7],
-        backgroundColor: [
-          "rgba(82, 196, 26, 0.6)",
-          "rgba(250, 173, 20, 0.6)",
-          "rgba(245, 34, 45, 0.6)"
-        ],
-      }
-    ]
-  },
-  responseTime: {
-    labels: ["Week 1", "Week 2", "Week 3", "Week 4"],
-    datasets: [
-      {
-        label: "Avg. Response Time (min)",
-        data: [12, 8, 6, 5],
-        borderColor: "rgba(24, 144, 255, 0.8)",
-        backgroundColor: "rgba(24, 144, 255, 0.1)",
-        tension: 0.3,
-      }
-    ]
-  },
+  ticketResolution: [
+    { name: "Resolved", value: 65, color: "rgba(82, 196, 26, 0.6)" },
+    { name: "Pending", value: 28, color: "rgba(250, 173, 20, 0.6)" },
+    { name: "Escalated", value: 7, color: "rgba(245, 34, 45, 0.6)" }
+  ],
+  responseTime: [
+    { name: "Week 1", value: 12 },
+    { name: "Week 2", value: 8 },
+    { name: "Week 3", value: 6 },
+    { name: "Week 4", value: 5 }
+  ],
   weeklyMetrics: {
     totalCalls: 338,
     avgDuration: "8.5 min",
@@ -81,23 +74,22 @@ const CallStats: React.FC = () => {
         </CardHeader>
         <CardContent>
           <div className="h-80">
-            <BarChart
-              data={mockCallData.dailyCalls}
-              options={{
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                  legend: {
-                    display: false,
-                  },
-                },
-                scales: {
-                  y: {
-                    beginAtZero: true,
-                  },
-                },
-              }}
-            />
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart
+                data={mockCallData.dailyCalls.labels.map((label, index) => ({
+                  name: label,
+                  calls: mockCallData.dailyCalls.data[index],
+                }))}
+                margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+              >
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="name" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                <Bar dataKey="calls" fill="rgba(24, 144, 255, 0.6)" />
+              </BarChart>
+            </ResponsiveContainer>
           </div>
         </CardContent>
       </Card>
@@ -115,18 +107,26 @@ const CallStats: React.FC = () => {
         </CardHeader>
         <CardContent>
           <div className="h-80">
-            <PieChart
-              data={mockCallData.ticketResolution}
-              options={{
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                  legend: {
-                    position: 'bottom',
-                  },
-                },
-              }}
-            />
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
+                <Pie
+                  data={mockCallData.ticketResolution}
+                  cx="50%"
+                  cy="50%"
+                  labelLine={false}
+                  outerRadius={80}
+                  fill="#8884d8"
+                  dataKey="value"
+                  label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                >
+                  {mockCallData.ticketResolution.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.color} />
+                  ))}
+                </Pie>
+                <Tooltip />
+                <Legend />
+              </PieChart>
+            </ResponsiveContainer>
           </div>
         </CardContent>
       </Card>
@@ -144,23 +144,25 @@ const CallStats: React.FC = () => {
         </CardHeader>
         <CardContent>
           <div className="h-80">
-            <LineChart
-              data={mockCallData.responseTime}
-              options={{
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                  legend: {
-                    display: false,
-                  },
-                },
-                scales: {
-                  y: {
-                    beginAtZero: true,
-                  },
-                },
-              }}
-            />
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart
+                data={mockCallData.responseTime}
+                margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+              >
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="name" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                <Line 
+                  type="monotone" 
+                  dataKey="value" 
+                  name="Avg. Response Time (min)"
+                  stroke="rgba(24, 144, 255, 0.8)" 
+                  activeDot={{ r: 8 }} 
+                />
+              </LineChart>
+            </ResponsiveContainer>
           </div>
         </CardContent>
       </Card>

@@ -31,7 +31,12 @@ const CallCenterDashboard: React.FC = () => {
   const renderActiveSection = () => {
     switch (activeSection) {
       case "tickets":
-        return <TicketingSystem onClientSelect={setSelectedClient} />;
+        return <TicketingSystem 
+                 onClientSelect={(clientId) => {
+                   setSelectedClient(clientId);
+                   if (clientId) setActiveSection("clients");
+                 }} 
+               />;
       case "clients":
         return <ClientDetails selectedClientId={selectedClient} />;
       case "stats":
@@ -53,7 +58,12 @@ const CallCenterDashboard: React.FC = () => {
           />
         );
       default:
-        return <TicketingSystem onClientSelect={setSelectedClient} />;
+        return <TicketingSystem 
+                 onClientSelect={(clientId) => {
+                   setSelectedClient(clientId);
+                   if (clientId) setActiveSection("clients");
+                 }} 
+               />;
     }
   };
 
