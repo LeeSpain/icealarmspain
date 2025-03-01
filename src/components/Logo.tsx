@@ -1,11 +1,14 @@
 
 import React from "react";
+import { useLanguage } from "@/context/LanguageContext";
 
 interface LogoProps {
   className?: string;
 }
 
 const Logo: React.FC<LogoProps> = ({ className }) => {
+  const { language } = useLanguage();
+  
   return (
     <div className={`flex items-center gap-2 ${className}`}>
       <div className="relative w-8 h-8">
@@ -16,7 +19,7 @@ const Logo: React.FC<LogoProps> = ({ className }) => {
       <div className="font-semibold text-xl">
         <span className="text-ice-500">ICE</span>
         <span className="text-gray-800"> Alarm</span>
-        <span className="text-guardian-500"> España</span>
+        <span className="text-guardian-500"> {language === 'en' ? 'Spain' : 'España'}</span>
       </div>
     </div>
   );

@@ -5,6 +5,7 @@ import Hero from "@/components/Hero";
 import Dashboard from "@/components/Dashboard";
 import DeviceShowcase from "@/components/DeviceShowcase";
 import Pricing from "@/components/Pricing";
+import ExpatInfo from "@/components/ExpatInfo";
 import Footer from "@/components/Footer";
 
 const Index: React.FC = () => {
@@ -42,6 +43,7 @@ const Index: React.FC = () => {
         <Dashboard />
         <DeviceShowcase />
         <Pricing />
+        <ExpatInfo />
       </main>
       <Footer />
     </div>
