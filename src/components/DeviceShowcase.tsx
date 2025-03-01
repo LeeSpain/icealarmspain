@@ -1,6 +1,6 @@
 
 import React from "react";
-import { BellRing, PlusSquare, ActivitySquare, ShoppingBag, Info, ArrowRight } from "lucide-react";
+import { BellRing, PlusSquare, ActivitySquare, ShoppingBag, Info, ArrowRight, Check } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
 import { Link } from "react-router-dom";
 import { ButtonCustom } from "./ui/button-custom";
