@@ -1,5 +1,6 @@
 
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { 
   Activity, 
@@ -9,7 +10,10 @@ import {
   Settings, 
   Plus,
   Check,
-  AlertTriangle
+  AlertTriangle,
+  LogOut,
+  Smile,
+  Heart
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -57,10 +61,11 @@ const MetricCard = ({ title, value, icon, status = "normal" }) => {
 };
 
 const MemberDashboard = () => {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   const { language } = useLanguage();
   const [showAddProducts, setShowAddProducts] = useState(false);
   const [cart, setCart] = useState([]);
+  const navigate = useNavigate();
 
   const addToCart = (product) => {
     const isInCart = cart.some(item => item.id === product.id);
@@ -86,23 +91,57 @@ const MemberDashboard = () => {
     }
   };
 
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+  };
+
   return (
-    <div className="container mx-auto p-4 md:p-6">
-      <div className="flex justify-between items-center mb-8">
-        <div>
-          <h1 className="text-2xl font-bold">{language === 'en' ? 'Member Dashboard' : 'Panel de Miembro'}</h1>
-          <p className="text-muted-foreground">
-            {language === 'en' 
-              ? `Welcome back, ${user?.name || 'Member'}` 
-              : `Bienvenido de nuevo, ${user?.name || 'Miembro'}`}
-          </p>
+    <div className="p-4 md:p-6 max-w-7xl mx-auto">
+      {/* Hero Welcome Section */}
+      <div className="mb-8 p-6 rounded-xl bg-gradient-to-r from-ice-100 to-ice-200 shadow-lg">
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 className="text-3xl font-bold text-ice-800 mb-2">
+              {language === 'en' 
+                ? `Welcome, ${user?.name || 'Member'}!` 
+                : `Bienvenido, ${user?.name || 'Miembro'}!`}
+            </h1>
+            <p className="text-ice-700 max-w-xl">
+              {language === 'en' 
+                ? 'Manage your ICE Alarm devices and explore new products to enhance your safety system.' 
+                : 'Gestiona tus dispositivos ICE Alarm y explora nuevos productos para mejorar tu sistema de seguridad.'}
+            </p>
+          </div>
+          <div className="flex items-center">
+            <Button 
+              variant="outline" 
+              className="flex items-center gap-2 bg-white/80 hover:bg-white"
+              onClick={handleLogout}
+            >
+              <LogOut className="w-4 h-4" />
+              {language === 'en' ? 'Log Out' : 'Cerrar Sesión'}
+            </Button>
+          </div>
         </div>
-        <Button onClick={() => setShowAddProducts(!showAddProducts)}>
-          <ShoppingCart className="mr-2 h-4 w-4" />
-          {showAddProducts 
-            ? (language === 'en' ? 'Hide Store' : 'Ocultar Tienda') 
-            : (language === 'en' ? 'Add Products' : 'Añadir Productos')}
-        </Button>
+        <div className="mt-4 flex flex-wrap gap-4">
+          <Button 
+            className="bg-ice-600 hover:bg-ice-700"
+            onClick={() => setShowAddProducts(!showAddProducts)}
+          >
+            {showAddProducts 
+              ? (language === 'en' ? 'Hide Store' : 'Ocultar Tienda') 
+              : (language === 'en' ? 'Explore Products' : 'Explorar Productos')}
+          </Button>
+          <Button variant="outline" className="bg-white/80 hover:bg-white">
+            <Bell className="mr-2 h-4 w-4" />
+            {language === 'en' ? 'Test Alarm' : 'Probar Alarma'}
+          </Button>
+          <Button variant="outline" className="bg-white/80 hover:bg-white">
+            <Settings className="mr-2 h-4 w-4" />
+            {language === 'en' ? 'Settings' : 'Configuración'}
+          </Button>
+        </div>
       </div>
 
       {/* Dashboard Overview */}
@@ -129,7 +168,10 @@ const MemberDashboard = () => {
       <Card className="mb-8">
         <CardHeader>
           <div className="flex justify-between items-center">
-            <CardTitle>{language === 'en' ? 'My Devices' : 'Mis Dispositivos'}</CardTitle>
+            <div className="flex items-center gap-2">
+              <Heart className="h-5 w-5 text-ice-500" />
+              <CardTitle>{language === 'en' ? 'My Devices' : 'Mis Dispositivos'}</CardTitle>
+            </div>
             <Button variant="outline" size="sm">
               <Settings className="mr-2 h-4 w-4" />
               {language === 'en' ? 'Manage Devices' : 'Gestionar Dispositivos'}
@@ -195,7 +237,10 @@ const MemberDashboard = () => {
         <div className="mb-8">
           <Card>
             <CardHeader>
-              <CardTitle>{language === 'en' ? 'Add New Products' : 'Añadir Nuevos Productos'}</CardTitle>
+              <div className="flex items-center gap-2">
+                <ShoppingCart className="h-5 w-5 text-ice-500" />
+                <CardTitle>{language === 'en' ? 'Add New Products' : 'Añadir Nuevos Productos'}</CardTitle>
+              </div>
               <CardDescription>
                 {language === 'en' 
                   ? 'Expand your ICE Alarm ecosystem with our products' 
@@ -205,7 +250,7 @@ const MemberDashboard = () => {
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 {availableProducts.map(product => (
-                  <Card key={product.id} className="overflow-hidden">
+                  <Card key={product.id} className="overflow-hidden border border-ice-200 transition-all hover:shadow-lg">
                     <div className="aspect-video bg-gradient-to-br from-ice-100 to-ice-300 flex items-center justify-center">
                       <Package className="h-12 w-12 text-ice-600" />
                     </div>
@@ -233,11 +278,11 @@ const MemberDashboard = () => {
 
           {/* Shopping Cart */}
           {cart.length > 0 && (
-            <Card className="mt-6">
+            <Card className="mt-6 border-t-4 border-ice-500">
               <CardHeader>
                 <CardTitle>
-                  <div className="flex items-center">
-                    <ShoppingCart className="mr-2 h-5 w-5" />
+                  <div className="flex items-center gap-2">
+                    <ShoppingCart className="h-5 w-5 text-ice-500" />
                     {language === 'en' ? 'Your Cart' : 'Tu Carrito'}
                   </div>
                 </CardTitle>
@@ -281,7 +326,7 @@ const MemberDashboard = () => {
                     €{cart.reduce((sum, item) => sum + parseInt(item.price.replace('€', '')), 0)}
                   </span>
                 </div>
-                <Button onClick={checkout}>
+                <Button onClick={checkout} className="bg-ice-600 hover:bg-ice-700">
                   <Check className="mr-2 h-4 w-4" />
                   {language === 'en' ? 'Checkout' : 'Finalizar Compra'}
                 </Button>
@@ -294,7 +339,10 @@ const MemberDashboard = () => {
       {/* Quick Actions */}
       <Card>
         <CardHeader>
-          <CardTitle>{language === 'en' ? 'Quick Actions' : 'Acciones Rápidas'}</CardTitle>
+          <div className="flex items-center gap-2">
+            <Smile className="h-5 w-5 text-ice-500" />
+            <CardTitle>{language === 'en' ? 'Quick Actions' : 'Acciones Rápidas'}</CardTitle>
+          </div>
         </CardHeader>
         <CardContent className="flex flex-wrap gap-4">
           <Button variant="outline">
