@@ -17,11 +17,17 @@ const Login: React.FC = () => {
   
   // Redirect if already logged in
   useEffect(() => {
-    if (isAuthenticated) {
-      if (user?.role === 'admin') {
-        navigate('/admin');
-      } else {
-        navigate('/dashboard');
+    if (isAuthenticated && user) {
+      switch (user.role) {
+        case 'admin':
+          navigate('/admin');
+          break;
+        case 'callcenter':
+          navigate('/callcenter');
+          break;
+        default:
+          navigate('/dashboard');
+          break;
       }
     }
   }, [isAuthenticated, navigate, user]);

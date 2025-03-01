@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useAuth } from "@/context/AuthContext";
@@ -8,6 +8,7 @@ import DashboardContent from "@/components/callcenter/dashboard/DashboardContent
 import Header from "@/components/callcenter/dashboard/Header";
 import { getMockNotifications } from "@/components/callcenter/notifications/mock-notifications";
 import { Notification } from "@/components/callcenter/notifications/NotificationTypes";
+import { useNavigate } from "react-router-dom";
 
 const CallCenterDashboard: React.FC = () => {
   const [activeSection, setActiveSection] = useState<string>("dashboard");
@@ -15,7 +16,22 @@ const CallCenterDashboard: React.FC = () => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [notifications, setNotifications] = useState<Notification[]>(getMockNotifications());
   const [showNotifications, setShowNotifications] = useState(false);
-  const { user } = useAuth();
+  const { user, isAuthenticated } = useAuth();
+  const navigate = useNavigate();
+
+  // Redirect if not authenticated or not a call center agent
+  useEffect(() => {
+    if (!isAuthenticated) {
+      navigate('/login');
+    } else if (user && user.role !== 'callcenter') {
+      // Redirect to appropriate dashboard based on role
+      if (user.role === 'admin') {
+        navigate('/admin');
+      } else {
+        navigate('/dashboard');
+      }
+    }
+  }, [isAuthenticated, user, navigate]);
 
   // Function to check if there are any unread notifications
   const hasUnreadNotifications = notifications.some(notification => !notification.read);
@@ -51,6 +67,11 @@ const CallCenterDashboard: React.FC = () => {
       hour12: true
     }).format(date);
   };
+
+  // If not authenticated or not a call center agent, show loading
+  if (!isAuthenticated || (user && user.role !== 'callcenter')) {
+    return <div className="flex h-screen items-center justify-center">Redirecting...</div>;
+  }
 
   return (
     <div className="flex h-screen overflow-hidden bg-background">

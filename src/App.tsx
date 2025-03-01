@@ -34,7 +34,14 @@ const ProtectedRoute = ({ children, requiredRole }: { children: JSX.Element, req
   }
   
   if (requiredRole && user?.role !== requiredRole) {
-    return <Navigate to="/" replace />;
+    // If user doesn't have the required role, redirect to appropriate dashboard
+    if (user?.role === 'admin') {
+      return <Navigate to="/admin" replace />;
+    } else if (user?.role === 'callcenter') {
+      return <Navigate to="/callcenter" replace />;
+    } else {
+      return <Navigate to="/dashboard" replace />;
+    }
   }
   
   return children;
@@ -49,7 +56,7 @@ const AppRoutes = () => {
       <Route 
         path="/dashboard" 
         element={
-          <ProtectedRoute>
+          <ProtectedRoute requiredRole="member">
             <DashboardPage />
           </ProtectedRoute>
         } 
