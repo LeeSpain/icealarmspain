@@ -10,6 +10,7 @@ const DeviceShowcase: React.FC = () => {
   const [selectedDevices, setSelectedDevices] = useState<string[]>([]);
   const [totalMonthly, setTotalMonthly] = useState<number>(0);
   const [totalOneTime, setTotalOneTime] = useState<number>(0);
+  const [shippingCost, setShippingCost] = useState<number>(0);
 
   const devices = [
     {
@@ -90,6 +91,7 @@ const DeviceShowcase: React.FC = () => {
     if (selectedDevices.length === 0) {
       setTotalMonthly(0);
       setTotalOneTime(0);
+      setShippingCost(0);
       return;
     }
 
@@ -104,6 +106,10 @@ const DeviceShowcase: React.FC = () => {
         baseMonthly += device.monthlyPrice;
       }
     });
+
+    // Calculate shipping cost (€14.99 per device)
+    const baseShipping = selectedDevices.length * 14.99;
+    setShippingCost(baseShipping);
 
     // Add base AI Guardian service automatically (€49.99)
     const aiGuardianMonthly = 49.99;
@@ -159,8 +165,8 @@ const DeviceShowcase: React.FC = () => {
             <Info size={18} className="text-ice-600 mr-2 mt-0.5 flex-shrink-0" />
             <div className="text-left">
               {language === 'en' 
-                ? "All prices are subject to IVA (taxes). One-time purchases are subject to 21% IVA, monthly subscription fees are subject to 10% IVA. Free shipping on all orders."
-                : "Todos los precios están sujetos a IVA. Las compras únicas están sujetas al 21% de IVA, las cuotas de suscripción mensual están sujetas al 10% de IVA. Envío gratuito en todos los pedidos."}
+                ? "All prices are subject to IVA (taxes). One-time purchases are subject to 21% IVA, monthly subscription fees are subject to 10% IVA. Shipping fee of €14.99 applies per device."
+                : "Todos los precios están sujetos a IVA. Las compras únicas están sujetas al 21% de IVA, las cuotas de suscripción mensual están sujetas al 10% de IVA. Se aplica una tarifa de envío de €14.99 por dispositivo."}
             </div>
           </div>
         </div>
@@ -188,6 +194,7 @@ const DeviceShowcase: React.FC = () => {
           devices={devices}
           totalMonthly={totalMonthly}
           totalOneTime={totalOneTime}
+          shippingCost={shippingCost}
           onRemoveDevice={toggleDeviceSelection}
         />
       </div>

@@ -1,6 +1,6 @@
 
 import React from "react";
-import { Check } from "lucide-react";
+import { Check, Truck } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
 
 const Pricing: React.FC = () => {
@@ -168,7 +168,15 @@ const Pricing: React.FC = () => {
               ? "All plans include device purchase. Additional fees apply for device replacement."
               : "Todos los planes incluyen la compra del dispositivo. Se aplican tarifas adicionales para el reemplazo del dispositivo."}
           </p>
-          <p className="text-ice-600 font-medium animate-pulse">
+          <div className="flex items-center justify-center text-ice-600 font-medium animate-pulse">
+            <Truck className="mr-2 h-5 w-5" />
+            <p>
+              {language === 'en'
+                ? "Shipping fee of €14.99 applies per device"
+                : "Se aplica una tarifa de envío de €14.99 por dispositivo"}
+            </p>
+          </div>
+          <p className="text-ice-600 font-medium mt-4 animate-pulse">
             {language === 'en'
               ? "Select your devices below to create your personalized package"
               : "Seleccione sus dispositivos a continuación para crear su paquete personalizado"}

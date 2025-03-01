@@ -1,7 +1,7 @@
 
 import React from "react";
 import { ButtonCustom } from "./ui/button-custom";
-import { ShoppingCart, CreditCard, Info } from "lucide-react";
+import { ShoppingCart, CreditCard, Info, Truck } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
 import { Link } from "react-router-dom";
 
@@ -18,6 +18,7 @@ interface ShoppingCartProps {
   devices: Device[];
   totalMonthly: number;
   totalOneTime: number;
+  shippingCost: number;
   onRemoveDevice: (deviceId: string) => void;
 }
 
@@ -26,6 +27,7 @@ const ShoppingCartComponent: React.FC<ShoppingCartProps> = ({
   devices,
   totalMonthly,
   totalOneTime,
+  shippingCost,
   onRemoveDevice,
 }) => {
   const { language } = useLanguage();
@@ -40,8 +42,10 @@ const ShoppingCartComponent: React.FC<ShoppingCartProps> = ({
   
   const productTax = totalOneTime * productTaxRate;
   const monthlyTax = totalMonthly * monthlyTaxRate;
+  const shippingTax = shippingCost * productTaxRate;
   
   const totalWithProductTax = totalOneTime + productTax;
+  const totalWithShipping = totalWithProductTax + shippingCost + shippingTax;
   const totalWithMonthlyTax = totalMonthly + monthlyTax;
   
   return (
@@ -110,11 +114,27 @@ const ShoppingCartComponent: React.FC<ShoppingCartProps> = ({
           <span className="font-medium">€{productTax.toFixed(2)}</span>
         </div>
         
+        {/* Shipping costs */}
+        <div className="flex justify-between mb-2">
+          <span className="text-muted-foreground flex items-center">
+            <Truck size={16} className="mr-1" />
+            {language === 'en' ? "Shipping" : "Envío"} (€14.99 {language === 'en' ? "per device" : "por dispositivo"}):
+          </span>
+          <span className="font-medium">€{shippingCost.toFixed(2)}</span>
+        </div>
+        
+        <div className="flex justify-between mb-2">
+          <span className="text-muted-foreground">
+            {language === 'en' ? "Shipping IVA (21%)" : "IVA de envío (21%)"}:
+          </span>
+          <span className="font-medium">€{shippingTax.toFixed(2)}</span>
+        </div>
+        
         <div className="flex justify-between mb-4 border-t border-gray-100 pt-2">
           <span className="font-medium">
             {language === 'en' ? "Total one-time cost" : "Costo único total"}:
           </span>
-          <span className="font-bold">€{totalWithProductTax.toFixed(2)}</span>
+          <span className="font-bold">€{totalWithShipping.toFixed(2)}</span>
         </div>
         
         <div className="flex justify-between mb-2">
@@ -150,8 +170,8 @@ const ShoppingCartComponent: React.FC<ShoppingCartProps> = ({
           <Info size={14} className="text-ice-600 mr-2 mt-0.5 flex-shrink-0" />
           <span>
             {language === 'en' 
-              ? "All prices are subject to IVA. One-time purchases include 21% IVA, monthly fees include 10% IVA. Free shipping on all orders." 
-              : "Todos los precios incluyen IVA. Las compras únicas incluyen 21% de IVA, las cuotas mensuales incluyen 10% de IVA. Envío gratuito en todos los pedidos."}
+              ? "All prices are subject to IVA. One-time purchases include 21% IVA, monthly fees include 10% IVA. Shipping fee of €14.99 applies per device." 
+              : "Todos los precios incluyen IVA. Las compras únicas incluyen 21% de IVA, las cuotas mensuales incluyen 10% de IVA. Se aplica una tarifa de envío de €14.99 por dispositivo."}
           </span>
         </div>
         

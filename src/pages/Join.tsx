@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -6,11 +5,23 @@ import AuthForm from "@/components/AuthForm";
 import { useLanguage } from "@/context/LanguageContext";
 import { useNavigate } from "react-router-dom";
 import { ButtonCustom } from "@/components/ui/button-custom";
-import { Check, Shield, PlusCircle, MinusCircle, Users, ShoppingBag, Info, UserPlus, User } from "lucide-react";
+import { 
+  Check, Shield, PlusCircle, MinusCircle, Users, ShoppingBag, 
+  Info, UserPlus, User, Home, Heart, UserCog
+} from "lucide-react";
+
+// Membership types that users can select from
+interface MembershipType {
+  id: string;
+  icon: React.ReactNode;
+  title: string;
+  subtitle: string;
+}
 
 interface PersonProducts {
   id: string;
   name: string;
+  membershipType: string;
   selectedDevices: string[];
 }
 
@@ -19,8 +30,41 @@ const Join: React.FC = () => {
   const navigate = useNavigate();
   const [showSignup, setShowSignup] = useState(false);
   const [people, setPeople] = useState<PersonProducts[]>([
-    { id: "person1", name: language === 'en' ? "Person 1" : "Persona 1", selectedDevices: [] }
+    { 
+      id: "person1", 
+      name: language === 'en' ? "Member 1" : "Miembro 1", 
+      membershipType: "individual",
+      selectedDevices: [] 
+    }
   ]);
+  
+  // Define membership types
+  const membershipTypes: MembershipType[] = [
+    {
+      id: "individual",
+      icon: <User className="h-8 w-8 text-orange-500" />,
+      title: language === 'en' ? "Individual" : "Individual",
+      subtitle: language === 'en' ? "For a single person" : "Para una persona"
+    },
+    {
+      id: "couple",
+      icon: <Heart className="h-8 w-8 text-orange-500" />,
+      title: language === 'en' ? "Couple" : "Pareja",
+      subtitle: language === 'en' ? "For partners or spouses" : "Para parejas o cónyuges"
+    },
+    {
+      id: "family",
+      icon: <Home className="h-8 w-8 text-orange-500" />,
+      title: language === 'en' ? "Family" : "Familia",
+      subtitle: language === 'en' ? "For family members" : "Para miembros de la familia"
+    },
+    {
+      id: "caregiver",
+      icon: <UserCog className="h-8 w-8 text-orange-500" />,
+      title: language === 'en' ? "Caregiver" : "Cuidador",
+      subtitle: language === 'en' ? "For caregivers" : "Para cuidadores"
+    }
+  ];
   
   const handleSignupSuccess = () => {
     // Redirect to dashboard or home after successful signup
@@ -86,13 +130,14 @@ const Join: React.FC = () => {
   
   const addPerson = () => {
     const newPersonId = `person${people.length + 1}`;
-    const newPersonName = language === 'en' ? `Person ${people.length + 1}` : `Persona ${people.length + 1}`;
+    const newPersonName = language === 'en' ? `Member ${people.length + 1}` : `Miembro ${people.length + 1}`;
     
     setPeople(prevPeople => [
       ...prevPeople,
       {
         id: newPersonId,
         name: newPersonName,
+        membershipType: "individual",
         selectedDevices: []
       }
     ]);
@@ -112,9 +157,18 @@ const Join: React.FC = () => {
     );
   };
   
+  const updateMembershipType = (personId: string, newType: string) => {
+    setPeople(prevPeople =>
+      prevPeople.map(person => 
+        person.id === personId ? { ...person, membershipType: newType } : person
+      )
+    );
+  };
+  
   const calculateTotals = () => {
     let oneTimeTotal = 0;
     let totalMonthlyBase = 0;
+    let totalShipping = 0;
     
     // Calculate totals for each person
     people.forEach(person => {
@@ -131,6 +185,9 @@ const Join: React.FC = () => {
           personMonthly += device.monthlyPrice;
         }
       });
+      
+      // Add shipping costs (€14.99 per device)
+      totalShipping += person.selectedDevices.length * 14.99;
       
       // Add AI Guardian base service (€49.99) per person with devices
       if (person.selectedDevices.length > 0) {
@@ -156,8 +213,10 @@ const Join: React.FC = () => {
     
     const productTax = oneTimeTotal * productTaxRate;
     const monthlyTax = totalMonthlyBase * monthlyTaxRate;
+    const shippingTax = totalShipping * productTaxRate;
     
     const totalWithProductTax = oneTimeTotal + productTax;
+    const totalWithShipping = totalWithProductTax + totalShipping + shippingTax;
     const totalWithMonthlyTax = totalMonthlyBase + monthlyTax;
     
     return {
@@ -165,7 +224,10 @@ const Join: React.FC = () => {
       totalMonthlyBase,
       productTax,
       monthlyTax,
+      totalShipping,
+      shippingTax,
       totalWithProductTax,
+      totalWithShipping,
       totalWithMonthlyTax,
       hasDevices: people.some(person => person.selectedDevices.length > 0)
     };
@@ -220,7 +282,7 @@ const Join: React.FC = () => {
                 </p>
               </div>
               
-              {/* New Multiple People section */}
+              {/* New Multiple People section with improved UI */}
               <div className="max-w-6xl mx-auto mb-12">
                 <div className="flex items-center justify-between mb-6">
                   <h2 className="text-2xl font-semibold flex items-center text-ice-600">
@@ -234,32 +296,32 @@ const Join: React.FC = () => {
                     className="flex items-center shadow-sm"
                   >
                     <UserPlus className="mr-2 h-5 w-5" />
-                    {language === 'en' ? "Add Another Person" : "Añadir Otra Persona"}
+                    {language === 'en' ? "Add Another Member" : "Añadir Otro Miembro"}
                   </ButtonCustom>
                 </div>
                 
                 <div className="bg-gradient-to-br from-white to-ice-50/50 rounded-xl shadow-glass-sm p-6 mb-6">
-                  <div className="flex flex-wrap gap-4 mb-4">
+                  <div className="flex flex-wrap gap-6 mb-4">
                     {people.map((person, index) => (
                       <div 
                         key={person.id} 
                         className={`
-                          flex-grow min-w-[250px] max-w-[300px] p-4 rounded-lg 
+                          flex-grow min-w-[300px] p-5 rounded-lg border 
                           ${person.selectedDevices.length > 0 
-                            ? 'bg-ice-50/80 border border-ice-200' 
-                            : 'bg-white/80 border border-gray-100'
+                            ? 'bg-ice-50/80 border-ice-200 shadow-sm' 
+                            : 'bg-white/80 border-gray-100'
                           } 
                           transition-all duration-300
                         `}
                       >
-                        <div className="flex justify-between items-center mb-3">
+                        <div className="flex justify-between items-center mb-4">
                           <div className="flex items-center space-x-2">
                             <User className="h-5 w-5 text-ice-500" />
                             <input
                               type="text"
                               value={person.name}
                               onChange={(e) => updatePersonName(person.id, e.target.value)}
-                              className="font-medium border-0 bg-transparent focus:outline-none focus:ring-1 focus:ring-ice-300 rounded-md px-2 py-1"
+                              className="font-medium border-0 bg-transparent focus:outline-none focus:ring-1 focus:ring-ice-300 rounded-md px-2 py-1 w-full max-w-[200px]"
                               placeholder={language === 'en' ? "Enter name" : "Ingrese nombre"}
                             />
                           </div>
@@ -273,6 +335,33 @@ const Join: React.FC = () => {
                               <MinusCircle size={18} />
                             </button>
                           )}
+                        </div>
+                        
+                        {/* Membership type selection */}
+                        <div className="mb-4">
+                          <label className="text-sm text-muted-foreground mb-2 block">
+                            {language === 'en' ? "Membership type:" : "Tipo de membresía:"}
+                          </label>
+                          <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap">
+                            {membershipTypes.map(type => (
+                              <div 
+                                key={type.id}
+                                onClick={() => updateMembershipType(person.id, type.id)}
+                                className={`
+                                  p-3 rounded-lg border cursor-pointer transition-all
+                                  flex flex-col items-center text-center
+                                  ${person.membershipType === type.id 
+                                    ? 'border-orange-300 bg-orange-50/50 shadow-sm' 
+                                    : 'border-gray-200 bg-white hover:border-orange-200'
+                                  }
+                                `}
+                              >
+                                {type.icon}
+                                <span className="font-medium text-sm mt-2">{type.title}</span>
+                                <span className="text-xs text-muted-foreground">{type.subtitle}</span>
+                              </div>
+                            ))}
+                          </div>
                         </div>
                         
                         <div className="text-sm text-muted-foreground mb-1">
@@ -306,14 +395,14 @@ const Join: React.FC = () => {
                     <Info size={16} className="mr-2 flex-shrink-0 mt-0.5 text-ice-600" />
                     <p>
                       {language === 'en' 
-                        ? "Select devices below for each person you've added. Each person will receive their own personalized monitoring package." 
-                        : "Seleccione dispositivos a continuación para cada persona que haya añadido. Cada persona recibirá su propio paquete de monitoreo personalizado."}
+                        ? "Select devices below for each member you've added. Each member will receive their own personalized monitoring package." 
+                        : "Seleccione dispositivos a continuación para cada miembro que haya añadido. Cada miembro recibirá su propio paquete de monitoreo personalizado."}
                     </p>
                   </div>
                 </div>
               </div>
               
-              {/* Device Selection */}
+              {/* Device Selection - Keep existing code with minor updates */}
               <div className="max-w-6xl mx-auto mb-10">
                 <h2 className="text-2xl font-semibold mb-8 flex items-center text-ice-600">
                   <ShoppingBag className="mr-3" />
@@ -324,8 +413,11 @@ const Join: React.FC = () => {
                   <div key={person.id} className="mb-16 last:mb-8">
                     <div className="bg-white/70 backdrop-blur-sm rounded-xl shadow-glass-sm border border-ice-100/50 overflow-hidden">
                       <div className="bg-gradient-to-r from-ice-50 to-ice-100/30 px-6 py-4 border-b border-ice-100/50">
-                        <h3 className="text-lg font-semibold text-ice-700">
+                        <h3 className="text-lg font-semibold text-ice-700 flex items-center">
                           {person.name}
+                          <span className="ml-3 px-2 py-0.5 bg-ice-100 text-ice-600 rounded-full text-xs font-medium">
+                            {membershipTypes.find(t => t.id === person.membershipType)?.title || 'Individual'}
+                          </span>
                         </h3>
                       </div>
                       
@@ -370,6 +462,13 @@ const Join: React.FC = () => {
                                     </div>
                                   </div>
                                   
+                                  <div className="flex items-center justify-between mb-3">
+                                    <div className="flex items-center text-xs text-muted-foreground">
+                                      <Truck size={12} className="mr-1" />
+                                      <span>€14.99 {language === 'en' ? "shipping" : "envío"}</span>
+                                    </div>
+                                  </div>
+                                  
                                   <ButtonCustom
                                     variant={isSelected ? "primary" : "outline"}
                                     className="w-full"
@@ -390,7 +489,7 @@ const Join: React.FC = () => {
                 ))}
               </div>
               
-              {/* Summary/Cart */}
+              {/* Summary/Cart - Update with shipping costs */}
               {totals.hasDevices && (
                 <div className="max-w-3xl mx-auto glass-panel p-6 mb-10 animate-fade-in">
                   <h2 className="text-xl font-semibold mb-6 flex items-center border-b pb-4 border-ice-100/50">
@@ -403,7 +502,12 @@ const Join: React.FC = () => {
                     
                     return (
                       <div key={person.id} className="mb-6 pb-4 border-b border-gray-100 last:border-b-0 last:mb-0 last:pb-0">
-                        <p className="font-medium text-ice-700 mb-2">{person.name}</p>
+                        <div className="flex items-center mb-2">
+                          <p className="font-medium text-ice-700">{person.name}</p>
+                          <span className="ml-2 px-2 py-0.5 bg-ice-100 text-ice-600 rounded-full text-xs font-medium">
+                            {membershipTypes.find(t => t.id === person.membershipType)?.title || 'Individual'}
+                          </span>
+                        </div>
                         <div className="pl-4 space-y-1">
                           {person.selectedDevices.map((deviceId) => {
                             const device = devices.find(d => d.id === deviceId);
@@ -438,11 +542,26 @@ const Join: React.FC = () => {
                       <span>€{totals.productTax.toFixed(2)}</span>
                     </div>
                     
+                    <div className="flex justify-between mb-1">
+                      <span className="text-muted-foreground flex items-center">
+                        <Truck size={14} className="mr-1" />
+                        {language === 'en' ? "Shipping" : "Envío"}:
+                      </span>
+                      <span>€{totals.totalShipping.toFixed(2)}</span>
+                    </div>
+                    
+                    <div className="flex justify-between mb-1">
+                      <span className="text-muted-foreground">
+                        {language === 'en' ? "Shipping IVA (21%)" : "IVA de envío (21%)"}:
+                      </span>
+                      <span>€{totals.shippingTax.toFixed(2)}</span>
+                    </div>
+                    
                     <div className="flex justify-between mb-4 pt-2 border-t border-gray-100">
                       <span className="font-medium">
                         {language === 'en' ? "Total one-time cost" : "Costo único total"}:
                       </span>
-                      <span className="font-bold">€{totals.totalWithProductTax.toFixed(2)}</span>
+                      <span className="font-bold">€{totals.totalWithShipping.toFixed(2)}</span>
                     </div>
                     
                     <div className="flex justify-between mb-1">
@@ -471,8 +590,8 @@ const Join: React.FC = () => {
                     <Info size={16} className="text-ice-600 mr-2 mt-0.5 flex-shrink-0" />
                     <span>
                       {language === 'en' 
-                        ? "All prices are subject to IVA. One-time purchases include 21% IVA, monthly fees include 10% IVA. Free shipping on all orders in Spain." 
-                        : "Todos los precios incluyen IVA. Las compras únicas incluyen 21% de IVA, las cuotas mensuales incluyen 10% de IVA. Envío gratuito en todos los pedidos en España."}
+                        ? "All prices are subject to IVA. One-time purchases include 21% IVA, monthly fees include 10% IVA. Shipping fee of €14.99 applies per device." 
+                        : "Todos los precios incluyen IVA. Las compras únicas incluyen 21% de IVA, las cuotas mensuales incluyen 10% de IVA. Se aplica una tarifa de envío de €14.99 por dispositivo."}
                     </span>
                   </div>
                   
@@ -494,7 +613,6 @@ const Join: React.FC = () => {
                   {(language === 'en' ? [
                     "No long-term contracts",
                     "Cancel anytime",
-                    "Free shipping on all devices",
                     "Software updates included",
                     "Multilingual support",
                     "30-day money-back guarantee",
@@ -503,7 +621,6 @@ const Join: React.FC = () => {
                   ] : [
                     "Sin contratos a largo plazo",
                     "Cancele en cualquier momento",
-                    "Envío gratuito en todos los dispositivos",
                     "Actualizaciones de software incluidas",
                     "Soporte multilingüe",
                     "Garantía de devolución de 30 días",
