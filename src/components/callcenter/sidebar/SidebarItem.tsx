@@ -1,11 +1,11 @@
 
 import React, { useState } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, LucideIcon } from "lucide-react";
 
 interface SidebarItemProps {
-  icon: React.ElementType;
+  icon: LucideIcon;
   label: string;
-  isActive?: boolean;
+  active?: boolean;
   onClick?: () => void;
   children?: React.ReactNode;
   collapsed?: boolean;
@@ -14,7 +14,7 @@ interface SidebarItemProps {
 const SidebarItem: React.FC<SidebarItemProps> = ({ 
   icon: Icon, 
   label, 
-  isActive = false, 
+  active = false, 
   onClick,
   children,
   collapsed = false
@@ -26,7 +26,7 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
     return (
       <div 
         className={`flex justify-center p-2 rounded-md cursor-pointer mb-1 ${
-          isActive ? "bg-primary/10 text-primary" : "hover:bg-accent"
+          active ? "bg-primary/10 text-primary" : "hover:bg-accent"
         }`}
         onClick={() => hasChildren ? setIsOpen(!isOpen) : onClick && onClick()}
       >
@@ -40,7 +40,7 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
       <div className="mb-1">
         <div 
           className={`flex items-center justify-between px-3 py-2 rounded-md cursor-pointer ${
-            isActive ? "bg-primary/10 text-primary" : "hover:bg-accent"
+            active ? "bg-primary/10 text-primary" : "hover:bg-accent"
           }`}
           onClick={() => setIsOpen(!isOpen)}
         >
@@ -64,7 +64,7 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
   return (
     <div 
       className={`flex items-center px-3 py-2 rounded-md cursor-pointer mb-1 ${
-        isActive ? "bg-primary/10 text-primary" : "hover:bg-accent"
+        active ? "bg-primary/10 text-primary" : "hover:bg-accent"
       }`}
       onClick={onClick}
     >

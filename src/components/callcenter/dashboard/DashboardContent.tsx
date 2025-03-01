@@ -1,6 +1,6 @@
 
 import React from "react";
-import { AgentDashboard } from "./AgentDashboard";
+import AgentDashboard from "./AgentDashboard";
 import TicketingSystem from "../ticketing/TicketingSystem";
 import ChatSystem from "../chat/ChatSystem";
 import ClientDetails from "../ClientDetails";

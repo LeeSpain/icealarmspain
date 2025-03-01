@@ -17,7 +17,7 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({
   return (
     <div className="space-y-1">
       <SidebarItem 
-        icon={<BarChart3 className="h-5 w-5" />}
+        icon={BarChart3}
         label="Dashboard"
         active={activeSection === "dashboard"}
         onClick={() => setActiveSection("dashboard")}
@@ -25,7 +25,7 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({
       />
 
       <SidebarItem 
-        icon={<TicketIcon className="h-5 w-5" />}
+        icon={TicketIcon}
         label="Support Tickets"
         active={activeSection === "tickets"}
         onClick={() => setActiveSection("tickets")}
@@ -33,7 +33,7 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({
       />
 
       <SidebarItem 
-        icon={<MessageCircle className="h-5 w-5" />}
+        icon={MessageCircle}
         label="Chat"
         active={activeSection === "chat"}
         onClick={() => setActiveSection("chat")}
@@ -41,7 +41,7 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({
       />
 
       <SidebarItem 
-        icon={<Users className="h-5 w-5" />}
+        icon={Users}
         label="All Clients"
         active={activeSection === "all-clients"}
         onClick={() => setActiveSection("all-clients")}
@@ -49,7 +49,7 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({
       />
 
       <SidebarItem 
-        icon={<Users className="h-5 w-5" />}
+        icon={Users}
         label="Client Information"
         active={activeSection === "clients"}
         onClick={() => setActiveSection("clients")}
@@ -57,7 +57,7 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({
       />
 
       <SidebarItem 
-        icon={<BarChart2 className="h-5 w-5" />}
+        icon={BarChart2}
         label="Call Center Stats"
         active={activeSection === "stats"}
         onClick={() => setActiveSection("stats")}
@@ -65,7 +65,7 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({
       />
 
       <SidebarItem 
-        icon={<Calendar className="h-5 w-5" />}
+        icon={Calendar}
         label="Agent Schedule"
         active={activeSection === "schedule"}
         onClick={() => setActiveSection("schedule")}
@@ -73,7 +73,7 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({
       />
 
       <SidebarItem 
-        icon={<BookOpen className="h-5 w-5" />}
+        icon={BookOpen}
         label="Knowledge Base"
         active={activeSection === "knowledge"}
         onClick={() => setActiveSection("knowledge")}
@@ -81,7 +81,7 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({
       />
 
       <SidebarItem 
-        icon={<Bell className="h-5 w-5" />}
+        icon={Bell}
         label="Notifications"
         active={activeSection === "notifications"}
         onClick={() => setActiveSection("notifications")}
@@ -89,7 +89,7 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({
       />
 
       <SidebarItem 
-        icon={<UserCircle className="h-5 w-5" />}
+        icon={UserCircle}
         label="Agent Profile"
         active={activeSection === "profile"}
         onClick={() => setActiveSection("profile")}
