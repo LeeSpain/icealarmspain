@@ -5,9 +5,14 @@ import { useLanguage } from "@/context/LanguageContext";
 import DeviceCard from "./DeviceCard";
 import ShoppingCartComponent from "./ShoppingCart";
 
+interface SelectedDevice {
+  id: string;
+  quantity: number;
+}
+
 const DeviceShowcase: React.FC = () => {
   const { language } = useLanguage();
-  const [selectedDevices, setSelectedDevices] = useState<string[]>([]);
+  const [selectedDevices, setSelectedDevices] = useState<SelectedDevice[]>([]);
   const [totalMonthly, setTotalMonthly] = useState<number>(0);
   const [totalOneTime, setTotalOneTime] = useState<number>(0);
   const [shippingCost, setShippingCost] = useState<number>(0);
@@ -97,18 +102,20 @@ const DeviceShowcase: React.FC = () => {
 
     let oneTimeTotal = 0;
     let baseMonthly = 0;
+    let totalDeviceCount = 0;
 
     // Calculate one-time device costs
-    selectedDevices.forEach(deviceId => {
-      const device = devices.find(d => d.id === deviceId);
+    selectedDevices.forEach(selectedDevice => {
+      const device = devices.find(d => d.id === selectedDevice.id);
       if (device) {
-        oneTimeTotal += device.price;
-        baseMonthly += device.monthlyPrice;
+        oneTimeTotal += device.price * selectedDevice.quantity;
+        baseMonthly += device.monthlyPrice * selectedDevice.quantity;
+        totalDeviceCount += selectedDevice.quantity;
       }
     });
 
     // Calculate shipping cost (€14.99 per device)
-    const baseShipping = selectedDevices.length * 14.99;
+    const baseShipping = totalDeviceCount * 14.99;
     setShippingCost(baseShipping);
 
     // Add base AI Guardian service automatically (€49.99)
@@ -117,11 +124,11 @@ const DeviceShowcase: React.FC = () => {
 
     // Apply discounts based on number of devices
     let discountedMonthly = baseMonthly;
-    if (selectedDevices.length === 2) {
+    if (totalDeviceCount === 2) {
       // 10% discount for 2 devices
       discountedMonthly = baseMonthly * 0.9;
-    } else if (selectedDevices.length === 3) {
-      // 20% discount for 3 devices
+    } else if (totalDeviceCount >= 3) {
+      // 20% discount for 3 or more devices
       discountedMonthly = baseMonthly * 0.8;
     }
 
@@ -131,12 +138,21 @@ const DeviceShowcase: React.FC = () => {
 
   const toggleDeviceSelection = (deviceId: string) => {
     setSelectedDevices(prev => {
-      if (prev.includes(deviceId)) {
-        return prev.filter(id => id !== deviceId);
+      const isSelected = prev.some(item => item.id === deviceId);
+      if (isSelected) {
+        return prev.filter(item => item.id !== deviceId);
       } else {
-        return [...prev, deviceId];
+        return [...prev, { id: deviceId, quantity: 1 }];
       }
     });
+  };
+
+  const updateDeviceQuantity = (deviceId: string, newQuantity: number) => {
+    setSelectedDevices(prev => 
+      prev.map(item => 
+        item.id === deviceId ? { ...item, quantity: newQuantity } : item
+      )
+    );
   };
 
   return (
@@ -172,21 +188,29 @@ const DeviceShowcase: React.FC = () => {
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-          {devices.map((device, index) => (
-            <DeviceCard
-              key={device.id}
-              id={device.id}
-              name={device.name}
-              price={device.price}
-              monthlyPrice={device.monthlyPrice}
-              icon={device.icon}
-              image={device.image}
-              features={device.features}
-              description={device.description}
-              isSelected={selectedDevices.includes(device.id)}
-              onSelect={toggleDeviceSelection}
-            />
-          ))}
+          {devices.map((device, index) => {
+            const selectedDevice = selectedDevices.find(item => item.id === device.id);
+            const isSelected = !!selectedDevice;
+            const quantity = selectedDevice?.quantity || 1;
+            
+            return (
+              <DeviceCard
+                key={device.id}
+                id={device.id}
+                name={device.name}
+                price={device.price}
+                monthlyPrice={device.monthlyPrice}
+                icon={device.icon}
+                image={device.image}
+                features={device.features}
+                description={device.description}
+                isSelected={isSelected}
+                quantity={quantity}
+                onSelect={toggleDeviceSelection}
+                onUpdateQuantity={updateDeviceQuantity}
+              />
+            );
+          })}
         </div>
         
         <ShoppingCartComponent
@@ -196,6 +220,7 @@ const DeviceShowcase: React.FC = () => {
           totalOneTime={totalOneTime}
           shippingCost={shippingCost}
           onRemoveDevice={toggleDeviceSelection}
+          onUpdateQuantity={updateDeviceQuantity}
         />
       </div>
     </section>

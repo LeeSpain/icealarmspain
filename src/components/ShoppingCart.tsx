@@ -1,9 +1,14 @@
 
 import React from "react";
 import { ButtonCustom } from "./ui/button-custom";
-import { ShoppingCart, CreditCard, Info, Truck } from "lucide-react";
+import { ShoppingCart, CreditCard, Info, Truck, Plus, Minus } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
 import { Link } from "react-router-dom";
+
+interface SelectedDevice {
+  id: string;
+  quantity: number;
+}
 
 interface Device {
   id: string;
@@ -14,12 +19,13 @@ interface Device {
 }
 
 interface ShoppingCartProps {
-  selectedDevices: string[];
+  selectedDevices: SelectedDevice[];
   devices: Device[];
   totalMonthly: number;
   totalOneTime: number;
   shippingCost: number;
   onRemoveDevice: (deviceId: string) => void;
+  onUpdateQuantity: (deviceId: string, quantity: number) => void;
 }
 
 const ShoppingCartComponent: React.FC<ShoppingCartProps> = ({
@@ -29,6 +35,7 @@ const ShoppingCartComponent: React.FC<ShoppingCartProps> = ({
   totalOneTime,
   shippingCost,
   onRemoveDevice,
+  onUpdateQuantity,
 }) => {
   const { language } = useLanguage();
   
@@ -48,6 +55,9 @@ const ShoppingCartComponent: React.FC<ShoppingCartProps> = ({
   const totalWithShipping = totalWithProductTax + shippingCost + shippingTax;
   const totalWithMonthlyTax = totalMonthly + monthlyTax;
   
+  // Calculate total device count
+  const totalDeviceCount = selectedDevices.reduce((total, item) => total + item.quantity, 0);
+  
   return (
     <div className="mt-12 p-6 bg-white rounded-xl shadow-lg max-w-3xl mx-auto animate-fade-in">
       <h3 className="text-xl font-semibold mb-4 flex items-center">
@@ -56,24 +66,42 @@ const ShoppingCartComponent: React.FC<ShoppingCartProps> = ({
       </h3>
       
       <div className="space-y-3 mb-6">
-        {selectedDevices.map(deviceId => {
-          const device = devices.find(d => d.id === deviceId);
+        {selectedDevices.map(selectedDevice => {
+          const device = devices.find(d => d.id === selectedDevice.id);
           return device && (
-            <div key={deviceId} className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
-              <div className="flex items-center">
+            <div key={selectedDevice.id} className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+              <div className="flex items-center flex-1">
                 <div className="mr-3">{device.icon}</div>
-                <div>
+                <div className="flex-1">
                   <p className="font-medium">{device.name}</p>
                   <p className="text-sm text-muted-foreground">
                     {language === 'en' ? "One-time purchase" : "Compra única"}: €{device.price.toFixed(2)}
                   </p>
                 </div>
+                
+                <div className="flex items-center border rounded-md overflow-hidden mr-3">
+                  <button 
+                    className="p-1 text-ice-600 hover:bg-ice-50 transition-colors"
+                    onClick={() => selectedDevice.quantity > 1 && onUpdateQuantity(selectedDevice.id, selectedDevice.quantity - 1)}
+                    disabled={selectedDevice.quantity <= 1}
+                  >
+                    <Minus size={16} />
+                  </button>
+                  <span className="px-3 font-medium">{selectedDevice.quantity}</span>
+                  <button 
+                    className="p-1 text-ice-600 hover:bg-ice-50 transition-colors"
+                    onClick={() => onUpdateQuantity(selectedDevice.id, selectedDevice.quantity + 1)}
+                  >
+                    <Plus size={16} />
+                  </button>
+                </div>
               </div>
+              
               <ButtonCustom 
                 variant="outline" 
                 size="sm" 
                 className="text-orange-500 hover:text-orange-700 hover:bg-orange-50"
-                onClick={() => onRemoveDevice(deviceId)}
+                onClick={() => onRemoveDevice(selectedDevice.id)}
               >
                 {language === 'en' ? "Remove" : "Eliminar"}
               </ButtonCustom>
@@ -118,7 +146,7 @@ const ShoppingCartComponent: React.FC<ShoppingCartProps> = ({
         <div className="flex justify-between mb-2">
           <span className="text-muted-foreground flex items-center">
             <Truck size={16} className="mr-1" />
-            {language === 'en' ? "Shipping" : "Envío"} (€14.99 {language === 'en' ? "per device" : "por dispositivo"}):
+            {language === 'en' ? "Shipping" : "Envío"} (€14.99 × {totalDeviceCount}):
           </span>
           <span className="font-medium">€{shippingCost.toFixed(2)}</span>
         </div>
@@ -158,9 +186,9 @@ const ShoppingCartComponent: React.FC<ShoppingCartProps> = ({
           <span className="font-bold">€{totalWithMonthlyTax.toFixed(2)}</span>
         </div>
         
-        {selectedDevices.length > 1 && (
+        {totalDeviceCount > 1 && (
           <div className="text-sm text-green-600 italic mb-4 text-right">
-            {selectedDevices.length === 2 
+            {totalDeviceCount === 2 
               ? (language === 'en' ? "10% discount applied!" : "¡Descuento del 10% aplicado!") 
               : (language === 'en' ? "20% discount applied!" : "¡Descuento del 20% aplicado!")}
           </div>

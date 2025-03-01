@@ -1,6 +1,6 @@
 
-import React from "react";
-import { CheckCircle, ArrowRight, Info } from "lucide-react";
+import React, { useState } from "react";
+import { CheckCircle, ArrowRight, Info, Plus, Minus } from "lucide-react";
 import { ButtonCustom } from "./ui/button-custom";
 import { useLanguage } from "@/context/LanguageContext";
 
@@ -14,7 +14,9 @@ interface DeviceCardProps {
   features: string[];
   description: string;
   isSelected: boolean;
+  quantity: number;
   onSelect: (id: string) => void;
+  onUpdateQuantity: (id: string, quantity: number) => void;
 }
 
 const DeviceCard: React.FC<DeviceCardProps> = ({
@@ -27,9 +29,25 @@ const DeviceCard: React.FC<DeviceCardProps> = ({
   features,
   description,
   isSelected,
+  quantity = 1,
   onSelect,
+  onUpdateQuantity,
 }) => {
   const { language } = useLanguage();
+  
+  const handleIncreaseQuantity = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (isSelected) {
+      onUpdateQuantity(id, quantity + 1);
+    }
+  };
+
+  const handleDecreaseQuantity = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (isSelected && quantity > 1) {
+      onUpdateQuantity(id, quantity - 1);
+    }
+  };
   
   return (
     <div 
@@ -76,22 +94,42 @@ const DeviceCard: React.FC<DeviceCardProps> = ({
         </ul>
       </div>
       
-      <ButtonCustom 
-        variant={isSelected ? "primary" : "outline"} 
-        className="mt-auto group"
-        onClick={() => onSelect(id)}
-      >
-        {isSelected ? (
-          language === 'en' ? "Selected" : "Seleccionado"
-        ) : (
-          language === 'en' ? "Select" : "Seleccionar"
-        )}
-        {isSelected ? (
-          <CheckCircle size={16} className="ml-2" />
-        ) : (
+      {isSelected ? (
+        <div className="flex flex-col gap-3">
+          <div className="flex items-center justify-between border rounded-md overflow-hidden">
+            <button 
+              className="p-2 text-ice-600 hover:bg-ice-50 transition-colors flex-shrink-0"
+              onClick={handleDecreaseQuantity}
+              disabled={quantity <= 1}
+            >
+              <Minus size={18} />
+            </button>
+            <span className="flex-1 text-center font-medium">{quantity}</span>
+            <button 
+              className="p-2 text-ice-600 hover:bg-ice-50 transition-colors flex-shrink-0"
+              onClick={handleIncreaseQuantity}
+            >
+              <Plus size={18} />
+            </button>
+          </div>
+          <ButtonCustom 
+            variant="primary" 
+            className="group"
+            onClick={() => onSelect(id)}
+          >
+            {language === 'en' ? "Remove" : "Eliminar"}
+          </ButtonCustom>
+        </div>
+      ) : (
+        <ButtonCustom 
+          variant="outline" 
+          className="mt-auto group"
+          onClick={() => onSelect(id)}
+        >
+          {language === 'en' ? "Select" : "Seleccionar"}
           <ArrowRight size={16} className="ml-2 group-hover:translate-x-1 transition-transform" />
-        )}
-      </ButtonCustom>
+        </ButtonCustom>
+      )}
     </div>
   );
 };

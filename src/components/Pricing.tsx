@@ -2,6 +2,8 @@
 import React from "react";
 import { Check, Truck } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
+import { Link } from "react-router-dom";
+import { ButtonCustom } from "./ui/button-custom";
 
 const Pricing: React.FC = () => {
   const { language } = useLanguage();
@@ -157,6 +159,12 @@ const Pricing: React.FC = () => {
                     </li>
                   ))}
                 </ul>
+                
+                <Link to="/#devices">
+                  <ButtonCustom className="w-full">
+                    {language === 'en' ? "Select Devices" : "Seleccionar Dispositivos"}
+                  </ButtonCustom>
+                </Link>
               </div>
             </div>
           ))}
@@ -181,6 +189,12 @@ const Pricing: React.FC = () => {
               ? "Select your devices below to create your personalized package"
               : "Seleccione sus dispositivos a continuación para crear su paquete personalizado"}
           </p>
+          
+          <Link to="/#devices" className="inline-block mt-6">
+            <ButtonCustom variant="primary" size="lg">
+              {language === 'en' ? "Shop Devices Now" : "Comprar Dispositivos Ahora"}
+            </ButtonCustom>
+          </Link>
         </div>
       </div>
     </section>
