@@ -10,6 +10,7 @@ export interface Ticket {
   created: string;
   lastUpdated: string;
   internalNotes?: InternalNote[];
+  assignedTo?: string; // Adding a new optional field
 }
 
 export interface InternalNote {
