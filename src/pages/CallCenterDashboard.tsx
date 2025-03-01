@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from "react";
-import { ToastContainer } from 'react-toastify';
+import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useAuth } from "@/context/AuthContext";
 import Sidebar from "@/components/callcenter/sidebar/Sidebar";
@@ -18,6 +18,13 @@ const CallCenterDashboard: React.FC = () => {
   const [showNotifications, setShowNotifications] = useState(false);
   const { user, isAuthenticated } = useAuth();
   const navigate = useNavigate();
+
+  // Show welcome toast on initial load
+  useEffect(() => {
+    if (user) {
+      toast.success(`Welcome back, ${user.name || 'Agent'}! You have ${notifications.filter(n => !n.read).length} unread notifications.`);
+    }
+  }, []);
 
   // Redirect if not authenticated or not a call center agent
   useEffect(() => {
@@ -75,7 +82,7 @@ const CallCenterDashboard: React.FC = () => {
 
   return (
     <div className="flex h-screen overflow-hidden bg-background">
-      <ToastContainer />
+      <ToastContainer position="top-right" autoClose={5000} />
       
       {/* Sidebar */}
       <Sidebar 

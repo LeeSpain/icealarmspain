@@ -6,14 +6,24 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { ModeToggle } from "@/components/mode-toggle";
 import { Badge } from "@/components/ui/badge";
+import { useAuth } from "@/context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 interface UserProfileProps {
   user: User | null;
   collapsed: boolean;
-  handleLogout: () => Promise<void>;
 }
 
-const UserProfile: React.FC<UserProfileProps> = ({ user, collapsed, handleLogout }) => {
+const UserProfile: React.FC<UserProfileProps> = ({ user, collapsed }) => {
+  const { logout } = useAuth();
+  const navigate = useNavigate();
+
+  // Function to handle logout
+  const handleLogout = async () => {
+    await logout();
+    navigate('/login');
+  };
+
   // Get initials for avatar
   const getInitials = (name: string) => {
     return name.split(' ').map(part => part.charAt(0)).join('').toUpperCase();

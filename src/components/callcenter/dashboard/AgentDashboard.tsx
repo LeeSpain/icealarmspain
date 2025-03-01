@@ -1,399 +1,347 @@
 
-import React, { useState } from "react";
-import {
-  Bell,
-  Settings,
-  Activity,
-  Heart,
-  CheckCircle2,
-  AlertTriangle,
-  CalendarClock,
-  Cog,
-  LogOut,
-  Phone,
-  HeadsetIcon,
-  Clock,
-  MessageSquare,
-  ArrowUpRight,
+import React from "react";
+import { 
+  User, 
+  Phone, 
+  Clock, 
+  CheckCircle2, 
+  AlertTriangle, 
   Users,
   Calendar,
-  PhoneCall,
-  BadgeAlert,
-  Database,
+  BarChart3,
+  MessageSquare,
+  TicketIcon
 } from "lucide-react";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  CardFooter,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
+import { useAuth } from "@/context/AuthContext";
 import { Badge } from "@/components/ui/badge";
-import { useToast } from "@/components/ui/use-toast";
+import { mockCallData } from "../stats/mock-data";
+import { mockTickets } from "../ticketing/mock-data";
 
 const AgentDashboard: React.FC = () => {
-  const { toast } = useToast();
-  const [callStatus, setCallStatus] = useState<"available" | "busy" | "offline">("available");
+  const { user } = useAuth();
+  const currentDate = new Date();
+  const formattedDate = new Intl.DateTimeFormat('en-US', { 
+    weekday: 'long', 
+    year: 'numeric', 
+    month: 'long', 
+    day: 'numeric' 
+  }).format(currentDate);
   
-  // Mock data for the Call Center Agent dashboard
-  const devices = [
-    { id: 1, name: "SOS Pendant - Room 103", status: "Active", lastChecked: "Yesterday", battery: "92%" },
-    { id: 2, name: "Fall Detector - Common Area", status: "Active", lastChecked: "Today", battery: "78%" },
-    { id: 3, name: "Motion Sensor - Entrance", status: "Offline", lastChecked: "3 days ago", battery: "45%" },
-    { id: 4, name: "Health Monitor - Room 215", status: "Active", lastChecked: "Today", battery: "85%" },
-  ];
-
+  // Filter tickets for pending and critical tickets
+  const pendingTickets = mockTickets.filter(ticket => ticket.status === 'open' || ticket.status === 'in-progress');
+  const criticalTickets = mockTickets.filter(ticket => ticket.priority === 'high');
+  
+  // Mock data for recent calls
   const recentCalls = [
-    { id: 1, client: "Maria Gonzalez", time: "10:15 AM", duration: "4m 30s", type: "Incoming", status: "Completed" },
-    { id: 2, client: "Juan Perez", time: "09:45 AM", duration: "2m 15s", type: "Outgoing", status: "Completed" },
-    { id: 3, client: "Ana Martinez", time: "Yesterday", duration: "8m 02s", type: "Incoming", status: "Transferred" },
+    { id: 1, client: "Maria García", time: "10:32 AM", duration: "8m 45s", status: "completed" },
+    { id: 2, client: "John Stevenson", time: "9:15 AM", duration: "12m 20s", status: "completed" },
+    { id: 3, client: "Sarah Williams", time: "Yesterday", duration: "5m 10s", status: "missed" },
   ];
-
+  
+  // Mock data for upcoming tasks
   const upcomingTasks = [
-    { id: 1, title: "Follow-up call: Maria Gonzalez", time: "2:30 PM", priority: "High" },
-    { id: 2, title: "Device check: La Residencia facility", time: "4:00 PM", priority: "Medium" },
-    { id: 3, title: "Team meeting", time: "Tomorrow, 9:00 AM", priority: "Medium" },
+    { id: 1, task: "Follow up with Maria García", time: "2:00 PM", priority: "high" },
+    { id: 2, task: "Call John Stevenson about device setup", time: "3:30 PM", priority: "medium" },
+    { id: 3, task: "Team meeting", time: "4:00 PM", priority: "medium" },
   ];
-
-  const pendingAlerts = [
-    { id: 1, client: "Carlos Rodriguez", device: "Health Monitor", time: "15 min ago", type: "High Blood Pressure" },
-    { id: 2, client: "Elena Sanchez", device: "SOS Pendant", time: "1 hour ago", type: "Fall Detected" },
-  ];
-
-  const handleStatusChange = (status: "available" | "busy" | "offline") => {
-    setCallStatus(status);
-    toast({
-      title: "Status Updated",
-      description: `You are now ${status}`,
-    });
-  };
-
-  const handleTestAlarm = () => {
-    toast({
-      title: "Test Alarm Triggered",
-      description: "The test alarm has been successfully triggered",
-      variant: "destructive",
-    });
-  };
-
+  
+  // Calculate some metrics from mockCallData
+  const totalCalls = mockCallData.dailyCalls.data.reduce((sum, num) => sum + num, 0);
+  const avgResponseTime = mockCallData.responseTime.reduce((sum, item) => sum + item.value, 0) / mockCallData.responseTime.length;
+  
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       {/* Welcome Banner */}
-      <Card className="bg-orange-50 border-orange-100">
+      <Card className="border-l-4 border-blue-500">
         <CardContent className="p-6">
-          <div className="flex justify-between items-start">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
-              <h2 className="text-3xl font-bold text-amber-900 mb-2">Welcome, Call Center Agent!</h2>
-              <p className="text-amber-800">
-                Manage your ICE Alarm devices and provide assistance to clients.
-              </p>
-              
-              <div className="flex gap-4 mt-6">
-                <Button 
-                  onClick={handleTestAlarm}
-                  variant="outline" 
-                  className="bg-white border-gray-200 text-gray-700 hover:bg-gray-50 flex items-center gap-2"
-                >
-                  <Bell className="h-4 w-4" />
-                  Test Alarm
-                </Button>
-                <Button variant="outline" className="bg-white border-gray-200 text-gray-700 hover:bg-gray-50 flex items-center gap-2">
-                  <Settings className="h-4 w-4" />
-                  Settings
-                </Button>
+              <h2 className="text-2xl font-bold mb-1">Welcome back, {user?.name || 'Agent'}</h2>
+              <p className="text-muted-foreground">{formattedDate}</p>
+              <div className="flex items-center mt-2">
+                <Badge className="bg-green-100 text-green-800 mr-2">Online</Badge>
+                <span className="text-sm text-muted-foreground">Agent ID: {user?.id || 'AG-324'}</span>
               </div>
             </div>
-            
-            <div className="flex gap-3">
-              <div className="rounded-full p-3 bg-white shadow-sm border border-gray-100">
-                <Badge className={
-                  callStatus === "available" ? "bg-green-500" :
-                  callStatus === "busy" ? "bg-orange-500" : "bg-gray-500"
-                }>
-                  {callStatus === "available" ? "Available" :
-                   callStatus === "busy" ? "Busy" : "Offline"}
-                </Badge>
-              </div>
-              <div className="flex flex-col gap-2">
-                <Button 
-                  size="sm" 
-                  className={`${callStatus === "available" ? "bg-green-600 hover:bg-green-700" : "bg-green-200"}`}
-                  onClick={() => handleStatusChange("available")}
-                >
-                  Available
-                </Button>
-                <Button 
-                  size="sm" 
-                  className={`${callStatus === "busy" ? "bg-orange-600 hover:bg-orange-700" : "bg-orange-200"}`}
-                  onClick={() => handleStatusChange("busy")}
-                >
-                  Busy
-                </Button>
-                <Button 
-                  size="sm" 
-                  className={`${callStatus === "offline" ? "bg-gray-600 hover:bg-gray-700" : "bg-gray-200"}`}
-                  onClick={() => handleStatusChange("offline")}
-                >
-                  Offline
-                </Button>
-              </div>
+            <div className="flex flex-col sm:flex-row gap-2">
+              <Button size="sm" className="bg-blue-600 hover:bg-blue-700">
+                <Phone className="mr-2 h-4 w-4" />
+                Set Status
+              </Button>
+              <Button size="sm" variant="outline">
+                <Clock className="mr-2 h-4 w-4" />
+                View Schedule
+              </Button>
             </div>
           </div>
         </CardContent>
       </Card>
-
+      
       {/* Metrics Overview */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <Card>
-          <CardContent className="p-6">
-            <div className="flex justify-between items-start">
-              <div>
-                <p className="text-gray-500 mb-1">Active Devices</p>
-                <h3 className="text-3xl font-bold">24</h3>
-              </div>
-              <div className="bg-primary/10 p-2 rounded-full">
-                <Activity className="h-6 w-6 text-primary" />
-              </div>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium">Total Calls This Week</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center">
+              <Phone className="h-5 w-5 text-blue-500 mr-2" />
+              <div className="text-2xl font-bold">{totalCalls}</div>
             </div>
+            <p className="text-xs text-muted-foreground mt-2">
+              +12% from last week
+            </p>
           </CardContent>
         </Card>
         
         <Card>
-          <CardContent className="p-6">
-            <div className="flex justify-between items-start">
-              <div>
-                <p className="text-gray-500 mb-1">Alert Status</p>
-                <h3 className="text-3xl font-bold">2 Pending</h3>
-              </div>
-              <div className="bg-red-100 p-2 rounded-full">
-                <BadgeAlert className="h-6 w-6 text-red-600" />
-              </div>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium">Avg. Response Time</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center">
+              <Clock className="h-5 w-5 text-amber-500 mr-2" />
+              <div className="text-2xl font-bold">{avgResponseTime.toFixed(1)}m</div>
             </div>
+            <p className="text-xs text-muted-foreground mt-2">
+              -2.5m from target
+            </p>
           </CardContent>
         </Card>
         
         <Card>
-          <CardContent className="p-6">
-            <div className="flex justify-between items-start">
-              <div>
-                <p className="text-gray-500 mb-1">Today's Calls</p>
-                <h3 className="text-3xl font-bold">12</h3>
-              </div>
-              <div className="bg-blue-100 p-2 rounded-full">
-                <PhoneCall className="h-6 w-6 text-blue-600" />
-              </div>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium">Open Tickets</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center">
+              <TicketIcon className="h-5 w-5 text-purple-500 mr-2" />
+              <div className="text-2xl font-bold">{pendingTickets.length}</div>
             </div>
+            <p className="text-xs text-muted-foreground mt-2">
+              {criticalTickets.length} high priority
+            </p>
           </CardContent>
         </Card>
         
         <Card>
-          <CardContent className="p-6">
-            <div className="flex justify-between items-start">
-              <div>
-                <p className="text-gray-500 mb-1">Active Clients</p>
-                <h3 className="text-3xl font-bold">87</h3>
-              </div>
-              <div className="bg-green-100 p-2 rounded-full">
-                <Users className="h-6 w-6 text-green-600" />
-              </div>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium">Customer Satisfaction</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center">
+              <CheckCircle2 className="h-5 w-5 text-green-500 mr-2" />
+              <div className="text-2xl font-bold">92%</div>
             </div>
+            <p className="text-xs text-muted-foreground mt-2">
+              +5% from last month
+            </p>
           </CardContent>
         </Card>
       </div>
-
-      {/* Pending Alerts */}
-      <Card>
-        <CardHeader className="pb-0">
-          <div className="flex justify-between items-center">
-            <div className="flex items-center gap-2">
-              <AlertTriangle className="text-red-500 h-5 w-5" />
-              <CardTitle className="text-xl">Pending Alerts</CardTitle>
-            </div>
-            <Badge variant="destructive">{pendingAlerts.length} Alerts</Badge>
-          </div>
-        </CardHeader>
-        <CardContent className="pt-4">
-          {pendingAlerts.length === 0 ? (
-            <div className="text-center py-8 text-gray-500">No pending alerts</div>
-          ) : (
-            <div className="rounded-md border">
-              <div className="grid grid-cols-4 bg-muted/50 p-4 text-sm font-medium">
-                <div>Client</div>
-                <div>Device</div>
-                <div>Time</div>
-                <div>Action</div>
-              </div>
-              <Separator />
-              {pendingAlerts.map((alert) => (
-                <div key={alert.id} className="grid grid-cols-4 p-4 text-sm items-center border-t first:border-t-0">
-                  <div className="font-medium">{alert.client}</div>
-                  <div>{alert.device}</div>
-                  <div>{alert.time}</div>
-                  <div>
-                    <Button size="sm" className="bg-red-600 hover:bg-red-700">
-                      Respond Now
+      
+      {/* Main Content Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Pending Alerts */}
+        <Card className="lg:col-span-2">
+          <CardHeader>
+            <CardTitle className="text-lg flex items-center gap-2">
+              <AlertTriangle className="h-5 w-5 text-amber-500" />
+              Pending Alerts
+            </CardTitle>
+            <CardDescription>
+              Tickets requiring immediate attention
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {pendingTickets.slice(0, 3).map(ticket => (
+                <div key={ticket.id} className="border-l-4 border-amber-500 bg-amber-50 p-4 rounded-md">
+                  <div className="flex justify-between">
+                    <h3 className="font-medium">{ticket.title}</h3>
+                    <Badge variant={ticket.priority === 'high' ? 'destructive' : 'outline'}>
+                      {ticket.priority}
+                    </Badge>
+                  </div>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    Client: {ticket.client}
+                  </p>
+                  <div className="flex justify-between items-center mt-3">
+                    <span className="text-xs text-muted-foreground">
+                      Created: {ticket.createdAt}
+                    </span>
+                    <Button size="sm">
+                      View Details
                     </Button>
                   </div>
                 </div>
               ))}
-            </div>
-          )}
-        </CardContent>
-      </Card>
-
-      {/* Recent Calls */}
-      <Card>
-        <CardHeader className="pb-0">
-          <div className="flex justify-between items-center">
-            <div className="flex items-center gap-2">
-              <Phone className="text-blue-500 h-5 w-5" />
-              <CardTitle className="text-xl">Recent Calls</CardTitle>
-            </div>
-            <Button variant="outline" className="flex items-center gap-2">
-              <Database className="h-4 w-4" />
-              View All Calls
-            </Button>
-          </div>
-        </CardHeader>
-        <CardContent className="pt-4">
-          <div className="rounded-md border">
-            <div className="grid grid-cols-5 bg-muted/50 p-4 text-sm font-medium">
-              <div>Client</div>
-              <div>Time</div>
-              <div>Duration</div>
-              <div>Type</div>
-              <div>Status</div>
-            </div>
-            <Separator />
-            {recentCalls.map((call) => (
-              <div key={call.id} className="grid grid-cols-5 p-4 text-sm items-center border-t first:border-t-0">
-                <div className="font-medium">{call.client}</div>
-                <div>{call.time}</div>
-                <div>{call.duration}</div>
-                <div className="flex items-center">
-                  {call.type === "Incoming" ? (
-                    <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
-                      Incoming
-                    </Badge>
-                  ) : (
-                    <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
-                      Outgoing
-                    </Badge>
-                  )}
+              
+              {pendingTickets.length === 0 && (
+                <div className="text-center py-6">
+                  <CheckCircle2 className="mx-auto h-12 w-12 text-green-200" />
+                  <h3 className="mt-2 font-medium">All clear!</h3>
+                  <p className="text-sm text-muted-foreground">
+                    No pending alerts at this time
+                  </p>
                 </div>
-                <div>{call.status}</div>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Upcoming Tasks and Devices */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Upcoming Tasks */}
-        <Card>
-          <CardHeader className="pb-0">
-            <div className="flex items-center gap-2">
-              <Calendar className="text-purple-500 h-5 w-5" />
-              <CardTitle className="text-xl">Upcoming Tasks</CardTitle>
+              )}
+              
+              {pendingTickets.length > 3 && (
+                <Button variant="outline" className="w-full">
+                  View All {pendingTickets.length} Tickets
+                </Button>
+              )}
             </div>
-          </CardHeader>
-          <CardContent className="pt-4">
-            <div className="space-y-4">
-              {upcomingTasks.map((task) => (
-                <div key={task.id} className="flex items-start gap-4 p-3 rounded-lg border">
-                  <div className={`rounded-full p-2 ${
-                    task.priority === "High" ? "bg-red-100" : 
-                    task.priority === "Medium" ? "bg-amber-100" : "bg-blue-100"
-                  }`}>
-                    <Clock className={`h-4 w-4 ${
-                      task.priority === "High" ? "text-red-500" : 
-                      task.priority === "Medium" ? "text-amber-500" : "text-blue-500"
-                    }`} />
+          </CardContent>
+        </Card>
+        
+        {/* Recent Activity & Upcoming */}
+        <div className="space-y-6">
+          {/* Recent Calls */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg flex items-center gap-2">
+                <Phone className="h-5 w-5" />
+                Recent Calls
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {recentCalls.map(call => (
+                  <div key={call.id} className="flex justify-between items-center pb-2 border-b last:border-0">
+                    <div>
+                      <p className="font-medium">{call.client}</p>
+                      <span className="text-xs text-muted-foreground">
+                        {call.time} • {call.duration}
+                      </span>
+                    </div>
+                    <Badge variant={call.status === 'completed' ? 'outline' : 'secondary'}>
+                      {call.status}
+                    </Badge>
                   </div>
-                  <div className="flex-1">
-                    <div className="flex justify-between items-start">
-                      <h4 className="font-medium">{task.title}</h4>
-                      <Badge variant="outline" className={
-                        task.priority === "High" ? "bg-red-50 border-red-200 text-red-700" : 
-                        task.priority === "Medium" ? "bg-amber-50 border-amber-200 text-amber-700" : 
-                        "bg-blue-50 border-blue-200 text-blue-700"
-                      }>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+          
+          {/* Upcoming Tasks */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg flex items-center gap-2">
+                <Calendar className="h-5 w-5" />
+                Upcoming Tasks
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {upcomingTasks.map(task => (
+                  <div key={task.id} className="pb-2 border-b last:border-0">
+                    <div className="flex justify-between">
+                      <p className="font-medium">{task.task}</p>
+                      <Badge variant={task.priority === 'high' ? 'destructive' : 'outline'}>
                         {task.priority}
                       </Badge>
                     </div>
-                    <p className="text-sm text-gray-500 mt-1">{task.time}</p>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Scheduled: {task.time}
+                    </p>
                   </div>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-          <CardFooter className="pt-0">
-            <Button variant="outline" className="w-full">
-              <Calendar className="mr-2 h-4 w-4" /> View Full Schedule
-            </Button>
-          </CardFooter>
-        </Card>
-
-        {/* Devices List */}
-        <Card>
-          <CardHeader className="pb-0">
-            <div className="flex justify-between items-center">
-              <div className="flex items-center gap-2">
-                <Heart className="text-orange-500 h-5 w-5" />
-                <CardTitle className="text-xl">My Devices</CardTitle>
+                ))}
               </div>
-              <Button variant="outline" className="flex items-center gap-2">
-                <Cog className="h-4 w-4" />
-                Manage Devices
-              </Button>
-            </div>
-          </CardHeader>
-          <CardContent className="pt-4">
-            <div className="rounded-md border">
-              <div className="grid grid-cols-4 bg-muted/50 p-4 text-sm font-medium">
-                <div>Device</div>
-                <div>Status</div>
-                <div>Last Checked</div>
-                <div>Battery</div>
-              </div>
-              <Separator />
-              {devices.map((device) => (
-                <div key={device.id} className="grid grid-cols-4 p-4 text-sm items-center border-t first:border-t-0">
-                  <div>{device.name}</div>
-                  <div className="flex items-center">
-                    {device.status === "Active" ? (
-                      <>
-                        <CheckCircle2 className="mr-2 h-4 w-4 text-green-500" />
-                        {device.status}
-                      </>
-                    ) : (
-                      <>
-                        <AlertTriangle className="mr-2 h-4 w-4 text-red-500" />
-                        {device.status}
-                      </>
-                    )}
-                  </div>
-                  <div>{device.lastChecked}</div>
-                  <div className="flex items-center">
-                    <div className="w-16 h-2 bg-gray-200 rounded-full mr-2">
-                      <div 
-                        className={`h-2 rounded-full ${
-                          parseInt(device.battery) > 70 ? "bg-green-500" : 
-                          parseInt(device.battery) > 30 ? "bg-amber-500" : "bg-red-500"
-                        }`}
-                        style={{ width: device.battery }}
-                      ></div>
-                    </div>
-                    {device.battery}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+      
+      {/* Device Monitoring */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg flex items-center gap-2">
+            <BarChart3 className="h-5 w-5" />
+            Device Monitoring
+          </CardTitle>
+          <CardDescription>
+            Recent device alerts from monitored clients
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead>
+                <tr>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Client</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Device</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Status</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Last Signal</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Battery</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Action</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-200">
+                <tr>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">Maria García</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm">SOS Pendant</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm">
+                    <Badge className="bg-green-100 text-green-800">Active</Badge>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm">10 min ago</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm">92%</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm">
+                    <Button size="sm" variant="outline">Details</Button>
+                  </td>
+                </tr>
+                <tr>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">John Stevenson</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm">Medical Dispenser</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm">
+                    <Badge className="bg-amber-100 text-amber-800">Warning</Badge>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm">1 hour ago</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm">45%</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm">
+                    <Button size="sm">Contact</Button>
+                  </td>
+                </tr>
+                <tr>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">Sarah Williams</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm">Health Wristband</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm">
+                    <Badge className="bg-red-100 text-red-800">Alert</Badge>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm">15 min ago</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm">78%</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm">
+                    <Button size="sm" className="bg-red-600 hover:bg-red-700">
+                      <Phone className="mr-2 h-3 w-3" />
+                      Call Now
+                    </Button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </CardContent>
+      </Card>
+      
+      {/* Call to Action */}
+      <div className="flex justify-between items-center p-6 bg-blue-50 rounded-lg border border-blue-200">
+        <div>
+          <h3 className="font-medium">Need assistance?</h3>
+          <p className="text-sm text-muted-foreground">Contact your supervisor for help or access additional resources</p>
+        </div>
+        <div className="flex gap-3">
+          <Button variant="outline" size="sm">
+            <MessageSquare className="mr-2 h-4 w-4" />
+            Chat
+          </Button>
+          <Button size="sm">
+            <Users className="mr-2 h-4 w-4" />
+            Resources
+          </Button>
+        </div>
       </div>
     </div>
   );
