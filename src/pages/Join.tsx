@@ -6,7 +6,7 @@ import AuthForm from "@/components/AuthForm";
 import { useLanguage } from "@/context/LanguageContext";
 import { useNavigate } from "react-router-dom";
 import { ButtonCustom } from "@/components/ui/button-custom";
-import { Check, Shield, PlusCircle, MinusCircle, Users, ShoppingBag, Info } from "lucide-react";
+import { Check, Shield, PlusCircle, MinusCircle, Users, ShoppingBag, Info, UserPlus, User } from "lucide-react";
 
 interface PersonProducts {
   id: string;
@@ -179,7 +179,14 @@ const Join: React.FC = () => {
   };
   
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen bg-gradient-to-b from-white via-ice-50/30 to-white">
+      {/* Decorative Elements */}
+      <div className="fixed top-0 right-0 w-full h-full overflow-hidden pointer-events-none -z-10">
+        <div className="absolute top-[15%] right-[10%] w-[500px] h-[500px] bg-gradient-radial from-ice-100/60 to-transparent rounded-full filter blur-3xl opacity-60"></div>
+        <div className="absolute top-[60%] left-[5%] w-[400px] h-[400px] bg-gradient-radial from-guardian-100/50 to-transparent rounded-full filter blur-3xl opacity-40"></div>
+        <div className="absolute bottom-[10%] right-[15%] w-[350px] h-[350px] bg-gradient-radial from-ice-200/40 to-transparent rounded-full filter blur-3xl opacity-30"></div>
+      </div>
+      
       <Navbar />
       <main className="flex-grow pt-28">
         <div className="container mx-auto px-4 py-12">
@@ -198,7 +205,7 @@ const Join: React.FC = () => {
             </div>
           ) : (
             <>
-              <div className="text-center max-w-3xl mx-auto mb-16">
+              <div className="text-center max-w-3xl mx-auto mb-16 animate-slide-down">
                 <div className="inline-flex items-center px-3 py-1 rounded-full bg-ice-50 border border-ice-200 text-ice-600 text-sm font-medium mb-4">
                   <Shield size={16} className="mr-2" />
                   {language === 'en' ? 'OUR PRODUCTS & SERVICES' : 'NUESTROS PRODUCTOS Y SERVICIOS'}
@@ -213,114 +220,180 @@ const Join: React.FC = () => {
                 </p>
               </div>
               
-              {/* Add multiple people section */}
-              <div className="max-w-6xl mx-auto mb-10">
-                <div className="flex justify-between items-center mb-4">
-                  <h2 className="text-xl font-semibold flex items-center">
-                    <Users className="mr-2 text-ice-600" />
-                    {language === 'en' ? "Select Devices for Multiple People" : "Seleccionar Dispositivos para Varias Personas"}
+              {/* New Multiple People section */}
+              <div className="max-w-6xl mx-auto mb-12">
+                <div className="flex items-center justify-between mb-6">
+                  <h2 className="text-2xl font-semibold flex items-center text-ice-600">
+                    <Users className="mr-3" />
+                    {language === 'en' ? "Who Is This Package For?" : "¿Para Quién Es Este Paquete?"}
                   </h2>
+                  
                   <ButtonCustom 
                     variant="outline" 
-                    size="sm" 
                     onClick={addPerson}
-                    className="flex items-center"
+                    className="flex items-center shadow-sm"
                   >
-                    <PlusCircle size={16} className="mr-2" />
-                    {language === 'en' ? "Add Person" : "Añadir Persona"}
+                    <UserPlus className="mr-2 h-5 w-5" />
+                    {language === 'en' ? "Add Another Person" : "Añadir Otra Persona"}
                   </ButtonCustom>
                 </div>
                 
-                <div className="bg-white rounded-xl shadow-sm p-6 mb-8">
-                  <div className="text-sm text-muted-foreground mb-6 flex items-start">
+                <div className="bg-gradient-to-br from-white to-ice-50/50 rounded-xl shadow-glass-sm p-6 mb-6">
+                  <div className="flex flex-wrap gap-4 mb-4">
+                    {people.map((person, index) => (
+                      <div 
+                        key={person.id} 
+                        className={`
+                          flex-grow min-w-[250px] max-w-[300px] p-4 rounded-lg 
+                          ${person.selectedDevices.length > 0 
+                            ? 'bg-ice-50/80 border border-ice-200' 
+                            : 'bg-white/80 border border-gray-100'
+                          } 
+                          transition-all duration-300
+                        `}
+                      >
+                        <div className="flex justify-between items-center mb-3">
+                          <div className="flex items-center space-x-2">
+                            <User className="h-5 w-5 text-ice-500" />
+                            <input
+                              type="text"
+                              value={person.name}
+                              onChange={(e) => updatePersonName(person.id, e.target.value)}
+                              className="font-medium border-0 bg-transparent focus:outline-none focus:ring-1 focus:ring-ice-300 rounded-md px-2 py-1"
+                              placeholder={language === 'en' ? "Enter name" : "Ingrese nombre"}
+                            />
+                          </div>
+                          
+                          {people.length > 1 && (
+                            <button
+                              onClick={() => removePerson(person.id)}
+                              className="text-gray-400 hover:text-red-500 transition-colors"
+                              aria-label={language === 'en' ? "Remove person" : "Eliminar persona"}
+                            >
+                              <MinusCircle size={18} />
+                            </button>
+                          )}
+                        </div>
+                        
+                        <div className="text-sm text-muted-foreground mb-1">
+                          {language === 'en' ? "Selected devices:" : "Dispositivos seleccionados:"}
+                        </div>
+                        
+                        {person.selectedDevices.length > 0 ? (
+                          <div className="flex flex-wrap gap-2 mt-2">
+                            {person.selectedDevices.map(deviceId => {
+                              const device = devices.find(d => d.id === deviceId);
+                              return device && (
+                                <span 
+                                  key={deviceId} 
+                                  className="inline-flex items-center px-2 py-1 bg-white rounded-full text-xs font-medium border border-ice-200 text-ice-700"
+                                >
+                                  {device.name}
+                                </span>
+                              );
+                            })}
+                          </div>
+                        ) : (
+                          <div className="text-sm italic text-gray-400 mt-2">
+                            {language === 'en' ? "No devices selected yet" : "Aún no hay dispositivos seleccionados"}
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                  
+                  <div className="text-sm text-muted-foreground flex items-start mt-4">
                     <Info size={16} className="mr-2 flex-shrink-0 mt-0.5 text-ice-600" />
                     <p>
                       {language === 'en' 
-                        ? "For each person, select the devices they need. Each person with devices will receive their own AI Guardian monitoring service." 
-                        : "Para cada persona, seleccione los dispositivos que necesita. Cada persona con dispositivos recibirá su propio servicio de monitoreo AI Guardian."}
+                        ? "Select devices below for each person you've added. Each person will receive their own personalized monitoring package." 
+                        : "Seleccione dispositivos a continuación para cada persona que haya añadido. Cada persona recibirá su propio paquete de monitoreo personalizado."}
                     </p>
                   </div>
-                  
-                  {people.map((person, personIndex) => (
-                    <div key={person.id} className="mb-8 pb-8 border-b border-gray-100 last:border-b-0 last:mb-0 last:pb-0">
-                      <div className="flex justify-between items-center mb-4">
-                        <div className="flex items-center">
-                          <h3 className="text-lg font-medium mr-3">{language === 'en' ? "Person" : "Persona"} {personIndex + 1}</h3>
-                          <input
-                            type="text"
-                            value={person.name}
-                            onChange={(e) => updatePersonName(person.id, e.target.value)}
-                            className="border border-gray-200 rounded-md px-3 py-1 text-sm"
-                            placeholder={language === 'en' ? "Enter name" : "Ingrese nombre"}
-                          />
-                        </div>
-                        {people.length > 1 && (
-                          <ButtonCustom 
-                            variant="ghost" 
-                            size="sm" 
-                            onClick={() => removePerson(person.id)}
-                            className="text-red-500 hover:text-red-700 hover:bg-red-50"
-                          >
-                            <MinusCircle size={16} className="mr-1" />
-                            {language === 'en' ? "Remove" : "Eliminar"}
-                          </ButtonCustom>
-                        )}
+                </div>
+              </div>
+              
+              {/* Device Selection */}
+              <div className="max-w-6xl mx-auto mb-10">
+                <h2 className="text-2xl font-semibold mb-8 flex items-center text-ice-600">
+                  <ShoppingBag className="mr-3" />
+                  {language === 'en' ? "Select Your Devices" : "Seleccione Sus Dispositivos"}
+                </h2>
+                
+                {people.map((person, personIndex) => (
+                  <div key={person.id} className="mb-16 last:mb-8">
+                    <div className="bg-white/70 backdrop-blur-sm rounded-xl shadow-glass-sm border border-ice-100/50 overflow-hidden">
+                      <div className="bg-gradient-to-r from-ice-50 to-ice-100/30 px-6 py-4 border-b border-ice-100/50">
+                        <h3 className="text-lg font-semibold text-ice-700">
+                          {person.name}
+                        </h3>
                       </div>
                       
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        {devices.map((device) => {
-                          const isSelected = person.selectedDevices.includes(device.id);
-                          
-                          return (
-                            <div 
-                              key={`${person.id}-${device.id}`} 
-                              className={`border rounded-lg overflow-hidden transition-all ${
-                                isSelected ? "border-ice-500 shadow-md" : "border-gray-200 hover:border-gray-300"
-                              }`}
-                            >
-                              <img 
-                                src={device.image} 
-                                alt={device.name} 
-                                className="w-full h-48 object-cover"
-                              />
-                              <div className="p-4">
-                                <h4 className="font-medium mb-1">{device.name}</h4>
-                                <p className="text-sm text-muted-foreground mb-3">{device.description}</p>
-                                
-                                <div className="flex justify-between items-center mb-2">
-                                  <div>
-                                    <p className="text-lg font-semibold text-ice-600">€{device.price.toFixed(2)}</p>
-                                    <p className="text-xs text-muted-foreground">{language === 'en' ? "+ 21% IVA" : "+ 21% IVA"}</p>
-                                  </div>
-                                  <div className="text-right">
-                                    <p className="text-sm text-ice-600">+€{device.monthlyPrice.toFixed(2)}/{language === 'en' ? "mo" : "mes"}</p>
-                                    <p className="text-xs text-muted-foreground">{language === 'en' ? "+ 10% IVA" : "+ 10% IVA"}</p>
-                                  </div>
+                      <div className="p-6">
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                          {devices.map((device) => {
+                            const isSelected = person.selectedDevices.includes(device.id);
+                            
+                            return (
+                              <div 
+                                key={`${person.id}-${device.id}`} 
+                                className={`
+                                  border rounded-lg overflow-hidden transition-all duration-300 hover:shadow-md
+                                  ${isSelected ? "border-ice-400 shadow-md" : "border-gray-200 hover:border-gray-300"}
+                                `}
+                              >
+                                <div className="relative h-48 overflow-hidden bg-gray-100">
+                                  <img 
+                                    src={device.image} 
+                                    alt={device.name} 
+                                    className={`w-full h-full object-cover transition-transform duration-700 ${isSelected ? "scale-105" : "hover:scale-105"}`}
+                                  />
+                                  {isSelected && (
+                                    <div className="absolute top-3 right-3 bg-ice-500 text-white rounded-full p-1">
+                                      <Check size={18} />
+                                    </div>
+                                  )}
                                 </div>
                                 
-                                <ButtonCustom
-                                  variant={isSelected ? "primary" : "outline"}
-                                  className="w-full"
-                                  onClick={() => toggleDeviceSelection(person.id, device.id)}
-                                >
-                                  {isSelected 
-                                    ? (language === 'en' ? "Selected" : "Seleccionado") 
-                                    : (language === 'en' ? "Select" : "Seleccionar")}
-                                </ButtonCustom>
+                                <div className="p-4">
+                                  <h4 className="font-semibold mb-1 text-lg">{device.name}</h4>
+                                  <p className="text-sm text-muted-foreground mb-3">{device.description}</p>
+                                  
+                                  <div className="flex justify-between items-center mb-3">
+                                    <div>
+                                      <p className="text-lg font-semibold text-ice-600">€{device.price.toFixed(2)}</p>
+                                      <p className="text-xs text-muted-foreground">{language === 'en' ? "+ 21% IVA" : "+ 21% IVA"}</p>
+                                    </div>
+                                    <div className="text-right">
+                                      <p className="text-sm text-ice-600">+€{device.monthlyPrice.toFixed(2)}/{language === 'en' ? "mo" : "mes"}</p>
+                                      <p className="text-xs text-muted-foreground">{language === 'en' ? "+ 10% IVA" : "+ 10% IVA"}</p>
+                                    </div>
+                                  </div>
+                                  
+                                  <ButtonCustom
+                                    variant={isSelected ? "primary" : "outline"}
+                                    className="w-full"
+                                    onClick={() => toggleDeviceSelection(person.id, device.id)}
+                                  >
+                                    {isSelected 
+                                      ? (language === 'en' ? "Selected" : "Seleccionado") 
+                                      : (language === 'en' ? "Select" : "Seleccionar")}
+                                  </ButtonCustom>
+                                </div>
                               </div>
-                            </div>
-                          );
-                        })}
+                            );
+                          })}
+                        </div>
                       </div>
                     </div>
-                  ))}
-                </div>
+                  </div>
+                ))}
               </div>
               
               {/* Summary/Cart */}
               {totals.hasDevices && (
-                <div className="max-w-3xl mx-auto bg-white rounded-xl shadow-md p-6 mb-10">
-                  <h2 className="text-xl font-semibold mb-4 flex items-center">
+                <div className="max-w-3xl mx-auto glass-panel p-6 mb-10 animate-fade-in">
+                  <h2 className="text-xl font-semibold mb-6 flex items-center border-b pb-4 border-ice-100/50">
                     <ShoppingBag className="mr-2 text-orange-500" />
                     {language === 'en' ? "Your Package Summary" : "Resumen de su Paquete"}
                   </h2>
@@ -329,9 +402,9 @@ const Join: React.FC = () => {
                     if (person.selectedDevices.length === 0) return null;
                     
                     return (
-                      <div key={person.id} className="mb-4 pb-4 border-b border-gray-100 last:border-b-0 last:mb-0 last:pb-0">
-                        <p className="font-medium">{person.name}</p>
-                        <div className="pl-4">
+                      <div key={person.id} className="mb-6 pb-4 border-b border-gray-100 last:border-b-0 last:mb-0 last:pb-0">
+                        <p className="font-medium text-ice-700 mb-2">{person.name}</p>
+                        <div className="pl-4 space-y-1">
                           {person.selectedDevices.map((deviceId) => {
                             const device = devices.find(d => d.id === deviceId);
                             return device && (
@@ -394,17 +467,17 @@ const Join: React.FC = () => {
                     </div>
                   </div>
                   
-                  <div className="bg-gray-50 p-3 text-xs rounded-lg my-4 flex items-start">
-                    <Info size={14} className="text-ice-600 mr-2 mt-0.5 flex-shrink-0" />
+                  <div className="bg-ice-50 p-4 text-sm rounded-lg my-6 flex items-start">
+                    <Info size={16} className="text-ice-600 mr-2 mt-0.5 flex-shrink-0" />
                     <span>
                       {language === 'en' 
-                        ? "All prices are subject to IVA. One-time purchases include 21% IVA, monthly fees include 10% IVA. Free shipping on all orders." 
-                        : "Todos los precios incluyen IVA. Las compras únicas incluyen 21% de IVA, las cuotas mensuales incluyen 10% de IVA. Envío gratuito en todos los pedidos."}
+                        ? "All prices are subject to IVA. One-time purchases include 21% IVA, monthly fees include 10% IVA. Free shipping on all orders in Spain." 
+                        : "Todos los precios incluyen IVA. Las compras únicas incluyen 21% de IVA, las cuotas mensuales incluyen 10% de IVA. Envío gratuito en todos los pedidos en España."}
                     </span>
                   </div>
                   
                   <ButtonCustom 
-                    className="w-full mt-4" 
+                    className="w-full mt-4 text-lg py-6" 
                     onClick={handleCheckout}
                   >
                     {language === 'en' ? "Proceed to Checkout" : "Proceder al Pago"}
@@ -413,8 +486,8 @@ const Join: React.FC = () => {
               )}
               
               {/* Benefits section */}
-              <div className="max-w-3xl mx-auto text-center">
-                <h2 className="text-2xl font-bold mb-4">
+              <div className="max-w-3xl mx-auto text-center mb-10">
+                <h2 className="text-2xl font-bold mb-6">
                   {language === 'en' ? "All Plans Include" : "Todos los Planes Incluyen"}
                 </h2>
                 <div className="glass-panel p-6 grid grid-cols-1 md:grid-cols-2 gap-4">
