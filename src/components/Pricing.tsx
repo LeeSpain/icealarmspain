@@ -1,6 +1,6 @@
 
 import React from "react";
-import { Check, Truck } from "lucide-react";
+import { Check, Truck, Shield, Users, User, Heart, Home, UserCog } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
 import { Link } from "react-router-dom";
 import { ButtonCustom } from "./ui/button-custom";
@@ -31,6 +31,7 @@ const Pricing: React.FC = () => {
             "Acceso al panel para la familia",
             "Informes de salud mensuales"
           ],
+      icon: <User className="h-12 w-12 p-2 bg-orange-100 text-orange-500 rounded-full" />,
       isPopular: false
     },
     {
@@ -61,6 +62,7 @@ const Pricing: React.FC = () => {
             "Recordatorios de medicación",
             "Consultas de bienestar"
           ],
+      icon: <Heart className="h-12 w-12 p-2 bg-orange-100 text-orange-500 rounded-full" />,
       isPopular: true
     },
     {
@@ -93,7 +95,35 @@ const Pricing: React.FC = () => {
             "Soporte técnico prioritario",
             "Gestión avanzada de medicamentos"
           ],
+      icon: <Home className="h-12 w-12 p-2 bg-orange-100 text-orange-500 rounded-full" />,
       isPopular: false
+    }
+  ];
+  
+  const membershipTypes = [
+    {
+      id: "individual",
+      icon: <User className="h-16 w-16 p-3 bg-gradient-to-br from-ice-50 to-ice-100 text-ice-600 rounded-full shadow-subtle animate-float" />,
+      title: language === 'en' ? "Individual" : "Individual",
+      subtitle: language === 'en' ? "For a single person" : "Para una persona"
+    },
+    {
+      id: "couple",
+      icon: <Heart className="h-16 w-16 p-3 bg-gradient-to-br from-ice-50 to-ice-100 text-ice-600 rounded-full shadow-subtle animate-float" />,
+      title: language === 'en' ? "Couple" : "Pareja",
+      subtitle: language === 'en' ? "For partners or spouses" : "Para parejas o cónyuges"
+    },
+    {
+      id: "family",
+      icon: <Home className="h-16 w-16 p-3 bg-gradient-to-br from-ice-50 to-ice-100 text-ice-600 rounded-full shadow-subtle animate-float" />,
+      title: language === 'en' ? "Family" : "Familia",
+      subtitle: language === 'en' ? "For family members" : "Para miembros de la familia"
+    },
+    {
+      id: "caregiver",
+      icon: <UserCog className="h-16 w-16 p-3 bg-gradient-to-br from-ice-50 to-ice-100 text-ice-600 rounded-full shadow-subtle animate-float" />,
+      title: language === 'en' ? "Caregiver" : "Cuidador",
+      subtitle: language === 'en' ? "For caregivers" : "Para cuidadores"
     }
   ];
   
@@ -116,6 +146,27 @@ const Pricing: React.FC = () => {
           </p>
         </div>
         
+        {/* Package For Section - Now centered and with improved icons */}
+        <div className="max-w-4xl mx-auto mb-16">
+          <h2 className="text-2xl font-semibold mb-8 text-center flex items-center justify-center text-ice-600">
+            <Shield className="mr-3 h-6 w-6" />
+            {language === 'en' ? "Who Is This Package For?" : "¿Para Quién Es Este Paquete?"}
+          </h2>
+          
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {membershipTypes.map(type => (
+              <div 
+                key={type.id}
+                className="p-6 rounded-xl border border-ice-100 bg-white shadow-subtle hover:shadow-md transition-all duration-300 flex flex-col items-center text-center"
+              >
+                <div className="mb-4">{type.icon}</div>
+                <h3 className="font-semibold text-lg mb-1">{type.title}</h3>
+                <p className="text-sm text-muted-foreground">{type.subtitle}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+        
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
           {plans.map((plan, index) => (
             <div 
@@ -132,7 +183,11 @@ const Pricing: React.FC = () => {
               )}
               
               <div className="p-6">
-                <h3 className="text-xl font-semibold mb-2">{plan.title}</h3>
+                <div className="flex items-center mb-2">
+                  {plan.icon}
+                  <h3 className="text-xl font-semibold ml-3">{plan.title}</h3>
+                </div>
+                
                 <div className="mb-4">
                   <span className="text-3xl font-bold">{plan.price}</span>
                   <span className="text-muted-foreground ml-1">{plan.period}</span>
