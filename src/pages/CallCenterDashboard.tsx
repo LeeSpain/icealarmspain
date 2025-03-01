@@ -11,6 +11,7 @@ import { Notification } from "@/components/callcenter/notifications/Notification
 import { useNavigate } from "react-router-dom";
 
 const CallCenterDashboard: React.FC = () => {
+  // Set dashboard as the default active section
   const [activeSection, setActiveSection] = useState<string>("dashboard");
   const [selectedClient, setSelectedClient] = useState<number | null>(null);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);

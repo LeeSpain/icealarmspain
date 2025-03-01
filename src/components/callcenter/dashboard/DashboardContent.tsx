@@ -11,7 +11,8 @@ import {
   Clock,
   Smartphone,
   AlertTriangle,
-  Phone
+  Phone,
+  LayoutDashboard
 } from "lucide-react";
 import TicketingSystem from "../ticketing/TicketingSystem";
 import ClientDetails from "../ClientDetails";

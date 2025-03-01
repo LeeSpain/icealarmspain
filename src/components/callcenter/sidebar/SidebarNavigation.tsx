@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import {
   Users,
@@ -12,7 +11,8 @@ import {
   ChevronLeft,
   Clock,
   Smartphone,
-  AlertTriangle
+  AlertTriangle,
+  LayoutDashboard
 } from "lucide-react";
 import SidebarItem from "./SidebarItem";
 
@@ -29,6 +29,14 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({
 }) => {
   return (
     <div className="flex flex-col space-y-1 flex-grow overflow-y-auto">
+      <SidebarItem 
+        icon={LayoutDashboard} 
+        label="Dashboard"
+        isActive={activeSection === "dashboard"} 
+        onClick={() => setActiveSection("dashboard")}
+        collapsed={collapsed}
+      />
+      
       <SidebarItem 
         icon={TicketIcon} 
         label="Support Tickets"
