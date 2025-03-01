@@ -9,7 +9,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Plus, TicketIcon, CheckCircle2, AlertCircle, XCircle } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Plus, TicketIcon, CheckCircle2, AlertCircle, XCircle, Search } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 import { Ticket } from "./types";
@@ -20,6 +21,8 @@ interface TicketsListProps {
   selectedTicketId: number | null;
   statusFilter: string | null;
   setStatusFilter: (filter: string | null) => void;
+  searchQuery: string;
+  setSearchQuery: (query: string) => void;
   onTicketSelect: (ticketId: number) => void;
   onClientSelect: (clientId: number) => void;
   onCreateTicket: () => void;
@@ -30,6 +33,8 @@ const TicketsList: React.FC<TicketsListProps> = ({
   selectedTicketId,
   statusFilter,
   setStatusFilter,
+  searchQuery,
+  setSearchQuery,
   onTicketSelect,
   onClientSelect,
   onCreateTicket
@@ -49,6 +54,18 @@ const TicketsList: React.FC<TicketsListProps> = ({
         <CardDescription>
           Manage client support tickets
         </CardDescription>
+        
+        {/* Search Input */}
+        <div className="relative mt-2 mb-2">
+          <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="Search by client or subject..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="pl-8"
+          />
+        </div>
+        
         <div className="flex gap-2 mt-2">
           <div className="flex gap-1">
             <Button
@@ -100,29 +117,37 @@ const TicketsList: React.FC<TicketsListProps> = ({
             </TableRow>
           </TableHeader>
           <TableBody>
-            {tickets.map((ticket) => (
-              <TableRow 
-                key={ticket.id}
-                className={`cursor-pointer ${selectedTicketId === ticket.id ? 'bg-muted' : ''}`}
-                onClick={() => {
-                  onTicketSelect(ticket.id);
-                  onClientSelect(ticket.clientId);
-                }}
-              >
-                <TableCell className="font-medium">{ticket.clientName}</TableCell>
-                <TableCell>{ticket.subject}</TableCell>
-                <TableCell>
-                  <span className={getStatusBadge(ticket.status)}>
-                    {ticket.status.charAt(0).toUpperCase() + ticket.status.slice(1)}
-                  </span>
-                </TableCell>
-                <TableCell>
-                  <span className={getPriorityBadge(ticket.priority)}>
-                    {ticket.priority.charAt(0).toUpperCase() + ticket.priority.slice(1)}
-                  </span>
+            {tickets.length > 0 ? (
+              tickets.map((ticket) => (
+                <TableRow 
+                  key={ticket.id}
+                  className={`cursor-pointer ${selectedTicketId === ticket.id ? 'bg-muted' : ''}`}
+                  onClick={() => {
+                    onTicketSelect(ticket.id);
+                    onClientSelect(ticket.clientId);
+                  }}
+                >
+                  <TableCell className="font-medium">{ticket.clientName}</TableCell>
+                  <TableCell>{ticket.subject}</TableCell>
+                  <TableCell>
+                    <span className={getStatusBadge(ticket.status)}>
+                      {ticket.status.charAt(0).toUpperCase() + ticket.status.slice(1)}
+                    </span>
+                  </TableCell>
+                  <TableCell>
+                    <span className={getPriorityBadge(ticket.priority)}>
+                      {ticket.priority.charAt(0).toUpperCase() + ticket.priority.slice(1)}
+                    </span>
+                  </TableCell>
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell colSpan={4} className="text-center py-4 text-muted-foreground">
+                  No tickets match your search criteria
                 </TableCell>
               </TableRow>
-            ))}
+            )}
           </TableBody>
         </Table>
       </CardContent>

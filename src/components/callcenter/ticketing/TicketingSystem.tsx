@@ -28,6 +28,7 @@ const TicketingSystem: React.FC<TicketingSystemProps> = ({ onClientSelect }) => 
   // Filter states
   const [statusFilter, setStatusFilter] = useState<string | null>(null);
   const [priorityFilter, setPriorityFilter] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState<string>("");
   
   // Get the selected ticket details
   const ticketDetails = selectedTicket 
@@ -41,8 +42,19 @@ const TicketingSystem: React.FC<TicketingSystemProps> = ({ onClientSelect }) => 
   
   // Apply filters to tickets
   const filteredTickets = tickets.filter(ticket => {
+    // Apply status filter
     if (statusFilter && ticket.status !== statusFilter) return false;
     if (priorityFilter && ticket.priority !== priorityFilter) return false;
+    
+    // Apply search query filter
+    if (searchQuery) {
+      const query = searchQuery.toLowerCase();
+      return (
+        ticket.clientName.toLowerCase().includes(query) ||
+        ticket.subject.toLowerCase().includes(query)
+      );
+    }
+    
     return true;
   });
   
@@ -100,6 +112,8 @@ const TicketingSystem: React.FC<TicketingSystemProps> = ({ onClientSelect }) => 
           selectedTicketId={selectedTicket}
           statusFilter={statusFilter}
           setStatusFilter={setStatusFilter}
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
           onTicketSelect={setSelectedTicket}
           onClientSelect={onClientSelect}
           onCreateTicket={() => setIsCreateDialogOpen(true)}
