@@ -18,8 +18,14 @@ import { useAuth } from "@/context/AuthContext";
 import { Badge } from "@/components/ui/badge";
 import { mockCallData } from "../stats/mock-data";
 import { mockTickets } from "../ticketing/mock-data";
+import UrgentNotifications from "./UrgentNotifications";
+import { mockNotifications } from "../notifications/mock-notifications";
 
-const AgentDashboard: React.FC = () => {
+interface AgentDashboardProps {
+  setActiveSection: (section: string) => void;
+}
+
+const AgentDashboard: React.FC<AgentDashboardProps> = ({ setActiveSection }) => {
   const { user } = useAuth();
   const currentDate = new Date();
   const formattedDate = new Intl.DateTimeFormat('en-US', { 
@@ -78,6 +84,12 @@ const AgentDashboard: React.FC = () => {
           </div>
         </CardContent>
       </Card>
+
+      {/* Urgent Notifications Section */}
+      <UrgentNotifications 
+        notifications={mockNotifications} 
+        setActiveSection={setActiveSection} 
+      />
       
       {/* Metrics Overview */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
