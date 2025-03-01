@@ -1,9 +1,10 @@
+
 import React, { useState, useEffect } from "react";
 import { 
   Users, 
   Bell, 
   Activity, 
-  Calendar, 
+  CalendarIcon, 
   BarChart3, 
   Settings, 
   Search,
@@ -12,7 +13,7 @@ import {
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import {
   Table,
@@ -48,6 +49,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DialogFooter,
 } from "@/components/ui/dialog"
 import { Textarea } from "@/components/ui/textarea"
 import { Switch } from "@/components/ui/switch"
@@ -55,7 +57,6 @@ import { Progress } from "@/components/ui/progress"
 import { Separator } from "@/components/ui/separator"
 import { Badge } from "@/components/ui/badge"
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card"
-import { Calendar as CalendarIcon } from "lucide-react"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Calendar } from "@/components/ui/calendar"
 import { cn } from "@/lib/utils"
@@ -84,7 +85,7 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Skeleton } from "@/components/ui/skeleton"
 import { AspectRatio } from "@/components/ui/aspect-ratio"
-import { ProgressDemo } from "@/components/ui/progress"
+import { Progress as ProgressDemo } from "@/components/ui/progress"
 import { ModeToggle } from "@/components/mode-toggle"
 import { useToast } from "@/components/ui/use-toast"
 import { ToastAction } from "@/components/ui/toast"
@@ -474,6 +475,7 @@ const AdminDashboard: React.FC = () => {
 
   return (
     <div className="container mx-auto py-10">
+      <ToastContainer />
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-semibold">{t("adminDashboard.title")}</h1>
         <Button onClick={handleLogout}>{t("adminDashboard.logout")}</Button>

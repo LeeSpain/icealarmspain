@@ -10,6 +10,7 @@ import Index from "./pages/Index";
 import Products from "./pages/Products";
 import DevicesPage from "./pages/DevicesPage";
 import DashboardPage from "./pages/DashboardPage";
+import AdminDashboard from "./pages/AdminDashboard";
 import Join from "./pages/Join";
 import Demo from "./pages/Demo";
 import Login from "./pages/Login";
@@ -56,7 +57,7 @@ const AppRoutes = () => {
         path="/admin" 
         element={
           <ProtectedRoute requiredRole="admin">
-            <DashboardPage />
+            <AdminDashboard />
           </ProtectedRoute>
         } 
       />
