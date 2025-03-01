@@ -1,781 +1,834 @@
-
-import React, { useEffect, useState } from "react";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import React, { useState, useEffect } from "react";
 import { 
-  Users, Settings, Bell, ShieldAlert, Package, Activity, 
-  User, Phone, Home, AlertTriangle, Mail, Key
+  Users, 
+  Bell, 
+  Activity, 
+  Calendar, 
+  BarChart3, 
+  Settings, 
+  Search,
+  Check,
+  X
 } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/context/AuthContext";
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+import { Textarea } from "@/components/ui/textarea"
+import { Switch } from "@/components/ui/switch"
+import { Progress } from "@/components/ui/progress"
+import { Separator } from "@/components/ui/separator"
+import { Badge } from "@/components/ui/badge"
+import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card"
+import { Calendar as CalendarIcon } from "lucide-react"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { Calendar } from "@/components/ui/calendar"
+import { cn } from "@/lib/utils"
+import { format } from "date-fns"
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+  CommandSeparator,
+} from "@/components/ui/command"
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from "@/components/ui/drawer"
+import { Slider } from "@/components/ui/slider"
+import { ScrollArea } from "@/components/ui/scroll-area"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Skeleton } from "@/components/ui/skeleton"
+import { AspectRatio } from "@/components/ui/aspect-ratio"
+import { ProgressDemo } from "@/components/ui/progress"
+import { ModeToggle } from "@/components/mode-toggle"
+import { useToast } from "@/components/ui/use-toast"
+import { ToastAction } from "@/components/ui/toast"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuSeparator,
+  DropdownMenuShortcut,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import {
+  ResizableHandle,
+  ResizablePanel,
+  ResizablePanelGroup,
+} from "@/components/ui/resizable"
 import { useLanguage } from "@/context/LanguageContext";
-import { ButtonCustom } from "@/components/ui/button-custom";
 
-interface UserData {
+interface User {
   id: string;
   name: string;
   email: string;
-  phone: string;
-  status: "active" | "inactive" | "alert";
-  plan: "basic" | "premium" | "family";
-  devices: string[];
-  lastActivity: string;
-  address: string;
-  emergencyContacts: {
-    name: string;
-    relation: string;
-    phone: string;
-  }[];
-  keyholders: {
-    name: string;
-    phone: string;
-    hasKey: boolean;
-  }[];
-  medicalInfo: {
-    conditions: string[];
-    medications: string[];
-    allergies: string[];
-    bloodType: string;
-  };
+  role: string;
+  status: string;
 }
 
-// Mock data for demonstration
-const mockUsers: UserData[] = [
-  {
-    id: "u1",
-    name: "María García",
-    email: "maria@example.com",
-    phone: "+34 612 345 678",
-    status: "active",
-    plan: "premium",
-    devices: ["SOS Pendant", "Health Monitor", "Fall Detector"],
-    lastActivity: "10 minutes ago",
-    address: "Calle Mayor 12, Madrid, 28001",
-    emergencyContacts: [
-      {
-        name: "Carlos García",
-        relation: "Son",
-        phone: "+34 623 456 789"
-      },
-      {
-        name: "Laura García",
-        relation: "Daughter",
-        phone: "+34 634 567 890"
-      }
-    ],
-    keyholders: [
-      {
-        name: "Carlos García",
-        phone: "+34 623 456 789",
-        hasKey: true
-      },
-      {
-        name: "Neighbor - Ana López",
-        phone: "+34 645 678 901",
-        hasKey: true
-      }
-    ],
-    medicalInfo: {
-      conditions: ["Hypertension", "Diabetes Type 2"],
-      medications: ["Metformin", "Lisinopril"],
-      allergies: ["Penicillin"],
-      bloodType: "A+"
-    }
-  },
-  {
-    id: "u2",
-    name: "John Smith",
-    email: "john@example.com",
-    phone: "+34 678 901 234",
-    status: "active",
-    plan: "family",
-    devices: ["SOS Pendant", "Health Monitor", "Fall Detector", "Door Sensor"],
-    lastActivity: "1 hour ago",
-    address: "Av. del Mediterráneo 15, Alicante, 03001",
-    emergencyContacts: [
-      {
-        name: "Emma Smith",
-        relation: "Wife",
-        phone: "+34 689 012 345"
-      }
-    ],
-    keyholders: [
-      {
-        name: "Emma Smith",
-        phone: "+34 689 012 345",
-        hasKey: true
-      }
-    ],
-    medicalInfo: {
-      conditions: ["Arrhythmia"],
-      medications: ["Warfarin"],
-      allergies: ["Sulfa drugs"],
-      bloodType: "O-"
-    }
-  },
-  {
-    id: "u3",
-    name: "Elizabeth Johnson",
-    email: "elizabeth@example.com",
-    phone: "+34 690 123 456",
-    status: "alert",
-    plan: "basic",
-    devices: ["SOS Pendant"],
-    lastActivity: "5 minutes ago",
-    address: "Paseo de Gracia 43, Barcelona, 08007",
-    emergencyContacts: [
-      {
-        name: "Michael Johnson",
-        relation: "Son",
-        phone: "+34 601 234 567"
-      }
-    ],
-    keyholders: [
-      {
-        name: "Local Care Service",
-        phone: "+34 612 345 678",
-        hasKey: true
-      }
-    ],
-    medicalInfo: {
-      conditions: ["COPD", "Osteoporosis"],
-      medications: ["Albuterol", "Calcium supplements"],
-      allergies: ["Latex"],
-      bloodType: "B+"
-    }
-  }
-];
-
-// Alerts mock data
-const mockAlerts = [
-  {
-    id: "a1",
-    userId: "u3",
-    userName: "Elizabeth Johnson",
-    type: "sos",
-    timestamp: "2 minutes ago",
-    status: "active",
-    message: "SOS button pressed. Emergency contact notified."
-  },
-  {
-    id: "a2",
-    userId: "u1",
-    userName: "María García",
-    type: "fall",
-    timestamp: "Yesterday at 8:45 PM",
-    status: "resolved",
-    message: "Potential fall detected. False alarm confirmed by user."
-  },
-  {
-    id: "a3",
-    userId: "u2",
-    userName: "John Smith",
-    type: "health",
-    timestamp: "2 days ago",
-    status: "resolved",
-    message: "Irregular heartbeat detected. Medical team notified."
-  }
-];
-
 const AdminDashboard: React.FC = () => {
-  const { toast } = useToast();
-  const { language } = useLanguage();
-  const [users, setUsers] = useState<UserData[]>(mockUsers);
-  const [alerts, setAlerts] = useState(mockAlerts);
-  const [selectedUser, setSelectedUser] = useState<UserData | null>(null);
-  const [alertDialogOpen, setAlertDialogOpen] = useState(false);
-  
+  const [users, setUsers] = useState<User[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const { logout } = useAuth();
+  const navigate = useNavigate();
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [newUserName, setNewUserName] = useState('');
+  const [newUserEmail, setNewUserEmail] = useState('');
+  const [newUserRole, setNewUserRole] = useState('user');
+  const [isEditing, setIsEditing] = useState(false);
+  const [editingUserId, setEditingUserId] = useState<string | null>(null);
+  const [editedUserName, setEditedUserName] = useState('');
+  const [editedUserEmail, setEditedUserEmail] = useState('');
+  const [editedUserRole, setEditedUserRole] = useState('user');
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [deletingUserId, setDeletingUserId] = useState<string | null>(null);
+  const { t } = useLanguage();
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filteredUsers, setFilteredUsers] = useState<User[]>([]);
+  const [sortColumn, setSortColumn] = useState<keyof User>('name');
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
+  const [selectedStatus, setSelectedStatus] = useState<string>('all');
+  const [isBulkEditDrawerOpen, setIsBulkEditDrawerOpen] = useState(false);
+  const [selectedUserIds, setSelectedUserIds] = useState<string[]>([]);
+  const [bulkEditRole, setBulkEditRole] = useState('user');
+  const [bulkEditStatus, setBulkEditStatus] = useState('active');
+  const [isBulkUpdateConfirmationOpen, setIsBulkUpdateConfirmationOpen] = useState(false);
+  const [isBulkDeleteConfirmationOpen, setIsBulkDeleteConfirmationOpen] = useState(false);
+  const [isAllSelected, setIsAllSelected] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const usersPerPage = 5;
+
   useEffect(() => {
-    window.scrollTo(0, 0);
-    
-    // Show toast notification for active alerts
-    const activeAlerts = alerts.filter(alert => alert.status === "active");
-    if (activeAlerts.length > 0) {
-      toast({
-        title: language === 'en' ? "Active Alerts" : "Alertas Activas",
-        description: language === 'en' 
-          ? `There are ${activeAlerts.length} active alerts requiring attention.` 
-          : `Hay ${activeAlerts.length} alertas activas que requieren atención.`,
-        variant: "destructive"
-      });
-    }
+    const fetchUsers = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const response = await fetch('https://jsonplaceholder.typicode.com/users');
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        // Transform the data to match the User interface
+        const transformedUsers: User[] = data.map((user: any) => ({
+          id: user.id.toString(),
+          name: user.name,
+          email: user.email,
+          role: ['admin', 'editor', 'user'][Math.floor(Math.random() * 3)] || 'user', // Randomly assign a role
+          status: ['active', 'inactive'][Math.floor(Math.random() * 2)] || 'inactive', // Randomly assign a status
+        }));
+        setUsers(transformedUsers);
+      } catch (e: any) {
+        setError(e.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUsers();
   }, []);
-  
-  const handleUserSelect = (user: UserData) => {
-    setSelectedUser(user);
-  };
-  
-  const handleAlertAction = (alertId: string, action: "respond" | "resolve") => {
-    if (action === "respond") {
-      // In a real app, this would initiate a response protocol
-      toast({
-        title: language === 'en' ? "Response Initiated" : "Respuesta Iniciada",
-        description: language === 'en' 
-          ? "Emergency response team has been dispatched." 
-          : "Se ha enviado al equipo de respuesta de emergencia."
-      });
-    } else {
-      // Mark alert as resolved
-      setAlerts(alerts.map(alert => 
-        alert.id === alertId ? {...alert, status: "resolved"} : alert
-      ));
-      
-      toast({
-        title: language === 'en' ? "Alert Resolved" : "Alerta Resuelta",
-        description: language === 'en' 
-          ? "The alert has been marked as resolved." 
-          : "La alerta ha sido marcada como resuelta."
+
+  useEffect(() => {
+    let results = [...users];
+
+    // Filter by search query
+    if (searchQuery) {
+      results = results.filter(user =>
+        user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        user.email.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    }
+
+    // Filter by status
+    if (selectedStatus !== 'all') {
+      results = results.filter(user => user.status === selectedStatus);
+    }
+
+    // Sort the results
+    results.sort((a, b) => {
+      const isAsc = sortDirection === 'asc' ? 1 : -1;
+      if (a[sortColumn] < b[sortColumn]) {
+        return -1 * isAsc;
+      }
+      if (a[sortColumn] > b[sortColumn]) {
+        return 1 * isAsc;
+      }
+      return 0;
+    });
+
+    setFilteredUsers(results);
+    setCurrentPage(1); // Reset to the first page when filters change
+  }, [users, searchQuery, selectedStatus, sortColumn, sortDirection]);
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      navigate('/login');
+    } catch (error) {
+      console.error("Logout failed:", error);
+      toast.error("Failed to logout", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
       });
     }
   };
-  
+
+  const openCreateUserDialog = () => {
+    setIsDialogOpen(true);
+  };
+
+  const closeCreateUserDialog = () => {
+    setIsDialogOpen(false);
+    setNewUserName('');
+    setNewUserEmail('');
+    setNewUserRole('user');
+  };
+
+  const handleCreateUser = () => {
+    if (!newUserName || !newUserEmail) {
+      alert('Please fill in all fields.');
+      return;
+    }
+
+    const newUser: User = {
+      id: String(Date.now()),
+      name: newUserName,
+      email: newUserEmail,
+      role: newUserRole,
+      status: 'active',
+    };
+
+    setUsers([...users, newUser]);
+    closeCreateUserDialog();
+    toast.success('User created successfully!', {
+      position: "top-right",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "light",
+    });
+  };
+
+  const handleEditUser = (user: User) => {
+    setIsEditing(true);
+    setEditingUserId(user.id);
+    setEditedUserName(user.name);
+    setEditedUserEmail(user.email);
+    setEditedUserRole(user.role);
+  };
+
+  const handleUpdateUser = () => {
+    if (!editedUserName || !editedUserEmail) {
+      alert('Please fill in all fields.');
+      return;
+    }
+
+    const updatedUsers = users.map(user => {
+      if (user.id === editingUserId) {
+        return {
+          ...user,
+          name: editedUserName,
+          email: editedUserEmail,
+          role: editedUserRole,
+        };
+      }
+      return user;
+    });
+
+    setUsers(updatedUsers);
+    setIsEditing(false);
+    setEditingUserId(null);
+    toast.success('User updated successfully!', {
+      position: "top-right",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "light",
+    });
+  };
+
+  const handleCancelEdit = () => {
+    setIsEditing(false);
+    setEditingUserId(null);
+  };
+
+  const openDeleteUserDialog = (userId: string) => {
+    setIsDeleteDialogOpen(true);
+    setDeletingUserId(userId);
+  };
+
+  const closeDeleteUserDialog = () => {
+    setIsDeleteDialogOpen(false);
+    setDeletingUserId(null);
+  };
+
+  const handleDeleteUser = () => {
+    const updatedUsers = users.filter(user => user.id !== deletingUserId);
+    setUsers(updatedUsers);
+    closeDeleteUserDialog();
+    toast.success('User deleted successfully!', {
+      position: "top-right",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "light",
+    });
+  };
+
+  const handleSort = (column: keyof User) => {
+    if (column === sortColumn) {
+      // If the column is already being sorted, reverse the direction
+      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+    } else {
+      // If the column is different, start sorting in ascending order
+      setSortColumn(column);
+      setSortDirection('asc');
+    }
+  };
+
+  const handleCheckboxChange = (userId: string) => {
+    setSelectedUserIds(prev => {
+      if (prev.includes(userId)) {
+        return prev.filter(id => id !== userId);
+      } else {
+        return [...prev, userId];
+      }
+    });
+  };
+
+  const handleSelectAll = () => {
+    if (isAllSelected) {
+      setSelectedUserIds([]);
+    } else {
+      const visibleUserIds = getCurrentPageUsers().map(user => user.id);
+      setSelectedUserIds(visibleUserIds);
+    }
+    setIsAllSelected(!isAllSelected);
+  };
+
+  useEffect(() => {
+    const visibleUserIds = getCurrentPageUsers().map(user => user.id);
+    const allSelected = visibleUserIds.every(id => selectedUserIds.includes(id));
+    setIsAllSelected(allSelected);
+  }, [selectedUserIds, currentPage, filteredUsers]);
+
+  const openBulkEditDrawer = () => {
+    setIsBulkEditDrawerOpen(true);
+  };
+
+  const closeBulkEditDrawer = () => {
+    setIsBulkEditDrawerOpen(false);
+  };
+
+  const handleBulkUpdate = () => {
+    setIsBulkUpdateConfirmationOpen(true);
+  };
+
+  const confirmBulkUpdate = () => {
+    const updatedUsers = users.map(user => {
+      if (selectedUserIds.includes(user.id)) {
+        return {
+          ...user,
+          role: bulkEditRole,
+          status: bulkEditStatus,
+        };
+      }
+      return user;
+    });
+
+    setUsers(updatedUsers);
+    setIsBulkUpdateConfirmationOpen(false);
+    closeBulkEditDrawer();
+    setSelectedUserIds([]);
+    toast.success('Users updated successfully!', {
+      position: "top-right",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "light",
+    });
+  };
+
+  const cancelBulkUpdate = () => {
+    setIsBulkUpdateConfirmationOpen(false);
+  };
+
+  const handleBulkDelete = () => {
+    setIsBulkDeleteConfirmationOpen(true);
+  };
+
+  const confirmBulkDelete = () => {
+    const updatedUsers = users.filter(user => !selectedUserIds.includes(user.id));
+    setUsers(updatedUsers);
+    setIsBulkDeleteConfirmationOpen(false);
+    closeBulkEditDrawer();
+    setSelectedUserIds([]);
+    toast.success('Users deleted successfully!', {
+      position: "top-right",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "light",
+    });
+  };
+
+  const cancelBulkDelete = () => {
+    setIsBulkDeleteConfirmationOpen(false);
+  };
+
+  const getCurrentPageUsers = () => {
+    const startIndex = (currentPage - 1) * usersPerPage;
+    const endIndex = startIndex + usersPerPage;
+    return filteredUsers.slice(startIndex, endIndex);
+  };
+
+  const totalPages = Math.ceil(filteredUsers.length / usersPerPage);
+
+  const handlePageChange = (newPage: number) => {
+    setCurrentPage(newPage);
+  };
+
   return (
-    <div className="flex flex-col min-h-screen">
-      <Navbar />
-      <main className="flex-grow pt-24">
-        <div className="container mx-auto px-4">
-          <div className="flex flex-col gap-6">
-            <div className="flex justify-between items-center">
-              <h1 className="text-3xl font-bold">
-                {language === 'en' ? "Admin Dashboard" : "Panel de Administración"}
-              </h1>
-              <div className="flex items-center gap-4">
-                <div className="relative">
-                  <Bell className="w-6 h-6 text-muted-foreground" />
-                  {alerts.filter(a => a.status === "active").length > 0 && (
-                    <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                      {alerts.filter(a => a.status === "active").length}
-                    </span>
-                  )}
-                </div>
-                <Settings className="w-6 h-6 text-muted-foreground" />
-              </div>
-            </div>
-            
-            <Tabs defaultValue="users" className="w-full">
-              <TabsList className="grid grid-cols-3 mb-8">
-                <TabsTrigger value="users" className="flex items-center gap-2">
-                  <Users className="w-4 h-4" />
-                  <span>{language === 'en' ? "Members" : "Miembros"}</span>
-                </TabsTrigger>
-                <TabsTrigger value="alerts" className="flex items-center gap-2">
-                  <ShieldAlert className="w-4 h-4" />
-                  <span>{language === 'en' ? "Alerts" : "Alertas"}</span>
-                  {alerts.filter(a => a.status === "active").length > 0 && (
-                    <span className="bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                      {alerts.filter(a => a.status === "active").length}
-                    </span>
-                  )}
-                </TabsTrigger>
-                <TabsTrigger value="devices" className="flex items-center gap-2">
-                  <Package className="w-4 h-4" />
-                  <span>{language === 'en' ? "Devices" : "Dispositivos"}</span>
-                </TabsTrigger>
-              </TabsList>
-              
-              <TabsContent value="users" className="space-y-6">
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                  {/* Users list panel */}
-                  <div className="col-span-1 glass-panel p-6 rounded-lg overflow-hidden">
-                    <h2 className="text-xl font-semibold mb-4">
-                      {language === 'en' ? "Members" : "Miembros"}
-                    </h2>
-                    <ScrollArea className="h-[calc(100vh-300px)]">
-                      <div className="space-y-2">
-                        {users.map(user => (
-                          <div 
-                            key={user.id}
-                            className={`p-3 rounded-lg cursor-pointer transition-colors ${
-                              selectedUser?.id === user.id 
-                                ? 'bg-ice-100 border-l-4 border-ice-500' 
-                                : 'hover:bg-gray-100'
-                            }`}
-                            onClick={() => handleUserSelect(user)}
-                          >
-                            <div className="flex justify-between items-start mb-1">
-                              <h3 className="font-medium">{user.name}</h3>
-                              <div className={`w-3 h-3 rounded-full ${
-                                user.status === 'active' ? 'bg-green-500' : 
-                                user.status === 'alert' ? 'bg-red-500' : 'bg-gray-400'
-                              }`}></div>
-                            </div>
-                            <div className="text-sm text-muted-foreground mb-1">
-                              {user.email}
-                            </div>
-                            <div className="text-sm text-muted-foreground">
-                              {user.plan === 'basic' ? (
-                                language === 'en' ? 'Basic Plan' : 'Plan Básico'
-                              ) : user.plan === 'premium' ? (
-                                language === 'en' ? 'Premium Plan' : 'Plan Premium'
-                              ) : (
-                                language === 'en' ? 'Family Plan' : 'Plan Familiar'
-                              )}
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </ScrollArea>
-                  </div>
-                  
-                  {/* User details panel */}
-                  <div className="col-span-1 lg:col-span-2 glass-panel p-6 rounded-lg">
-                    {selectedUser ? (
-                      <div>
-                        <div className="flex justify-between items-start mb-6">
-                          <div>
-                            <h2 className="text-2xl font-semibold">{selectedUser.name}</h2>
-                            <p className="text-muted-foreground">
-                              {selectedUser.plan === 'basic' ? (
-                                language === 'en' ? 'Basic Plan' : 'Plan Básico'
-                              ) : selectedUser.plan === 'premium' ? (
-                                language === 'en' ? 'Premium Plan' : 'Plan Premium'
-                              ) : (
-                                language === 'en' ? 'Family Plan' : 'Plan Familiar'
-                              )}
-                            </p>
-                          </div>
-                          <div className="flex gap-2">
-                            <ButtonCustom variant="outline" size="sm">
-                              {language === 'en' ? "Edit" : "Editar"}
-                            </ButtonCustom>
-                            <ButtonCustom size="sm">
-                              {language === 'en' ? "Contact" : "Contactar"}
-                            </ButtonCustom>
-                          </div>
-                        </div>
-                        
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                          <div className="space-y-4">
-                            <div className="p-4 bg-gray-50 rounded-lg">
-                              <h3 className="text-sm font-medium text-muted-foreground mb-3">
-                                {language === 'en' ? "Contact Information" : "Información de Contacto"}
-                              </h3>
-                              <div className="space-y-2">
-                                <div className="flex gap-2 items-center">
-                                  <Mail className="w-4 h-4 text-muted-foreground" />
-                                  <span>{selectedUser.email}</span>
-                                </div>
-                                <div className="flex gap-2 items-center">
-                                  <Phone className="w-4 h-4 text-muted-foreground" />
-                                  <span>{selectedUser.phone}</span>
-                                </div>
-                                <div className="flex gap-2 items-center">
-                                  <Home className="w-4 h-4 text-muted-foreground" />
-                                  <span>{selectedUser.address}</span>
-                                </div>
-                              </div>
-                            </div>
-                            
-                            <div className="p-4 bg-gray-50 rounded-lg">
-                              <h3 className="text-sm font-medium text-muted-foreground mb-3">
-                                {language === 'en' ? "Devices" : "Dispositivos"}
-                              </h3>
-                              <div className="space-y-2">
-                                {selectedUser.devices.map((device, idx) => (
-                                  <div key={idx} className="flex justify-between items-center">
-                                    <span>{device}</span>
-                                    <span className="text-xs px-2 py-1 bg-green-100 text-green-700 rounded-full">
-                                      {language === 'en' ? "Active" : "Activo"}
-                                    </span>
-                                  </div>
-                                ))}
-                              </div>
-                            </div>
-                            
-                            <div className="p-4 bg-gray-50 rounded-lg">
-                              <h3 className="text-sm font-medium text-muted-foreground mb-3">
-                                {language === 'en' ? "Medical Information" : "Información Médica"}
-                              </h3>
-                              <div className="space-y-3">
-                                <div>
-                                  <p className="text-xs text-muted-foreground">
-                                    {language === 'en' ? "Conditions" : "Condiciones"}
-                                  </p>
-                                  <p>{selectedUser.medicalInfo.conditions.join(", ")}</p>
-                                </div>
-                                <div>
-                                  <p className="text-xs text-muted-foreground">
-                                    {language === 'en' ? "Medications" : "Medicamentos"}
-                                  </p>
-                                  <p>{selectedUser.medicalInfo.medications.join(", ")}</p>
-                                </div>
-                                <div>
-                                  <p className="text-xs text-muted-foreground">
-                                    {language === 'en' ? "Allergies" : "Alergias"}
-                                  </p>
-                                  <p>{selectedUser.medicalInfo.allergies.join(", ")}</p>
-                                </div>
-                                <div>
-                                  <p className="text-xs text-muted-foreground">
-                                    {language === 'en' ? "Blood Type" : "Grupo Sanguíneo"}
-                                  </p>
-                                  <p>{selectedUser.medicalInfo.bloodType}</p>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                          
-                          <div className="space-y-4">
-                            <div className="p-4 bg-gray-50 rounded-lg">
-                              <h3 className="text-sm font-medium text-muted-foreground mb-3">
-                                {language === 'en' ? "Emergency Contacts" : "Contactos de Emergencia"}
-                              </h3>
-                              <div className="space-y-4">
-                                {selectedUser.emergencyContacts.map((contact, idx) => (
-                                  <div key={idx} className="border-b border-gray-100 last:border-0 pb-2 last:pb-0">
-                                    <p className="font-medium">{contact.name}</p>
-                                    <p className="text-sm text-muted-foreground">{contact.relation}</p>
-                                    <p className="text-sm">{contact.phone}</p>
-                                  </div>
-                                ))}
-                              </div>
-                            </div>
-                            
-                            <div className="p-4 bg-gray-50 rounded-lg">
-                              <h3 className="text-sm font-medium text-muted-foreground mb-3">
-                                {language === 'en' ? "Key Holders" : "Portadores de Llaves"}
-                              </h3>
-                              <div className="space-y-4">
-                                {selectedUser.keyholders.map((keyholder, idx) => (
-                                  <div key={idx} className="border-b border-gray-100 last:border-0 pb-2 last:pb-0">
-                                    <div className="flex justify-between">
-                                      <p className="font-medium">{keyholder.name}</p>
-                                      <div className="flex items-center gap-1">
-                                        <Key className="w-3 h-3" />
-                                        <span className="text-xs">
-                                          {keyholder.hasKey ? 
-                                            (language === 'en' ? "Has key" : "Tiene llave") : 
-                                            (language === 'en' ? "No key" : "Sin llave")}
-                                        </span>
-                                      </div>
-                                    </div>
-                                    <p className="text-sm">{keyholder.phone}</p>
-                                  </div>
-                                ))}
-                              </div>
-                            </div>
-                            
-                            <div className="p-4 bg-gray-50 rounded-lg">
-                              <h3 className="text-sm font-medium text-muted-foreground mb-3">
-                                {language === 'en' ? "Activity Log" : "Registro de Actividad"}
-                              </h3>
-                              <div className="space-y-2 text-sm">
-                                <div className="flex justify-between">
-                                  <span>{language === 'en' ? "Last activity" : "Última actividad"}</span>
-                                  <span>{selectedUser.lastActivity}</span>
-                                </div>
-                                <div className="flex justify-between">
-                                  <span>{language === 'en' ? "SOS button test" : "Prueba botón SOS"}</span>
-                                  <span>{language === 'en' ? "3 days ago" : "Hace 3 días"}</span>
-                                </div>
-                                <div className="flex justify-between">
-                                  <span>{language === 'en' ? "Account login" : "Inicio de sesión"}</span>
-                                  <span>{language === 'en' ? "5 days ago" : "Hace 5 días"}</span>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="h-full flex flex-col items-center justify-center text-center p-6">
-                        <User className="w-12 h-12 text-muted-foreground/40 mb-4" />
-                        <h3 className="text-xl font-medium mb-2">
-                          {language === 'en' ? "No Member Selected" : "Ningún Miembro Seleccionado"}
-                        </h3>
-                        <p className="text-muted-foreground max-w-md mx-auto">
-                          {language === 'en' 
-                            ? "Select a member from the list to view their detailed information and manage their account." 
-                            : "Seleccione un miembro de la lista para ver su información detallada y gestionar su cuenta."}
-                        </p>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </TabsContent>
-              
-              <TabsContent value="alerts" className="space-y-6">
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                  {/* Active alerts panel */}
-                  <div className="col-span-1 lg:col-span-2 glass-panel p-6 rounded-lg">
-                    <h2 className="text-xl font-semibold mb-4">
-                      {language === 'en' ? "Active Alerts" : "Alertas Activas"}
-                    </h2>
-                    {alerts.filter(alert => alert.status === "active").length === 0 ? (
-                      <div className="p-8 text-center">
-                        <div className="mx-auto w-12 h-12 rounded-full bg-green-50 flex items-center justify-center mb-4">
-                          <Check className="w-6 h-6 text-green-500" />
-                        </div>
-                        <h3 className="text-lg font-medium mb-2">
-                          {language === 'en' ? "No Active Alerts" : "Sin Alertas Activas"}
-                        </h3>
-                        <p className="text-muted-foreground">
-                          {language === 'en' 
-                            ? "There are currently no active alerts requiring attention." 
-                            : "Actualmente no hay alertas activas que requieran atención."}
-                        </p>
-                      </div>
-                    ) : (
-                      <div className="space-y-4">
-                        {alerts.filter(alert => alert.status === "active").map(alert => (
-                          <div 
-                            key={alert.id} 
-                            className="p-4 border border-red-200 bg-red-50 rounded-lg"
-                          >
-                            <div className="flex justify-between items-start mb-2">
-                              <div className="flex items-center gap-2">
-                                <AlertTriangle className="w-5 h-5 text-red-500" />
-                                <h3 className="font-medium">
-                                  {alert.type === 'sos' 
-                                    ? (language === 'en' ? 'SOS Alert' : 'Alerta SOS')
-                                    : alert.type === 'fall'
-                                    ? (language === 'en' ? 'Fall Detected' : 'Caída Detectada')
-                                    : (language === 'en' ? 'Health Alert' : 'Alerta de Salud')}
-                                </h3>
-                              </div>
-                              <span className="text-xs text-muted-foreground">{alert.timestamp}</span>
-                            </div>
-                            <p className="mb-2">{alert.userName} - {alert.message}</p>
-                            <div className="flex gap-2 mt-3">
-                              <ButtonCustom 
-                                size="sm" 
-                                onClick={() => handleAlertAction(alert.id, "respond")}
-                              >
-                                {language === 'en' ? "Respond" : "Responder"}
-                              </ButtonCustom>
-                              <ButtonCustom 
-                                variant="outline" 
-                                size="sm"
-                                onClick={() => handleAlertAction(alert.id, "resolve")}
-                              >
-                                {language === 'en' ? "Mark as Resolved" : "Marcar como Resuelto"}
-                              </ButtonCustom>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                    
-                    <h2 className="text-xl font-semibold my-6">
-                      {language === 'en' ? "Recent Alert History" : "Historial de Alertas Recientes"}
-                    </h2>
-                    <div className="space-y-3">
-                      {alerts.filter(alert => alert.status === "resolved").map(alert => (
-                        <div 
-                          key={alert.id} 
-                          className="p-3 border border-gray-200 bg-gray-50 rounded-lg flex justify-between items-center"
-                        >
-                          <div>
-                            <div className="flex items-center gap-2">
-                              <h3 className="font-medium">{alert.userName}</h3>
-                              <span className="text-xs px-2 py-0.5 bg-gray-200 rounded-full">
-                                {alert.type === 'sos' 
-                                  ? (language === 'en' ? 'SOS' : 'SOS')
-                                  : alert.type === 'fall'
-                                  ? (language === 'en' ? 'Fall' : 'Caída')
-                                  : (language === 'en' ? 'Health' : 'Salud')}
-                              </span>
-                            </div>
-                            <p className="text-sm text-muted-foreground">{alert.message}</p>
-                          </div>
-                          <div className="text-xs text-right">
-                            <div className="text-muted-foreground">{alert.timestamp}</div>
-                            <div className="text-green-600">
-                              {language === 'en' ? "Resolved" : "Resuelto"}
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                  
-                  {/* Alert statistics panel */}
-                  <div className="col-span-1 glass-panel p-6 rounded-lg">
-                    <h2 className="text-xl font-semibold mb-4">
-                      {language === 'en' ? "Alert Statistics" : "Estadísticas de Alertas"}
-                    </h2>
-                    <div className="space-y-6">
-                      <div>
-                        <h3 className="text-sm font-medium text-muted-foreground mb-3">
-                          {language === 'en' ? "Alert Types (Last 30 Days)" : "Tipos de Alertas (Últimos 30 Días)"}
-                        </h3>
-                        <div className="relative pt-1">
-                          <div className="flex h-2 mb-4 overflow-hidden rounded bg-gray-200">
-                            <div style={{ width: "65%" }} className="bg-red-500"></div>
-                            <div style={{ width: "25%" }} className="bg-amber-500"></div>
-                            <div style={{ width: "10%" }} className="bg-blue-500"></div>
-                          </div>
-                          <div className="flex justify-between text-xs text-muted-foreground">
-                            <span>{language === 'en' ? "SOS (65%)" : "SOS (65%)"}</span>
-                            <span>{language === 'en' ? "Fall (25%)" : "Caída (25%)"}</span>
-                            <span>{language === 'en' ? "Health (10%)" : "Salud (10%)"}</span>
-                          </div>
-                        </div>
-                      </div>
-                      
-                      <div>
-                        <h3 className="text-sm font-medium text-muted-foreground mb-3">
-                          {language === 'en' ? "Response Time (Average)" : "Tiempo de Respuesta (Promedio)"}
-                        </h3>
-                        <div className="grid grid-cols-3 gap-2 text-center">
-                          <div className="p-3 bg-gray-50 rounded-lg">
-                            <div className="text-2xl font-bold text-ice-600">2.5</div>
-                            <div className="text-xs text-muted-foreground">
-                              {language === 'en' ? "minutes" : "minutos"}
-                            </div>
-                            <div className="text-xs">SOS</div>
-                          </div>
-                          <div className="p-3 bg-gray-50 rounded-lg">
-                            <div className="text-2xl font-bold text-ice-600">3.2</div>
-                            <div className="text-xs text-muted-foreground">
-                              {language === 'en' ? "minutes" : "minutos"}
-                            </div>
-                            <div className="text-xs">
-                              {language === 'en' ? "Fall" : "Caída"}
-                            </div>
-                          </div>
-                          <div className="p-3 bg-gray-50 rounded-lg">
-                            <div className="text-2xl font-bold text-ice-600">5.8</div>
-                            <div className="text-xs text-muted-foreground">
-                              {language === 'en' ? "minutes" : "minutos"}
-                            </div>
-                            <div className="text-xs">
-                              {language === 'en' ? "Health" : "Salud"}
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      
-                      <div>
-                        <h3 className="text-sm font-medium text-muted-foreground mb-3">
-                          {language === 'en' ? "Active Users with Alerts" : "Usuarios Activos con Alertas"}
-                        </h3>
-                        <div className="space-y-2">
-                          {users.filter(user => user.status === "alert").map(user => (
-                            <div 
-                              key={user.id}
-                              className="p-2 border-l-4 border-red-500 bg-red-50 rounded-r-lg flex justify-between items-center"
-                            >
-                              <div>
-                                <p className="font-medium">{user.name}</p>
-                                <p className="text-xs text-muted-foreground">{user.devices.join(", ")}</p>
-                              </div>
-                              <ButtonCustom size="sm" variant="outline" onClick={() => handleUserSelect(user)}>
-                                {language === 'en' ? "View" : "Ver"}
-                              </ButtonCustom>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </TabsContent>
-              
-              <TabsContent value="devices" className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  <div className="glass-panel p-6 rounded-lg">
-                    <div className="flex justify-between items-start mb-4">
-                      <h3 className="text-lg font-semibold">SOS Pendant</h3>
-                      <span className="text-xs px-2 py-1 bg-green-100 text-green-700 rounded-full">
-                        {language === 'en' ? "87 Active" : "87 Activos"}
-                      </span>
-                    </div>
-                    <p className="text-muted-foreground mb-4">
-                      {language === 'en' 
-                        ? "Emergency button with fall detection and GPS location tracking." 
-                        : "Botón de emergencia con detección de caídas y seguimiento de ubicación GPS."}
-                    </p>
-                    <div className="space-y-2 mb-4">
-                      <div className="flex justify-between text-sm">
-                        <span>{language === 'en' ? "Battery Health (Avg)" : "Salud de Batería (Prom)"}</span>
-                        <span>92%</span>
-                      </div>
-                      <div className="flex justify-between text-sm">
-                        <span>{language === 'en' ? "Signal Strength (Avg)" : "Fuerza de Señal (Prom)"}</span>
-                        <span>89%</span>
-                      </div>
-                      <div className="flex justify-between text-sm">
-                        <span>{language === 'en' ? "Alerts (30 days)" : "Alertas (30 días)"}</span>
-                        <span>43</span>
-                      </div>
-                    </div>
-                    <ButtonCustom className="w-full">
-                      {language === 'en' ? "Manage Devices" : "Gestionar Dispositivos"}
-                    </ButtonCustom>
-                  </div>
-                  
-                  <div className="glass-panel p-6 rounded-lg">
-                    <div className="flex justify-between items-start mb-4">
-                      <h3 className="text-lg font-semibold">Health Monitor</h3>
-                      <span className="text-xs px-2 py-1 bg-green-100 text-green-700 rounded-full">
-                        {language === 'en' ? "52 Active" : "52 Activos"}
-                      </span>
-                    </div>
-                    <p className="text-muted-foreground mb-4">
-                      {language === 'en' 
-                        ? "Continuous health tracking with real-time vital sign monitoring." 
-                        : "Seguimiento continuo de salud con monitoreo de signos vitales en tiempo real."}
-                    </p>
-                    <div className="space-y-2 mb-4">
-                      <div className="flex justify-between text-sm">
-                        <span>{language === 'en' ? "Battery Health (Avg)" : "Salud de Batería (Prom)"}</span>
-                        <span>87%</span>
-                      </div>
-                      <div className="flex justify-between text-sm">
-                        <span>{language === 'en' ? "Data Sync Rate" : "Tasa de Sincronización"}</span>
-                        <span>98%</span>
-                      </div>
-                      <div className="flex justify-between text-sm">
-                        <span>{language === 'en' ? "Alerts (30 days)" : "Alertas (30 días)"}</span>
-                        <span>21</span>
-                      </div>
-                    </div>
-                    <ButtonCustom className="w-full">
-                      {language === 'en' ? "Manage Devices" : "Gestionar Dispositivos"}
-                    </ButtonCustom>
-                  </div>
-                  
-                  <div className="glass-panel p-6 rounded-lg">
-                    <div className="flex justify-between items-start mb-4">
-                      <h3 className="text-lg font-semibold">
-                        {language === 'en' ? "Fall Detector" : "Detector de Caídas"}
-                      </h3>
-                      <span className="text-xs px-2 py-1 bg-green-100 text-green-700 rounded-full">
-                        {language === 'en' ? "63 Active" : "63 Activos"}
-                      </span>
-                    </div>
-                    <p className="text-muted-foreground mb-4">
-                      {language === 'en' 
-                        ? "Advanced AI-powered fall detection with automatic alert system." 
-                        : "Detección de caídas avanzada con IA y sistema de alerta automática."}
-                    </p>
-                    <div className="space-y-2 mb-4">
-                      <div className="flex justify-between text-sm">
-                        <span>{language === 'en' ? "Battery Health (Avg)" : "Salud de Batería (Prom)"}</span>
-                        <span>90%</span>
-                      </div>
-                      <div className="flex justify-between text-sm">
-                        <span>{language === 'en' ? "False Positive Rate" : "Tasa de Falsos Positivos"}</span>
-                        <span>3.2%</span>
-                      </div>
-                      <div className="flex justify-between text-sm">
-                        <span>{language === 'en' ? "Alerts (30 days)" : "Alertas (30 días)"}</span>
-                        <span>17</span>
-                      </div>
-                    </div>
-                    <ButtonCustom className="w-full">
-                      {language === 'en' ? "Manage Devices" : "Gestionar Dispositivos"}
-                    </ButtonCustom>
-                  </div>
-                </div>
-              </TabsContent>
-            </Tabs>
-          </div>
+    <div className="container mx-auto py-10">
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-3xl font-semibold">{t("adminDashboard.title")}</h1>
+        <Button onClick={handleLogout}>{t("adminDashboard.logout")}</Button>
+      </div>
+
+      <div className="flex justify-between items-center mb-4">
+        <Input
+          type="text"
+          placeholder={t("adminDashboard.searchPlaceholder")}
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="w-1/3"
+        />
+        <Select value={selectedStatus} onValueChange={setSelectedStatus}>
+          <SelectTrigger className="w-[180px]">
+            <SelectValue placeholder={t("adminDashboard.selectStatus")} />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">{t("adminDashboard.allStatuses")}</SelectItem>
+            <SelectItem value="active">{t("adminDashboard.active")}</SelectItem>
+            <SelectItem value="inactive">{t("adminDashboard.inactive")}</SelectItem>
+          </SelectContent>
+        </Select>
+        <Button onClick={openCreateUserDialog}>{t("adminDashboard.createUser")}</Button>
+      </div>
+
+      {loading ? (
+        <div className="flex flex-col gap-4">
+          {Array.from({ length: 5 }).map((_, i) => (
+            <Card key={i}>
+              <CardHeader>
+                <CardTitle><Skeleton className="h-5 w-40" /></CardTitle>
+                <CardDescription><Skeleton className="h-4 w-60" /></CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Skeleton className="h-4 w-full" />
+                <Skeleton className="h-4 w-full mt-2" />
+              </CardContent>
+            </Card>
+          ))}
         </div>
-      </main>
-      <Footer />
+      ) : error ? (
+        <div className="text-red-500">Error: {error}</div>
+      ) : (
+        <>
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="w-[50px]">
+                    <input
+                      type="checkbox"
+                      checked={isAllSelected}
+                      onChange={handleSelectAll}
+                    />
+                  </TableHead>
+                  <TableHead onClick={() => handleSort('name')} className="cursor-pointer">
+                    {t("adminDashboard.name")}
+                    {sortColumn === 'name' && (sortDirection === 'asc' ? ' ▲' : ' ▼')}
+                  </TableHead>
+                  <TableHead onClick={() => handleSort('email')} className="cursor-pointer">
+                    {t("adminDashboard.email")}
+                    {sortColumn === 'email' && (sortDirection === 'asc' ? ' ▲' : ' ▼')}
+                  </TableHead>
+                  <TableHead onClick={() => handleSort('role')} className="cursor-pointer">
+                    {t("adminDashboard.role")}
+                    {sortColumn === 'role' && (sortDirection === 'asc' ? ' ▲' : ' ▼')}
+                  </TableHead>
+                  <TableHead onClick={() => handleSort('status')} className="cursor-pointer">
+                    {t("adminDashboard.status")}
+                    {sortColumn === 'status' && (sortDirection === 'asc' ? ' ▲' : ' ▼')}
+                  </TableHead>
+                  <TableHead className="text-right">{t("adminDashboard.actions")}</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {getCurrentPageUsers().map((user) => (
+                  <TableRow key={user.id}>
+                    <TableCell className="font-medium">
+                      <input
+                        type="checkbox"
+                        checked={selectedUserIds.includes(user.id)}
+                        onChange={() => handleCheckboxChange(user.id)}
+                      />
+                    </TableCell>
+                    <TableCell className="font-medium">{user.name}</TableCell>
+                    <TableCell>{user.email}</TableCell>
+                    <TableCell>{user.role}</TableCell>
+                    <TableCell>{user.status}</TableCell>
+                    <TableCell className="text-right">
+                      <Button
+                        variant="secondary"
+                        size="sm"
+                        onClick={() => handleEditUser(user)}
+                      >
+                        {t("adminDashboard.edit")}
+                      </Button>
+                      <Button
+                        variant="destructive"
+                        size="sm"
+                        onClick={() => openDeleteUserDialog(user.id)}
+                        className="ml-2"
+                      >
+                        {t("adminDashboard.delete")}
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+
+          <div className="flex justify-between items-center mt-4">
+            <Button
+              onClick={openBulkEditDrawer}
+              disabled={selectedUserIds.length === 0}
+            >
+              {t("adminDashboard.bulkEdit")}
+            </Button>
+            <div className="flex items-center space-x-2">
+              <Button
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={currentPage === 1}
+                size="sm"
+              >
+                {t("adminDashboard.previous")}
+              </Button>
+              <span>{t("adminDashboard.page")} {currentPage} {t("adminDashboard.of")} {totalPages}</span>
+              <Button
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={currentPage === totalPages}
+                size="sm"
+              >
+                {t("adminDashboard.next")}
+              </Button>
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* Create User Dialog */}
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>{t("adminDashboard.createUser")}</DialogTitle>
+            <DialogDescription>
+              {t("adminDashboard.createUserDescription")}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="name" className="text-right">
+                {t("adminDashboard.name")}
+              </Label>
+              <Input
+                id="name"
+                value={newUserName}
+                onChange={(e) => setNewUserName(e.target.value)}
+                className="col-span-3"
+              />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="email" className="text-right">
+                {t("adminDashboard.email")}
+              </Label>
+              <Input
+                type="email"
+                id="email"
+                value={newUserEmail}
+                onChange={(e) => setNewUserEmail(e.target.value)}
+                className="col-span-3"
+              />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="role" className="text-right">
+                {t("adminDashboard.role")}
+              </Label>
+              <Select value={newUserRole} onValueChange={setNewUserRole}>
+                <SelectTrigger className="col-span-3">
+                  <SelectValue placeholder={t("adminDashboard.selectRole")} />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="admin">{t("adminDashboard.admin")}</SelectItem>
+                  <SelectItem value="editor">{t("adminDashboard.editor")}</SelectItem>
+                  <SelectItem value="user">{t("adminDashboard.user")}</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button type="button" variant="secondary" onClick={closeCreateUserDialog}>
+              {t("adminDashboard.cancel")}
+            </Button>
+            <Button type="submit" onClick={handleCreateUser}>
+              {t("adminDashboard.createUser")}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Edit User Dialog */}
+      <Dialog open={isEditing} onOpenChange={setIsEditing}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>{t("adminDashboard.editUser")}</DialogTitle>
+            <DialogDescription>
+              {t("adminDashboard.editUserDescription")}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="name" className="text-right">
+                {t("adminDashboard.name")}
+              </Label>
+              <Input
+                id="edit-name"
+                value={editedUserName}
+                onChange={(e) => setEditedUserName(e.target.value)}
+                className="col-span-3"
+              />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="email" className="text-right">
+                {t("adminDashboard.email")}
+              </Label>
+              <Input
+                type="email"
+                id="edit-email"
+                value={editedUserEmail}
+                onChange={(e) => setEditedUserEmail(e.target.value)}
+                className="col-span-3"
+              />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="role" className="text-right">
+                {t("adminDashboard.role")}
+              </Label>
+              <Select value={editedUserRole} onValueChange={setEditedUserRole}>
+                <SelectTrigger className="col-span-3">
+                  <SelectValue placeholder={t("adminDashboard.selectRole")} />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="admin">{t("adminDashboard.admin")}</SelectItem>
+                  <SelectItem value="editor">{t("adminDashboard.editor")}</SelectItem>
+                  <SelectItem value="user">{t("adminDashboard.user")}</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button type="button" variant="secondary" onClick={handleCancelEdit}>
+              {t("adminDashboard.cancel")}
+            </Button>
+            <Button type="submit" onClick={handleUpdateUser}>
+              {t("adminDashboard.updateUser")}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete User Dialog */}
+      <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{t("adminDashboard.deleteConfirmation")}</AlertDialogTitle>
+            <AlertDialogDescription>
+              {t("adminDashboard.deleteConfirmationDescription")}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={closeDeleteUserDialog}>{t("adminDashboard.cancel")}</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDeleteUser}>{t("adminDashboard.delete")}</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Bulk Edit Drawer */}
+      <Drawer open={isBulkEditDrawerOpen} onOpenChange={setIsBulkEditDrawerOpen}>
+        <DrawerContent>
+          <DrawerHeader>
+            <DrawerTitle>{t("adminDashboard.bulkEdit")}</DrawerTitle>
+            <DrawerDescription>{t("adminDashboard.bulkEditDescription")}</DrawerDescription>
+          </DrawerHeader>
+          <div className="grid gap-4 py-4 px-6">
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="role" className="text-right">
+                {t("adminDashboard.role")}
+              </Label>
+              <Select value={bulkEditRole} onValueChange={setBulkEditRole}>
+                <SelectTrigger className="col-span-3">
+                  <SelectValue placeholder={t("adminDashboard.selectRole")} />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="admin">{t("adminDashboard.admin")}</SelectItem>
+                  <SelectItem value="editor">{t("adminDashboard.editor")}</SelectItem>
+                  <SelectItem value="user">{t("adminDashboard.user")}</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="status" className="text-right">
+                {t("adminDashboard.status")}
+              </Label>
+              <Select value={bulkEditStatus} onValueChange={setBulkEditStatus}>
+                <SelectTrigger className="col-span-3">
+                  <SelectValue placeholder={t("adminDashboard.selectStatus")} />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="active">{t("adminDashboard.active")}</SelectItem>
+                  <SelectItem value="inactive">{t("adminDashboard.inactive")}</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          <DrawerFooter>
+            <Button variant="outline" onClick={closeBulkEditDrawer}>
+              {t("adminDashboard.cancel")}
+            </Button>
+            <Button onClick={handleBulkUpdate}>{t("adminDashboard.update")}</Button>
+            <Button variant="destructive" onClick={handleBulkDelete}>{t("adminDashboard.delete")}</Button>
+          </DrawerFooter>
+        </DrawerContent>
+      </Drawer>
+
+      {/* Bulk Update Confirmation Dialog */}
+      <AlertDialog open={isBulkUpdateConfirmationOpen} onOpenChange={setIsBulkUpdateConfirmationOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{t("adminDashboard.bulkUpdateConfirmation")}</AlertDialogTitle>
+            <AlertDialogDescription>
+              {t("adminDashboard.bulkUpdateConfirmationDescription")}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={cancelBulkUpdate}>{t("adminDashboard.cancel")}</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmBulkUpdate}>{t("adminDashboard.update")}</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Bulk Delete Confirmation Dialog */}
+      <AlertDialog open={isBulkDeleteConfirmationOpen} onOpenChange={setIsBulkDeleteConfirmationOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{t("adminDashboard.bulkDeleteConfirmation")}</AlertDialogTitle>
+            <AlertDialogDescription>
+              {t("adminDashboard.bulkDeleteConfirmationDescription")}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={cancelBulkDelete}>{t("adminDashboard.cancel")}</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmBulkDelete}>{t("adminDashboard.delete")}</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
