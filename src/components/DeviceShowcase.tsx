@@ -147,7 +147,7 @@ const DeviceShowcase: React.FC = () => {
                   </ul>
                 </div>
                 
-                <Link to={`/products#${device.id}`}>
+                <Link to={`/devices#${device.id}`}>
                   <ButtonCustom 
                     variant="outline" 
                     className="mt-auto w-full group"
@@ -169,7 +169,7 @@ const DeviceShowcase: React.FC = () => {
           </p>
           
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-8">
-            <Link to="/products">
+            <Link to="/devices">
               <ButtonCustom variant="outline" size="lg">
                 {language === 'en' ? "Explore All Devices" : "Explorar Todos los Dispositivos"}
               </ButtonCustom>
