@@ -1,6 +1,6 @@
 
 import React from "react";
-import TicketingSystem from "../TicketingSystem";
+import TicketingSystem from "../ticketing/TicketingSystem";
 import ClientDetails from "../ClientDetails";
 import CallStats from "../stats/CallStats";
 import PlaceholderSection from "../../admin/PlaceholderSection";
