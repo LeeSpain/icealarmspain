@@ -80,7 +80,7 @@ const CallCenterDashboard: React.FC = () => {
   };
 
   return (
-    <div className="flex h-screen overflow-hidden bg-slate-50">
+    <div className="flex h-screen overflow-hidden bg-slate-50 dark:bg-slate-900">
       <ToastContainer />
       
       {/* Sidebar */}

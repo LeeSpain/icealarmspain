@@ -36,9 +36,11 @@ const Header: React.FC<HeaderProps> = ({
   const getSectionTitle = () => {
     switch (activeSection) {
       case "tickets": return "Support Tickets";
+      case "all-clients": return "All Clients";
       case "clients": return "Client Information";
       case "clients-alerts": return "Client Alerts";
       case "clients-history": return "Interaction History";
+      case "clients-devices": return "Client Devices";
       case "stats": return "Call Center Statistics";
       case "stats-performance": return "Agent Performance";
       case "schedule": return "Agent Schedule";
@@ -50,18 +52,18 @@ const Header: React.FC<HeaderProps> = ({
   };
 
   return (
-    <header className="sticky top-0 z-10 bg-gradient-to-r from-ice-500 to-ice-600 text-white border-b px-6 py-4 flex justify-between items-center shadow-md">
+    <header className="sticky top-0 z-10 bg-background border-b px-6 py-4 flex justify-between items-center shadow-md">
       <h1 className="text-2xl font-bold">
         {getSectionTitle()}
       </h1>
       
       <div className="flex items-center gap-4">
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <input 
             type="text" 
             placeholder="Search..." 
-            className="h-10 pl-10 pr-4 rounded-md border border-slate-300 bg-white text-slate-800" 
+            className="h-10 pl-10 pr-4 rounded-md border border-input bg-background text-foreground" 
           />
         </div>
         
@@ -78,9 +80,9 @@ const Header: React.FC<HeaderProps> = ({
             formatNotificationTime={formatNotificationTime}
           />
           
-          <div className="flex items-center gap-2 ml-4 bg-ice-700 px-3 py-1.5 rounded-md">
-            <User className="h-4 w-4 text-ice-200" />
-            <span className="text-sm font-medium text-white">{user?.name || 'Call Center Agent'}</span>
+          <div className="flex items-center gap-2 ml-4 bg-primary/10 px-3 py-1.5 rounded-md">
+            <User className="h-4 w-4 text-primary" />
+            <span className="text-sm font-medium">{user?.name || 'Call Center Agent'}</span>
           </div>
         </div>
       </div>

@@ -4,7 +4,7 @@ import TicketingSystem from "../ticketing/TicketingSystem";
 import ClientDetails from "../ClientDetails";
 import CallStats from "../stats/CallStats";
 import PlaceholderSection from "../../admin/PlaceholderSection";
-import { Bell, User, Calendar, ClipboardList, Users, BarChart3, Clock } from "lucide-react";
+import { Bell, User, Calendar, ClipboardList, Users, BarChart3, Clock, Smartphone, AlertTriangle } from "lucide-react";
 
 interface DashboardContentProps {
   activeSection: string;
@@ -29,6 +29,14 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
                    if (clientId) setActiveSection("clients");
                  }} 
                />;
+      case "all-clients":
+        return (
+          <PlaceholderSection 
+            title="All Clients" 
+            description="View and manage all client accounts" 
+            icon={<Users className="h-5 w-5 text-primary" />} 
+          />
+        );
       case "clients":
         return <ClientDetails selectedClientId={selectedClient} />;
       case "clients-alerts":
@@ -36,7 +44,15 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
           <PlaceholderSection 
             title="Client Alerts" 
             description="Monitor critical alerts and warnings for all clients" 
-            icon={<Bell className="h-5 w-5 text-ice-500" />} 
+            icon={<AlertTriangle className="h-5 w-5 text-primary" />} 
+          />
+        );
+      case "clients-devices":
+        return (
+          <PlaceholderSection 
+            title="Client Devices" 
+            description="Manage and monitor client devices and their status" 
+            icon={<Smartphone className="h-5 w-5 text-primary" />} 
           />
         );
       case "clients-history":
@@ -44,7 +60,7 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
           <PlaceholderSection 
             title="Interaction History" 
             description="View complete history of client interactions" 
-            icon={<Clock className="h-5 w-5 text-ice-500" />} 
+            icon={<Clock className="h-5 w-5 text-primary" />} 
           />
         );
       case "stats":
@@ -54,7 +70,7 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
           <PlaceholderSection 
             title="Agent Performance" 
             description="Track individual and team performance metrics" 
-            icon={<BarChart3 className="h-5 w-5 text-ice-500" />} 
+            icon={<BarChart3 className="h-5 w-5 text-primary" />} 
           />
         );
       case "schedule":
@@ -62,7 +78,7 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
           <PlaceholderSection 
             title="Agent Schedule" 
             description="View and manage your call center schedule" 
-            icon={<Calendar className="h-5 w-5 text-ice-500" />} 
+            icon={<Calendar className="h-5 w-5 text-primary" />} 
           />
         );
       case "knowledge":
@@ -70,7 +86,7 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
           <PlaceholderSection 
             title="Knowledge Base" 
             description="Access product information and troubleshooting guides" 
-            icon={<ClipboardList className="h-5 w-5 text-ice-500" />} 
+            icon={<ClipboardList className="h-5 w-5 text-primary" />} 
           />
         );
       case "notifications":
@@ -78,7 +94,7 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
           <PlaceholderSection 
             title="Notifications" 
             description="View all system notifications and alerts" 
-            icon={<Bell className="h-5 w-5 text-ice-500" />} 
+            icon={<Bell className="h-5 w-5 text-primary" />} 
           />
         );
       case "profile":
@@ -86,7 +102,7 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
           <PlaceholderSection 
             title="Agent Profile" 
             description="View and edit your profile information" 
-            icon={<User className="h-5 w-5 text-ice-500" />} 
+            icon={<User className="h-5 w-5 text-primary" />} 
           />
         );
       default:
@@ -100,7 +116,7 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
   };
   
   return (
-    <main className="flex-1 overflow-y-auto p-6 bg-slate-50">
+    <main className="flex-1 overflow-y-auto p-6 bg-background">
       {renderActiveSection()}
     </main>
   );

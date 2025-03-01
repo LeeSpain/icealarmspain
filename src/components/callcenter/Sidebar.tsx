@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useState } from "react";
 import {
   Users,
   TicketIcon,
@@ -10,9 +10,12 @@ import {
   ChevronLeft,
   LogOut,
   LifeBuoy,
-  Phone,
   Calendar,
-  ClipboardList
+  ClipboardList,
+  Clock,
+  Shield,
+  AlertTriangle,
+  Smartphone
 } from "lucide-react";
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from "@/context/AuthContext";
@@ -32,6 +35,7 @@ interface SidebarItemProps {
   isActive?: boolean;
   onClick?: () => void;
   children?: React.ReactNode;
+  collapsed?: boolean;
 }
 
 const SidebarItem: React.FC<SidebarItemProps> = ({ 
@@ -39,23 +43,40 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
   label, 
   isActive = false, 
   onClick,
-  children 
+  children,
+  collapsed = false
 }) => {
+  const [isOpen, setIsOpen] = useState(false);
   const hasChildren = !!children;
+  
+  if (collapsed) {
+    return (
+      <div 
+        className={`flex justify-center p-2 rounded-md cursor-pointer mb-1 ${
+          isActive ? "bg-primary/10 text-primary" : "hover:bg-accent"
+        }`}
+        onClick={() => hasChildren ? setIsOpen(!isOpen) : onClick && onClick()}
+      >
+        <Icon className="h-5 w-5" />
+      </div>
+    );
+  }
   
   if (hasChildren) {
     return (
-      <Collapsible className="w-full">
+      <Collapsible className="w-full mb-1" open={isOpen} onOpenChange={setIsOpen}>
         <CollapsibleTrigger asChild>
-          <div className={`flex items-center justify-between px-3 py-2 rounded-md cursor-pointer hover:bg-accent`}>
+          <div className={`flex items-center justify-between px-3 py-2 rounded-md cursor-pointer hover:bg-accent ${
+            isActive ? "bg-primary/10 text-primary" : ""
+          }`}>
             <div className="flex items-center">
               <Icon className="mr-2 h-5 w-5" />
               <span className="text-sm font-medium">{label}</span>
             </div>
-            <ChevronRight className="h-4 w-4" />
+            {isOpen ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
           </div>
         </CollapsibleTrigger>
-        <CollapsibleContent className="pl-8 pr-2">
+        <CollapsibleContent className="pl-8 pr-2 mt-1">
           {children}
         </CollapsibleContent>
       </Collapsible>
@@ -64,7 +85,7 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
   
   return (
     <div 
-      className={`flex items-center px-3 py-2 rounded-md cursor-pointer ${
+      className={`flex items-center px-3 py-2 rounded-md cursor-pointer mb-1 ${
         isActive ? "bg-primary/10 text-primary" : "hover:bg-accent"
       }`}
       onClick={onClick}
@@ -100,106 +121,6 @@ const Sidebar: React.FC<SidebarProps> = ({
     }
   };
 
-  // Define nested sidebar items
-  const renderNestedItems = () => {
-    if (collapsed) return null;
-    
-    return (
-      <>
-        <SidebarItem 
-          icon={TicketIcon} 
-          label="Support Tickets"
-          isActive={activeSection === "tickets"} 
-          onClick={() => setActiveSection("tickets")}
-        />
-        
-        <SidebarItem 
-          icon={Users} 
-          label="Client Management"
-        >
-          <div className="flex flex-col space-y-1 mt-1">
-            <div 
-              className={`flex items-center px-3 py-2 rounded-md cursor-pointer ${
-                activeSection === "clients" ? "bg-primary/10 text-primary" : "hover:bg-accent"
-              }`}
-              onClick={() => setActiveSection("clients")}
-            >
-              <span className="text-sm font-medium">All Clients</span>
-            </div>
-            <div 
-              className={`flex items-center px-3 py-2 rounded-md cursor-pointer ${
-                activeSection === "clients-alerts" ? "bg-primary/10 text-primary" : "hover:bg-accent"
-              }`}
-              onClick={() => setActiveSection("clients-alerts")}
-            >
-              <span className="text-sm font-medium">Client Alerts</span>
-            </div>
-            <div 
-              className={`flex items-center px-3 py-2 rounded-md cursor-pointer ${
-                activeSection === "clients-history" ? "bg-primary/10 text-primary" : "hover:bg-accent"
-              }`}
-              onClick={() => setActiveSection("clients-history")}
-            >
-              <span className="text-sm font-medium">Interaction History</span>
-            </div>
-          </div>
-        </SidebarItem>
-        
-        <SidebarItem 
-          icon={BarChart3} 
-          label="Call Center Stats" 
-        >
-          <div className="flex flex-col space-y-1 mt-1">
-            <div 
-              className={`flex items-center px-3 py-2 rounded-md cursor-pointer ${
-                activeSection === "stats" ? "bg-primary/10 text-primary" : "hover:bg-accent"
-              }`}
-              onClick={() => setActiveSection("stats")}
-            >
-              <span className="text-sm font-medium">Overview</span>
-            </div>
-            <div 
-              className={`flex items-center px-3 py-2 rounded-md cursor-pointer ${
-                activeSection === "stats-performance" ? "bg-primary/10 text-primary" : "hover:bg-accent"
-              }`}
-              onClick={() => setActiveSection("stats-performance")}
-            >
-              <span className="text-sm font-medium">Agent Performance</span>
-            </div>
-          </div>
-        </SidebarItem>
-        
-        <SidebarItem 
-          icon={Calendar} 
-          label="Schedule" 
-          isActive={activeSection === "schedule"} 
-          onClick={() => setActiveSection("schedule")} 
-        />
-        
-        <SidebarItem 
-          icon={ClipboardList} 
-          label="Knowledge Base" 
-          isActive={activeSection === "knowledge"} 
-          onClick={() => setActiveSection("knowledge")} 
-        />
-        
-        <SidebarItem 
-          icon={Bell} 
-          label="Notifications" 
-          isActive={activeSection === "notifications"} 
-          onClick={() => setActiveSection("notifications")} 
-        />
-        
-        <SidebarItem 
-          icon={User} 
-          label="Agent Profile" 
-          isActive={activeSection === "profile"} 
-          onClick={() => setActiveSection("profile")} 
-        />
-      </>
-    );
-  };
-
   return (
     <div className={cn(
       "flex flex-col h-screen bg-background border-r p-4 transition-all duration-300",
@@ -217,68 +138,137 @@ const Sidebar: React.FC<SidebarProps> = ({
       </div>
 
       <div className="flex flex-col space-y-1 flex-grow overflow-y-auto">
+        <SidebarItem 
+          icon={TicketIcon} 
+          label="Support Tickets"
+          isActive={activeSection === "tickets"} 
+          onClick={() => setActiveSection("tickets")}
+          collapsed={collapsed}
+        />
+        
         {collapsed ? (
-          <>
+          <SidebarItem 
+            icon={Users} 
+            label=""
+            isActive={activeSection.startsWith("clients") || activeSection === "all-clients"} 
+            onClick={() => setActiveSection("all-clients")}
+            collapsed={collapsed}
+          />
+        ) : (
+          <SidebarItem 
+            icon={Users} 
+            label="Client Management"
+            isActive={activeSection.startsWith("clients") || activeSection === "all-clients"}
+            collapsed={collapsed}
+          >
             <div 
-              className={`flex justify-center p-2 rounded-md cursor-pointer ${
-                activeSection === "tickets" ? "bg-primary/10 text-primary" : "hover:bg-accent"
+              className={`flex items-center px-3 py-2 rounded-md cursor-pointer ${
+                activeSection === "all-clients" ? "bg-primary/10 text-primary" : "hover:bg-accent"
               }`}
-              onClick={() => setActiveSection("tickets")}
+              onClick={() => setActiveSection("all-clients")}
             >
-              <TicketIcon className="h-5 w-5" />
+              <span className="text-sm font-medium">All Clients</span>
             </div>
             <div 
-              className={`flex justify-center p-2 rounded-md cursor-pointer ${
+              className={`flex items-center px-3 py-2 rounded-md cursor-pointer ${
                 activeSection === "clients" ? "bg-primary/10 text-primary" : "hover:bg-accent"
               }`}
               onClick={() => setActiveSection("clients")}
             >
-              <Users className="h-5 w-5" />
+              <span className="text-sm font-medium">Client Details</span>
             </div>
             <div 
-              className={`flex justify-center p-2 rounded-md cursor-pointer ${
+              className={`flex items-center px-3 py-2 rounded-md cursor-pointer ${
+                activeSection === "clients-alerts" ? "bg-primary/10 text-primary" : "hover:bg-accent"
+              }`}
+              onClick={() => setActiveSection("clients-alerts")}
+            >
+              <span className="text-sm font-medium">Client Alerts</span>
+            </div>
+            <div 
+              className={`flex items-center px-3 py-2 rounded-md cursor-pointer ${
+                activeSection === "clients-devices" ? "bg-primary/10 text-primary" : "hover:bg-accent"
+              }`}
+              onClick={() => setActiveSection("clients-devices")}
+            >
+              <span className="text-sm font-medium">Client Devices</span>
+            </div>
+            <div 
+              className={`flex items-center px-3 py-2 rounded-md cursor-pointer ${
+                activeSection === "clients-history" ? "bg-primary/10 text-primary" : "hover:bg-accent"
+              }`}
+              onClick={() => setActiveSection("clients-history")}
+            >
+              <span className="text-sm font-medium">Interaction History</span>
+            </div>
+          </SidebarItem>
+        )}
+        
+        {collapsed ? (
+          <SidebarItem 
+            icon={BarChart3} 
+            label=""
+            isActive={activeSection.startsWith("stats")} 
+            onClick={() => setActiveSection("stats")}
+            collapsed={collapsed}
+          />
+        ) : (
+          <SidebarItem 
+            icon={BarChart3} 
+            label="Call Center Stats"
+            isActive={activeSection.startsWith("stats")}
+            collapsed={collapsed}
+          >
+            <div 
+              className={`flex items-center px-3 py-2 rounded-md cursor-pointer ${
                 activeSection === "stats" ? "bg-primary/10 text-primary" : "hover:bg-accent"
               }`}
               onClick={() => setActiveSection("stats")}
             >
-              <BarChart3 className="h-5 w-5" />
+              <span className="text-sm font-medium">Overview</span>
             </div>
             <div 
-              className={`flex justify-center p-2 rounded-md cursor-pointer ${
-                activeSection === "schedule" ? "bg-primary/10 text-primary" : "hover:bg-accent"
+              className={`flex items-center px-3 py-2 rounded-md cursor-pointer ${
+                activeSection === "stats-performance" ? "bg-primary/10 text-primary" : "hover:bg-accent"
               }`}
-              onClick={() => setActiveSection("schedule")}
+              onClick={() => setActiveSection("stats-performance")}
             >
-              <Calendar className="h-5 w-5" />
+              <span className="text-sm font-medium">Agent Performance</span>
             </div>
-            <div 
-              className={`flex justify-center p-2 rounded-md cursor-pointer ${
-                activeSection === "knowledge" ? "bg-primary/10 text-primary" : "hover:bg-accent"
-              }`}
-              onClick={() => setActiveSection("knowledge")}
-            >
-              <ClipboardList className="h-5 w-5" />
-            </div>
-            <div 
-              className={`flex justify-center p-2 rounded-md cursor-pointer ${
-                activeSection === "notifications" ? "bg-primary/10 text-primary" : "hover:bg-accent"
-              }`}
-              onClick={() => setActiveSection("notifications")}
-            >
-              <Bell className="h-5 w-5" />
-            </div>
-            <div 
-              className={`flex justify-center p-2 rounded-md cursor-pointer ${
-                activeSection === "profile" ? "bg-primary/10 text-primary" : "hover:bg-accent"
-              }`}
-              onClick={() => setActiveSection("profile")}
-            >
-              <User className="h-5 w-5" />
-            </div>
-          </>
-        ) : (
-          renderNestedItems()
+          </SidebarItem>
         )}
+        
+        <SidebarItem 
+          icon={Calendar} 
+          label="Schedule" 
+          isActive={activeSection === "schedule"} 
+          onClick={() => setActiveSection("schedule")}
+          collapsed={collapsed}
+        />
+        
+        <SidebarItem 
+          icon={ClipboardList} 
+          label="Knowledge Base" 
+          isActive={activeSection === "knowledge"} 
+          onClick={() => setActiveSection("knowledge")}
+          collapsed={collapsed}
+        />
+        
+        <SidebarItem 
+          icon={Bell} 
+          label="Notifications" 
+          isActive={activeSection === "notifications"} 
+          onClick={() => setActiveSection("notifications")}
+          collapsed={collapsed}
+        />
+        
+        <SidebarItem 
+          icon={User} 
+          label="Agent Profile" 
+          isActive={activeSection === "profile"} 
+          onClick={() => setActiveSection("profile")}
+          collapsed={collapsed}
+        />
       </div>
 
       <div className="mt-auto pt-4 border-t">
