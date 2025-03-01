@@ -79,23 +79,6 @@ const CallCenterDashboard: React.FC = () => {
     });
   };
 
-  // Get the title for the current active section
-  const getSectionTitle = () => {
-    switch (activeSection) {
-      case "tickets": return "Support Tickets";
-      case "clients": return "Client Information";
-      case "clients-alerts": return "Client Alerts";
-      case "clients-history": return "Interaction History";
-      case "stats": return "Call Center Statistics";
-      case "stats-performance": return "Agent Performance";
-      case "schedule": return "Agent Schedule";
-      case "knowledge": return "Knowledge Base";
-      case "notifications": return "Notifications";
-      case "profile": return "Agent Profile";
-      default: return "Support Tickets";
-    }
-  };
-
   return (
     <div className="flex h-screen overflow-hidden bg-slate-50">
       <ToastContainer />
@@ -109,7 +92,7 @@ const CallCenterDashboard: React.FC = () => {
       />
       
       {/* Main Content */}
-      <div className="flex-1 overflow-auto">
+      <div className="flex-1 flex flex-col overflow-hidden">
         <Header 
           activeSection={activeSection}
           hasUnreadNotifications={hasUnreadNotifications}

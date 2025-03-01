@@ -50,7 +50,7 @@ const Header: React.FC<HeaderProps> = ({
   };
 
   return (
-    <header className="sticky top-0 z-10 bg-gradient-to-r from-blue-700 to-indigo-800 text-white border-b px-6 py-4 flex justify-between items-center shadow-md">
+    <header className="sticky top-0 z-10 bg-gradient-to-r from-ice-500 to-ice-600 text-white border-b px-6 py-4 flex justify-between items-center shadow-md">
       <h1 className="text-2xl font-bold">
         {getSectionTitle()}
       </h1>
@@ -78,9 +78,9 @@ const Header: React.FC<HeaderProps> = ({
             formatNotificationTime={formatNotificationTime}
           />
           
-          <div className="flex items-center gap-2 ml-4 bg-indigo-800 px-3 py-1.5 rounded-md">
-            <User className="h-4 w-4 text-indigo-200" />
-            <span className="text-sm font-medium text-white">{user?.name || 'Agent'}</span>
+          <div className="flex items-center gap-2 ml-4 bg-ice-700 px-3 py-1.5 rounded-md">
+            <User className="h-4 w-4 text-ice-200" />
+            <span className="text-sm font-medium text-white">{user?.name || 'Call Center Agent'}</span>
           </div>
         </div>
       </div>
