@@ -19,7 +19,7 @@ const DeviceShowcase: React.FC = () => {
       price: 110.00,
       monthlyPrice: 24.99,
       icon: <BellRing className="w-12 h-12 text-orange-500" />,
-      image: "https://images.unsplash.com/photo-1434494878577-86c23bcb06b9",
+      image: "/lovable-uploads/ad65a632-e7ef-4c61-a20e-7b6ff282a87a.png",
       features: language === 'en' ? [
         "One-touch emergency call",
         "GPS tracking",
@@ -43,7 +43,7 @@ const DeviceShowcase: React.FC = () => {
       price: 249.99,
       monthlyPrice: 24.99,
       icon: <PlusSquare className="w-12 h-12 text-guardian-500" />,
-      image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158",
+      image: "/lovable-uploads/5e439305-cf63-4080-962e-52657e864050.png",
       features: language === 'en' ? [
         "Automated pill dispensing",
         "Missed dose notifications",
@@ -67,7 +67,7 @@ const DeviceShowcase: React.FC = () => {
       price: 149.99,
       monthlyPrice: 24.99,
       icon: <ActivitySquare className="w-12 h-12 text-orange-500" />,
-      image: "https://images.unsplash.com/photo-1487058792275-0ad4aaf24ca7",
+      image: "/lovable-uploads/6eb6b5d1-34a3-4236-ac3a-351d6c22de7e.png",
       features: language === 'en' ? [
         "Continuous glucose monitoring",
         "AI trend analysis",

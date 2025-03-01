@@ -1,4 +1,3 @@
-
 import React from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -18,7 +17,7 @@ const DevicesPage: React.FC = () => {
       id: "sos",
       name: language === 'en' ? "SOS Pendant" : "Colgante SOS",
       icon: <BellRing className="w-16 h-16 text-orange-500" />,
-      image: "https://images.unsplash.com/photo-1434494878577-86c23bcb06b9",
+      image: "/lovable-uploads/ad65a632-e7ef-4c61-a20e-7b6ff282a87a.png",
       price: 110.00,
       monthlyService: 24.99,
       description: language === 'en' 
@@ -57,7 +56,7 @@ const DevicesPage: React.FC = () => {
       id: "dispenser",
       name: language === 'en' ? "Medical Dispenser" : "Dispensador Médico",
       icon: <PlusSquare className="w-16 h-16 text-guardian-500" />,
-      image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158",
+      image: "/lovable-uploads/5e439305-cf63-4080-962e-52657e864050.png",
       price: 249.99,
       monthlyService: 24.99,
       description: language === 'en' 
@@ -96,7 +95,7 @@ const DevicesPage: React.FC = () => {
       id: "glucose",
       name: language === 'en' ? "Glucose Monitor" : "Monitor de Glucosa",
       icon: <ActivitySquare className="w-16 h-16 text-orange-500" />,
-      image: "https://images.unsplash.com/photo-1487058792275-0ad4aaf24ca7",
+      image: "/lovable-uploads/6eb6b5d1-34a3-4236-ac3a-351d6c22de7e.png",
       price: 149.99,
       monthlyService: 24.99,
       description: language === 'en' 
@@ -313,9 +312,9 @@ const DevicesPage: React.FC = () => {
                 <div className={`${index % 2 !== 0 ? 'lg:order-1' : ''}`}>
                   <div className="relative">
                     <img 
-                      src={`${device.image}?w=600&h=400&fit=crop&crop=entropy&auto=compress`}
+                      src={device.image}
                       alt={device.name}
-                      className="rounded-xl shadow-subtle w-full object-cover"
+                      className="rounded-xl shadow-subtle w-full object-contain bg-white p-4"
                       style={{ height: '400px' }}
                     />
                     

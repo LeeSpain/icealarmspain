@@ -43,9 +43,9 @@ const DeviceCard: React.FC<DeviceCardProps> = ({
       {/* Device Image */}
       <div className="mb-4 overflow-hidden rounded-lg h-48">
         <img 
-          src={`${image}?w=400&h=300&fit=crop&crop=entropy&auto=compress`}
+          src={image}
           alt={name}
-          className="w-full h-full object-cover transition-transform hover:scale-105"
+          className="w-full h-full object-contain transition-transform hover:scale-105"
         />
       </div>
       
