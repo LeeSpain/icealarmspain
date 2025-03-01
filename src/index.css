@@ -1,5 +1,7 @@
 
+
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -53,8 +55,16 @@
     @apply bg-background text-foreground antialiased;
   }
 
+  h1, h2, h3 {
+    @apply tracking-tight;
+  }
+
   .glass-panel {
     @apply bg-white/90 backdrop-blur-md shadow-glass border border-white/30 rounded-2xl;
+  }
+
+  .glass-card {
+    @apply bg-white/80 backdrop-blur-sm shadow-glass-sm border border-white/50 rounded-xl transition-all duration-300 hover:shadow-glass;
   }
 
   .text-balance {
@@ -88,6 +98,10 @@
 }
 
 @layer components {
+  .fancy-heading {
+    @apply font-playfair font-semibold;
+  }
+  
   .link-underline {
     @apply relative after:absolute after:w-full after:scale-x-0 after:h-0.5 after:bottom-0 after:left-0 after:bg-ice-500 after:transition-transform after:duration-300 hover:after:scale-x-100;
   }
@@ -141,6 +155,19 @@
   .dashboard-card-value {
     @apply text-2xl font-semibold;
   }
+
+  /* Section styles */
+  .section-title {
+    @apply text-3xl md:text-4xl lg:text-5xl font-bold mb-6 text-balance;
+  }
+  
+  .section-subtitle {
+    @apply text-xl md:text-2xl font-medium mb-4 text-foreground/90 text-balance;
+  }
+  
+  .section-description {
+    @apply text-base md:text-lg text-muted-foreground mb-8 max-w-3xl mx-auto text-balance;
+  }
   
   /* Animation utilities */
   .animate-delay-100 {
@@ -162,4 +189,26 @@
   .animate-delay-500 {
     animation-delay: 0.5s;
   }
+  
+  /* Decorative elements */
+  .decorative-dots {
+    @apply relative;
+  }
+  
+  .decorative-dots::before {
+    content: '';
+    @apply absolute w-24 h-24 -z-10 opacity-20 rounded-full;
+    background-image: radial-gradient(circle, currentColor 1px, transparent 1px);
+    background-size: 8px 8px;
+  }
+  
+  .decorative-line {
+    @apply relative;
+  }
+  
+  .decorative-line::after {
+    content: '';
+    @apply absolute h-px w-16 bg-current opacity-20;
+  }
 }
+
