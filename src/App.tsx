@@ -7,6 +7,8 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { LanguageProvider } from "./context/LanguageContext";
 import Index from "./pages/Index";
 import Products from "./pages/Products";
+import DevicesPage from "./pages/DevicesPage";
+import DashboardPage from "./pages/DashboardPage";
 import Join from "./pages/Join";
 import Demo from "./pages/Demo";
 import Login from "./pages/Login";
@@ -26,6 +28,8 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/products" element={<Products />} />
+            <Route path="/devices" element={<DevicesPage />} />
+            <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/join" element={<Join />} />
             <Route path="/demo" element={<Demo />} />
             <Route path="/login" element={<Login />} />
