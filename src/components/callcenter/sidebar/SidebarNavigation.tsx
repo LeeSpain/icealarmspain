@@ -1,19 +1,6 @@
-import React, { useState } from "react";
-import {
-  Users,
-  TicketIcon,
-  BarChart3,
-  Bell,
-  User,
-  Calendar,
-  ClipboardList,
-  ChevronRight,
-  ChevronLeft,
-  Clock,
-  Smartphone,
-  AlertTriangle,
-  LayoutDashboard
-} from "lucide-react";
+
+import React from "react";
+import { BarChart3, Users, TicketIcon, MessageCircle, BarChart2, Calendar, BookOpen, Bell, UserCircle } from "lucide-react";
 import SidebarItem from "./SidebarItem";
 
 interface SidebarNavigationProps {
@@ -28,133 +15,83 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({
   collapsed 
 }) => {
   return (
-    <div className="flex flex-col space-y-1 flex-grow overflow-y-auto">
+    <div className="space-y-1">
       <SidebarItem 
-        icon={LayoutDashboard} 
+        icon={<BarChart3 className="h-5 w-5" />}
         label="Dashboard"
-        isActive={activeSection === "dashboard"} 
+        active={activeSection === "dashboard"}
         onClick={() => setActiveSection("dashboard")}
         collapsed={collapsed}
       />
-      
+
       <SidebarItem 
-        icon={TicketIcon} 
+        icon={<TicketIcon className="h-5 w-5" />}
         label="Support Tickets"
-        isActive={activeSection === "tickets"} 
+        active={activeSection === "tickets"}
         onClick={() => setActiveSection("tickets")}
         collapsed={collapsed}
       />
-      
+
       <SidebarItem 
-        icon={Users} 
-        label="Client Management"
-        isActive={activeSection.startsWith("clients") || activeSection === "all-clients"}
-        onClick={collapsed ? () => setActiveSection("all-clients") : undefined}
+        icon={<MessageCircle className="h-5 w-5" />}
+        label="Chat"
+        active={activeSection === "chat"}
+        onClick={() => setActiveSection("chat")}
         collapsed={collapsed}
-      >
-        {!collapsed && (
-          <>
-            <div 
-              className={`flex items-center px-3 py-2 rounded-md cursor-pointer ${
-                activeSection === "all-clients" ? "bg-primary/10 text-primary" : "hover:bg-accent"
-              }`}
-              onClick={() => setActiveSection("all-clients")}
-            >
-              <span className="text-sm font-medium">All Clients</span>
-            </div>
-            <div 
-              className={`flex items-center px-3 py-2 rounded-md cursor-pointer ${
-                activeSection === "clients" ? "bg-primary/10 text-primary" : "hover:bg-accent"
-              }`}
-              onClick={() => setActiveSection("clients")}
-            >
-              <span className="text-sm font-medium">Client Details</span>
-            </div>
-            <div 
-              className={`flex items-center px-3 py-2 rounded-md cursor-pointer ${
-                activeSection === "clients-alerts" ? "bg-primary/10 text-primary" : "hover:bg-accent"
-              }`}
-              onClick={() => setActiveSection("clients-alerts")}
-            >
-              <span className="text-sm font-medium">Client Alerts</span>
-            </div>
-            <div 
-              className={`flex items-center px-3 py-2 rounded-md cursor-pointer ${
-                activeSection === "clients-devices" ? "bg-primary/10 text-primary" : "hover:bg-accent"
-              }`}
-              onClick={() => setActiveSection("clients-devices")}
-            >
-              <span className="text-sm font-medium">Client Devices</span>
-            </div>
-            <div 
-              className={`flex items-center px-3 py-2 rounded-md cursor-pointer ${
-                activeSection === "clients-history" ? "bg-primary/10 text-primary" : "hover:bg-accent"
-              }`}
-              onClick={() => setActiveSection("clients-history")}
-            >
-              <span className="text-sm font-medium">Interaction History</span>
-            </div>
-          </>
-        )}
-      </SidebarItem>
-      
+      />
+
       <SidebarItem 
-        icon={BarChart3} 
+        icon={<Users className="h-5 w-5" />}
+        label="All Clients"
+        active={activeSection === "all-clients"}
+        onClick={() => setActiveSection("all-clients")}
+        collapsed={collapsed}
+      />
+
+      <SidebarItem 
+        icon={<Users className="h-5 w-5" />}
+        label="Client Information"
+        active={activeSection === "clients"}
+        onClick={() => setActiveSection("clients")}
+        collapsed={collapsed}
+      />
+
+      <SidebarItem 
+        icon={<BarChart2 className="h-5 w-5" />}
         label="Call Center Stats"
-        isActive={activeSection.startsWith("stats")}
-        onClick={collapsed ? () => setActiveSection("stats") : undefined}
+        active={activeSection === "stats"}
+        onClick={() => setActiveSection("stats")}
         collapsed={collapsed}
-      >
-        {!collapsed && (
-          <>
-            <div 
-              className={`flex items-center px-3 py-2 rounded-md cursor-pointer ${
-                activeSection === "stats" ? "bg-primary/10 text-primary" : "hover:bg-accent"
-              }`}
-              onClick={() => setActiveSection("stats")}
-            >
-              <span className="text-sm font-medium">Overview</span>
-            </div>
-            <div 
-              className={`flex items-center px-3 py-2 rounded-md cursor-pointer ${
-                activeSection === "stats-performance" ? "bg-primary/10 text-primary" : "hover:bg-accent"
-              }`}
-              onClick={() => setActiveSection("stats-performance")}
-            >
-              <span className="text-sm font-medium">Agent Performance</span>
-            </div>
-          </>
-        )}
-      </SidebarItem>
-      
+      />
+
       <SidebarItem 
-        icon={Calendar} 
-        label="Schedule" 
-        isActive={activeSection === "schedule"} 
+        icon={<Calendar className="h-5 w-5" />}
+        label="Agent Schedule"
+        active={activeSection === "schedule"}
         onClick={() => setActiveSection("schedule")}
         collapsed={collapsed}
       />
-      
+
       <SidebarItem 
-        icon={ClipboardList} 
-        label="Knowledge Base" 
-        isActive={activeSection === "knowledge"} 
+        icon={<BookOpen className="h-5 w-5" />}
+        label="Knowledge Base"
+        active={activeSection === "knowledge"}
         onClick={() => setActiveSection("knowledge")}
         collapsed={collapsed}
       />
-      
+
       <SidebarItem 
-        icon={Bell} 
-        label="Notifications" 
-        isActive={activeSection === "notifications"} 
+        icon={<Bell className="h-5 w-5" />}
+        label="Notifications"
+        active={activeSection === "notifications"}
         onClick={() => setActiveSection("notifications")}
         collapsed={collapsed}
       />
-      
+
       <SidebarItem 
-        icon={User} 
-        label="Agent Profile" 
-        isActive={activeSection === "profile"} 
+        icon={<UserCircle className="h-5 w-5" />}
+        label="Agent Profile"
+        active={activeSection === "profile"}
         onClick={() => setActiveSection("profile")}
         collapsed={collapsed}
       />
