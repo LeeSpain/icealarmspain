@@ -1,6 +1,6 @@
 
 import React from "react";
-import { Search, User } from "lucide-react";
+import { User } from "lucide-react";
 import NotificationBell from "../notifications/NotificationBell";
 import { Notification } from "../notifications/NotificationTypes";
 import { User as UserType } from "@/context/AuthContext";
@@ -39,6 +39,7 @@ const Header: React.FC<HeaderProps> = ({
   // Get the title based on the active section
   const getSectionTitle = () => {
     switch (activeSection) {
+      case "dashboard": return "Dashboard";
       case "tickets": return "Support Tickets";
       case "all-clients": return "All Clients";
       case "clients": return "Client Information";
@@ -51,7 +52,7 @@ const Header: React.FC<HeaderProps> = ({
       case "knowledge": return "Knowledge Base";
       case "notifications": return "Notifications";
       case "profile": return "Agent Profile";
-      default: return "Support Tickets";
+      default: return "Dashboard";
     }
   };
 
@@ -62,15 +63,6 @@ const Header: React.FC<HeaderProps> = ({
       </h1>
       
       <div className="flex items-center gap-4">
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <input 
-            type="text" 
-            placeholder="Search..." 
-            className="h-10 pl-10 pr-4 rounded-md border border-input bg-background text-foreground" 
-          />
-        </div>
-        
         <div className="flex items-center gap-2">
           <NotificationBell
             hasUnreadNotifications={hasUnreadNotifications}
