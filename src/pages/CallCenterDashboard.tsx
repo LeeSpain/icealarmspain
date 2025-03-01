@@ -6,14 +6,14 @@ import { useAuth } from "@/context/AuthContext";
 import Sidebar from "@/components/callcenter/sidebar/Sidebar";
 import DashboardContent from "@/components/callcenter/dashboard/DashboardContent";
 import Header from "@/components/callcenter/dashboard/Header";
-import { mockNotifications } from "@/components/callcenter/notifications/mock-notifications";
+import { getMockNotifications } from "@/components/callcenter/notifications/mock-notifications";
 import { Notification } from "@/components/callcenter/notifications/NotificationTypes";
 
 const CallCenterDashboard: React.FC = () => {
   const [activeSection, setActiveSection] = useState<string>("dashboard");
   const [selectedClient, setSelectedClient] = useState<number | null>(null);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-  const [notifications, setNotifications] = useState<Notification[]>(mockNotifications);
+  const [notifications, setNotifications] = useState<Notification[]>(getMockNotifications());
   const [showNotifications, setShowNotifications] = useState(false);
   const { user } = useAuth();
 
