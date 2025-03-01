@@ -1,3 +1,4 @@
+
 import React, { useEffect } from "react";
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
@@ -9,8 +10,11 @@ import Footer from "@/components/Footer";
 import { ArrowUpCircle } from "lucide-react";
 
 const Index: React.FC = () => {
+  console.log("Index component rendering");
+  
   // Smooth scroll implementation
   useEffect(() => {
+    console.log("Setting up smooth scroll");
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
       anchor.addEventListener('click', function (e) {
         e.preventDefault();
@@ -39,6 +43,7 @@ const Index: React.FC = () => {
   const [showScrollTop, setShowScrollTop] = React.useState(false);
   
   useEffect(() => {
+    console.log("Setting up scroll to top");
     const handleScroll = () => {
       if (window.scrollY > 500) {
         setShowScrollTop(true);
@@ -70,7 +75,10 @@ const Index: React.FC = () => {
       <Navbar />
       
       <main className="flex-grow relative">
-        <Hero />
+        {/* Wrapping Hero in error boundary */}
+        <div className="relative">
+          <Hero />
+        </div>
         
         {/* Section Divider */}
         <div className="relative">

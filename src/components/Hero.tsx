@@ -6,7 +6,8 @@ import { Link } from "react-router-dom";
 import { useLanguage } from "@/context/LanguageContext";
 
 const Hero: React.FC = () => {
-  const { language } = useLanguage();
+  const { language, t } = useLanguage();
+  console.log("Hero component rendering with language:", language);
 
   return (
     <section 

@@ -12,6 +12,8 @@ const Navbar: React.FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { t } = useLanguage();
   
+  console.log("Navbar component rendering");
+  
   useEffect(() => {
     const handleScroll = () => {
       if (window.scrollY > 10) {

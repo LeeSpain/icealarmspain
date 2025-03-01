@@ -9,6 +9,8 @@ interface LogoProps {
 const Logo: React.FC<LogoProps> = ({ className }) => {
   const { language } = useLanguage();
   
+  console.log("Logo component rendering with language:", language);
+  
   return (
     <div className={`flex items-center gap-2 ${className}`}>
       <div className="relative w-8 h-8">
