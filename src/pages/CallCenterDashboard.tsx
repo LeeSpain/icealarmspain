@@ -237,7 +237,7 @@ const CallCenterDashboard: React.FC = () => {
   };
 
   return (
-    <div className="flex h-screen overflow-hidden bg-background">
+    <div className="flex h-screen overflow-hidden bg-slate-50">
       <ToastContainer />
       
       {/* Sidebar */}
@@ -250,7 +250,7 @@ const CallCenterDashboard: React.FC = () => {
       
       {/* Main Content */}
       <div className="flex-1 overflow-auto">
-        <header className="sticky top-0 z-10 bg-background border-b px-6 py-4 flex justify-between items-center">
+        <header className="sticky top-0 z-10 bg-gradient-to-r from-blue-700 to-indigo-800 text-white border-b px-6 py-4 flex justify-between items-center shadow-md">
           <h1 className="text-2xl font-bold">
             {activeSection === "tickets" && "Support Tickets"}
             {activeSection === "clients" && "Client Information"}
@@ -261,11 +261,11 @@ const CallCenterDashboard: React.FC = () => {
           
           <div className="flex items-center gap-4">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
               <input 
                 type="text" 
                 placeholder="Search..." 
-                className="h-10 pl-10 pr-4 rounded-md border border-input bg-background" 
+                className="h-10 pl-10 pr-4 rounded-md border border-slate-300 bg-white text-slate-800" 
               />
             </div>
             
@@ -274,29 +274,29 @@ const CallCenterDashboard: React.FC = () => {
               <div className="relative">
                 <button 
                   onClick={() => setShowNotifications(!showNotifications)}
-                  className="relative p-1.5 rounded-full hover:bg-muted"
+                  className="relative p-1.5 rounded-full hover:bg-blue-600"
                 >
-                  <Bell className="h-5 w-5 cursor-pointer text-muted-foreground hover:text-foreground" />
+                  <Bell className="h-5 w-5 cursor-pointer text-white" />
                   {hasUnreadNotifications && (
-                    <span className="absolute top-0 right-0 block h-2.5 w-2.5 rounded-full bg-red-600 ring-2 ring-white" />
+                    <span className="absolute top-0 right-0 block h-2.5 w-2.5 rounded-full bg-red-500 ring-2 ring-indigo-800" />
                   )}
                 </button>
                 
                 {/* Notifications dropdown */}
                 {showNotifications && (
-                  <div className="absolute right-0 mt-2 w-96 bg-background border rounded-md shadow-lg z-50">
-                    <div className="p-3 border-b flex justify-between items-center">
-                      <h3 className="font-semibold">Notifications</h3>
+                  <div className="absolute right-0 mt-2 w-96 bg-white border rounded-md shadow-lg z-50">
+                    <div className="p-3 border-b flex justify-between items-center bg-indigo-50">
+                      <h3 className="font-semibold text-indigo-900">Notifications</h3>
                       <button 
                         onClick={() => setShowNotifications(false)}
-                        className="p-1 rounded-full hover:bg-muted"
+                        className="p-1 rounded-full hover:bg-indigo-100 text-indigo-700"
                       >
                         <X className="h-4 w-4" />
                       </button>
                     </div>
                     <div className="max-h-96 overflow-y-auto">
                       {notifications.length === 0 ? (
-                        <div className="p-4 text-center text-muted-foreground">
+                        <div className="p-4 text-center text-slate-500">
                           No notifications
                         </div>
                       ) : (
@@ -304,7 +304,7 @@ const CallCenterDashboard: React.FC = () => {
                           {notifications.map((notification) => (
                             <div 
                               key={notification.id}
-                              className={`p-3 border-b hover:bg-muted cursor-pointer ${!notification.read ? 'bg-muted/40' : ''}`}
+                              className={`p-3 border-b hover:bg-slate-50 cursor-pointer ${!notification.read ? 'bg-blue-50/40' : ''}`}
                               onClick={() => viewClientFromNotification(notification.clientId, notification.id)}
                             >
                               <div className="flex items-start gap-3">
@@ -319,15 +319,15 @@ const CallCenterDashboard: React.FC = () => {
                                          notification.type === 'high-glucose' ? 'HIGH GLUCOSE' : 'DEVICE OFFLINE'}
                                       </Badge>
                                     </div>
-                                    <span className="text-xs text-muted-foreground">
+                                    <span className="text-xs text-slate-500">
                                       {formatNotificationTime(notification.timestamp)}
                                     </span>
                                   </div>
-                                  <p className="font-medium mt-1">{notification.clientName}</p>
-                                  <p className="text-sm text-muted-foreground mt-1">{notification.message}</p>
+                                  <p className="font-medium mt-1 text-slate-800">{notification.clientName}</p>
+                                  <p className="text-sm text-slate-600 mt-1">{notification.message}</p>
                                   <div className="mt-2 flex justify-between">
                                     <button 
-                                      className="text-xs text-blue-600 hover:underline"
+                                      className="text-xs text-indigo-600 hover:underline"
                                       onClick={(e) => {
                                         e.stopPropagation();
                                         viewClientFromNotification(notification.clientId, notification.id);
@@ -339,7 +339,7 @@ const CallCenterDashboard: React.FC = () => {
                                       <AlertDialog>
                                         <AlertDialogTrigger asChild>
                                           <button 
-                                            className="text-xs text-blue-600 hover:underline"
+                                            className="text-xs text-indigo-600 hover:underline"
                                             onClick={(e) => e.stopPropagation()}
                                           >
                                             Check service readiness
@@ -374,9 +374,9 @@ const CallCenterDashboard: React.FC = () => {
                         </div>
                       )}
                     </div>
-                    <div className="p-2 border-t">
+                    <div className="p-2 border-t bg-indigo-50">
                       <button 
-                        className="w-full py-2 text-center text-sm text-blue-600 hover:underline"
+                        className="w-full py-2 text-center text-sm text-indigo-700 hover:underline"
                         onClick={() => {
                           setActiveSection("notifications");
                           setShowNotifications(false);
@@ -389,8 +389,9 @@ const CallCenterDashboard: React.FC = () => {
                 )}
               </div>
               
-              <div className="flex items-center gap-2">
-                <span className="text-sm font-medium">{user?.name || 'Agent'}</span>
+              <div className="flex items-center gap-2 ml-4 bg-indigo-800 px-3 py-1.5 rounded-md">
+                <User className="h-4 w-4 text-indigo-200" />
+                <span className="text-sm font-medium text-white">{user?.name || 'Agent'}</span>
               </div>
             </div>
           </div>
