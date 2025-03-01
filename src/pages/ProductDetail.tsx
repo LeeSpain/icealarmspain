@@ -3,58 +3,21 @@ import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { useLanguage } from "@/context/LanguageContext";
 import { ButtonCustom } from "@/components/ui/button-custom";
-import { CheckCircle, ShoppingCart, CreditCard, AlertCircle } from "lucide-react";
-import { useToast } from "@/components/ui/use-toast";
+import { useLanguage } from "@/context/LanguageContext";
+import { ShoppingCart, Heart, ChevronLeft, ChevronRight, Check, Info, Star, Shield } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { useToast } from "@/hooks/use-toast";
 
-interface ProductData {
-  id: string;
-  name: {
-    en: string;
-    es: string;
-  };
-  price: number;
-  monthlyPrice: number;
-  image: string;
-  features: {
-    en: string[];
-    es: string[];
-  };
-  description: {
-    en: string;
-    es: string;
-  };
-  technicalSpecs: {
-    en: {
-      [key: string]: string;
-    };
-    es: {
-      [key: string]: string;
-    };
-  };
-  faqs: {
-    en: {
-      question: string;
-      answer: string;
-    }[];
-    es: {
-      question: string;
-      answer: string;
-    }[];
-  };
-}
-
-const products: ProductData[] = [
-  {
-    id: "sos",
-    name: {
-      en: "SOS Pendant",
-      es: "Colgante SOS"
-    },
+const PRODUCTS = {
+  "sos-pendant": {
+    id: "sos-pendant",
+    nameEn: "SOS Pendant",
+    nameEs: "Colgante SOS",
     price: 110.00,
     monthlyPrice: 24.99,
-    image: "https://images.unsplash.com/photo-1434494878577-86c23bcb06b9",
+    rating: 4.9,
+    reviewCount: 128,
     features: {
       en: [
         "One-touch emergency call",
@@ -62,8 +25,9 @@ const products: ProductData[] = [
         "Fall detection sensors",
         "Custom emergency routing",
         "AI wellness check-ins",
-        "Waterproof design",
-        "Long battery life"
+        "Water-resistant design",
+        "Long-lasting battery life",
+        "Comfortable, lightweight design"
       ],
       es: [
         "Llamada de emergencia con un toque",
@@ -71,74 +35,53 @@ const products: ProductData[] = [
         "Sensores de detección de caídas",
         "Enrutamiento personalizado",
         "Revisiones de bienestar con IA",
-        "Diseño impermeable",
-        "Larga duración de batería"
+        "Diseño resistente al agua",
+        "Batería de larga duración",
+        "Diseño cómodo y ligero"
       ]
     },
     description: {
-      en: "Immediate emergency response with just one touch. Our advanced pendant provides around-the-clock protection with built-in fall detection and GPS tracking. The SOS Pendant connects directly to our professional call center and AI Guardian system, ensuring help arrives quickly when you need it most. Waterproof and long-lasting battery make it perfect for everyday wear.",
-      es: "Respuesta inmediata a emergencias con un solo toque. Nuestro colgante avanzado proporciona protección las 24 horas con detección de caídas y seguimiento GPS. El Colgante SOS se conecta directamente a nuestro centro de llamadas profesional y sistema Guardian de IA, asegurando que la ayuda llegue rápidamente cuando más la necesita. Impermeable y con batería de larga duración, es perfecto para uso diario."
+      en: "The ICE SOS Pendant provides immediate emergency response with just one touch. Our advanced pendant offers around-the-clock protection with built-in fall detection and GPS tracking, ensuring help is always at hand when you need it most. Perfect for seniors, individuals with health concerns, or anyone wanting extra security.",
+      es: "El Colgante SOS de ICE proporciona respuesta inmediata a emergencias con un solo toque. Nuestro colgante avanzado ofrece protección las 24 horas con detección de caídas y seguimiento GPS incorporados, asegurando que la ayuda esté siempre disponible cuando más la necesite. Perfecto para personas mayores, personas con problemas de salud o cualquiera que desee seguridad adicional."
     },
-    technicalSpecs: {
-      en: {
-        "Dimensions": "4.5 x 3.2 x 1.5 cm",
-        "Weight": "35g",
-        "Battery Life": "Up to 7 days",
-        "Charging": "Wireless charging dock",
-        "Waterproof": "IP67 rated",
-        "Connectivity": "4G LTE, Bluetooth 5.0",
-        "Location": "GPS, GLONASS, Galileo"
-      },
-      es: {
-        "Dimensiones": "4.5 x 3.2 x 1.5 cm",
-        "Peso": "35g",
-        "Duración de batería": "Hasta 7 días",
-        "Carga": "Base de carga inalámbrica",
-        "Impermeable": "Clasificación IP67",
-        "Conectividad": "4G LTE, Bluetooth 5.0",
-        "Ubicación": "GPS, GLONASS, Galileo"
-      }
-    },
-    faqs: {
+    techSpecs: {
       en: [
-        {
-          question: "How do I set up the SOS Pendant?",
-          answer: "Setting up is simple. After unboxing, place the pendant on the charging dock until fully charged. Download our app, create an account, and follow the on-screen instructions to connect your pendant. Our support team can guide you through the process remotely if needed."
-        },
-        {
-          question: "What happens when I press the SOS button?",
-          answer: "When you press the SOS button, an alert is immediately sent to our 24/7 monitoring center. The operator will try to speak with you through the pendant. If you don't respond, or if you confirm an emergency, the operator will dispatch appropriate help and notify your emergency contacts."
-        },
-        {
-          question: "Is the pendant waterproof?",
-          answer: "Yes, the SOS Pendant is IP67 rated, meaning it's protected against dust and can withstand water immersion up to 1 meter for 30 minutes. You can wear it while showering or washing your hands, but we don't recommend swimming with it."
-        }
+        "Dimensions: 45mm x 32mm x 12mm",
+        "Weight: 35g",
+        "Battery life: Up to 7 days",
+        "Water resistance: IP67",
+        "Connectivity: 4G LTE, Bluetooth 5.0",
+        "GPS accuracy: Within 3 meters",
+        "Fall detection sensitivity: Adjustable",
+        "Emergency button: Recessed to prevent accidental activation"
       ],
       es: [
-        {
-          question: "¿Cómo configuro el Colgante SOS?",
-          answer: "La configuración es simple. Después de desembalar, coloque el colgante en la base de carga hasta que esté completamente cargado. Descargue nuestra aplicación, cree una cuenta y siga las instrucciones en pantalla para conectar su colgante. Nuestro equipo de soporte puede guiarlo a través del proceso de forma remota si es necesario."
-        },
-        {
-          question: "¿Qué sucede cuando presiono el botón SOS?",
-          answer: "Cuando presiona el botón SOS, se envía inmediatamente una alerta a nuestro centro de monitoreo 24/7. El operador intentará hablar con usted a través del colgante. Si no responde, o si confirma una emergencia, el operador enviará la ayuda adecuada y notificará a sus contactos de emergencia."
-        },
-        {
-          question: "¿El colgante es impermeable?",
-          answer: "Sí, el Colgante SOS tiene clasificación IP67, lo que significa que está protegido contra el polvo y puede soportar inmersión en agua hasta 1 metro durante 30 minutos. Puede usarlo mientras se ducha o se lava las manos, pero no recomendamos nadar con él."
-        }
+        "Dimensiones: 45mm x 32mm x 12mm",
+        "Peso: 35g",
+        "Duración de la batería: Hasta 7 días",
+        "Resistencia al agua: IP67",
+        "Conectividad: 4G LTE, Bluetooth 5.0",
+        "Precisión GPS: Dentro de 3 metros",
+        "Sensibilidad de detección de caídas: Ajustable",
+        "Botón de emergencia: Empotrado para evitar activación accidental"
       ]
-    }
-  },
-  {
-    id: "dispenser",
-    name: {
-      en: "Medical Dispenser",
-      es: "Dispensador Médico"
     },
+    colors: ["Black", "White", "Silver"],
+    images: [
+      "https://images.unsplash.com/photo-1434494878577-86c23bcb06b9?w=800&h=600&fit=crop",
+      "https://images.unsplash.com/photo-1516399677247-f48bf3f35a2e?w=800&h=600&fit=crop",
+      "https://images.unsplash.com/photo-1503235930437-8c713a84969c?w=800&h=600&fit=crop"
+    ]
+  },
+  
+  "medical-dispenser": {
+    id: "medical-dispenser",
+    nameEn: "Medical Dispenser",
+    nameEs: "Dispensador Médico",
     price: 249.99,
     monthlyPrice: 24.99,
-    image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158",
+    rating: 4.8,
+    reviewCount: 97,
     features: {
       en: [
         "Automated pill dispensing",
@@ -146,8 +89,9 @@ const products: ProductData[] = [
         "AI-powered reminders",
         "Escalation protocols",
         "Medication adherence tracking",
-        "Multiple medication compartments",
-        "Tamper-proof design"
+        "Tamper-proof locking system",
+        "Up to 28-day capacity",
+        "Easy-to-use interface"
       ],
       es: [
         "Dispensación automática de píldoras",
@@ -155,74 +99,53 @@ const products: ProductData[] = [
         "Recordatorios potenciados por IA",
         "Protocolos de escalada",
         "Seguimiento de adherencia",
-        "Múltiples compartimentos para medicamentos",
-        "Diseño a prueba de manipulaciones"
+        "Sistema de bloqueo a prueba de manipulaciones",
+        "Capacidad de hasta 28 días",
+        "Interfaz fácil de usar"
       ]
     },
     description: {
-      en: "Never miss a dose again. Our smart Medical Dispenser provides automated medication management with intelligent reminders and adherence tracking. The dispenser can hold up to 28 days of medication in separate, secure compartments. It connects to our AI Guardian system to monitor adherence, send reminders, and alert caregivers or emergency services if doses are missed repeatedly.",
-      es: "Nunca vuelva a olvidar una dosis. Nuestro Dispensador Médico inteligente proporciona gestión automatizada de medicamentos con recordatorios inteligentes y seguimiento de adherencia. El dispensador puede contener hasta 28 días de medicación en compartimentos separados y seguros. Se conecta a nuestro sistema Guardian de IA para monitorear la adherencia, enviar recordatorios y alertar a cuidadores o servicios de emergencia si se omiten dosis repetidamente."
+      en: "Never miss a dose again with the ICE Medical Dispenser. Our smart dispenser provides automated medication management with intelligent reminders and adherence tracking. The tamper-proof system ensures medications are taken at the right time and in the correct dosage, providing peace of mind for users and caregivers alike.",
+      es: "Nunca vuelva a olvidar una dosis con el Dispensador Médico ICE. Nuestro dispensador inteligente proporciona gestión automatizada de medicamentos con recordatorios inteligentes y seguimiento de adherencia. El sistema a prueba de manipulaciones asegura que los medicamentos se tomen en el momento adecuado y en la dosis correcta, proporcionando tranquilidad tanto a usuarios como a cuidadores."
     },
-    technicalSpecs: {
-      en: {
-        "Dimensions": "22 x 18 x 8 cm",
-        "Weight": "950g",
-        "Capacity": "28 days, up to 4 doses per day",
-        "Power": "AC adapter with 72-hour backup battery",
-        "Connectivity": "Wi-Fi, Bluetooth, 4G LTE (optional)",
-        "Display": "3.5\" color touchscreen",
-        "Alarms": "Visual, audio, and remote notification"
-      },
-      es: {
-        "Dimensiones": "22 x 18 x 8 cm",
-        "Peso": "950g",
-        "Capacidad": "28 días, hasta 4 dosis diarias",
-        "Alimentación": "Adaptador CA con batería de respaldo de 72 horas",
-        "Conectividad": "Wi-Fi, Bluetooth, 4G LTE (opcional)",
-        "Pantalla": "Táctil a color de 3.5\"",
-        "Alarmas": "Notificación visual, auditiva y remota"
-      }
-    },
-    faqs: {
+    techSpecs: {
       en: [
-        {
-          question: "How do I fill the Medical Dispenser?",
-          answer: "The dispenser has a secure, easy-to-access filling system. Unlock the dispenser with your personal code, and the system will guide you through filling each compartment according to your medication schedule. Our support team can also send a healthcare professional to help with initial setup and refills."
-        },
-        {
-          question: "What happens if I miss a dose?",
-          answer: "If a dose is missed, the dispenser will send visual and audio reminders. If you still don't take the medication, the system will send alerts to your designated contacts and to our monitoring center. For critical medications, our team can follow up with a wellness check."
-        },
-        {
-          question: "Can the dispenser handle different medication schedules?",
-          answer: "Yes, the Medical Dispenser can manage complex medication schedules including different medications at different times of day, medications taken every other day, or weekly medications. All scheduling is managed through our user-friendly app."
-        }
+        "Dimensions: 220mm x 150mm x 100mm",
+        "Weight: 850g (without medications)",
+        "Power: AC adapter with 72-hour backup battery",
+        "Capacity: Up to 28 days of medication (4 doses per day)",
+        "Connectivity: Wi-Fi, 4G LTE (optional)",
+        "Alarms: Visual, audible, and remote notifications",
+        "Dispensing accuracy: 99.9%",
+        "Security: Biometric or PIN-code locking system"
       ],
       es: [
-        {
-          question: "¿Cómo lleno el Dispensador Médico?",
-          answer: "El dispensador tiene un sistema de llenado seguro y de fácil acceso. Desbloquee el dispensador con su código personal, y el sistema lo guiará para llenar cada compartimento según su horario de medicación. Nuestro equipo de soporte también puede enviar a un profesional de la salud para ayudar con la configuración inicial y las recargas."
-        },
-        {
-          question: "¿Qué sucede si omito una dosis?",
-          answer: "Si se omite una dosis, el dispensador enviará recordatorios visuales y auditivos. Si aún no toma la medicación, el sistema enviará alertas a sus contactos designados y a nuestro centro de monitoreo. Para medicamentos críticos, nuestro equipo puede realizar un seguimiento con una verificación de bienestar."
-        },
-        {
-          question: "¿Puede el dispensador manejar diferentes horarios de medicación?",
-          answer: "Sí, el Dispensador Médico puede gestionar horarios de medicación complejos, incluidos diferentes medicamentos en diferentes momentos del día, medicamentos tomados en días alternos o medicamentos semanales. Toda la programación se gestiona a través de nuestra aplicación fácil de usar."
-        }
+        "Dimensiones: 220mm x 150mm x 100mm",
+        "Peso: 850g (sin medicamentos)",
+        "Alimentación: Adaptador CA con batería de respaldo de 72 horas",
+        "Capacidad: Hasta 28 días de medicación (4 dosis por día)",
+        "Conectividad: Wi-Fi, 4G LTE (opcional)",
+        "Alarmas: Notificaciones visuales, audibles y remotas",
+        "Precisión de dispensación: 99.9%",
+        "Seguridad: Sistema de bloqueo biométrico o con código PIN"
       ]
-    }
-  },
-  {
-    id: "glucose",
-    name: {
-      en: "Glucose Monitor",
-      es: "Monitor de Glucosa"
     },
+    colors: ["White", "Light Gray", "Titanium"],
+    images: [
+      "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=800&h=600&fit=crop",
+      "https://images.unsplash.com/photo-1555633514-abcee6ab92e1?w=800&h=600&fit=crop",
+      "https://images.unsplash.com/photo-1512069772995-ec65ed45afd6?w=800&h=600&fit=crop"
+    ]
+  },
+  
+  "glucose-monitor": {
+    id: "glucose-monitor",
+    nameEn: "Glucose Monitor",
+    nameEs: "Monitor de Glucosa",
     price: 149.99,
     monthlyPrice: 24.99,
-    image: "https://images.unsplash.com/photo-1487058792275-0ad4aaf24ca7",
+    rating: 4.7,
+    reviewCount: 84,
     features: {
       en: [
         "Continuous glucose monitoring",
@@ -230,8 +153,9 @@ const products: ProductData[] = [
         "Immediate alerts",
         "Emergency response",
         "Dietary recommendations",
-        "Smartphone integration",
-        "Data sharing with healthcare providers"
+        "14-day sensor life",
+        "Waterproof design",
+        "Smartphone integration"
       ],
       es: [
         "Monitoreo continuo de glucosa",
@@ -239,119 +163,72 @@ const products: ProductData[] = [
         "Alertas inmediatas",
         "Respuesta de emergencia",
         "Recomendaciones dietéticas",
-        "Integración con smartphone",
-        "Compartir datos con proveedores de salud"
+        "Sensor con vida útil de 14 días",
+        "Diseño impermeable",
+        "Integración con smartphone"
       ]
     },
     description: {
-      en: "Real-time glucose monitoring with AI-powered analysis. Our Glucose Monitor provides continuous readings and alerts for concerning levels, with personalized recommendations for better health. The system learns your patterns over time to provide increasingly accurate predictions and preemptive warnings. Seamlessly integrates with our AI Guardian system for comprehensive health monitoring.",
-      es: "Monitoreo de glucosa en tiempo real con análisis impulsado por IA. Nuestro Monitor de Glucosa proporciona lecturas continuas y alertas para niveles preocupantes, con recomendaciones personalizadas para una mejor salud. El sistema aprende sus patrones a lo largo del tiempo para proporcionar predicciones cada vez más precisas y advertencias preventivas. Se integra perfectamente con nuestro sistema Guardian de IA para un monitoreo integral de la salud."
+      en: "The ICE Glucose Monitor provides real-time glucose monitoring with AI-powered analysis. Receive immediate alerts for concerning levels and personalized recommendations for better health. Our discreet, comfortable sensor provides continuous monitoring without the need for frequent finger pricks, helping you maintain optimal glucose levels with minimal effort.",
+      es: "El Monitor de Glucosa ICE proporciona monitoreo de glucosa en tiempo real con análisis impulsado por IA. Reciba alertas inmediatas para niveles preocupantes y recomendaciones personalizadas para una mejor salud. Nuestro sensor discreto y cómodo proporciona monitoreo continuo sin necesidad de pinchazos frecuentes en los dedos, ayudándole a mantener niveles óptimos de glucosa con un esfuerzo mínimo."
     },
-    technicalSpecs: {
-      en: {
-        "Sensor Life": "14 days per sensor",
-        "Reading Frequency": "Every 5 minutes",
-        "Range": "40-500 mg/dL",
-        "Accuracy": "±9% MARD",
-        "Warmup Time": "1 hour",
-        "Water Resistance": "IP27 (sensor), IP67 (transmitter)",
-        "Connectivity": "Bluetooth 5.0, NFC"
-      },
-      es: {
-        "Vida útil del sensor": "14 días por sensor",
-        "Frecuencia de lectura": "Cada 5 minutos",
-        "Rango": "40-500 mg/dL",
-        "Precisión": "±9% MARD",
-        "Tiempo de calentamiento": "1 hora",
-        "Resistencia al agua": "IP27 (sensor), IP67 (transmisor)",
-        "Conectividad": "Bluetooth 5.0, NFC"
-      }
-    },
-    faqs: {
+    techSpecs: {
       en: [
-        {
-          question: "How do I apply the sensor?",
-          answer: "The sensor is applied to the back of your upper arm using the included applicator. It's a simple, nearly painless process that takes just a few seconds. Our app provides step-by-step instructions, or you can schedule a video call with our support team to guide you through your first application."
-        },
-        {
-          question: "How accurate are the readings?",
-          answer: "Our Glucose Monitor has a Mean Absolute Relative Difference (MARD) of ±9%, which is considered highly accurate for continuous glucose monitoring systems. While not a replacement for traditional blood glucose meters in all cases, it provides reliable trend information and alerts."
-        },
-        {
-          question: "What happens if my glucose levels become dangerous?",
-          answer: "If your glucose readings fall outside your safe range, you'll receive immediate alerts on your smartphone and connected devices. For severe events, our AI Guardian system can notify your emergency contacts and our 24/7 monitoring center, which will contact you to assess the situation and can dispatch emergency services if necessary."
-        }
+        "Sensor dimensions: 35mm x 6mm",
+        "Transmitter dimensions: 40mm x 33mm x 10mm",
+        "Sensor life: Up to 14 days",
+        "Water resistance: IP28 (2.4 meters for 30 minutes)",
+        "Warm-up time: 1 hour",
+        "Glucose range: 40-400 mg/dL",
+        "Reading frequency: Every 5 minutes",
+        "Data storage: 90 days of glucose data"
       ],
       es: [
-        {
-          question: "¿Cómo aplico el sensor?",
-          answer: "El sensor se aplica en la parte posterior del brazo superior usando el aplicador incluido. Es un proceso simple, casi indoloro, que toma solo unos segundos. Nuestra aplicación proporciona instrucciones paso a paso, o puede programar una videollamada con nuestro equipo de soporte para guiarlo durante su primera aplicación."
-        },
-        {
-          question: "¿Qué tan precisas son las lecturas?",
-          answer: "Nuestro Monitor de Glucosa tiene una Diferencia Relativa Absoluta Media (MARD) de ±9%, lo que se considera altamente preciso para sistemas de monitoreo continuo de glucosa. Si bien no reemplaza los medidores tradicionales de glucosa en sangre en todos los casos, proporciona información confiable sobre tendencias y alertas."
-        },
-        {
-          question: "¿Qué sucede si mis niveles de glucosa se vuelven peligrosos?",
-          answer: "Si sus lecturas de glucosa caen fuera de su rango seguro, recibirá alertas inmediatas en su smartphone y dispositivos conectados. Para eventos graves, nuestro sistema Guardian de IA puede notificar a sus contactos de emergencia y a nuestro centro de monitoreo 24/7, que se comunicará con usted para evaluar la situación y puede enviar servicios de emergencia si es necesario."
-        }
+        "Dimensiones del sensor: 35mm x 6mm",
+        "Dimensiones del transmisor: 40mm x 33mm x 10mm",
+        "Vida útil del sensor: Hasta 14 días",
+        "Resistencia al agua: IP28 (2.4 metros durante 30 minutos)",
+        "Tiempo de calentamiento: 1 hora",
+        "Rango de glucosa: 40-400 mg/dL",
+        "Frecuencia de lectura: Cada 5 minutos",
+        "Almacenamiento de datos: 90 días de datos de glucosa"
       ]
-    }
+    },
+    colors: ["White", "Clear"],
+    images: [
+      "https://images.unsplash.com/photo-1487058792275-0ad4aaf24ca7?w=800&h=600&fit=crop",
+      "https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=800&h=600&fit=crop",
+      "https://images.unsplash.com/photo-1588534510807-86dfce5d452e?w=800&h=600&fit=crop"
+    ]
   }
-];
+};
 
 const ProductDetail: React.FC = () => {
-  const { id } = useParams<{ id: string }>();
-  const [product, setProduct] = useState<ProductData | null>(null);
-  const { language } = useLanguage();
+  const { productId } = useParams<{ productId: string }>();
+  const { language, t } = useLanguage();
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [quantity, setQuantity] = useState(1);
   const { toast } = useToast();
-  const [isAddingToCart, setIsAddingToCart] = useState(false);
-  const [activeTab, setActiveTab] = useState("description");
-
-  useEffect(() => {
-    const foundProduct = products.find(p => p.id === id);
-    if (foundProduct) {
-      setProduct(foundProduct);
-      window.scrollTo(0, 0);
-    }
-  }, [id]);
-
-  const handleAddToCart = () => {
-    if (!product) return;
-    
-    setIsAddingToCart(true);
-    
-    // Simulate adding to cart
-    setTimeout(() => {
-      setIsAddingToCart(false);
-      toast({
-        title: language === 'en' ? "Added to cart!" : "¡Añadido al carrito!",
-        description: language === 'en' 
-          ? `${product.name[language === 'en' ? 'en' : 'es']} has been added to your cart.` 
-          : `${product.name[language === 'en' ? 'en' : 'es']} ha sido añadido a tu carrito.`,
-        variant: "default",
-      });
-    }, 1000);
-  };
-
+  
+  const product = productId ? PRODUCTS[productId as keyof typeof PRODUCTS] : null;
+  
   if (!product) {
     return (
-      <div className="flex flex-col min-h-screen">
+      <div className="min-h-screen flex flex-col">
         <Navbar />
         <main className="flex-grow pt-28 flex items-center justify-center">
           <div className="text-center">
-            <AlertCircle className="mx-auto h-12 w-12 text-red-500 mb-4" />
-            <h1 className="text-2xl font-bold mb-2">
-              {language === 'en' ? "Product Not Found" : "Producto No Encontrado"}
+            <h1 className="text-3xl font-bold mb-4">
+              {language === 'en' ? 'Product Not Found' : 'Producto No Encontrado'}
             </h1>
-            <p className="text-muted-foreground mb-6">
+            <p className="mb-6">
               {language === 'en' 
-                ? "The product you're looking for doesn't exist or has been removed." 
-                : "El producto que estás buscando no existe o ha sido eliminado."}
+                ? 'The product you are looking for does not exist or has been removed.' 
+                : 'El producto que buscas no existe o ha sido eliminado.'}
             </p>
             <Link to="/products">
               <ButtonCustom>
-                {language === 'en' ? "Back to Products" : "Volver a Productos"}
+                {language === 'en' ? 'Browse Products' : 'Ver Productos'}
               </ButtonCustom>
             </Link>
           </div>
@@ -360,192 +237,226 @@ const ProductDetail: React.FC = () => {
       </div>
     );
   }
-
+  
+  const handleNextImage = () => {
+    setCurrentImageIndex((prev) => 
+      prev === product.images.length - 1 ? 0 : prev + 1
+    );
+  };
+  
+  const handlePrevImage = () => {
+    setCurrentImageIndex((prev) => 
+      prev === 0 ? product.images.length - 1 : prev - 1
+    );
+  };
+  
+  const handleAddToCart = () => {
+    toast({
+      title: language === 'en' ? 'Added to cart!' : '¡Añadido al carrito!',
+      description: language === 'en' 
+        ? `${product.nameEn} x${quantity} added to your cart.` 
+        : `${product.nameEs} x${quantity} añadido a tu carrito.`,
+    });
+  };
+  
+  const productName = language === 'en' ? product.nameEn : product.nameEs;
+  const productDescription = language === 'en' ? product.description.en : product.description.es;
+  const productFeatures = language === 'en' ? product.features.en : product.features.es;
+  const productTechSpecs = language === 'en' ? product.techSpecs.en : product.techSpecs.es;
+  
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="min-h-screen flex flex-col">
       <Navbar />
       <main className="flex-grow pt-28">
         <div className="container mx-auto px-4 md:px-6 py-12">
-          <Link to="/products" className="inline-flex items-center text-ice-600 hover:text-ice-700 mb-6">
-            <svg 
-              xmlns="http://www.w3.org/2000/svg" 
-              className="h-5 w-5 mr-2" 
-              viewBox="0 0 20 20" 
-              fill="currentColor"
-            >
-              <path 
-                fillRule="evenodd" 
-                d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" 
-                clipRule="evenodd" 
-              />
-            </svg>
-            {language === 'en' ? "Back to Products" : "Volver a Productos"}
-          </Link>
+          <nav className="mb-8">
+            <ol className="flex items-center text-sm text-muted-foreground">
+              <li>
+                <Link to="/" className="hover:underline">{t('nav.home')}</Link>
+              </li>
+              <span className="mx-2">/</span>
+              <li>
+                <Link to="/products" className="hover:underline">{language === 'en' ? 'Products' : 'Productos'}</Link>
+              </li>
+              <span className="mx-2">/</span>
+              <li className="font-medium text-foreground">{productName}</li>
+            </ol>
+          </nav>
           
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-            <div className="rounded-xl overflow-hidden shadow-lg">
-              <img 
-                src={`${product.image}?w=800&h=600&fit=crop&crop=entropy&auto=compress`} 
-                alt={product.name[language === 'en' ? 'en' : 'es']}
-                className="w-full h-full object-cover"
-              />
+            {/* Product Images */}
+            <div className="relative">
+              <div className="aspect-square rounded-xl overflow-hidden bg-gray-100 mb-4">
+                <img 
+                  src={product.images[currentImageIndex]} 
+                  alt={productName}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              
+              <div className="absolute top-1/2 left-4 transform -translate-y-1/2">
+                <button 
+                  onClick={handlePrevImage}
+                  className="w-10 h-10 rounded-full bg-white/80 shadow flex items-center justify-center hover:bg-white transition-colors"
+                >
+                  <ChevronLeft size={20} />
+                </button>
+              </div>
+              
+              <div className="absolute top-1/2 right-4 transform -translate-y-1/2">
+                <button 
+                  onClick={handleNextImage}
+                  className="w-10 h-10 rounded-full bg-white/80 shadow flex items-center justify-center hover:bg-white transition-colors"
+                >
+                  <ChevronRight size={20} />
+                </button>
+              </div>
+              
+              <div className="flex justify-center gap-2 mt-4">
+                {product.images.map((_, idx) => (
+                  <button 
+                    key={idx}
+                    onClick={() => setCurrentImageIndex(idx)}
+                    className={cn(
+                      "w-2 h-2 rounded-full",
+                      idx === currentImageIndex ? "bg-ice-500" : "bg-gray-300"
+                    )}
+                  />
+                ))}
+              </div>
             </div>
             
-            <div className="space-y-6">
-              <h1 className="text-3xl md:text-4xl font-bold">
-                {product.name[language === 'en' ? 'en' : 'es']}
-              </h1>
+            {/* Product Details */}
+            <div>
+              <div className="flex items-center gap-2 mb-2">
+                <div className="px-2 py-1 bg-green-50 text-green-700 text-xs font-medium rounded-full">
+                  {language === 'en' ? 'In Stock' : 'En Stock'}
+                </div>
+                <div className="flex items-center gap-1 text-amber-500">
+                  {[...Array(5)].map((_, idx) => (
+                    <Star 
+                      key={idx} 
+                      size={16} 
+                      fill={idx < Math.floor(product.rating) ? "currentColor" : "none"} 
+                    />
+                  ))}
+                  <span className="ml-1 text-sm text-muted-foreground">
+                    ({product.reviewCount})
+                  </span>
+                </div>
+              </div>
               
-              <div className="flex items-baseline">
-                <span className="text-3xl font-bold text-orange-600">
-                  €{product.price.toFixed(2)}
-                </span>
-                <span className="ml-4 text-sm text-orange-700">
-                  + €{product.monthlyPrice.toFixed(2)} {language === 'en' ? "monthly" : "mensual"}
+              <h1 className="text-3xl font-bold mb-2">{productName}</h1>
+              
+              <div className="flex items-end gap-3 mb-6">
+                <span className="text-3xl font-bold text-ice-600">€{product.price.toFixed(2)}</span>
+                <span className="text-sm text-muted-foreground mb-1">
+                  + €{product.monthlyPrice.toFixed(2)} {language === 'en' ? 'monthly' : 'mensual'}
                 </span>
               </div>
               
-              <p className="text-muted-foreground">
-                {product.description[language === 'en' ? 'en' : 'es']}
-              </p>
+              <p className="text-muted-foreground mb-8">{productDescription}</p>
               
-              <div className="border-t border-gray-200 pt-6">
-                <h3 className="text-lg font-medium mb-4">
-                  {language === 'en' ? "Key Features" : "Características Principales"}
+              <div className="mb-8">
+                <h3 className="font-semibold mb-3">
+                  {language === 'en' ? 'Key Features' : 'Características Clave'}
                 </h3>
-                <ul className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                  {product.features[language === 'en' ? 'en' : 'es'].map((feature, idx) => (
-                    <li key={idx} className="flex items-start">
-                      <CheckCircle className="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" />
+                <ul className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                  {productFeatures.map((feature, idx) => (
+                    <li key={idx} className="flex items-start gap-2">
+                      <Check size={18} className="text-green-500 flex-shrink-0 mt-0.5" />
                       <span>{feature}</span>
                     </li>
                   ))}
                 </ul>
               </div>
               
-              <div className="space-y-4 pt-6">
-                <ButtonCustom 
-                  className="w-full md:w-auto mr-4"
-                  onClick={handleAddToCart}
-                  isLoading={isAddingToCart}
-                >
-                  <ShoppingCart className="mr-2 h-5 w-5" />
-                  {language === 'en' ? "Add to Cart" : "Añadir al Carrito"}
+              <div className="mb-8">
+                <h3 className="font-semibold mb-3">
+                  {language === 'en' ? 'Available Colors' : 'Colores Disponibles'}
+                </h3>
+                <div className="flex gap-2 mb-4">
+                  {product.colors.map((color, idx) => (
+                    <div key={idx} className="flex flex-col items-center">
+                      <button 
+                        className={`w-8 h-8 rounded-full border ${idx === 0 ? 'border-ice-500 ring-2 ring-ice-200' : 'border-gray-200'}`}
+                        style={{ 
+                          backgroundColor: color.toLowerCase() === 'white' 
+                            ? 'white' 
+                            : color.toLowerCase() === 'black' 
+                              ? 'black'
+                              : color.toLowerCase() === 'silver' || color.toLowerCase() === 'light gray' || color.toLowerCase() === 'titanium'
+                                ? '#D3D3D3'
+                                : color.toLowerCase() === 'clear'
+                                  ? 'transparent'
+                                  : color 
+                        }}
+                      />
+                      <span className="text-xs mt-1">{color}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              
+              <div className="flex gap-3 mb-8">
+                <div className="flex items-center">
+                  <button 
+                    onClick={() => setQuantity(prev => Math.max(1, prev - 1))}
+                    className="w-10 h-10 flex items-center justify-center border border-gray-200 rounded-l-md hover:bg-gray-50"
+                  >
+                    -
+                  </button>
+                  <div className="w-12 h-10 flex items-center justify-center border-t border-b border-gray-200">
+                    {quantity}
+                  </div>
+                  <button 
+                    onClick={() => setQuantity(prev => prev + 1)}
+                    className="w-10 h-10 flex items-center justify-center border border-gray-200 rounded-r-md hover:bg-gray-50"
+                  >
+                    +
+                  </button>
+                </div>
+                
+                <ButtonCustom className="flex-1 flex items-center justify-center gap-2" onClick={handleAddToCart}>
+                  <ShoppingCart size={18} />
+                  {language === 'en' ? 'Add to Cart' : 'Añadir al Carrito'}
                 </ButtonCustom>
                 
-                <Link to="/join">
-                  <ButtonCustom variant="outline" className="w-full md:w-auto">
-                    <CreditCard className="mr-2 h-5 w-5" />
-                    {language === 'en' ? "Buy Now" : "Comprar Ahora"}
-                  </ButtonCustom>
-                </Link>
+                <ButtonCustom variant="outline" className="w-10 h-10 flex items-center justify-center p-0">
+                  <Heart size={18} />
+                </ButtonCustom>
+              </div>
+              
+              <div className="p-4 bg-ice-50 rounded-lg border border-ice-100 flex items-start gap-3">
+                <Shield className="text-ice-600 flex-shrink-0 mt-0.5" />
+                <div>
+                  <h4 className="font-medium text-ice-800">
+                    {language === 'en' ? 'ICE Guardian Protection' : 'Protección ICE Guardian'}
+                  </h4>
+                  <p className="text-sm text-ice-600">
+                    {language === 'en'
+                      ? 'This device includes 24/7 emergency monitoring and support through our AI Guardian platform.'
+                      : 'Este dispositivo incluye monitoreo de emergencia y soporte 24/7 a través de nuestra plataforma AI Guardian.'}
+                  </p>
+                </div>
               </div>
             </div>
           </div>
           
           <div className="mt-16">
-            <div className="border-b border-gray-200 mb-8">
-              <div className="flex space-x-8">
-                <button
-                  className={`py-4 px-2 border-b-2 font-medium ${
-                    activeTab === "description"
-                      ? "border-ice-600 text-ice-600"
-                      : "border-transparent text-gray-500 hover:text-gray-700"
-                  }`}
-                  onClick={() => setActiveTab("description")}
-                >
-                  {language === 'en' ? "Technical Specifications" : "Especificaciones Técnicas"}
-                </button>
-                <button
-                  className={`py-4 px-2 border-b-2 font-medium ${
-                    activeTab === "faq"
-                      ? "border-ice-600 text-ice-600"
-                      : "border-transparent text-gray-500 hover:text-gray-700"
-                  }`}
-                  onClick={() => setActiveTab("faq")}
-                >
-                  {language === 'en' ? "FAQ" : "Preguntas Frecuentes"}
-                </button>
-              </div>
-            </div>
+            <h2 className="text-2xl font-bold mb-6">
+              {language === 'en' ? 'Technical Specifications' : 'Especificaciones Técnicas'}
+            </h2>
             
-            {activeTab === "description" && (
-              <div className="glass-panel p-6">
-                <h2 className="text-xl font-bold mb-6">
-                  {language === 'en' ? "Technical Specifications" : "Especificaciones Técnicas"}
-                </h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-y-4 gap-x-8">
-                  {Object.entries(product.technicalSpecs[language === 'en' ? 'en' : 'es']).map(([key, value]) => (
-                    <div key={key} className="pb-3 border-b border-gray-200">
-                      <div className="flex justify-between">
-                        <span className="font-medium">{key}</span>
-                        <span className="text-muted-foreground">{value}</span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-            
-            {activeTab === "faq" && (
-              <div className="glass-panel p-6">
-                <h2 className="text-xl font-bold mb-6">
-                  {language === 'en' ? "Frequently Asked Questions" : "Preguntas Frecuentes"}
-                </h2>
-                <div className="space-y-6">
-                  {product.faqs[language === 'en' ? 'en' : 'es'].map((faq, idx) => (
-                    <div key={idx} className="pb-6 border-b border-gray-200 last:border-b-0 last:pb-0">
-                      <h3 className="text-lg font-medium mb-2">{faq.question}</h3>
-                      <p className="text-muted-foreground">{faq.answer}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-          
-          <div className="mt-16">
-            <div className="text-center mb-8">
-              <h2 className="text-2xl font-bold">
-                {language === 'en' ? "Complete Your Health Monitoring System" : "Complete Su Sistema de Monitoreo de Salud"}
-              </h2>
-              <p className="text-muted-foreground mt-2">
-                {language === 'en' 
-                  ? "Our devices work best together as an integrated ecosystem." 
-                  : "Nuestros dispositivos funcionan mejor juntos como un ecosistema integrado."}
-              </p>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {products
-                .filter(p => p.id !== product.id)
-                .map(relatedProduct => (
-                  <Link 
-                    key={relatedProduct.id}
-                    to={`/product/${relatedProduct.id}`}
-                    className="glass-panel p-6 hover:shadow-lg transition-shadow flex flex-col items-center text-center"
-                  >
-                    <div className="h-40 w-40 overflow-hidden rounded-lg mb-4">
-                      <img 
-                        src={`${relatedProduct.image}?w=300&h=300&fit=crop&crop=entropy&auto=compress`} 
-                        alt={relatedProduct.name[language === 'en' ? 'en' : 'es']}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                    <h3 className="text-xl font-medium mb-2">
-                      {relatedProduct.name[language === 'en' ? 'en' : 'es']}
-                    </h3>
-                    <p className="text-orange-600 font-bold">
-                      €{relatedProduct.price.toFixed(2)}
-                    </p>
-                    <p className="text-sm mt-2 mb-4 text-muted-foreground line-clamp-3">
-                      {relatedProduct.description[language === 'en' ? 'en' : 'es']}
-                    </p>
-                    <ButtonCustom variant="outline" size="sm" className="mt-auto">
-                      {language === 'en' ? "View Details" : "Ver Detalles"}
-                    </ButtonCustom>
-                  </Link>
+            <div className="bg-white rounded-xl shadow-sm border p-6">
+              <ul className="grid grid-cols-1 md:grid-cols-2 gap-y-4 gap-x-8">
+                {productTechSpecs.map((spec, idx) => (
+                  <li key={idx} className="flex items-start gap-2 pb-4 border-b border-gray-100">
+                    <Info size={16} className="text-muted-foreground flex-shrink-0 mt-0.5" />
+                    <span>{spec}</span>
+                  </li>
                 ))}
+              </ul>
             </div>
           </div>
         </div>
