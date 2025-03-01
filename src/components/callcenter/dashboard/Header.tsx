@@ -1,9 +1,10 @@
 
 import React from "react";
-import { User } from "lucide-react";
+import { User, Circle } from "lucide-react";
 import NotificationBell from "../notifications/NotificationBell";
 import { Notification } from "../notifications/NotificationTypes";
 import { User as UserType } from "@/context/AuthContext";
+import { AgentStatus } from "../sidebar/UserProfile";
 
 interface HeaderProps {
   activeSection: string;
@@ -19,6 +20,7 @@ interface HeaderProps {
   setActiveSection?: (section: string) => void;
   formatNotificationTime?: (date: Date) => string;
   user?: UserType | null;
+  agentStatus?: AgentStatus;
 }
 
 const Header: React.FC<HeaderProps> = ({
@@ -34,7 +36,8 @@ const Header: React.FC<HeaderProps> = ({
   markAsRead = () => {},
   setActiveSection = () => {},
   formatNotificationTime = () => "",
-  user = null
+  user = null,
+  agentStatus = "online"
 }) => {
   // Get the title based on the active section
   const getSectionTitle = () => {
@@ -53,6 +56,16 @@ const Header: React.FC<HeaderProps> = ({
       case "notifications": return "Notifications";
       case "profile": return "Agent Profile";
       default: return "Dashboard";
+    }
+  };
+
+  // Get color for status indicator
+  const getStatusColor = (status: AgentStatus): string => {
+    switch (status) {
+      case "online": return "text-green-500";
+      case "away": return "text-amber-500";
+      case "offline": return "text-gray-400";
+      default: return "text-gray-400";
     }
   };
 
@@ -79,6 +92,7 @@ const Header: React.FC<HeaderProps> = ({
           <div className="flex items-center gap-2 ml-4 bg-primary/10 px-3 py-1.5 rounded-md">
             <User className="h-4 w-4 text-primary" />
             <span className="text-sm font-medium">{user?.name || 'Call Center Agent'}</span>
+            <Circle className={`h-2.5 w-2.5 ${getStatusColor(agentStatus)} fill-current`} />
           </div>
         </div>
       </div>

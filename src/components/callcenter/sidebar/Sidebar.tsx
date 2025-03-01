@@ -5,7 +5,7 @@ import { User } from "@/context/AuthContext";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import SidebarNavigation from "./SidebarNavigation";
-import UserProfile from "./UserProfile";
+import UserProfile, { AgentStatus } from "./UserProfile";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 
@@ -15,6 +15,8 @@ interface SidebarProps {
   collapsed: boolean;
   setCollapsed: (collapsed: boolean) => void;
   user: User | null;
+  agentStatus?: AgentStatus;
+  setAgentStatus?: (status: AgentStatus) => void;
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ 
@@ -22,7 +24,9 @@ const Sidebar: React.FC<SidebarProps> = ({
   setActiveSection, 
   collapsed, 
   setCollapsed,
-  user
+  user,
+  agentStatus = "online",
+  setAgentStatus
 }) => {
   const { logout } = useAuth();
   const navigate = useNavigate();

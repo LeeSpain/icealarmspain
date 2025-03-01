@@ -9,6 +9,7 @@ import Header from "@/components/callcenter/dashboard/Header";
 import { getMockNotifications } from "@/components/callcenter/notifications/mock-notifications";
 import { Notification } from "@/components/callcenter/notifications/NotificationTypes";
 import { useNavigate } from "react-router-dom";
+import { AgentStatus } from "@/components/callcenter/sidebar/UserProfile";
 
 const CallCenterDashboard: React.FC = () => {
   // Set dashboard as the default active section
@@ -17,6 +18,7 @@ const CallCenterDashboard: React.FC = () => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [notifications, setNotifications] = useState<Notification[]>(getMockNotifications());
   const [showNotifications, setShowNotifications] = useState(false);
+  const [agentStatus, setAgentStatus] = useState<AgentStatus>("online");
   const { user, isAuthenticated } = useAuth();
   const navigate = useNavigate();
 
@@ -51,6 +53,17 @@ const CallCenterDashboard: React.FC = () => {
         notification.id === id ? { ...notification, read: true } : notification
       )
     );
+  };
+
+  // Function to update the agent status
+  const updateAgentStatus = (status: AgentStatus) => {
+    setAgentStatus(status);
+    const statusMessages = {
+      online: "You are now online and available to take calls.",
+      away: "You are now set to away. You will not receive new calls.",
+      offline: "You are now offline. Your status will not be visible to others."
+    };
+    toast.info(statusMessages[status]);
   };
 
   // Function to view a client from a notification
@@ -92,6 +105,8 @@ const CallCenterDashboard: React.FC = () => {
         collapsed={sidebarCollapsed}
         setCollapsed={setSidebarCollapsed}
         user={user}
+        agentStatus={agentStatus}
+        setAgentStatus={updateAgentStatus}
       />
       
       {/* Main Content */}
@@ -110,6 +125,7 @@ const CallCenterDashboard: React.FC = () => {
           setActiveSection={setActiveSection}
           formatNotificationTime={formatNotificationTime}
           user={user}
+          agentStatus={agentStatus}
         />
         
         <main className="p-6">
