@@ -96,6 +96,7 @@ const DeviceShowcase: React.FC = () => {
     let oneTimeTotal = 0;
     let baseMonthly = 0;
 
+    // Calculate one-time device costs
     selectedDevices.forEach(deviceId => {
       const device = devices.find(d => d.id === deviceId);
       if (device) {
@@ -104,10 +105,17 @@ const DeviceShowcase: React.FC = () => {
       }
     });
 
+    // Add base AI Guardian service automatically (€49.99)
+    const aiGuardianMonthly = 49.99;
+    baseMonthly += aiGuardianMonthly;
+
+    // Apply discounts based on number of devices
     let discountedMonthly = baseMonthly;
     if (selectedDevices.length === 2) {
+      // 10% discount for 2 devices
       discountedMonthly = baseMonthly * 0.9;
     } else if (selectedDevices.length === 3) {
+      // 20% discount for 3 devices
       discountedMonthly = baseMonthly * 0.8;
     }
 
@@ -143,8 +151,8 @@ const DeviceShowcase: React.FC = () => {
           </p>
           <p className="text-ice-600 mt-2 font-medium">
             {language === 'en' 
-              ? "Select the devices you need below to see your customized pricing." 
-              : "Seleccione los dispositivos que necesita a continuación para ver sus precios personalizados."}
+              ? "Select the devices you need below. AI Guardian service is automatically included." 
+              : "Seleccione los dispositivos que necesita a continuación. El servicio AI Guardian se incluye automáticamente."}
           </p>
         </div>
         

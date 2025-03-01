@@ -68,6 +68,23 @@ const ShoppingCartComponent: React.FC<ShoppingCartProps> = ({
         })}
       </div>
       
+      {/* AI Guardian Service automatically included */}
+      <div className="p-3 bg-ice-50 rounded-lg mb-6">
+        <div className="flex justify-between items-center">
+          <div>
+            <p className="font-medium text-guardian-600">
+              {language === 'en' ? "AI Guardian Service" : "Servicio Guardian IA"}
+            </p>
+            <p className="text-sm text-muted-foreground">
+              {language === 'en' ? "Automatically included" : "Incluido automáticamente"}
+            </p>
+          </div>
+          <p className="font-medium text-guardian-600">
+            {language === 'en' ? "Included" : "Incluido"}
+          </p>
+        </div>
+      </div>
+      
       <div className="border-t border-gray-100 pt-4">
         <div className="flex justify-between mb-2">
           <span className="text-muted-foreground">
