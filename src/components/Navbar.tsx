@@ -31,7 +31,7 @@ const Navbar: React.FC = () => {
     { name: t("nav.home"), href: "/", isAnchor: false },
     { name: t("nav.dashboard"), href: "#dashboard", isAnchor: true },
     { name: t("nav.devices"), href: "#devices", isAnchor: true },
-    { name: t("nav.pricing"), href: "#pricing", isAnchor: true },
+    { name: t("nav.pricing"), href: "/join", isAnchor: false },
   ];
   
   const renderNavLink = (link: { name: string; href: string; isAnchor: boolean }, onClick?: () => void) => {

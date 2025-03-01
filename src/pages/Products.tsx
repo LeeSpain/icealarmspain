@@ -45,11 +45,18 @@ const Products: React.FC = () => {
                   ? "Discover our comprehensive range of AI-powered health monitoring devices designed to provide peace of mind and enhanced care for you and your loved ones."
                   : "Descubra nuestra amplia gama de dispositivos de monitoreo de salud impulsados por IA diseñados para brindar tranquilidad y atención mejorada para usted y sus seres queridos."}
               </p>
-              <Link to="#devices">
-                <ButtonCustom size="lg" className="px-8 py-6 text-lg">
-                  {language === 'en' ? "Shop Now" : "Comprar Ahora"} <ArrowRight className="ml-2 h-5 w-5" />
-                </ButtonCustom>
-              </Link>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <Link to="#devices">
+                  <ButtonCustom size="lg" className="px-8 py-6 text-lg">
+                    {language === 'en' ? "Shop Now" : "Comprar Ahora"} <ArrowRight className="ml-2 h-5 w-5" />
+                  </ButtonCustom>
+                </Link>
+                <Link to="/join">
+                  <ButtonCustom variant="outline" size="lg" className="px-8 py-6 text-lg">
+                    {language === 'en' ? "View Pricing Plans" : "Ver Planes de Precios"}
+                  </ButtonCustom>
+                </Link>
+              </div>
             </div>
           </div>
         </section>
@@ -96,12 +103,12 @@ const Products: React.FC = () => {
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link to="/join">
                 <ButtonCustom variant="secondary" size="lg">
-                  {language === 'en' ? "Contact Our Team" : "Contactar a Nuestro Equipo"}
+                  {language === 'en' ? "View Pricing Plans" : "Ver Planes de Precios"}
                 </ButtonCustom>
               </Link>
               <Link to="/join">
                 <ButtonCustom variant="outline" size="lg" className="text-white border-white hover:bg-white/10">
-                  {language === 'en' ? "View Pricing" : "Ver Precios"}
+                  {language === 'en' ? "Contact Our Team" : "Contactar a Nuestro Equipo"}
                 </ButtonCustom>
               </Link>
             </div>
