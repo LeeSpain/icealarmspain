@@ -7,30 +7,34 @@ import { User as UserType } from "@/context/AuthContext";
 
 interface HeaderProps {
   activeSection: string;
-  hasUnreadNotifications: boolean;
-  showNotifications: boolean;
-  setShowNotifications: (show: boolean) => void;
-  notifications: Notification[];
-  viewClientFromNotification: (clientId: number, notificationId: string) => void;
-  checkClientServiceReadiness: (clientId: number) => void;
-  markAsRead: (id: string) => void;
-  setActiveSection: (section: string) => void;
-  formatNotificationTime: (date: Date) => string;
-  user: UserType | null;
+  sidebarCollapsed?: boolean;
+  setSidebarCollapsed?: (collapsed: boolean) => void;
+  hasUnreadNotifications?: boolean;
+  showNotifications?: boolean;
+  setShowNotifications?: (show: boolean) => void;
+  notifications?: Notification[];
+  viewClientFromNotification?: (clientId: number, notificationId: string) => void;
+  checkClientServiceReadiness?: (clientId: number) => void;
+  markAsRead?: (id: string) => void;
+  setActiveSection?: (section: string) => void;
+  formatNotificationTime?: (date: Date) => string;
+  user?: UserType | null;
 }
 
 const Header: React.FC<HeaderProps> = ({
   activeSection,
-  hasUnreadNotifications,
-  showNotifications,
-  setShowNotifications,
-  notifications,
-  viewClientFromNotification,
-  checkClientServiceReadiness,
-  markAsRead,
-  setActiveSection,
-  formatNotificationTime,
-  user
+  sidebarCollapsed,
+  setSidebarCollapsed,
+  hasUnreadNotifications = false,
+  showNotifications = false,
+  setShowNotifications = () => {},
+  notifications = [],
+  viewClientFromNotification = () => {},
+  checkClientServiceReadiness = () => {},
+  markAsRead = () => {},
+  setActiveSection = () => {},
+  formatNotificationTime = () => "",
+  user = null
 }) => {
   // Get the title based on the active section
   const getSectionTitle = () => {

@@ -6,12 +6,51 @@ import { useAuth } from "@/context/AuthContext";
 import Sidebar from "@/components/callcenter/sidebar/Sidebar";
 import DashboardContent from "@/components/callcenter/dashboard/DashboardContent";
 import Header from "@/components/callcenter/dashboard/Header";
+import { mockNotifications } from "@/components/callcenter/notifications/mock-notifications";
+import { Notification } from "@/components/callcenter/notifications/NotificationTypes";
 
 const CallCenterDashboard: React.FC = () => {
   const [activeSection, setActiveSection] = useState<string>("dashboard");
   const [selectedClient, setSelectedClient] = useState<number | null>(null);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [notifications, setNotifications] = useState<Notification[]>(mockNotifications);
+  const [showNotifications, setShowNotifications] = useState(false);
   const { user } = useAuth();
+
+  // Function to check if there are any unread notifications
+  const hasUnreadNotifications = notifications.some(notification => !notification.read);
+
+  // Function to mark a notification as read
+  const markAsRead = (id: string) => {
+    setNotifications(prev => 
+      prev.map(notification => 
+        notification.id === id ? { ...notification, read: true } : notification
+      )
+    );
+  };
+
+  // Function to view a client from a notification
+  const viewClientFromNotification = (clientId: number, notificationId: string) => {
+    setSelectedClient(clientId);
+    setActiveSection("clients");
+    markAsRead(notificationId);
+    setShowNotifications(false);
+  };
+
+  // Function to check if a client is ready for service
+  const checkClientServiceReadiness = (clientId: number) => {
+    console.log(`Checking service readiness for client ${clientId}`);
+    // Implementation would go here
+  };
+
+  // Format the notification time
+  const formatNotificationTime = (date: Date) => {
+    return new Intl.DateTimeFormat('en-US', {
+      hour: 'numeric',
+      minute: 'numeric',
+      hour12: true
+    }).format(date);
+  };
 
   return (
     <div className="flex h-screen overflow-hidden bg-background">
@@ -29,9 +68,19 @@ const CallCenterDashboard: React.FC = () => {
       {/* Main Content */}
       <div className="flex-1 overflow-auto">
         <Header 
-          activeSection={activeSection} 
-          sidebarCollapsed={sidebarCollapsed} 
-          setSidebarCollapsed={setSidebarCollapsed} 
+          activeSection={activeSection}
+          sidebarCollapsed={sidebarCollapsed}
+          setSidebarCollapsed={setSidebarCollapsed}
+          hasUnreadNotifications={hasUnreadNotifications}
+          showNotifications={showNotifications}
+          setShowNotifications={setShowNotifications}
+          notifications={notifications}
+          viewClientFromNotification={viewClientFromNotification}
+          checkClientServiceReadiness={checkClientServiceReadiness}
+          markAsRead={markAsRead}
+          setActiveSection={setActiveSection}
+          formatNotificationTime={formatNotificationTime}
+          user={user}
         />
         
         <main className="p-6">
