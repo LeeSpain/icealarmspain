@@ -1,4 +1,3 @@
-
 import React from "react";
 import { 
   User, 
@@ -19,7 +18,7 @@ import { Badge } from "@/components/ui/badge";
 import { mockCallData } from "../stats/mock-data";
 import { mockTickets } from "../ticketing/mock-data";
 import UrgentNotifications from "./UrgentNotifications";
-import { mockNotifications } from "../notifications/mock-notifications";
+import { getMockNotifications } from "../notifications/mock-notifications";
 
 interface AgentDashboardProps {
   setActiveSection: (section: string) => void;
@@ -35,31 +34,26 @@ const AgentDashboard: React.FC<AgentDashboardProps> = ({ setActiveSection }) => 
     day: 'numeric' 
   }).format(currentDate);
   
-  // Filter tickets for pending and critical tickets
   const pendingTickets = mockTickets.filter(ticket => ticket.status === 'open' || ticket.status === 'pending');
   const criticalTickets = mockTickets.filter(ticket => ticket.priority === 'high');
   
-  // Mock data for recent calls
   const recentCalls = [
     { id: 1, client: "Maria García", time: "10:32 AM", duration: "8m 45s", status: "completed" },
     { id: 2, client: "John Stevenson", time: "9:15 AM", duration: "12m 20s", status: "completed" },
     { id: 3, client: "Sarah Williams", time: "Yesterday", duration: "5m 10s", status: "missed" },
   ];
   
-  // Mock data for upcoming tasks
   const upcomingTasks = [
     { id: 1, task: "Follow up with Maria García", time: "2:00 PM", priority: "high" },
     { id: 2, task: "Call John Stevenson about device setup", time: "3:30 PM", priority: "medium" },
     { id: 3, task: "Team meeting", time: "4:00 PM", priority: "medium" },
   ];
   
-  // Calculate some metrics from mockCallData
   const totalCalls = mockCallData.dailyCalls.data.reduce((sum, num) => sum + num, 0);
   const avgResponseTime = mockCallData.responseTime.reduce((sum, item) => sum + item.value, 0) / mockCallData.responseTime.length;
   
   return (
     <div className="space-y-6">
-      {/* Welcome Banner */}
       <Card className="border-l-4 border-blue-500">
         <CardContent className="p-6">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -85,13 +79,11 @@ const AgentDashboard: React.FC<AgentDashboardProps> = ({ setActiveSection }) => 
         </CardContent>
       </Card>
 
-      {/* Urgent Notifications Section */}
       <UrgentNotifications 
-        notifications={mockNotifications} 
+        notifications={getMockNotifications()} 
         setActiveSection={setActiveSection} 
       />
       
-      {/* Metrics Overview */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <Card>
           <CardHeader className="pb-2">
@@ -154,9 +146,7 @@ const AgentDashboard: React.FC<AgentDashboardProps> = ({ setActiveSection }) => 
         </Card>
       </div>
       
-      {/* Main Content Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Pending Alerts */}
         <Card className="lg:col-span-2">
           <CardHeader>
             <CardTitle className="text-lg flex items-center gap-2">
@@ -210,9 +200,7 @@ const AgentDashboard: React.FC<AgentDashboardProps> = ({ setActiveSection }) => 
           </CardContent>
         </Card>
         
-        {/* Recent Activity & Upcoming */}
         <div className="space-y-6">
-          {/* Recent Calls */}
           <Card>
             <CardHeader>
               <CardTitle className="text-lg flex items-center gap-2">
@@ -239,7 +227,6 @@ const AgentDashboard: React.FC<AgentDashboardProps> = ({ setActiveSection }) => 
             </CardContent>
           </Card>
           
-          {/* Upcoming Tasks */}
           <Card>
             <CardHeader>
               <CardTitle className="text-lg flex items-center gap-2">
@@ -268,7 +255,6 @@ const AgentDashboard: React.FC<AgentDashboardProps> = ({ setActiveSection }) => 
         </div>
       </div>
       
-      {/* Device Monitoring */}
       <Card>
         <CardHeader>
           <CardTitle className="text-lg flex items-center gap-2">
@@ -338,7 +324,6 @@ const AgentDashboard: React.FC<AgentDashboardProps> = ({ setActiveSection }) => 
         </CardContent>
       </Card>
       
-      {/* Call to Action */}
       <div className="flex justify-between items-center p-6 bg-blue-50 rounded-lg border border-blue-200">
         <div>
           <h3 className="font-medium">Need assistance?</h3>

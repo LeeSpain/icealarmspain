@@ -33,7 +33,7 @@ const UrgentNotifications: React.FC<UrgentNotificationsProps> = ({
   
   // Filter pending high priority tickets
   const urgentTickets = mockTickets.filter(ticket => 
-    ticket.status !== 'resolved' && ticket.priority === 'high'
+    ticket.status !== 'closed' && ticket.priority === 'high'
   ).slice(0, 3);
   
   // Mock data for urgent chats
