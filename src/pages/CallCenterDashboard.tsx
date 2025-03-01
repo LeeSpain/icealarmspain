@@ -18,7 +18,7 @@ import { useAuth } from "@/context/AuthContext";
 import Sidebar from "@/components/callcenter/Sidebar";
 import TicketingSystem from "@/components/callcenter/TicketingSystem";
 import ClientDetails from "@/components/callcenter/ClientDetails";
-import CallStats from "@/components/callcenter/CallStats";
+import CallStats from "@/components/callcenter/stats/CallStats";
 import PlaceholderSection from "@/components/admin/PlaceholderSection";
 
 const CallCenterDashboard: React.FC = () => {
