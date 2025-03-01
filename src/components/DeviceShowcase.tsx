@@ -1,9 +1,8 @@
-
 import React, { useState, useEffect } from "react";
-import { BellRing, PlusSquare, ActivitySquare, ShoppingCart } from "lucide-react";
+import { BellRing, PlusSquare, ActivitySquare, ShoppingBag } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
 import DeviceCard from "./DeviceCard";
-import ShoppingCart from "./ShoppingCart";
+import ShoppingCartComponent from "./ShoppingCart";
 
 const DeviceShowcase: React.FC = () => {
   const { language } = useLanguage();
@@ -86,7 +85,6 @@ const DeviceShowcase: React.FC = () => {
     }
   ];
 
-  // Calculate discounts based on number of devices
   useEffect(() => {
     if (selectedDevices.length === 0) {
       setTotalMonthly(0);
@@ -97,7 +95,6 @@ const DeviceShowcase: React.FC = () => {
     let oneTimeTotal = 0;
     let baseMonthly = 0;
 
-    // Calculate one-time device costs
     selectedDevices.forEach(deviceId => {
       const device = devices.find(d => d.id === deviceId);
       if (device) {
@@ -106,13 +103,10 @@ const DeviceShowcase: React.FC = () => {
       }
     });
 
-    // Apply discounts based on number of devices
     let discountedMonthly = baseMonthly;
     if (selectedDevices.length === 2) {
-      // 10% discount for 2 devices
       discountedMonthly = baseMonthly * 0.9;
     } else if (selectedDevices.length === 3) {
-      // 20% discount for 3 devices
       discountedMonthly = baseMonthly * 0.8;
     }
 
@@ -129,13 +123,13 @@ const DeviceShowcase: React.FC = () => {
       }
     });
   };
-  
+
   return (
     <section id="devices" className="py-20">
       <div className="container mx-auto px-4 md:px-6">
         <div className="text-center max-w-3xl mx-auto mb-16 animate-slide-down">
           <div className="inline-flex items-center px-3 py-1 rounded-full bg-ice-50 border border-ice-200 text-ice-600 text-sm font-medium mb-4">
-            <ShoppingCart size={16} className="mr-2" />
+            <ShoppingBag size={16} className="mr-2" />
             {language === 'en' ? 'SHOP NOW & BUY TODAY' : 'COMPRE AHORA Y HOY MISMO'}
           </div>
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
@@ -171,7 +165,7 @@ const DeviceShowcase: React.FC = () => {
           ))}
         </div>
         
-        <ShoppingCart
+        <ShoppingCartComponent
           selectedDevices={selectedDevices}
           devices={devices}
           totalMonthly={totalMonthly}

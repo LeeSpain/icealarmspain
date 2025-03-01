@@ -21,7 +21,7 @@ interface ShoppingCartProps {
   onRemoveDevice: (deviceId: string) => void;
 }
 
-const ShoppingCart: React.FC<ShoppingCartProps> = ({
+const ShoppingCartComponent: React.FC<ShoppingCartProps> = ({
   selectedDevices,
   devices,
   totalMonthly,
@@ -108,4 +108,4 @@ const ShoppingCart: React.FC<ShoppingCartProps> = ({
   );
 };
 
-export default ShoppingCart;
+export default ShoppingCartComponent;
