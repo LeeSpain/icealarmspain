@@ -2,7 +2,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
 // Define user types and roles
-export type UserRole = 'admin' | 'member' | null;
+export type UserRole = 'admin' | 'member' | 'callcenter' | null;
 
 export interface User {
   id: string;
@@ -37,7 +37,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // Mock users - in a real app, this would be authenticated against a backend
   const mockUsers = [
     { id: '1', email: 'admin@icealarm.es', password: 'admin123', name: 'Admin User', role: 'admin' as UserRole },
-    { id: '2', email: 'member@icealarm.es', password: 'member123', name: 'Member User', role: 'member' as UserRole }
+    { id: '2', email: 'member@icealarm.es', password: 'member123', name: 'Member User', role: 'member' as UserRole },
+    { id: '3', email: 'agent@icealarm.es', password: 'agent123', name: 'Call Center Agent', role: 'callcenter' as UserRole }
   ];
 
   const login = async (email: string, password: string): Promise<boolean> => {

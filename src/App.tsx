@@ -11,6 +11,7 @@ import Products from "./pages/Products";
 import DevicesPage from "./pages/DevicesPage";
 import DashboardPage from "./pages/DashboardPage";
 import AdminDashboard from "./pages/AdminDashboard";
+import CallCenterDashboard from "./pages/CallCenterDashboard";
 import Join from "./pages/Join";
 import Demo from "./pages/Demo";
 import Login from "./pages/Login";
@@ -21,7 +22,7 @@ import NotFound from "./pages/NotFound";
 const queryClient = new QueryClient();
 
 // Protected route component that checks auth status
-const ProtectedRoute = ({ children, requiredRole }: { children: JSX.Element, requiredRole?: 'admin' | 'member' }) => {
+const ProtectedRoute = ({ children, requiredRole }: { children: JSX.Element, requiredRole?: 'admin' | 'member' | 'callcenter' }) => {
   const { user, isAuthenticated, isLoading } = useAuth();
   
   if (isLoading) {
@@ -58,6 +59,14 @@ const AppRoutes = () => {
         element={
           <ProtectedRoute requiredRole="admin">
             <AdminDashboard />
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/callcenter" 
+        element={
+          <ProtectedRoute requiredRole="callcenter">
+            <CallCenterDashboard />
           </ProtectedRoute>
         } 
       />
