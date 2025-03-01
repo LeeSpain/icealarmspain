@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -7,7 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { ButtonCustom } from "@/components/ui/button-custom";
 import { 
   Check, Shield, PlusCircle, MinusCircle, Users, ShoppingBag, 
-  Info, UserPlus, User, Home, Heart, UserCog
+  Info, UserPlus, User, Home, Heart, UserCog, Truck
 } from "lucide-react";
 
 // Membership types that users can select from
