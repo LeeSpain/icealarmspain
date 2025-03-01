@@ -32,7 +32,7 @@ const Navbar: React.FC = () => {
   const navLinks = [
     { name: t("nav.home"), href: "/", isAnchor: false },
     { name: t("nav.dashboard"), href: "/dashboard", isAnchor: false },
-    { name: t("nav.devices"), href: "/devices", isAnchor: false },
+    { name: t("nav.devices"), href: "/products", isAnchor: false },
     { name: t("nav.pricing"), href: "/join", isAnchor: false },
   ];
   
