@@ -23,12 +23,15 @@ export const WelcomeHero: React.FC<WelcomeHeroProps> = ({
   const { language } = useLanguage();
   const { user } = useAuth();
   
+  // Get the user's name, defaulting to "Member" if not available
+  const userName = (user?.displayName || user?.email) ? (user.displayName || user.email?.split('@')[0]) : 'Member';
+  
   return (
     <div className="bg-gradient-to-br from-ice-50 to-ice-100/50 rounded-lg p-6 mb-6 shadow-sm">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           <h1 className="text-2xl md:text-3xl font-bold text-ice-700">
-            {language === 'en' ? 'Welcome Member' : 'Bienvenido Miembro'}
+            {language === 'en' ? `Welcome ${userName}` : `Bienvenido ${userName}`}
           </h1>
           <p className="text-ice-600 mt-1">
             {language === 'en' 

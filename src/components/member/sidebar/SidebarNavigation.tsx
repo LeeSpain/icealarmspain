@@ -30,6 +30,12 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({
   const { language } = useLanguage();
   const navigate = useNavigate();
 
+  // Function to handle navigation
+  const handleNavigation = (path: string) => {
+    console.log("Navigating to:", path);
+    navigate(path);
+  };
+
   return (
     <div className="px-2 pt-4">
       <ScrollArea className="h-[calc(100vh-9rem)]">
@@ -38,7 +44,7 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({
             icon={Home} 
             label={language === 'en' ? "Dashboard" : "Panel"} 
             active={activePage === "dashboard"} 
-            onClick={() => navigate('/dashboard')}
+            onClick={() => handleNavigation('/dashboard')}
             collapsed={collapsed}
           />
           
@@ -47,21 +53,21 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({
               icon={BellRing} 
               label={language === 'en' ? "SOS Pendant" : "Colgante SOS"} 
               active={activePage === "sos-pendant"} 
-              onClick={() => navigate('/devices/sos-pendant')}
+              onClick={() => handleNavigation('/devices/sos-pendant')}
               collapsed={collapsed}
             />
             <SidebarItem 
               icon={Activity} 
               label={language === 'en' ? "Glucose Monitor" : "Monitor de Glucosa"} 
               active={activePage === "glucose-monitor"} 
-              onClick={() => navigate('/devices/glucose-monitor')}
+              onClick={() => handleNavigation('/devices/glucose-monitor')}
               collapsed={collapsed}
             />
             <SidebarItem 
               icon={PlusSquare} 
               label={language === 'en' ? "Medical Dispenser" : "Dispensador Médico"} 
               active={activePage === "medical-dispenser"} 
-              onClick={() => navigate('/devices/medical-dispenser')}
+              onClick={() => handleNavigation('/devices/medical-dispenser')}
               collapsed={collapsed}
             />
           </SidebarSection>
@@ -71,14 +77,14 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({
               icon={Activity} 
               label={language === 'en' ? "Health Metrics" : "Métricas de Salud"} 
               active={activePage === "health-metrics"} 
-              onClick={() => navigate('/health/metrics')}
+              onClick={() => handleNavigation('/health/metrics')}
               collapsed={collapsed}
             />
             <SidebarItem 
               icon={PlusSquare} 
               label={language === 'en' ? "Medications" : "Medicamentos"} 
               active={activePage === "medications"} 
-              onClick={() => navigate('/health/medications')}
+              onClick={() => handleNavigation('/health/medications')}
               collapsed={collapsed}
             />
           </SidebarSection>
@@ -88,21 +94,21 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({
               icon={User} 
               label={language === 'en' ? "Profile" : "Perfil"} 
               active={activePage === "profile"} 
-              onClick={() => navigate('/profile')}
+              onClick={() => handleNavigation('/profile')}
               collapsed={collapsed}
             />
             <SidebarItem 
               icon={Settings} 
               label={language === 'en' ? "Settings" : "Configuración"} 
               active={activePage === "settings"} 
-              onClick={() => navigate('/settings')}
+              onClick={() => handleNavigation('/settings')}
               collapsed={collapsed}
             />
             <SidebarItem 
               icon={HelpCircle} 
               label={language === 'en' ? "Help & Support" : "Ayuda y Soporte"} 
               active={activePage === "help"} 
-              onClick={() => navigate('/help')}
+              onClick={() => handleNavigation('/help')}
               collapsed={collapsed}
             />
           </SidebarSection>
