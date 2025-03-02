@@ -10,6 +10,12 @@ import DevicesPage from './pages/DevicesPage';
 import SOSPendantPage from './pages/SOSPendantPage';
 import GlucoseMonitorPage from './pages/GlucoseMonitorPage';
 import MedicalDispenserPage from './pages/MedicalDispenserPage';
+import HealthMetricsPage from './pages/HealthMetricsPage';
+import MedicationsPage from './pages/MedicationsPage';
+import ProfilePage from './pages/ProfilePage';
+import SettingsPage from './pages/SettingsPage';
+import DevicesSettingsPage from './pages/DevicesSettingsPage';
+import HelpSupportPage from './pages/HelpSupportPage';
 import Contact from './pages/Contact';
 import AboutUs from './pages/AboutUs';
 import Demo from './pages/Demo';
@@ -36,6 +42,12 @@ function App() {
       <Route path="/devices/sos-pendant" element={<SOSPendantPage />} />
       <Route path="/devices/glucose-monitor" element={<GlucoseMonitorPage />} />
       <Route path="/devices/medical-dispenser" element={<MedicalDispenserPage />} />
+      <Route path="/devices/settings" element={<DevicesSettingsPage />} />
+      <Route path="/health/metrics" element={<HealthMetricsPage />} />
+      <Route path="/health/medications" element={<MedicationsPage />} />
+      <Route path="/profile" element={<ProfilePage />} />
+      <Route path="/settings" element={<SettingsPage />} />
+      <Route path="/help" element={<HelpSupportPage />} />
       <Route path="/contact" element={<Contact />} />
       <Route path="/about" element={<AboutUs />} />
       <Route path="/demo" element={<Demo />} />

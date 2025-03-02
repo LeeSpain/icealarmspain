@@ -131,6 +131,13 @@ const MemberSidebar: React.FC<MemberSidebarProps> = ({
               onClick={() => navigate('/devices/medical-dispenser')}
               collapsed={collapsed}
             />
+            <SidebarItem 
+              icon={Settings} 
+              label={language === 'en' ? "Devices Settings" : "Config. Dispositivos"} 
+              active={activePage === "device-settings"} 
+              onClick={() => navigate('/devices/settings')}
+              collapsed={collapsed}
+            />
             
             <div className={cn("mt-6 mb-2", !collapsed && "px-3")}>
               <h3 className={cn(
@@ -144,12 +151,14 @@ const MemberSidebar: React.FC<MemberSidebarProps> = ({
               icon={Activity} 
               label={language === 'en' ? "Health Metrics" : "Métricas de Salud"} 
               active={activePage === "health-metrics"} 
+              onClick={() => navigate('/health/metrics')}
               collapsed={collapsed}
             />
             <SidebarItem 
               icon={PlusSquare} 
               label={language === 'en' ? "Medications" : "Medicamentos"} 
               active={activePage === "medications"} 
+              onClick={() => navigate('/health/medications')}
               collapsed={collapsed}
             />
             
@@ -165,18 +174,21 @@ const MemberSidebar: React.FC<MemberSidebarProps> = ({
               icon={User} 
               label={language === 'en' ? "Profile" : "Perfil"} 
               active={activePage === "profile"} 
+              onClick={() => navigate('/profile')}
               collapsed={collapsed}
             />
             <SidebarItem 
               icon={Settings} 
               label={language === 'en' ? "Settings" : "Configuración"} 
               active={activePage === "settings"} 
+              onClick={() => navigate('/settings')}
               collapsed={collapsed}
             />
             <SidebarItem 
               icon={HelpCircle} 
               label={language === 'en' ? "Help & Support" : "Ayuda y Soporte"} 
               active={activePage === "help"} 
+              onClick={() => navigate('/help')}
               collapsed={collapsed}
             />
           </div>
