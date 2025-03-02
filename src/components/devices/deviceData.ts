@@ -18,7 +18,7 @@ export interface DeviceSpecification {
 export interface DeviceData {
   id: string;
   name: string;
-  icon: JSX.Element;
+  icon: React.ReactNode;
   image: string;
   price: number;
   monthlyService: number;
@@ -33,7 +33,7 @@ export const getDevices = (language: string): DeviceData[] => {
     {
       id: "sos",
       name: language === 'en' ? "SOS Pendant" : "Colgante SOS",
-      icon: <BellRing className="w-16 h-16 text-orange-500" />,
+      icon: React.createElement(BellRing, { className: "w-16 h-16 text-orange-500" }),
       image: "/lovable-uploads/ad65a632-e7ef-4c61-a20e-7b6ff282a87a.png",
       price: 110.00,
       monthlyService: 24.99,
@@ -73,7 +73,7 @@ export const getDevices = (language: string): DeviceData[] => {
     {
       id: "dispenser",
       name: language === 'en' ? "Medical Dispenser" : "Dispensador Médico",
-      icon: <PlusSquare className="w-16 h-16 text-guardian-500" />,
+      icon: React.createElement(PlusSquare, { className: "w-16 h-16 text-guardian-500" }),
       image: "/lovable-uploads/5e439305-cf63-4080-962e-52657e864050.png",
       price: 249.99,
       monthlyService: 24.99,
@@ -113,7 +113,7 @@ export const getDevices = (language: string): DeviceData[] => {
     {
       id: "glucose",
       name: language === 'en' ? "Glucose Monitor" : "Monitor de Glucosa",
-      icon: <ActivitySquare className="w-16 h-16 text-orange-500" />,
+      icon: React.createElement(ActivitySquare, { className: "w-16 h-16 text-orange-500" }),
       image: "/lovable-uploads/6eb6b5d1-34a3-4236-ac3a-351d6c22de7e.png",
       price: 149.99,
       monthlyService: 24.99,
