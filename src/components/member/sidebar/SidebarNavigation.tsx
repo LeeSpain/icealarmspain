@@ -64,13 +64,6 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({
               onClick={() => navigate('/devices/medical-dispenser')}
               collapsed={collapsed}
             />
-            <SidebarItem 
-              icon={Settings} 
-              label={language === 'en' ? "Devices Settings" : "Config. Dispositivos"} 
-              active={activePage === "device-settings"} 
-              onClick={() => navigate('/devices/settings')}
-              collapsed={collapsed}
-            />
           </SidebarSection>
           
           <SidebarSection title={language === 'en' ? "Health" : "Salud"} collapsed={collapsed}>
