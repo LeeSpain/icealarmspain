@@ -5,10 +5,10 @@ import { Globe, Clipboard, PhoneCall, MessageSquare } from "lucide-react";
 import { ButtonCustom } from "./ui/button-custom";
 
 const ExpatInfo: React.FC = () => {
-  const { t, isEnglish } = useLanguage();
+  const { t, language } = useLanguage();
   
   // Only show this component for English users
-  if (!isEnglish) return null;
+  if (language !== 'en') return null;
   
   return (
     <section className="py-16 bg-guardian-50">
