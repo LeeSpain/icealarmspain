@@ -1,8 +1,5 @@
 
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { LanguageProvider } from './context/LanguageContext';
-import { AuthProvider } from './context/AuthContext';
-import { Toaster } from './components/ui/toaster';
+import { Routes, Route } from 'react-router-dom';
 import { ThemeProvider } from './components/mode-toggle';
 
 // Regular Pages
@@ -45,49 +42,42 @@ import CallCenterDashboard from './pages/CallCenterDashboard';
 function App() {
   return (
     <ThemeProvider defaultTheme="light" storageKey="ice-theme-preference">
-      <BrowserRouter>
-        <LanguageProvider>
-          <AuthProvider>
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/about" element={<AboutUs />} />
-              <Route path="/contact" element={<Contact />} />
-              <Route path="/products" element={<Products />} />
-              <Route path="/product/:id" element={<ProductDetail />} />
-              <Route path="/devices" element={<DevicesPage />} />
-              <Route path="/sos-pendant" element={<SOSPendantPage />} />
-              <Route path="/glucose-monitor" element={<GlucoseMonitorPage />} />
-              <Route path="/medical-dispenser" element={<MedicalDispenserPage />} />
-              <Route path="/demo" element={<Demo />} />
-              <Route path="/terms" element={<Terms />} />
-              <Route path="/privacy" element={<Privacy />} />
-              <Route path="/join" element={<Join />} />
-              <Route path="/onboarding" element={<OnboardingQuestionnaire />} />
-              
-              {/* Member Dashboard */}
-              <Route path="/dashboard" element={<DashboardPage />} />
-              <Route path="/profile" element={<ProfilePage />} />
-              <Route path="/settings" element={<SettingsPage />} />
-              <Route path="/help" element={<HelpSupportPage />} />
-              <Route path="/health/metrics" element={<HealthMetricsPage />} />
-              <Route path="/health/medications" element={<MedicationsPage />} />
-              <Route path="/devices/sos-pendant" element={<SOSPendantMemberPage />} />
-              <Route path="/devices/glucose-monitor" element={<GlucoseMonitorMemberPage />} />
-              <Route path="/devices/medical-dispenser" element={<MedicalDispenserMemberPage />} />
-              
-              {/* Admin Dashboard */}
-              <Route path="/admin" element={<AdminDashboard />} />
-              
-              {/* Call Center Dashboard */}
-              <Route path="/call-center" element={<CallCenterDashboard />} />
-              
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-            <Toaster />
-          </AuthProvider>
-        </LanguageProvider>
-      </BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Index />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/about" element={<AboutUs />} />
+        <Route path="/contact" element={<Contact />} />
+        <Route path="/products" element={<Products />} />
+        <Route path="/product/:id" element={<ProductDetail />} />
+        <Route path="/devices" element={<DevicesPage />} />
+        <Route path="/sos-pendant" element={<SOSPendantPage />} />
+        <Route path="/glucose-monitor" element={<GlucoseMonitorPage />} />
+        <Route path="/medical-dispenser" element={<MedicalDispenserPage />} />
+        <Route path="/demo" element={<Demo />} />
+        <Route path="/terms" element={<Terms />} />
+        <Route path="/privacy" element={<Privacy />} />
+        <Route path="/join" element={<Join />} />
+        <Route path="/onboarding" element={<OnboardingQuestionnaire />} />
+        
+        {/* Member Dashboard */}
+        <Route path="/dashboard" element={<DashboardPage />} />
+        <Route path="/profile" element={<ProfilePage />} />
+        <Route path="/settings" element={<SettingsPage />} />
+        <Route path="/help" element={<HelpSupportPage />} />
+        <Route path="/health/metrics" element={<HealthMetricsPage />} />
+        <Route path="/health/medications" element={<MedicationsPage />} />
+        <Route path="/devices/sos-pendant" element={<SOSPendantMemberPage />} />
+        <Route path="/devices/glucose-monitor" element={<GlucoseMonitorMemberPage />} />
+        <Route path="/devices/medical-dispenser" element={<MedicalDispenserMemberPage />} />
+        
+        {/* Admin Dashboard */}
+        <Route path="/admin" element={<AdminDashboard />} />
+        
+        {/* Call Center Dashboard */}
+        <Route path="/call-center" element={<CallCenterDashboard />} />
+        
+        <Route path="*" element={<NotFound />} />
+      </Routes>
     </ThemeProvider>
   );
 }
