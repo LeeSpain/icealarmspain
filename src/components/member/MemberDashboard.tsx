@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
@@ -13,13 +12,16 @@ import {
   AlertTriangle,
   LogOut,
   Smile,
-  Heart
+  Heart,
+  Wand2,
+  ArrowLeft
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useLanguage } from "@/context/LanguageContext";
 import { toast } from "react-toastify";
+import DeviceSetupGuide from "./DeviceSetupGuide";
 
 // Mock data for devices/products the user owns
 const mockUserDevices = [
@@ -35,36 +37,14 @@ const availableProducts = [
   { id: "prod-4", name: "Health Wristband", price: "€129", description: "24/7 health tracking wristband" }
 ];
 
-const MetricCard = ({ title, value, icon, status = "normal" }) => {
-  const statusColors = {
-    normal: "bg-green-50 text-green-600",
-    warning: "bg-amber-50 text-amber-600",
-    alert: "bg-red-50 text-red-600"
-  };
-  
-  return (
-    <Card>
-      <CardHeader className="flex flex-row items-center justify-between pb-2">
-        <CardTitle className="text-sm font-medium">{title}</CardTitle>
-        <div className="text-muted-foreground">{icon}</div>
-      </CardHeader>
-      <CardContent>
-        <div className="text-2xl font-bold">{value}</div>
-        {status !== "normal" && (
-          <div className={`mt-2 text-xs px-2 py-1 rounded-full self-start inline-block ${statusColors[status]}`}>
-            {status === "warning" ? "Needs attention" : "Critical"}
-          </div>
-        )}
-      </CardContent>
-    </Card>
-  );
-};
-
 const MemberDashboard = () => {
   const { user, logout } = useAuth();
   const { language } = useLanguage();
   const [showAddProducts, setShowAddProducts] = useState(false);
+  const [showSetupGuide, setShowSetupGuide] = useState(false);
+  const [setupDeviceType, setSetupDeviceType] = useState<'pendant' | 'monitor' | 'dispenser'>('pendant');
   const [cart, setCart] = useState([]);
+  const [userDevices, setUserDevices] = useState(mockUserDevices);
   const navigate = useNavigate();
 
   const addToCart = (product) => {
@@ -91,9 +71,95 @@ const MemberDashboard = () => {
     }
   };
 
+  const handleStartSetup = (deviceType: 'pendant' | 'monitor' | 'dispenser') => {
+    setSetupDeviceType(deviceType);
+    setShowSetupGuide(true);
+    setShowAddProducts(false);
+  };
+
+  const handleSetupComplete = () => {
+    setShowSetupGuide(false);
+    
+    // Add the device to the user's devices
+    const newDevice = {
+      id: `dev-${userDevices.length + 1}`,
+      name: setupDeviceType === 'pendant' 
+        ? 'SOS Pendant' 
+        : setupDeviceType === 'monitor' 
+          ? 'Health Monitor' 
+          : 'Medical Dispenser',
+      status: 'active',
+      lastChecked: 'Now',
+      batteryLevel: '100%'
+    };
+    
+    setUserDevices([...userDevices, newDevice]);
+    
+    toast.success(
+      language === 'en'
+        ? `${newDevice.name} added to your devices!`
+        : `¡${newDevice.name} añadido a tus dispositivos!`
+    );
+  };
+
+  // For simulation, let's allow the user to clear their devices
+  const clearDevices = () => {
+    setUserDevices([]);
+    toast.info(
+      language === 'en'
+        ? 'All devices have been removed for demonstration purposes'
+        : 'Todos los dispositivos han sido eliminados con fines de demostración'
+    );
+  };
+
   const handleLogout = () => {
     logout();
     navigate('/');
+  };
+
+  if (showSetupGuide) {
+    return (
+      <div className="p-4 md:p-6 max-w-3xl mx-auto">
+        <Button 
+          variant="outline" 
+          onClick={() => setShowSetupGuide(false)} 
+          className="mb-6 flex items-center gap-2"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          {language === 'en' ? 'Back to Dashboard' : 'Volver al Panel'}
+        </Button>
+        
+        <DeviceSetupGuide 
+          deviceType={setupDeviceType} 
+          onComplete={handleSetupComplete} 
+        />
+      </div>
+    );
+  }
+
+  const MetricCard = ({ title, value, icon, status = "normal" }) => {
+    const statusColors = {
+      normal: "bg-green-50 text-green-600",
+      warning: "bg-amber-50 text-amber-600",
+      alert: "bg-red-50 text-red-600"
+    };
+    
+    return (
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between pb-2">
+          <CardTitle className="text-sm font-medium">{title}</CardTitle>
+          <div className="text-muted-foreground">{icon}</div>
+        </CardHeader>
+        <CardContent>
+          <div className="text-2xl font-bold">{value}</div>
+          {status !== "normal" && (
+            <div className={`mt-2 text-xs px-2 py-1 rounded-full self-start inline-block ${statusColors[status]}`}>
+              {status === "warning" ? "Needs attention" : "Critical"}
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    );
   };
 
   return (
@@ -133,14 +199,28 @@ const MemberDashboard = () => {
               ? (language === 'en' ? 'Hide Store' : 'Ocultar Tienda') 
               : (language === 'en' ? 'Explore Products' : 'Explorar Productos')}
           </Button>
-          <Button variant="outline" className="bg-white/80 hover:bg-white">
-            <Bell className="mr-2 h-4 w-4" />
-            {language === 'en' ? 'Test Alarm' : 'Probar Alarma'}
-          </Button>
-          <Button variant="outline" className="bg-white/80 hover:bg-white">
-            <Settings className="mr-2 h-4 w-4" />
-            {language === 'en' ? 'Settings' : 'Configuración'}
-          </Button>
+          
+          {userDevices.length > 0 ? (
+            <>
+              <Button variant="outline" className="bg-white/80 hover:bg-white">
+                <Bell className="mr-2 h-4 w-4" />
+                {language === 'en' ? 'Test Alarm' : 'Probar Alarma'}
+              </Button>
+              <Button variant="outline" className="bg-white/80 hover:bg-white">
+                <Settings className="mr-2 h-4 w-4" />
+                {language === 'en' ? 'Settings' : 'Configuración'}
+              </Button>
+              {/* For demo purposes */}
+              <Button 
+                variant="outline" 
+                className="bg-white/80 hover:bg-white ml-auto"
+                onClick={clearDevices}
+              >
+                <Wand2 className="mr-2 h-4 w-4" />
+                {language === 'en' ? 'Demo: Clear Devices' : 'Demo: Eliminar Dispositivos'}
+              </Button>
+            </>
+          ) : null}
         </div>
       </div>
 
@@ -148,7 +228,7 @@ const MemberDashboard = () => {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
         <MetricCard 
           title={language === 'en' ? "Active Devices" : "Dispositivos Activos"} 
-          value={mockUserDevices.length.toString()} 
+          value={userDevices.length.toString()} 
           icon={<Activity size={18} />} 
         />
         <MetricCard 
@@ -172,10 +252,12 @@ const MemberDashboard = () => {
               <Heart className="h-5 w-5 text-ice-500" />
               <CardTitle>{language === 'en' ? 'My Devices' : 'Mis Dispositivos'}</CardTitle>
             </div>
-            <Button variant="outline" size="sm">
-              <Settings className="mr-2 h-4 w-4" />
-              {language === 'en' ? 'Manage Devices' : 'Gestionar Dispositivos'}
-            </Button>
+            {userDevices.length > 0 && (
+              <Button variant="outline" size="sm">
+                <Settings className="mr-2 h-4 w-4" />
+                {language === 'en' ? 'Manage Devices' : 'Gestionar Dispositivos'}
+              </Button>
+            )}
           </div>
           <CardDescription>
             {language === 'en' 
@@ -184,7 +266,7 @@ const MemberDashboard = () => {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          {mockUserDevices.length > 0 ? (
+          {userDevices.length > 0 ? (
             <Table>
               <TableHeader>
                 <TableRow>
@@ -195,7 +277,7 @@ const MemberDashboard = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {mockUserDevices.map(device => (
+                {userDevices.map(device => (
                   <TableRow key={device.id}>
                     <TableCell className="font-medium">{device.name}</TableCell>
                     <TableCell>
@@ -258,17 +340,48 @@ const MemberDashboard = () => {
                       <CardTitle className="text-lg">{product.name}</CardTitle>
                       <CardDescription className="text-sm">{product.description}</CardDescription>
                     </CardHeader>
-                    <CardFooter className="flex justify-between">
+                    <CardFooter className="flex justify-between flex-col sm:flex-row gap-2">
                       <div className="font-bold">{product.price}</div>
-                      <Button 
-                        variant="outline" 
-                        size="sm" 
-                        onClick={() => addToCart(product)}
-                        className="text-ice-600 border-ice-300 hover:bg-ice-50"
-                      >
-                        <Plus className="mr-2 h-4 w-4" />
-                        {language === 'en' ? 'Add to Cart' : 'Añadir'}
-                      </Button>
+                      <div className="flex flex-wrap gap-2">
+                        <Button 
+                          variant="outline" 
+                          size="sm" 
+                          onClick={() => addToCart(product)}
+                          className="text-ice-600 border-ice-300 hover:bg-ice-50"
+                        >
+                          <Plus className="mr-2 h-4 w-4" />
+                          {language === 'en' ? 'Add to Cart' : 'Añadir'}
+                        </Button>
+                        
+                        {/* Setup guide button - shown for devices that can be set up */}
+                        {product.id === 'prod-2' && (
+                          <Button 
+                            size="sm" 
+                            onClick={() => handleStartSetup('pendant')}
+                            className="bg-ice-600 hover:bg-ice-700"
+                          >
+                            {language === 'en' ? 'Setup Guide' : 'Guía de Configuración'}
+                          </Button>
+                        )}
+                        {product.id === 'prod-3' && (
+                          <Button 
+                            size="sm" 
+                            onClick={() => handleStartSetup('dispenser')}
+                            className="bg-ice-600 hover:bg-ice-700"
+                          >
+                            {language === 'en' ? 'Setup Guide' : 'Guía de Configuración'}
+                          </Button>
+                        )}
+                        {product.id === 'prod-4' && (
+                          <Button 
+                            size="sm" 
+                            onClick={() => handleStartSetup('monitor')}
+                            className="bg-ice-600 hover:bg-ice-700"
+                          >
+                            {language === 'en' ? 'Setup Guide' : 'Guía de Configuración'}
+                          </Button>
+                        )}
+                      </div>
                     </CardFooter>
                   </Card>
                 ))}
@@ -345,18 +458,39 @@ const MemberDashboard = () => {
           </div>
         </CardHeader>
         <CardContent className="flex flex-wrap gap-4">
-          <Button variant="outline">
-            <Bell className="mr-2 h-4 w-4" />
-            {language === 'en' ? 'Test Alarm' : 'Probar Alarma'}
-          </Button>
-          <Button variant="outline">
-            <Activity className="mr-2 h-4 w-4" />
-            {language === 'en' ? 'View Reports' : 'Ver Informes'}
-          </Button>
-          <Button variant="outline">
-            <Settings className="mr-2 h-4 w-4" />
-            {language === 'en' ? 'Account Settings' : 'Configuración de Cuenta'}
-          </Button>
+          {userDevices.length > 0 ? (
+            <>
+              <Button variant="outline">
+                <Bell className="mr-2 h-4 w-4" />
+                {language === 'en' ? 'Test Alarm' : 'Probar Alarma'}
+              </Button>
+              <Button variant="outline">
+                <Activity className="mr-2 h-4 w-4" />
+                {language === 'en' ? 'View Reports' : 'Ver Informes'}
+              </Button>
+              <Button variant="outline">
+                <Settings className="mr-2 h-4 w-4" />
+                {language === 'en' ? 'Account Settings' : 'Configuración de Cuenta'}
+              </Button>
+            </>
+          ) : (
+            <>
+              <Button 
+                variant="outline"
+                onClick={() => setShowAddProducts(true)}
+              >
+                <ShoppingCart className="mr-2 h-4 w-4" />
+                {language === 'en' ? 'Shop Devices' : 'Comprar Dispositivos'}
+              </Button>
+              <Button 
+                variant="outline"
+                onClick={() => navigate('/onboarding')}
+              >
+                <Settings className="mr-2 h-4 w-4" />
+                {language === 'en' ? 'Complete Profile' : 'Completar Perfil'}
+              </Button>
+            </>
+          )}
         </CardContent>
       </Card>
     </div>

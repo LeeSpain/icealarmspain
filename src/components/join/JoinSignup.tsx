@@ -15,11 +15,11 @@ const JoinSignup: React.FC<JoinSignupProps> = ({ language, onSuccess }) => {
       </h1>
       <p className="text-muted-foreground mb-8 text-center">
         {language === 'en' 
-          ? "Sign up to start your health monitoring journey with ICE Alarm España." 
-          : "Regístrate para comenzar tu viaje de monitoreo de salud con ICE Alarm España."}
+          ? "Sign up to start your health monitoring journey with ICE Alarm España. You'll complete your profile in the next step." 
+          : "Regístrate para comenzar tu viaje de monitoreo de salud con ICE Alarm España. Completarás tu perfil en el siguiente paso."}
       </p>
       
-      <AuthForm mode="signup" onSuccess={onSuccess} />
+      <AuthForm mode="signup" onSuccess={onSuccess} redirectTo="/onboarding" />
     </div>
   );
 };
