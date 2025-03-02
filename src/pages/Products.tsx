@@ -38,8 +38,8 @@ const Products: React.FC = () => {
     <div className="flex flex-col min-h-screen">
       <Navbar />
       <main className="flex-grow">
-        {/* Hero section */}
-        <section className="bg-ice-50 py-20">
+        {/* Hero section - adjusted padding-top to move content down */}
+        <section className="bg-ice-50 pt-32 pb-20">
           <div className="container mx-auto px-4 md:px-6">
             <div className="max-w-4xl mx-auto text-center">
               <h1 className="text-4xl md:text-5xl font-bold mb-6 mx-auto">
