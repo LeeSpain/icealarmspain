@@ -78,7 +78,7 @@ const DeviceShowcase: React.FC = () => {
   ];
 
   return (
-    <section id="devices" className="py-20 bg-white">
+    <section id="devices" className="py-20 bg-gradient-to-b from-white to-ice-50/30">
       <div className="container mx-auto px-4 md:px-6">
         <div className="text-center max-w-3xl mx-auto mb-16 animate-slide-down">
           <div className="inline-flex items-center px-3 py-1 rounded-full bg-ice-50 border border-ice-200 text-ice-600 text-sm font-medium mb-4">
@@ -113,34 +113,53 @@ const DeviceShowcase: React.FC = () => {
           {devices.map((device, index) => (
             <div 
               key={device.id}
-              className="bg-white rounded-3xl shadow-subtle border border-gray-100 overflow-hidden transition-all duration-300 hover:shadow-lg animate-slide-up"
-              style={{ animationDelay: `${(index + 1) * 0.1}s` }}
+              className="glass-card relative overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-1 animate-slide-up"
+              style={{ 
+                animationDelay: `${(index + 1) * 0.1}s`,
+                background: `linear-gradient(to bottom right, ${index % 2 === 0 ? 'white, #f8fafc' : '#f8fafc, white'})` 
+              }}
             >
+              {/* Decorative accent bar at top of card */}
+              <div 
+                className="absolute top-0 left-0 w-full h-1.5"
+                style={{ 
+                  background: index === 0 
+                    ? 'linear-gradient(to right, #ff7e1d, #ff9a4d)' 
+                    : index === 1 
+                      ? 'linear-gradient(to right, #16a34a, #4ade80)' 
+                      : 'linear-gradient(to right, #ff7e1d, #16a34a)' 
+                }}
+              ></div>
+              
               <div className="p-6">
-                <div className="mb-4">{device.icon}</div>
+                <div className="mb-4 bg-ice-50/50 p-3 rounded-full inline-block">
+                  {device.icon}
+                </div>
                 <h3 className="text-xl font-semibold mb-2">{device.name}</h3>
                 
-                {/* Device Image */}
-                <div className="mb-4 overflow-hidden rounded-lg h-48">
+                {/* Device Image with enhanced styling */}
+                <div className="mb-4 overflow-hidden rounded-lg h-48 bg-white shadow-inner border border-ice-100">
                   <img 
                     src={device.image}
                     alt={device.name}
-                    className="w-full h-full object-contain transition-transform hover:scale-105"
+                    className="w-full h-full object-contain transition-transform hover:scale-105 p-2"
                   />
                 </div>
                 
-                <p className="text-muted-foreground text-sm text-center mb-6">
+                <p className="text-muted-foreground text-sm mb-6">
                   {device.description}
                 </p>
                 
-                <div className="w-full border-t border-gray-100 pt-4 mb-6">
+                <div className="w-full border-t border-ice-100 pt-4 mb-6">
                   <h4 className="font-medium mb-2 text-sm text-ice-600">
                     {language === 'en' ? "Key Features:" : "Características Principales:"}
                   </h4>
                   <ul className="space-y-2">
                     {device.features.map((feature, idx) => (
-                      <li key={idx} className="flex items-center text-sm">
-                        <Check size={16} className="text-green-500 mr-2 flex-shrink-0" />
+                      <li key={idx} className="flex items-start text-sm">
+                        <div className="bg-green-50 rounded-full p-0.5 flex-shrink-0 mt-0.5 mr-2">
+                          <Check size={14} className="text-green-500" />
+                        </div>
                         <span>{feature}</span>
                       </li>
                     ))}
@@ -150,7 +169,7 @@ const DeviceShowcase: React.FC = () => {
                 <Link to={`/devices#${device.id}`}>
                   <ButtonCustom 
                     variant="outline" 
-                    className="mt-auto w-full group"
+                    className="mt-auto w-full group hover:bg-ice-50"
                   >
                     {language === 'en' ? "Learn More" : "Más Información"}
                     <ArrowRight size={16} className="ml-2 group-hover:translate-x-1 transition-transform" />
