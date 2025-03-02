@@ -9,6 +9,9 @@ import { AuthProvider, useAuth } from "./context/AuthContext";
 import Index from "./pages/Index";
 import Products from "./pages/Products";
 import DevicesPage from "./pages/DevicesPage";
+import SOSPendantPage from "./pages/SOSPendantPage";
+import MedicalDispenserPage from "./pages/MedicalDispenserPage";
+import GlucoseMonitorPage from "./pages/GlucoseMonitorPage";
 import DashboardPage from "./pages/DashboardPage";
 import AdminDashboard from "./pages/AdminDashboard";
 import CallCenterDashboard from "./pages/CallCenterDashboard";
@@ -55,6 +58,9 @@ const AppRoutes = () => {
       <Route path="/" element={<Index />} />
       <Route path="/products" element={<Products />} />
       <Route path="/devices" element={<DevicesPage />} />
+      <Route path="/sos-pendant" element={<SOSPendantPage />} />
+      <Route path="/medical-dispenser" element={<MedicalDispenserPage />} />
+      <Route path="/glucose-monitor" element={<GlucoseMonitorPage />} />
       <Route 
         path="/dashboard" 
         element={

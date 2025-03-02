@@ -51,7 +51,8 @@ const DevicesPage: React.FC = () => {
         connectivity: language === 'en' ? "4G LTE & Bluetooth" : "4G LTE y Bluetooth",
         dimensions: "4.5 × 3.2 × 1.2 cm",
         weight: "35g"
-      }
+      },
+      path: "/sos-pendant"
     },
     {
       id: "dispenser",
@@ -90,7 +91,8 @@ const DevicesPage: React.FC = () => {
         connectivity: "Wi-Fi",
         dimensions: "22 × 18 × 8 cm",
         weight: "650g"
-      }
+      },
+      path: "/medical-dispenser"
     },
     {
       id: "glucose",
@@ -129,7 +131,8 @@ const DevicesPage: React.FC = () => {
         connectivity: language === 'en' ? "Bluetooth Low Energy" : "Bluetooth de baja energía",
         readingRange: "40-500 mg/dL",
         accuracy: "±10%"
-      }
+      },
+      path: "/glucose-monitor"
     }
   ];
 
@@ -360,11 +363,18 @@ const DevicesPage: React.FC = () => {
                     </div>
                   </div>
                   
-                  <Link to="/join">
-                    <ButtonCustom>
-                      {language === 'en' ? "Add to Cart" : "Añadir al Carrito"}
-                    </ButtonCustom>
-                  </Link>
+                  <div className="flex flex-col sm:flex-row gap-3">
+                    <Link to="/join">
+                      <ButtonCustom>
+                        {language === 'en' ? "Add to Cart" : "Añadir al Carrito"}
+                      </ButtonCustom>
+                    </Link>
+                    <Link to={device.path}>
+                      <ButtonCustom variant="outline">
+                        {language === 'en' ? "Learn More" : "Más Información"}
+                      </ButtonCustom>
+                    </Link>
+                  </div>
                 </div>
                 
                 <div className={`${index % 2 !== 0 ? 'lg:order-1' : ''}`}>
