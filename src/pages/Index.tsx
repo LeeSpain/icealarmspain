@@ -2,7 +2,6 @@
 import React, { useEffect } from "react";
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
-import Dashboard from "@/components/Dashboard";
 import DeviceShowcase from "@/components/DeviceShowcase";
 import Pricing from "@/components/Pricing";
 import ExpatInfo from "@/components/ExpatInfo";
@@ -88,13 +87,6 @@ const Index: React.FC = () => {
         {/* Section Divider with enhanced styling */}
         <div className="relative">
           <div className="absolute left-0 right-0 h-16 bg-gradient-to-b from-transparent to-white/80 -top-16 z-10"></div>
-        </div>
-        
-        <Dashboard />
-        
-        {/* Section Divider with enhanced styling */}
-        <div className="relative">
-          <div className="absolute left-0 right-0 h-24 bg-gradient-to-b from-ice-50/50 to-white -top-24 z-10"></div>
         </div>
         
         <DeviceShowcase />
