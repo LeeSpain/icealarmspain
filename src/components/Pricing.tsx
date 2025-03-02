@@ -1,6 +1,6 @@
 
 import React from "react";
-import { Check, Truck, Shield, Info } from "lucide-react";
+import { Check, Truck, Shield, Info, AlertCircle } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
 import { Link } from "react-router-dom";
 import { ButtonCustom } from "./ui/button-custom";
@@ -14,73 +14,70 @@ const Pricing: React.FC = () => {
       description: language === 'en' 
         ? "Basic monitoring with a single device of your choice." 
         : "Monitoreo básico con un solo dispositivo de su elección.",
+      deviceCount: 1,
       features: language === 'en' 
         ? [
-            "1 device monitoring",
+            "AI Guardian service",
             "24/7 emergency response",
-            "AI Guardian basic interactions",
             "Dashboard access for family",
-            "Monthly health reports"
+            "Monthly health updates",
+            "Device-specific features"
           ]
         : [
-            "Monitoreo de 1 dispositivo",
+            "Servicio AI Guardian",
             "Respuesta de emergencia 24/7",
-            "Interacciones básicas con IA Guardian",
             "Acceso al panel para la familia",
-            "Informes de salud mensuales"
+            "Actualizaciones mensuales de salud",
+            "Características específicas del dispositivo"
           ],
     },
     {
       title: language === 'en' ? "Dual Protection" : "Protección Dual",
       description: language === 'en'
-        ? "Enhanced protection with two integrated devices."
-        : "Protección mejorada con dos dispositivos integrados.",
+        ? "Enhanced monitoring with two integrated devices."
+        : "Monitoreo mejorado con dos dispositivos integrados.",
+      deviceCount: 2,
       features: language === 'en'
         ? [
-            "2 devices monitoring",
-            "24/7 priority emergency response",
-            "Full AI Guardian interactions",
+            "AI Guardian service",
+            "24/7 emergency response",
             "Dashboard access for family",
-            "Weekly health reports",
-            "Medication reminders",
-            "Wellness check-ins"
+            "Monthly health updates",
+            "Device-specific features for both devices",
+            "10% monthly discount"
           ]
         : [
-            "Monitoreo de 2 dispositivos",
-            "Respuesta prioritaria de emergencia 24/7",
-            "Interacciones completas con IA Guardian",
+            "Servicio AI Guardian",
+            "Respuesta de emergencia 24/7",
             "Acceso al panel para la familia",
-            "Informes de salud semanales",
-            "Recordatorios de medicación",
-            "Consultas de bienestar"
+            "Actualizaciones mensuales de salud",
+            "Características específicas para ambos dispositivos",
+            "10% de descuento mensual"
           ],
       isPopular: true
     },
     {
       title: language === 'en' ? "Complete Guardian" : "Guardian Completo",
       description: language === 'en'
-        ? "Comprehensive health monitoring with all three devices."
-        : "Monitoreo de salud integral con los tres dispositivos.",
+        ? "Comprehensive monitoring with all three devices."
+        : "Monitoreo integral con los tres dispositivos.",
+      deviceCount: 3,
       features: language === 'en'
         ? [
-            "3 devices monitoring",
-            "24/7 VIP emergency response",
-            "Premium AI Guardian features",
-            "Multiple family members access",
-            "Daily health insights",
-            "Personalized health recommendations",
-            "Priority technical support",
-            "Advanced medication management"
+            "AI Guardian service",
+            "24/7 emergency response",
+            "Dashboard access for family",
+            "Monthly health updates",
+            "Device-specific features for all devices",
+            "20% monthly discount"
           ]
         : [
-            "Monitoreo de 3 dispositivos",
-            "Respuesta VIP de emergencia 24/7",
-            "Características premium de IA Guardian",
-            "Acceso para múltiples miembros de la familia",
-            "Información diaria de salud",
-            "Recomendaciones de salud personalizadas",
-            "Soporte técnico prioritario",
-            "Gestión avanzada de medicamentos"
+            "Servicio AI Guardian",
+            "Respuesta de emergencia 24/7",
+            "Acceso al panel para la familia",
+            "Actualizaciones mensuales de salud",
+            "Características específicas para todos los dispositivos",
+            "20% de descuento mensual"
           ],
     }
   ];
@@ -104,13 +101,13 @@ const Pricing: React.FC = () => {
           </p>
         </div>
         
-        {/* Service Clarification Notice */}
-        <div className="max-w-3xl mx-auto bg-ice-50 border border-ice-100 rounded-xl p-4 mb-10 flex items-start">
-          <Info className="text-ice-600 h-5 w-5 mr-3 flex-shrink-0 mt-1" />
-          <p className="text-sm text-ice-700">
+        {/* Important Service Clarification Notice */}
+        <div className="max-w-3xl mx-auto bg-orange-50 border border-orange-200 rounded-xl p-4 mb-10 flex items-start">
+          <AlertCircle className="text-orange-500 h-5 w-5 mr-3 flex-shrink-0 mt-1" />
+          <p className="text-sm text-gray-700">
             {language === 'en' 
-              ? "Our pricing is device-based. Each additional device connects to your existing AI Guardian service. You'll receive services specific to each device you add, without duplicating core AI Guardian features."
-              : "Nuestro precio se basa en dispositivos. Cada dispositivo adicional se conecta a su servicio AI Guardian existente. Recibirá servicios específicos para cada dispositivo que agregue, sin duplicar las características básicas de AI Guardian."}
+              ? "Our AI Guardian service remains consistent across all plans. Adding more devices gives you device-specific features only, not additional AI services. You pay only for the connections and device-specific features you need."
+              : "Nuestro servicio AI Guardian se mantiene consistente en todos los planes. Agregar más dispositivos le brinda características específicas del dispositivo únicamente, no servicios de IA adicionales. Usted paga solo por las conexiones y características específicas del dispositivo que necesita."}
           </p>
         </div>
         
@@ -136,6 +133,13 @@ const Pricing: React.FC = () => {
                 <p className="text-muted-foreground text-sm mb-6">
                   {plan.description}
                 </p>
+                
+                <div className="bg-ice-50 rounded-lg p-3 text-center mb-6">
+                  <span className="text-sm font-medium text-ice-700">
+                    {language === 'en' ? `${plan.deviceCount} Device Connection${plan.deviceCount > 1 ? 's' : ''}` : 
+                    `${plan.deviceCount} Conexión${plan.deviceCount > 1 ? 'es' : ''} de Dispositivo`}
+                  </span>
+                </div>
                 
                 <ul className="space-y-3 mb-8">
                   {plan.features.map((feature, idx) => (
@@ -180,8 +184,8 @@ const Pricing: React.FC = () => {
                 </h4>
                 <p className="text-sm text-muted-foreground">
                   {language === 'en'
-                    ? "All devices connect to your single AI Guardian service. Adding devices does not create multiple AI Guardian services."
-                    : "Todos los dispositivos se conectan a su único servicio AI Guardian. Agregar dispositivos no crea múltiples servicios AI Guardian."}
+                    ? "All devices connect to your single AI Guardian service. Adding devices does not create multiple AI Guardian services or enhance its features."
+                    : "Todos los dispositivos se conectan a su único servicio AI Guardian. Agregar dispositivos no crea múltiples servicios AI Guardian ni mejora sus características."}
                 </p>
               </div>
             </div>
@@ -196,8 +200,8 @@ const Pricing: React.FC = () => {
                 </h4>
                 <p className="text-sm text-muted-foreground">
                   {language === 'en'
-                    ? "Each device adds its unique monitoring capabilities to your existing service. For example, adding a medication dispenser provides medication management features."
-                    : "Cada dispositivo agrega sus capacidades únicas de monitoreo a su servicio existente. Por ejemplo, agregar un dispensador de medicamentos proporciona funciones de gestión de medicamentos."}
+                    ? "Each device adds its unique monitoring capabilities to your existing service. For example, adding a medication dispenser provides medication management features only."
+                    : "Cada dispositivo agrega sus capacidades únicas de monitoreo a su servicio existente. Por ejemplo, agregar un dispensador de medicamentos proporciona únicamente funciones de gestión de medicamentos."}
                 </p>
               </div>
             </div>
