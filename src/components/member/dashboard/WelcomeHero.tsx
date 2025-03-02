@@ -23,6 +23,8 @@ export const WelcomeHero: React.FC<WelcomeHeroProps> = ({
   const { language } = useLanguage();
   const { user } = useAuth();
   
+  console.log("WelcomeHero rendering, user:", user);
+  
   // Get the user's name, defaulting to "Member" if not available
   const userName = user?.name || user?.email?.split('@')[0] || 'Member';
   

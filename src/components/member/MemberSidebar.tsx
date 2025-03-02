@@ -21,6 +21,8 @@ const MemberSidebar: React.FC<MemberSidebarProps> = ({
   const navigate = useNavigate();
   const location = useLocation();
   
+  console.log("MemberSidebar rendering, location:", location.pathname);
+  
   // Determine active page based on current location
   const getActivePage = () => {
     const path = location.pathname;
