@@ -24,7 +24,7 @@ export const WelcomeHero: React.FC<WelcomeHeroProps> = ({
   const { user } = useAuth();
   
   // Get the user's name, defaulting to "Member" if not available
-  const userName = (user?.displayName || user?.email) ? (user.displayName || user.email?.split('@')[0]) : 'Member';
+  const userName = user?.name || user?.email?.split('@')[0] || 'Member';
   
   return (
     <div className="bg-gradient-to-br from-ice-50 to-ice-100/50 rounded-lg p-6 mb-6 shadow-sm">
