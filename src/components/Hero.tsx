@@ -35,15 +35,27 @@ const Hero: React.FC = () => {
               </span>
             </div>
             
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight font-playfair mx-auto max-w-4xl">
-              <span className="bg-gradient-to-r from-gray-900 via-ice-900 to-guardian-800 bg-clip-text text-transparent inline-block">
-                {language === 'en' 
-                  ? 'Intelligent Health Monitoring & Emergency Response' 
-                  : 'Monitoreo Inteligente de Salud y Respuesta de Emergencia'}
-              </span>
-            </h1>
+            {/* Enhanced headline with professional styling */}
+            <div className="relative mb-4">
+              {/* Decorative elements behind the headline */}
+              <div className="absolute -top-10 left-1/2 transform -translate-x-1/2 w-32 h-1 bg-gradient-to-r from-transparent via-ice-400 to-transparent rounded-full opacity-70"></div>
+              
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight font-playfair mx-auto max-w-4xl relative">
+                <span className="relative z-10 bg-gradient-to-r from-gray-900 via-ice-900 to-guardian-800 bg-clip-text text-transparent inline-block">
+                  {language === 'en' 
+                    ? 'Intelligent Health Monitoring & Emergency Response' 
+                    : 'Monitoreo Inteligente de Salud y Respuesta de Emergencia'}
+                </span>
+                
+                {/* Accent decorations */}
+                <span className="absolute -bottom-3 left-1/2 transform -translate-x-1/2 w-48 h-1 bg-gradient-to-r from-ice-400 to-guardian-600 rounded-full"></span>
+              </h1>
+              
+              {/* Decorative elements after the headline */}
+              <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 w-24 h-0.5 bg-gradient-to-r from-transparent via-guardian-300 to-transparent rounded-full opacity-60"></div>
+            </div>
             
-            <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto">
+            <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto backdrop-blur-sm bg-white/5 py-2 rounded-lg">
               {language === 'en' 
                 ? 'Our AI Guardian provides 24/7 monitoring and emergency support, integrating smart devices for real-time health tracking and instant response.' 
                 : 'Nuestro Guardián de IA proporciona monitoreo 24/7 y soporte de emergencia, integrando dispositivos inteligentes para seguimiento de salud en tiempo real.'}
