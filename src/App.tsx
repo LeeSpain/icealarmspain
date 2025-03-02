@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import Index from './pages/Index';
@@ -6,9 +7,9 @@ import Join from './pages/Join';
 import DashboardPage from './pages/DashboardPage';
 import Products from './pages/Products';
 import DevicesPage from './pages/DevicesPage';
-import SOSPendantPage from './pages/devices/SOSPendantPage';
-import GlucoseMonitorPage from './pages/devices/GlucoseMonitorPage';
-import MedicalDispenserPage from './pages/devices/MedicalDispenserPage';
+import SOSPendantPage from './pages/SOSPendantPage';
+import GlucoseMonitorPage from './pages/GlucoseMonitorPage';
+import MedicalDispenserPage from './pages/MedicalDispenserPage';
 import Contact from './pages/Contact';
 import AboutUs from './pages/AboutUs';
 import Demo from './pages/Demo';

@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { ButtonCustom } from "@/components/ui/button-custom";
@@ -9,9 +10,10 @@ interface AuthFormProps {
   mode: "login" | "signup";
   onSuccess?: (email: string, password: string) => void;
   isLoading?: boolean;
+  redirectTo?: string; // Added this prop
 }
 
-const AuthForm: React.FC<AuthFormProps> = ({ mode, onSuccess, isLoading: externalLoading }) => {
+const AuthForm: React.FC<AuthFormProps> = ({ mode, onSuccess, isLoading: externalLoading, redirectTo }) => {
   const { language } = useLanguage();
   const { toast } = useToast();
   const [formData, setFormData] = useState({
