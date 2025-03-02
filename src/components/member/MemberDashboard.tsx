@@ -120,7 +120,7 @@ const MemberDashboard = () => {
   }
 
   return (
-    <div className="p-4 md:p-6 max-w-7xl mx-auto">
+    <div className="w-full">
       {/* Hero Welcome Section */}
       <WelcomeHero 
         onShowAddProducts={() => setShowAddProducts(!showAddProducts)}

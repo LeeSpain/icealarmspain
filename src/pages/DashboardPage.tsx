@@ -17,7 +17,7 @@ const DashboardPage: React.FC = () => {
       />
       
       <div className={`flex-1 overflow-auto transition-all duration-300 ${sidebarCollapsed ? 'ml-16' : 'ml-64'}`}>
-        <div className="p-6 max-w-7xl mx-auto">
+        <div className="p-6 w-full">
           <ToastContainer />
           <MemberDashboard />
         </div>
