@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
 type Language = 'en' | 'es';
@@ -19,6 +18,9 @@ const translations = {
     'nav.pricing': 'Pricing',
     'nav.login': 'Login',
     'nav.signup': 'Sign Up',
+    'nav.about_us': 'About Us',
+    'nav.contact': 'Contact',
+    'nav.logout': 'Logout',
     
     // Hero section
     'hero.badge': 'AI-Powered Health Protection',
@@ -108,6 +110,9 @@ const translations = {
     'nav.pricing': 'Precios',
     'nav.login': 'Iniciar Sesión',
     'nav.signup': 'Registrarse',
+    'nav.about_us': 'Sobre Nosotros',
+    'nav.contact': 'Contacto',
+    'nav.logout': 'Cerrar Sesión',
     
     // Hero section
     'hero.badge': 'Protección de Salud con IA',
