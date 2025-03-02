@@ -70,11 +70,11 @@ const Index: React.FC = () => {
   
   return (
     <div className="flex flex-col min-h-screen bg-gradient-to-b from-white via-ice-50/30 to-white">
-      {/* Decorative Elements */}
+      {/* Enhanced Decorative Elements */}
       <div className="fixed top-0 right-0 w-full h-full overflow-hidden pointer-events-none -z-10">
-        <div className="absolute top-[15%] right-[10%] w-[500px] h-[500px] bg-gradient-radial from-ice-100/60 to-transparent rounded-full filter blur-3xl opacity-60"></div>
+        <div className="absolute top-[15%] right-[10%] w-[500px] h-[500px] bg-gradient-radial from-ice-100/60 to-transparent rounded-full filter blur-3xl opacity-60 animate-pulse-gentle"></div>
         <div className="absolute top-[60%] left-[5%] w-[400px] h-[400px] bg-gradient-radial from-guardian-100/50 to-transparent rounded-full filter blur-3xl opacity-40"></div>
-        <div className="absolute bottom-[10%] right-[15%] w-[350px] h-[350px] bg-gradient-radial from-ice-200/40 to-transparent rounded-full filter blur-3xl opacity-30"></div>
+        <div className="absolute bottom-[10%] right-[15%] w-[350px] h-[350px] bg-gradient-radial from-ice-200/40 to-transparent rounded-full filter blur-3xl opacity-30 animate-pulse-gentle" style={{ animationDelay: "2s" }}></div>
       </div>
       
       <Navbar />
@@ -85,14 +85,14 @@ const Index: React.FC = () => {
           <Hero />
         </div>
         
-        {/* Section Divider */}
+        {/* Section Divider with enhanced styling */}
         <div className="relative">
           <div className="absolute left-0 right-0 h-16 bg-gradient-to-b from-transparent to-white/80 -top-16 z-10"></div>
         </div>
         
         <Dashboard />
         
-        {/* Section Divider */}
+        {/* Section Divider with enhanced styling */}
         <div className="relative">
           <div className="absolute left-0 right-0 h-24 bg-gradient-to-b from-ice-50/50 to-white -top-24 z-10"></div>
         </div>
@@ -101,14 +101,14 @@ const Index: React.FC = () => {
         
         <Pricing />
         
-        {/* Section Divider */}
+        {/* Section Divider with enhanced styling */}
         <div className="relative">
           <div className="absolute left-0 right-0 h-16 bg-gradient-to-b from-white to-ice-50/30 -top-16 z-10"></div>
         </div>
         
         <ExpatInfo />
         
-        {/* Scroll to Top Button */}
+        {/* Scroll to Top Button with enhanced styling */}
         {showScrollTop && (
           <button 
             onClick={scrollToTop}
