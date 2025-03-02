@@ -17,15 +17,18 @@ const Login: React.FC = () => {
   
   // Redirect if already logged in
   useEffect(() => {
+    console.log("Login page useEffect - isAuthenticated:", isAuthenticated, "user:", user);
     if (isAuthenticated && user) {
+      // Redirect based on user role
       switch (user.role) {
         case 'admin':
           navigate('/admin');
           break;
         case 'callcenter':
-          navigate('/callcenter');
+          navigate('/call-center');
           break;
         default:
+          // Direct members to the member dashboard
           navigate('/dashboard');
           break;
       }
@@ -40,6 +43,7 @@ const Login: React.FC = () => {
   const handleLoginSuccess = async (email: string, password: string) => {
     setIsLoading(true);
     try {
+      console.log("Attempting login with:", email);
       const success = await login(email, password);
       
       if (success) {
@@ -55,14 +59,15 @@ const Login: React.FC = () => {
           description: language === 'en' ? "Invalid email or password" : "Correo o contraseña inválidos",
           variant: "destructive",
         });
+        setIsLoading(false);
       }
     } catch (error) {
+      console.error("Login error:", error);
       toast({
         title: language === 'en' ? "Login error" : "Error de inicio de sesión",
         description: language === 'en' ? "Something went wrong" : "Algo salió mal",
         variant: "destructive",
       });
-    } finally {
       setIsLoading(false);
     }
   };

@@ -5,6 +5,7 @@ import App from './App';
 import './index.css';
 import './App.css';
 import { Toaster } from "@/components/ui/toaster";
+import { ToastContainer } from "react-toastify";
 import { LanguageProvider } from "@/context/LanguageContext";
 import { AuthProvider } from "@/context/AuthContext";
 import { BrowserRouter } from 'react-router-dom';
@@ -20,6 +21,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
         <LanguageProvider>
           <App />
           <Toaster />
+          <ToastContainer />
         </LanguageProvider>
       </AuthProvider>
     </BrowserRouter>
