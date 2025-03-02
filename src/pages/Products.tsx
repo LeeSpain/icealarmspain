@@ -59,7 +59,7 @@ const Products: React.FC = () => {
                 <div className="inline-flex items-center px-3 py-1.5 rounded-full bg-gradient-to-r from-ice-50/80 to-ice-100/80 border border-ice-200 text-ice-600 text-sm font-medium mb-6 shadow-sm backdrop-blur-sm">
                   <Shield size={16} className="mr-2" />
                   <span className="relative">
-                    {language === 'en' ? 'OUR PRODUCT RANGE' : 'NUESTRA GAMA DE PRODUCTOS'}
+                    {language === 'en' ? 'INNOVATIVE SOLUTIONS' : 'SOLUCIONES INNOVADORAS'}
                     <Sparkles size={14} className="absolute -top-1 -right-4 text-ice-500 animate-pulse-gentle" />
                   </span>
                 </div>
@@ -72,8 +72,8 @@ const Products: React.FC = () => {
                   <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight font-playfair mx-auto max-w-4xl relative">
                     <span className="relative z-10 bg-gradient-to-r from-gray-900 via-ice-900 to-guardian-800 bg-clip-text text-transparent inline-block">
                       {language === 'en' 
-                        ? 'Our Smart Health Monitoring Devices' 
-                        : 'Nuestros Dispositivos Inteligentes de Monitoreo de Salud'}
+                        ? 'Complete Healthcare Protection' 
+                        : 'Protección Completa de Salud'}
                     </span>
                     
                     {/* Accent decorations */}
@@ -86,15 +86,15 @@ const Products: React.FC = () => {
                 
                 <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto backdrop-blur-sm bg-white/5 py-2 rounded-lg mt-6">
                   {language === 'en' 
-                    ? 'Discover our comprehensive range of AI-powered health monitoring devices designed to provide peace of mind and enhanced care for you and your loved ones.' 
-                    : 'Descubra nuestra amplia gama de dispositivos de monitoreo de salud impulsados por IA diseñados para brindar tranquilidad y atención mejorada para usted y sus seres queridos.'}
+                    ? 'Experience peace of mind with our integrated ecosystem of protection devices and 24/7 emergency monitoring for independent living.' 
+                    : 'Experimente tranquilidad con nuestro ecosistema integrado de dispositivos de protección y monitoreo de emergencia 24/7 para una vida independiente.'}
                 </p>
                 
                 <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-6">
                   <Link to="/devices">
                     <ButtonCustom size="lg" className="group relative overflow-hidden shadow-md">
                       <span className="relative z-10 flex items-center">
-                        {language === 'en' ? 'Learn More' : 'Más Información'}
+                        {language === 'en' ? 'Explore Devices' : 'Explorar Dispositivos'}
                         <ArrowRight size={18} className="ml-2 transition-transform group-hover:translate-x-1" />
                       </span>
                       <span className="absolute inset-0 bg-gradient-to-r from-ice-500 to-ice-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-0"></span>
