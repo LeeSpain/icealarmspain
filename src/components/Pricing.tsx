@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Check, Truck, Shield, Info, AlertCircle, Sparkles } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
@@ -84,18 +83,15 @@ const Pricing: React.FC = () => {
   
   return (
     <section id="pricing" className="py-20 bg-gradient-to-b from-white to-ice-50">
-      {/* Hero Section - Added new hero section to match other pages */}
       <section 
         id="pricing-hero" 
         className="relative pt-32 pb-24 overflow-hidden mb-16"
       >
-        {/* Enhanced Background Elements - matching other hero sections */}
         <div className="absolute top-20 right-0 w-96 h-96 bg-gradient-radial from-ice-100/70 to-transparent rounded-full filter blur-3xl opacity-70 -z-10 animate-pulse-gentle"></div>
         <div className="absolute bottom-0 left-20 w-72 h-72 bg-gradient-radial from-guardian-100/60 to-transparent rounded-full filter blur-3xl opacity-50 -z-10"></div>
         <div className="absolute top-40 left-1/4 w-64 h-64 rounded-full border border-ice-200/50 -z-10 animate-float"></div>
         <div className="absolute bottom-20 right-1/4 w-80 h-80 rounded-full border border-guardian-200/50 -z-10 animate-float" style={{ animationDelay: "2s" }}></div>
         
-        {/* Decorative accent lines */}
         <div className="absolute top-1/4 left-0 w-full h-px bg-gradient-to-r from-transparent via-ice-200/50 to-transparent -z-10"></div>
         <div className="absolute top-2/3 left-0 w-full h-px bg-gradient-to-r from-transparent via-guardian-200/30 to-transparent -z-10"></div>
         
@@ -110,9 +106,7 @@ const Pricing: React.FC = () => {
                 </span>
               </div>
               
-              {/* Enhanced headline with professional styling */}
               <div className="relative mb-12">
-                {/* Decorative elements behind the headline */}
                 <div className="absolute -top-10 left-1/2 transform -translate-x-1/2 w-32 h-1 bg-gradient-to-r from-transparent via-ice-400 to-transparent rounded-full opacity-70"></div>
                 
                 <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight font-playfair mx-auto max-w-4xl relative">
@@ -122,11 +116,9 @@ const Pricing: React.FC = () => {
                       : 'Paquetes de Servicio y Opciones'}
                   </span>
                   
-                  {/* Accent decorations */}
                   <span className="absolute -bottom-3 left-1/2 transform -translate-x-1/2 w-48 h-1 bg-gradient-to-r from-ice-400 to-guardian-600 rounded-full"></span>
                 </h1>
                 
-                {/* Decorative elements after the headline */}
                 <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 w-24 h-0.5 bg-gradient-to-r from-transparent via-guardian-300 to-transparent rounded-full opacity-60"></div>
               </div>
               
@@ -139,7 +131,6 @@ const Pricing: React.FC = () => {
           </div>
         </div>
         
-        {/* Enhanced Bottom Decorative Wave - like other pages */}
         <div className="absolute bottom-0 left-0 right-0 h-16 overflow-hidden">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320" className="absolute bottom-0 w-full h-auto">
             <path fill="rgba(255, 245, 235, 0.5)" fillOpacity="1" d="M0,224L48,213.3C96,203,192,181,288,181.3C384,181,480,203,576,224C672,245,768,267,864,250.7C960,235,1056,181,1152,165.3C1248,149,1344,171,1392,181.3L1440,192L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
@@ -157,17 +148,15 @@ const Pricing: React.FC = () => {
           </p>
         </div>
         
-        {/* Important Service Clarification Notice */}
         <div className="max-w-3xl mx-auto bg-orange-50 border border-orange-200 rounded-xl p-4 mb-10 flex items-start">
           <AlertCircle className="text-orange-500 h-5 w-5 mr-3 flex-shrink-0 mt-1" />
           <p className="text-sm text-gray-700">
             {language === 'en' 
-              ? "Our AI Guardian service remains consistent across all plans. Adding more devices gives you device-specific features only, not additional AI services. You pay only for the connections and device-specific features you need."
-              : "Nuestro servicio AI Guardian se mantiene consistente en todos los planes. Agregar más dispositivos le brinda características específicas del dispositivo únicamente, no servicios de IA adicionales. Usted paga solo por las conexiones y características específicas del dispositivo que necesita."}
+              ? "Our AI Guardian service is provided free with all plans. The monthly fee of €24.99 only applies to each connected device that you select, providing you with device-specific features."
+              : "Nuestro servicio AI Guardian se proporciona gratis con todos los planes. La cuota mensual de €24.99 solo se aplica a cada dispositivo conectado que seleccione, proporcionándole características específicas del dispositivo."}
           </p>
         </div>
         
-        {/* Service Packages Section */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto mb-16">
           {plans.map((plan, index) => (
             <div 
@@ -223,7 +212,6 @@ const Pricing: React.FC = () => {
           ))}
         </div>
         
-        {/* Device Connection Information */}
         <div className="max-w-3xl mx-auto bg-white border border-ice-100 rounded-xl p-6 mb-12 shadow-sm">
           <h3 className="text-xl font-semibold mb-4 text-center">
             {language === 'en' ? "How Device Connections Work" : "Cómo Funcionan las Conexiones de Dispositivos"}

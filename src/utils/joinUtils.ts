@@ -43,10 +43,8 @@ export const calculateTotals = (devices: Device[], selectedDevices: DeviceWithQu
   // Add shipping costs (€14.99 per device)
   totalShipping = totalDeviceCount * 14.99;
   
-  // Add AI Guardian base service (€49.99)
-  if (totalDeviceCount > 0) {
-    totalMonthlyBase += 49.99;
-  }
+  // Removed AI Guardian base service (€49.99) - AI service is now free
+  // Only charge for each device's monthly fee (€24.99 per device)
   
   // Apply discounts based on number of devices
   if (totalDeviceCount === 2) {
