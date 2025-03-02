@@ -20,30 +20,36 @@ import Privacy from './pages/Privacy';
 import Terms from './pages/Terms';
 import NotFound from './pages/NotFound';
 import OnboardingQuestionnaire from './pages/OnboardingQuestionnaire';
+import TestComponent from './components/TestComponent';
 
 function App() {
+  console.log('App component rendering');
+  
   return (
-    <Routes>
-      <Route path="/" element={<Index />} />
-      <Route path="/login" element={<Login />} />
-      <Route path="/join" element={<Join />} />
-      <Route path="/onboarding" element={<OnboardingQuestionnaire />} />
-      <Route path="/dashboard" element={<DashboardPage />} />
-      <Route path="/products" element={<Products />} />
-      <Route path="/devices" element={<DevicesPage />} />
-      <Route path="/devices/sos-pendant" element={<SOSPendantPage />} />
-      <Route path="/devices/glucose-monitor" element={<GlucoseMonitorPage />} />
-      <Route path="/devices/medical-dispenser" element={<MedicalDispenserPage />} />
-      <Route path="/contact" element={<Contact />} />
-      <Route path="/about" element={<AboutUs />} />
-      <Route path="/demo" element={<Demo />} />
-      <Route path="/admin" element={<AdminDashboard />} />
-      <Route path="/callcenter" element={<CallCenterDashboard />} />
-      <Route path="/product/:productId" element={<ProductDetail />} />
-      <Route path="/privacy" element={<Privacy />} />
-      <Route path="/terms" element={<Terms />} />
-      <Route path="*" element={<NotFound />} />
-    </Routes>
+    <>
+      <TestComponent />
+      <Routes>
+        <Route path="/" element={<Index />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/join" element={<Join />} />
+        <Route path="/onboarding" element={<OnboardingQuestionnaire />} />
+        <Route path="/dashboard" element={<DashboardPage />} />
+        <Route path="/products" element={<Products />} />
+        <Route path="/devices" element={<DevicesPage />} />
+        <Route path="/devices/sos-pendant" element={<SOSPendantPage />} />
+        <Route path="/devices/glucose-monitor" element={<GlucoseMonitorPage />} />
+        <Route path="/devices/medical-dispenser" element={<MedicalDispenserPage />} />
+        <Route path="/contact" element={<Contact />} />
+        <Route path="/about" element={<AboutUs />} />
+        <Route path="/demo" element={<Demo />} />
+        <Route path="/admin" element={<AdminDashboard />} />
+        <Route path="/callcenter" element={<CallCenterDashboard />} />
+        <Route path="/product/:productId" element={<ProductDetail />} />
+        <Route path="/privacy" element={<Privacy />} />
+        <Route path="/terms" element={<Terms />} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </>
   );
 }
 
