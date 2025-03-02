@@ -1,4 +1,3 @@
-
 import React from "react";
 import { BellRing, PlusSquare, ActivitySquare, ShoppingBag, Info, ArrowRight, Check } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
@@ -86,20 +85,15 @@ const DeviceShowcase: React.FC = () => {
         <div className="text-center max-w-3xl mx-auto mb-16 animate-slide-down">
           <div className="inline-flex items-center px-3 py-1 rounded-full bg-ice-50 border border-ice-200 text-ice-600 text-sm font-medium mb-4">
             <ShoppingBag size={16} className="mr-2" />
-            {language === 'en' ? 'INNOVATIVE MONITORING DEVICES' : 'DISPOSITIVOS DE MONITOREO INNOVADORES'}
+            {language === 'en' ? 'OUR PRODUCT RANGE' : 'NUESTRA GAMA DE PRODUCTOS'}
           </div>
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
             {language === 'en' ? "Smart Health Monitoring Devices" : "Dispositivos Inteligentes de Monitoreo de Salud"}
           </h2>
           <p className="text-muted-foreground text-lg">
             {language === 'en' 
-              ? "Our comprehensive ecosystem of health monitoring devices works seamlessly with the AI Guardian." 
-              : "Nuestro ecosistema integral de dispositivos de monitoreo de salud funciona a la perfección con el Guardián de IA."}
-          </p>
-          <p className="text-ice-600 mt-2 font-medium">
-            {language === 'en' 
-              ? "Learn more about our innovative devices below and how they integrate with our service." 
-              : "Aprenda más sobre nuestros dispositivos innovadores a continuación y cómo se integran con nuestro servicio."}
+              ? "Discover our comprehensive range of AI-powered health monitoring devices designed to provide peace of mind and enhanced care." 
+              : "Descubra nuestra amplia gama de dispositivos de monitoreo de salud impulsados por IA diseñados para brindar tranquilidad y atención mejorada."}
           </p>
           
           <div className="mt-4 bg-gray-50 p-4 rounded-lg text-sm flex items-start max-w-xl mx-auto">
@@ -122,7 +116,6 @@ const DeviceShowcase: React.FC = () => {
                 background: `linear-gradient(to bottom right, ${index % 2 === 0 ? 'white, #f8fafc' : '#f8fafc, white'})` 
               }}
             >
-              {/* Decorative accent bar at top of card */}
               <div 
                 className="absolute top-0 left-0 w-full h-1.5"
                 style={{ 
@@ -140,7 +133,6 @@ const DeviceShowcase: React.FC = () => {
                 </div>
                 <h3 className="text-xl font-semibold mb-2">{device.name}</h3>
                 
-                {/* Device Image with enhanced styling */}
                 <div className="mb-4 overflow-hidden rounded-lg h-48 bg-white shadow-inner border border-ice-100">
                   <img 
                     src={device.image}

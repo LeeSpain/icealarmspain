@@ -27,7 +27,7 @@ const DeviceHero: React.FC<DeviceHeroProps> = ({ language }) => {
             <div className="inline-flex items-center px-3 py-1.5 rounded-full bg-gradient-to-r from-ice-50/80 to-ice-100/80 border border-ice-200 text-ice-600 text-sm font-medium mb-6 shadow-sm backdrop-blur-sm">
               <Shield size={16} className="mr-2" />
               <span className="relative">
-                {language === 'en' ? 'SMART HEALTH DEVICES' : 'DISPOSITIVOS INTELIGENTES DE SALUD'}
+                {language === 'en' ? 'HEALTH MONITORING SOLUTIONS' : 'SOLUCIONES DE MONITOREO DE SALUD'}
                 <Sparkles size={14} className="absolute -top-1 -right-4 text-ice-500 animate-pulse-gentle" />
               </span>
             </div>
@@ -40,8 +40,8 @@ const DeviceHero: React.FC<DeviceHeroProps> = ({ language }) => {
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight font-playfair mx-auto max-w-4xl relative">
                 <span className="relative z-10 bg-gradient-to-r from-gray-900 via-ice-900 to-guardian-800 bg-clip-text text-transparent inline-block">
                   {language === 'en' 
-                    ? 'Our Smart Health Monitoring Devices' 
-                    : 'Nuestros Dispositivos Inteligentes de Monitoreo de Salud'}
+                    ? 'Advanced Protection Technology' 
+                    : 'Tecnología Avanzada de Protección'}
                 </span>
                 
                 {/* Accent decorations */}
@@ -54,8 +54,8 @@ const DeviceHero: React.FC<DeviceHeroProps> = ({ language }) => {
             
             <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto backdrop-blur-sm bg-white/5 py-2 rounded-lg mt-6">
               {language === 'en' 
-                ? 'Discover our comprehensive range of AI-powered health monitoring devices designed to provide peace of mind and enhanced care for you and your loved ones.' 
-                : 'Descubra nuestra amplia gama de dispositivos de monitoreo de salud impulsados por IA diseñados para brindar tranquilidad y atención mejorada para usted y sus seres queridos.'}
+                ? 'Discover how our AI-powered monitoring solutions create a seamless safety network for independent living with 24/7 emergency response.' 
+                : 'Descubra cómo nuestras soluciones de monitoreo impulsadas por IA crean una red de seguridad perfecta para una vida independiente con respuesta de emergencia 24/7.'}
             </p>
             
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-6">
