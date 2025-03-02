@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -116,7 +115,7 @@ const Join: React.FC = () => {
     );
   };
   
-  const totals = calculateTotals(devices, selectedDevices);
+  const totals = calculateTotals(devices, selectedDevices, membershipType);
   
   const handleCheckout = () => {
     setShowSignup(true);

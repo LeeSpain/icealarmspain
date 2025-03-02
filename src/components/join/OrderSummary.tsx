@@ -1,6 +1,6 @@
 
 import React from "react";
-import { Info, ShoppingBag, Truck, Check } from "lucide-react";
+import { Info, ShoppingBag, Truck, Check, Users } from "lucide-react";
 import { ButtonCustom } from "@/components/ui/button-custom";
 
 interface MembershipType {
@@ -57,6 +57,37 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
 }) => {
   if (!totals.hasDevices) return null;
 
+  // Get number of additional users based on membership type
+  const getAdditionalUsers = () => {
+    switch (membershipType) {
+      case 'couple':
+      case 'caregiver':
+        return 1;
+      case 'family':
+        return 2;
+      default:
+        return 0;
+    }
+  };
+
+  const additionalUsers = getAdditionalUsers();
+  
+  // Get discount text based on membership type or device count
+  const getDiscountText = () => {
+    if (membershipType === 'individual') {
+      if (totals.totalDeviceCount === 2) {
+        return language === 'en' ? "10% discount on devices" : "10% de descuento en dispositivos";
+      } else if (totals.totalDeviceCount >= 3) {
+        return language === 'en' ? "20% discount on devices" : "20% de descuento en dispositivos";
+      }
+    } else if (membershipType === 'couple' || membershipType === 'caregiver') {
+      return language === 'en' ? "10% discount on membership" : "10% de descuento en membresía"; 
+    } else if (membershipType === 'family') {
+      return language === 'en' ? "20% discount on membership" : "20% de descuento en membresía";
+    }
+    return "";
+  };
+
   return (
     <div className="max-w-3xl mx-auto glass-panel p-6 mb-10 animate-fade-in">
       <h2 className="text-xl font-semibold mb-6 flex items-center border-b pb-4 border-ice-100/50">
@@ -78,6 +109,19 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
               </div>
             );
           })}
+          
+          {additionalUsers > 0 && (
+            <div className="flex justify-between text-sm py-1">
+              <span className="flex items-center">
+                <Users size={14} className="mr-1" />
+                {language === 'en' 
+                  ? `Additional user${additionalUsers > 1 ? 's' : ''} (${additionalUsers}x)`
+                  : `Usuario${additionalUsers > 1 ? 's' : ''} adicional${additionalUsers > 1 ? 'es' : ''} (${additionalUsers}x)`}
+              </span>
+              <span>€{(24.99 * additionalUsers).toFixed(2)}</span>
+            </div>
+          )}
+          
           <div className="flex justify-between text-sm py-1 text-guardian-600 font-medium">
             <span>AI Guardian Service</span>
             <span>{language === 'en' ? "Free" : "Gratis"}</span>
@@ -144,11 +188,9 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
         </div>
       </div>
       
-      {totals.totalDeviceCount > 1 && (
+      {getDiscountText() && (
         <div className="text-sm text-green-600 italic mt-2 text-right">
-          {totals.totalDeviceCount === 2 
-            ? (language === 'en' ? "10% discount applied!" : "¡Descuento del 10% aplicado!") 
-            : (language === 'en' ? "20% discount applied!" : "¡Descuento del 20% aplicado!")}
+          {getDiscountText()}
         </div>
       )}
       
