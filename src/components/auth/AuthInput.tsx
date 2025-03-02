@@ -10,7 +10,7 @@ interface AuthInputProps {
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   placeholder: string;
   autoComplete?: string;
-  icon: LucideIcon;
+  icon: LucideIcon | null;
   hasError: boolean;
   errorMessage?: string;
   rightElement?: React.ReactNode;
@@ -38,7 +38,7 @@ const AuthInput: React.FC<AuthInputProps> = ({
       </label>
       <div className="relative">
         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-          <Icon className="h-5 w-5 text-gray-400" />
+          {Icon && <Icon className="h-5 w-5 text-gray-400" />}
         </div>
         <input
           id={id}
@@ -47,7 +47,7 @@ const AuthInput: React.FC<AuthInputProps> = ({
           autoComplete={autoComplete}
           value={value}
           onChange={onChange}
-          className={`${rightElement ? 'pl-10 pr-10' : 'pl-10'} block w-full border ${
+          className={`${Icon ? 'pl-10' : 'pl-3'} ${rightElement ? 'pr-10' : ''} block w-full border ${
             hasError ? 'border-red-500' : 'border-gray-300'
           } rounded-md shadow-sm py-2 px-3 placeholder-gray-400 focus:outline-none focus:ring-ice-500 focus:border-ice-500`}
           placeholder={placeholder}

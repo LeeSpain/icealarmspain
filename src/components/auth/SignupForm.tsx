@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { ButtonCustom } from "@/components/ui/button-custom";
-import { Mail, User, ArrowRight } from "lucide-react";
+import { Mail, User, ArrowRight, Phone } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
 import AuthInput from "./AuthInput";
 import PasswordInput from "./PasswordInput";
@@ -135,7 +135,7 @@ const SignupForm: React.FC<SignupFormProps> = ({
           onChange={handleChange}
           placeholder={language === 'en' ? "+34 612 345 678" : "+34 612 345 678"}
           autoComplete="tel"
-          icon={() => null} // Empty icon for consistency in layout
+          icon={Phone}
           hasError={false}
           language={language}
         />
