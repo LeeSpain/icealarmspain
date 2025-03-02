@@ -9,7 +9,7 @@ import Footer from "@/components/Footer";
 import { ArrowUpCircle } from "lucide-react";
 
 const Index: React.FC = () => {
-  console.log("Index component rendering");
+  console.log("Index component rendering - SHOULD BE VISIBLE");
   
   // Smooth scroll implementation
   useEffect(() => {
@@ -66,6 +66,8 @@ const Index: React.FC = () => {
       behavior: 'smooth'
     });
   };
+  
+  console.log("Index about to render JSX");
   
   return (
     <div className="flex flex-col min-h-screen bg-gradient-to-b from-white via-ice-50/30 to-white">

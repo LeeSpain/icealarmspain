@@ -9,6 +9,9 @@ import { LanguageProvider } from "@/context/LanguageContext";
 import { AuthProvider } from "@/context/AuthContext";
 import { BrowserRouter } from 'react-router-dom';
 
+// Add console logs for debugging
+console.log("main.tsx rendering");
+
 // Rendering the application with all necessary providers
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>

@@ -1,6 +1,7 @@
 
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, useLocation } from 'react-router-dom';
 import { ThemeProvider } from './components/mode-toggle';
+import { useEffect } from 'react';
 
 // Regular Pages
 import Index from './pages/Index';
@@ -40,6 +41,12 @@ import AdminDashboard from './pages/AdminDashboard';
 import CallCenterDashboard from './pages/CallCenterDashboard';
 
 function App() {
+  const location = useLocation();
+  
+  useEffect(() => {
+    console.log("App rendering, current route:", location.pathname);
+  }, [location]);
+
   return (
     <ThemeProvider defaultTheme="light" storageKey="ice-theme-preference">
       <Routes>
