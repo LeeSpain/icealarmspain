@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Menu, X, LogOut } from "lucide-react";
 import Logo from "./Logo";
@@ -44,9 +45,10 @@ const Navbar: React.FC = () => {
   
   const navLinks = [
     { name: t("nav.home"), href: "/", isAnchor: false },
-    { name: t("nav.dashboard"), href: getDashboardLink(), isAnchor: false },
     { name: t("nav.devices"), href: "/products", isAnchor: false },
     { name: t("nav.pricing"), href: "/join", isAnchor: false },
+    { name: t("nav.about"), href: "/about", isAnchor: false },
+    { name: t("nav.contact"), href: "/contact", isAnchor: false },
   ];
   
   const renderNavLink = (link: { name: string; href: string; isAnchor: boolean }, onClick?: () => void) => {
