@@ -1,153 +1,226 @@
 
 import React, { useState, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useLanguage } from "@/context/LanguageContext";
-import { toast, ToastContainer } from "react-toastify";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
-import PaymentForm from "@/components/payment/PaymentForm";
+import { useCart } from "@/components/payment/CartContext";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
+import { ArrowLeft, Check, ClipboardCheck } from "lucide-react";
 import OrderSummary from "@/components/payment/OrderSummary";
+import PaymentForm from "@/components/payment/PaymentForm";
+import PaymentMethod from "@/components/payment/PaymentMethod";
 import PaymentSuccess from "@/components/payment/PaymentSuccess";
-import ScrollToTop from "@/components/layout/ScrollToTop";
-import { useAuth } from "@/context/AuthContext";
-import 'react-toastify/dist/ReactToastify.css';
+import { toast } from "react-toastify";
 
 const Checkout: React.FC = () => {
   const { language } = useLanguage();
+  const { cart, clearCart, totalPrice } = useCart();
   const navigate = useNavigate();
-  const location = useLocation();
-  const { isAuthenticated } = useAuth();
-  const [paymentComplete, setPaymentComplete] = useState(false);
-  const [paymentResult, setPaymentResult] = useState<any>(null);
   
-  // Get order data from location state or redirect to join page
-  const orderData = location.state?.orderData;
+  const [step, setStep] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const [billingInfo, setBillingInfo] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    address: "",
+    city: "",
+    country: "",
+    postalCode: "",
+    phone: ""
+  });
+  const [paymentMethod, setPaymentMethod] = useState("credit_card");
+  const [cardDetails, setCardDetails] = useState({});
+  const [orderId, setOrderId] = useState("");
   
   useEffect(() => {
-    // If no order data is provided, redirect to the join page
-    if (!orderData) {
-      toast.error(
-        language === "en"
-          ? "No order information found. Redirecting to membership page."
-          : "No se encontró información del pedido. Redirigiendo a la página de membresía."
+    if (cart.length === 0) {
+      navigate("/products");
+      toast.info(
+        language === 'en' 
+          ? "Your cart is empty. Please add items before checkout." 
+          : "Su carrito está vacío. Por favor añada artículos antes de proceder al pago."
       );
-      navigate("/join");
     }
     
-    // No longer redirecting to login if not authenticated
-    // We'll create an account during checkout for new customers
-  }, [orderData, navigate, language]);
+    // Generate a random order ID for demo purposes
+    const randomOrderId = "ICE-" + Math.floor(100000 + Math.random() * 900000);
+    setOrderId(randomOrderId);
+  }, [cart, navigate, language]);
   
-  // Handle payment success
-  const handlePaymentSuccess = (result: any) => {
-    console.log("Payment successful:", result);
-    setPaymentResult(result);
-    setPaymentComplete(true);
-    
-    // Clear any pending order from session storage
-    sessionStorage.removeItem("pendingOrder");
-    
-    // Scroll to top to show success message
+  const handleBillingInfoSubmit = (data: any) => {
+    setBillingInfo(data);
+    setStep(2);
     window.scrollTo(0, 0);
   };
   
-  // Handle payment cancellation
-  const handleCancel = () => {
-    navigate("/join");
+  const handlePaymentMethodSelect = (method: string) => {
+    setPaymentMethod(method);
   };
   
-  // Handle test payment (for development only)
-  const handleTestPayment = () => {
-    const testResult = {
-      id: "test-" + Date.now(),
-      amount: orderData.total,
-      status: "success",
-      date: new Date().toISOString(),
-      method: "Test Payment",
-      items: orderData.items
-    };
-    
-    toast.success(
-      language === "en"
-        ? "Test payment processed successfully!"
-        : "¡Pago de prueba procesado con éxito!"
-    );
-    
-    handlePaymentSuccess(testResult);
+  const handleCardDetailsChange = (details: any) => {
+    setCardDetails(details);
   };
   
-  // If no order data, show loading
-  if (!orderData) {
-    return (
-      <div className="flex min-h-screen flex-col">
-        <Navbar />
-        <main className="flex-grow flex items-center justify-center">
-          <div className="text-center p-8">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-ice-600 mx-auto mb-4"></div>
-            <p className="text-lg text-ice-800">
-              {language === 'en' ? "Loading checkout..." : "Cargando el proceso de pago..."}
-            </p>
-          </div>
-        </main>
-        <ToastContainer />
-      </div>
-    );
-  }
+  const processPayment = () => {
+    setLoading(true);
+    
+    // Simulate payment processing
+    setTimeout(() => {
+      setLoading(false);
+      setStep(3);
+      clearCart();
+      window.scrollTo(0, 0);
+    }, 2000);
+  };
+  
+  const handleBackToShopping = () => {
+    navigate("/products");
+  };
+  
+  const handleGoToDashboard = () => {
+    navigate("/dashboard");
+  };
   
   return (
-    <div className="flex min-h-screen flex-col">
-      <ScrollToTop />
-      <Navbar />
-      
-      {/* Added extra spacing with mt-24 to move content below header */}
-      <main className="flex-grow bg-ice-50/30 py-12 mt-24">
-        <div className="container mx-auto px-4">
-          {paymentComplete ? (
-            <PaymentSuccess 
-              result={paymentResult}
-              orderData={orderData}
-            />
-          ) : (
-            <>
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <div className="lg:col-span-2">
-                  <PaymentForm 
-                    amount={orderData.total}
-                    items={orderData.items}
-                    onSuccess={handlePaymentSuccess}
-                    onCancel={handleCancel}
-                    isNewCustomer={orderData.isNewCustomer}
-                  />
-                </div>
-                
-                <div className="lg:col-span-1">
-                  <OrderSummary orderData={orderData} />
-                </div>
+    <div className="min-h-screen bg-ice-50/30 py-12">
+      <div className="container max-w-6xl mx-auto px-4">
+        <Button
+          variant="ghost"
+          className="mb-6"
+          onClick={() => {
+            if (step === 1) {
+              navigate(-1);
+            } else {
+              setStep(step - 1);
+              window.scrollTo(0, 0);
+            }
+          }}
+        >
+          <ArrowLeft className="h-4 w-4 mr-2" />
+          {language === 'en' ? 'Back' : 'Atrás'}
+        </Button>
+        
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold mb-2">
+            {language === 'en' ? 'Checkout' : 'Finalizar Compra'}
+          </h1>
+          
+          <div className="flex items-center my-6">
+            <div className={`flex items-center ${step >= 1 ? 'text-ice-700' : 'text-muted-foreground'}`}>
+              <div className={`h-8 w-8 rounded-full flex items-center justify-center text-sm font-medium ${step >= 1 ? 'bg-ice-100 border-2 border-ice-500' : 'bg-muted border border-muted-foreground'}`}>
+                {step > 1 ? <Check className="h-4 w-4" /> : "1"}
               </div>
-              
-              {/* Test payment link for development */}
-              <div className="mt-8 text-center border-t pt-6">
-                <button
-                  onClick={handleTestPayment}
-                  className="text-sm text-ice-600 hover:text-ice-800 underline"
-                >
-                  {language === 'en' 
-                    ? "Complete purchase with test payment (Development Only)" 
-                    : "Completar compra con pago de prueba (Solo desarrollo)"}
-                </button>
-                <p className="text-xs text-gray-500 mt-1">
-                  {language === 'en'
-                    ? "This option is for testing purposes only and will be removed in production."
-                    : "Esta opción es solo para pruebas y se eliminará en producción."}
-                </p>
+              <span className="ml-2 font-medium">
+                {language === 'en' ? 'Billing Info' : 'Datos de Facturación'}
+              </span>
+            </div>
+            
+            <Separator className="mx-4 w-8" />
+            
+            <div className={`flex items-center ${step >= 2 ? 'text-ice-700' : 'text-muted-foreground'}`}>
+              <div className={`h-8 w-8 rounded-full flex items-center justify-center text-sm font-medium ${step >= 2 ? 'bg-ice-100 border-2 border-ice-500' : 'bg-muted border border-muted-foreground'}`}>
+                {step > 2 ? <Check className="h-4 w-4" /> : "2"}
               </div>
-            </>
-          )}
+              <span className="ml-2 font-medium">
+                {language === 'en' ? 'Payment' : 'Pago'}
+              </span>
+            </div>
+            
+            <Separator className="mx-4 w-8" />
+            
+            <div className={`flex items-center ${step >= 3 ? 'text-ice-700' : 'text-muted-foreground'}`}>
+              <div className={`h-8 w-8 rounded-full flex items-center justify-center text-sm font-medium ${step >= 3 ? 'bg-ice-100 border-2 border-ice-500' : 'bg-muted border border-muted-foreground'}`}>
+                {step > 3 ? <Check className="h-4 w-4" /> : "3"}
+              </div>
+              <span className="ml-2 font-medium">
+                {language === 'en' ? 'Confirmation' : 'Confirmación'}
+              </span>
+            </div>
+          </div>
         </div>
-      </main>
-      
-      <Footer />
-      <ToastContainer />
+        
+        {step === 1 && (
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="lg:col-span-2">
+              <PaymentForm onSubmit={handleBillingInfoSubmit} />
+            </div>
+            <div className="lg:col-span-1">
+              <OrderSummary cart={cart} totalPrice={totalPrice} />
+            </div>
+          </div>
+        )}
+        
+        {step === 2 && (
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="lg:col-span-2">
+              <PaymentMethod 
+                onMethodSelect={handlePaymentMethodSelect}
+                onCardDetailsChange={handleCardDetailsChange}
+              />
+              
+              <div className="mt-6 flex justify-end">
+                <Button 
+                  onClick={processPayment}
+                  disabled={loading}
+                  className="w-full md:w-auto"
+                >
+                  {loading ? (
+                    <>
+                      <div className="spinner-border h-4 w-4 mr-2 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                      {language === 'en' ? 'Processing...' : 'Procesando...'}
+                    </>
+                  ) : (
+                    <>{language === 'en' ? 'Complete Purchase' : 'Completar Compra'}</>
+                  )}
+                </Button>
+              </div>
+            </div>
+            <div className="lg:col-span-1">
+              <Card>
+                <CardContent className="pt-6">
+                  <div className="space-y-4">
+                    <h3 className="font-medium">
+                      {language === 'en' ? 'Billing Information' : 'Información de Facturación'}
+                    </h3>
+                    
+                    <div className="text-sm space-y-2">
+                      <p><span className="font-medium">{language === 'en' ? 'Name:' : 'Nombre:'}</span> {billingInfo.firstName} {billingInfo.lastName}</p>
+                      <p><span className="font-medium">{language === 'en' ? 'Email:' : 'Correo:'}</span> {billingInfo.email}</p>
+                      <p><span className="font-medium">{language === 'en' ? 'Address:' : 'Dirección:'}</span> {billingInfo.address}</p>
+                      <p><span className="font-medium">{language === 'en' ? 'City:' : 'Ciudad:'}</span> {billingInfo.city}</p>
+                      <p><span className="font-medium">{language === 'en' ? 'Country:' : 'País:'}</span> {billingInfo.country}</p>
+                      <p><span className="font-medium">{language === 'en' ? 'Postal Code:' : 'Código Postal:'}</span> {billingInfo.postalCode}</p>
+                      <p><span className="font-medium">{language === 'en' ? 'Phone:' : 'Teléfono:'}</span> {billingInfo.phone}</p>
+                    </div>
+                    
+                    <Button
+                      variant="outline"
+                      className="w-full"
+                      onClick={() => setStep(1)}
+                    >
+                      {language === 'en' ? 'Edit Billing Info' : 'Editar Información de Facturación'}
+                    </Button>
+                  </div>
+                  
+                  <Separator className="my-6" />
+                  
+                  <OrderSummary cart={cart} totalPrice={totalPrice} condensed={true} />
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        )}
+        
+        {step === 3 && (
+          <PaymentSuccess 
+            orderId={orderId}
+            onBackToShopping={handleBackToShopping}
+            onGoToDashboard={handleGoToDashboard}
+          />
+        )}
+      </div>
     </div>
   );
 };
