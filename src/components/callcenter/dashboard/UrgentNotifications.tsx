@@ -1,19 +1,17 @@
 
 import React from "react";
-import { 
-  Bell, 
-  MessageCircle, 
-  TicketIcon, 
-  AlertTriangle, 
-  PlusCircle, 
-  ArrowUpRight 
-} from "lucide-react";
+import { AlertTriangle } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { mockTickets } from "../ticketing/mock-data";
 import { Notification } from "../notifications/NotificationTypes";
+
+// Import our new components
+import MedicalAlertsSection from "./components/urgentNotifications/MedicalAlertsSection";
+import HighPriorityTicketsSection from "./components/urgentNotifications/HighPriorityTicketsSection";
+import UnreadMessagesSection from "./components/urgentNotifications/UnreadMessagesSection";
+import EmptyNotificationsState from "./components/urgentNotifications/EmptyNotificationsState";
 
 interface UrgentNotificationsProps {
   notifications: Notification[];
@@ -49,6 +47,9 @@ const UrgentNotifications: React.FC<UrgentNotificationsProps> = ({
       description: "Loading all items in this category",
     });
   };
+
+  // Calculate total items for the badge
+  const totalUrgentItems = urgentNotifications.length + urgentTickets.length + urgentChats.length;
   
   return (
     <Card className="border-l-4 border-red-500 shadow-md">
@@ -59,7 +60,7 @@ const UrgentNotifications: React.FC<UrgentNotificationsProps> = ({
             Urgent & Important
           </CardTitle>
           <Badge variant="destructive" className="ml-2">
-            {urgentNotifications.length + urgentTickets.length + urgentChats.length} items
+            {totalUrgentItems} items
           </Badge>
         </div>
         <CardDescription>
@@ -67,155 +68,22 @@ const UrgentNotifications: React.FC<UrgentNotificationsProps> = ({
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
-        {/* Medical Dispenser & Glucose Notifications */}
-        {urgentNotifications.length > 0 && (
-          <div>
-            <div className="flex justify-between items-center mb-2">
-              <h3 className="text-sm font-semibold flex items-center">
-                <Bell className="h-4 w-4 mr-1 text-amber-500" />
-                Medical Alerts
-              </h3>
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                onClick={() => handleViewAll("notifications")}
-                className="text-xs h-6 px-2"
-              >
-                View all <ArrowUpRight className="h-3 w-3 ml-1" />
-              </Button>
-            </div>
-            <div className="space-y-2">
-              {urgentNotifications.map(notification => (
-                <div 
-                  key={notification.id}
-                  className={`p-3 rounded-md text-sm ${notification.type === 'sos' ? 'bg-red-50 border-l-2 border-red-500' : 'bg-amber-50 border-l-2 border-amber-500'}`}
-                >
-                  <div className="flex justify-between">
-                    <span className="font-medium">{notification.clientName}</span>
-                    <Badge variant={notification.type === 'sos' ? 'destructive' : 'outline'} className="text-xs">
-                      {notification.type === 'sos' ? 'SOS ALERT' : 'HIGH GLUCOSE'}
-                    </Badge>
-                  </div>
-                  <p className="mt-1 text-gray-600">{notification.message}</p>
-                  <div className="flex justify-between items-center mt-2">
-                    <span className="text-xs text-gray-500">
-                      {new Date(notification.timestamp).toLocaleTimeString()}
-                    </span>
-                    <Button 
-                      size="sm" 
-                      variant="outline" 
-                      className="h-6 text-xs"
-                      onClick={() => handleViewAll("clients")}
-                    >
-                      View Details
-                    </Button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
+        <MedicalAlertsSection 
+          notifications={notifications} 
+          handleViewAll={handleViewAll} 
+        />
         
-        {/* Urgent Tickets */}
-        {urgentTickets.length > 0 && (
-          <div>
-            <div className="flex justify-between items-center mb-2">
-              <h3 className="text-sm font-semibold flex items-center">
-                <TicketIcon className="h-4 w-4 mr-1 text-purple-500" />
-                High Priority Tickets
-              </h3>
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                onClick={() => handleViewAll("tickets")}
-                className="text-xs h-6 px-2"
-              >
-                View all <ArrowUpRight className="h-3 w-3 ml-1" />
-              </Button>
-            </div>
-            <div className="space-y-2">
-              {urgentTickets.map(ticket => (
-                <div 
-                  key={ticket.id}
-                  className="p-3 bg-purple-50 rounded-md text-sm border-l-2 border-purple-500"
-                >
-                  <div className="flex justify-between">
-                    <span className="font-medium">{ticket.subject}</span>
-                    <Badge variant="outline" className="bg-red-100 text-red-800 text-xs">
-                      {ticket.priority}
-                    </Badge>
-                  </div>
-                  <p className="mt-1 text-gray-600">Client: {ticket.clientName}</p>
-                  <div className="flex justify-between items-center mt-2">
-                    <span className="text-xs text-gray-500">{ticket.created}</span>
-                    <Button 
-                      size="sm" 
-                      variant="outline" 
-                      className="h-6 text-xs"
-                      onClick={() => handleViewAll("tickets")}
-                    >
-                      Respond
-                    </Button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
+        <HighPriorityTicketsSection 
+          tickets={urgentTickets} 
+          handleViewAll={handleViewAll} 
+        />
         
-        {/* Unread Chats */}
-        {urgentChats.length > 0 && (
-          <div>
-            <div className="flex justify-between items-center mb-2">
-              <h3 className="text-sm font-semibold flex items-center">
-                <MessageCircle className="h-4 w-4 mr-1 text-blue-500" />
-                Unread Messages
-              </h3>
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                onClick={() => handleViewAll("chat")}
-                className="text-xs h-6 px-2"
-              >
-                View all <ArrowUpRight className="h-3 w-3 ml-1" />
-              </Button>
-            </div>
-            <div className="space-y-2">
-              {urgentChats.map(chat => (
-                <div 
-                  key={chat.id}
-                  className="p-3 bg-blue-50 rounded-md text-sm border-l-2 border-blue-500"
-                >
-                  <div className="flex justify-between">
-                    <span className="font-medium">{chat.clientName}</span>
-                    <span className="text-xs text-gray-500">{chat.time}</span>
-                  </div>
-                  <p className="mt-1 text-gray-600">{chat.message}</p>
-                  <div className="flex justify-end mt-2">
-                    <Button 
-                      size="sm" 
-                      className="h-6 text-xs bg-blue-600 hover:bg-blue-700"
-                      onClick={() => handleViewAll("chat")}
-                    >
-                      Reply Now
-                    </Button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
+        <UnreadMessagesSection 
+          chats={urgentChats} 
+          handleViewAll={handleViewAll} 
+        />
         
-        {/* Empty state */}
-        {urgentNotifications.length === 0 && urgentTickets.length === 0 && urgentChats.length === 0 && (
-          <div className="py-6 text-center">
-            <div className="mx-auto w-12 h-12 rounded-full bg-green-100 flex items-center justify-center mb-2">
-              <PlusCircle className="h-6 w-6 text-green-600" />
-            </div>
-            <h3 className="text-sm font-medium">All clear!</h3>
-            <p className="text-xs text-gray-500 mt-1">No urgent items requiring attention</p>
-          </div>
-        )}
+        {totalUrgentItems === 0 && <EmptyNotificationsState />}
       </CardContent>
     </Card>
   );
