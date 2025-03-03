@@ -15,17 +15,21 @@ import {
 import SidebarItem from './SidebarItem';
 import SidebarSection from './SidebarSection';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { User as UserType } from '@/context/AuthContext';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 
 interface SidebarNavigationProps {
   activePage: string;
   collapsed: boolean;
   onLogout: () => void;
+  user?: UserType | null;
 }
 
 const SidebarNavigation: React.FC<SidebarNavigationProps> = ({ 
   activePage, 
   collapsed, 
-  onLogout 
+  onLogout,
+  user
 }) => {
   const { language } = useLanguage();
   const navigate = useNavigate();
@@ -36,9 +40,35 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({
     navigate(path);
   };
 
+  // Get user initials for avatar
+  const getUserInitials = () => {
+    if (!user || !user.name) return 'U';
+    return user.name.split(' ')
+      .map(part => part.charAt(0))
+      .join('')
+      .toUpperCase();
+  };
+
   return (
-    <div className="px-2 pt-4">
-      <ScrollArea className="h-[calc(100vh-9rem)]">
+    <div className="flex flex-col h-full">
+      {/* User profile at the top */}
+      {!collapsed && user && (
+        <div className="px-4 py-4 border-b border-gray-100">
+          <div className="flex items-center space-x-3">
+            <Avatar className="h-10 w-10 bg-ice-100">
+              <AvatarFallback className="bg-ice-500 text-white">
+                {getUserInitials()}
+              </AvatarFallback>
+            </Avatar>
+            <div className="flex flex-col">
+              <span className="font-medium text-sm">{user.name || 'Member'}</span>
+              <span className="text-xs text-muted-foreground">{user.email}</span>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <ScrollArea className="flex-1 px-2 pt-4">
         <div className="space-y-1 px-2">
           <SidebarItem 
             icon={Home} 

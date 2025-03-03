@@ -17,11 +17,11 @@ const MemberSidebar: React.FC<MemberSidebarProps> = ({
   collapsed = false,
   setCollapsed = () => {}
 }) => {
-  const { logout } = useAuth();
+  const { logout, user } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   
-  console.log("MemberSidebar rendering, location:", location.pathname);
+  console.log("MemberSidebar rendering, location:", location.pathname, "user:", user);
   
   // Determine active page based on current location
   const getActivePage = () => {
@@ -48,7 +48,7 @@ const MemberSidebar: React.FC<MemberSidebarProps> = ({
 
   return (
     <div className={cn(
-      "h-screen bg-white border-r border-gray-200 flex flex-col transition-all duration-300",
+      "h-screen bg-white border-r border-gray-200 flex flex-col transition-all duration-300 shadow-sm",
       collapsed ? "w-16" : "w-64"
     )}>
       <SidebarHeader 
@@ -59,7 +59,8 @@ const MemberSidebar: React.FC<MemberSidebarProps> = ({
       <SidebarNavigation 
         activePage={getActivePage()}
         collapsed={collapsed} 
-        onLogout={handleLogout} 
+        onLogout={handleLogout}
+        user={user}
       />
     </div>
   );

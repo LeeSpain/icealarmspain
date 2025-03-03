@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { toast } from "react-toastify";
@@ -20,14 +20,23 @@ import { QuickActionsCard } from "./dashboard/QuickActionsCard";
 import { mockUserDevices, availableProducts } from "./dashboard/data";
 
 const MemberDashboard = () => {
-  const { logout } = useAuth();
+  const { logout, user } = useAuth();
   const { language } = useLanguage();
   const [showAddProducts, setShowAddProducts] = useState(false);
   const [showSetupGuide, setShowSetupGuide] = useState(false);
   const [setupDeviceType, setSetupDeviceType] = useState<'pendant' | 'monitor' | 'dispenser'>('pendant');
   const [cart, setCart] = useState<any[]>([]);
   const [userDevices, setUserDevices] = useState(mockUserDevices);
+  const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
+
+  // Simulate loading data
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 800);
+    return () => clearTimeout(timer);
+  }, []);
 
   const addToCart = (product: any) => {
     const isInCart = cart.some(item => item.id === product.id);
@@ -119,6 +128,19 @@ const MemberDashboard = () => {
     );
   }
 
+  if (isLoading) {
+    return (
+      <div className="w-full h-full flex items-center justify-center p-12">
+        <div className="flex flex-col items-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-ice-600 mb-4"></div>
+          <p className="text-ice-700">
+            {language === 'en' ? 'Loading your dashboard...' : 'Cargando su panel...'}
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="w-full">
       {/* Hero Welcome Section */}
@@ -128,6 +150,7 @@ const MemberDashboard = () => {
         hasDevices={userDevices.length > 0}
         onClearDevices={clearDevices}
         onLogout={handleLogout}
+        user={user}
       />
 
       {/* Dashboard Overview */}
