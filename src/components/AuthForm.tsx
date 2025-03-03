@@ -8,18 +8,35 @@ interface AuthFormProps {
   mode: "login" | "signup";
   onSuccess?: (email: string, password: string) => void;
   isLoading?: boolean;
+  error?: string | null;
   redirectTo?: string;
 }
 
-const AuthForm: React.FC<AuthFormProps> = ({ mode, onSuccess, isLoading, redirectTo }) => {
-  console.log("AuthForm rendering, mode:", mode, "redirectTo:", redirectTo);
+const AuthForm: React.FC<AuthFormProps> = ({ 
+  mode, 
+  onSuccess, 
+  isLoading, 
+  error,
+  redirectTo 
+}) => {
+  console.log("AuthForm rendering, mode:", mode, "redirectTo:", redirectTo, "error:", error);
   
   return (
     <>
       {mode === "login" ? (
-        <LoginForm onSuccess={onSuccess} isLoading={isLoading} redirectTo={redirectTo} />
+        <LoginForm 
+          onSuccess={onSuccess} 
+          isLoading={isLoading} 
+          error={error}
+          redirectTo={redirectTo} 
+        />
       ) : (
-        <SignupForm onSuccess={onSuccess} isLoading={isLoading} redirectTo={redirectTo} />
+        <SignupForm 
+          onSuccess={onSuccess} 
+          isLoading={isLoading}
+          error={error}
+          redirectTo={redirectTo} 
+        />
       )}
     </>
   );

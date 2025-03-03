@@ -1,22 +1,26 @@
-import React, { useState } from "react";
+
+import React, { useState, useEffect } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { ButtonCustom } from "@/components/ui/button-custom";
-import { Mail, ArrowRight } from "lucide-react";
+import { Mail, ArrowRight, AlertCircle } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
 import { Link } from "react-router-dom";
 import AuthInput from "./AuthInput";
 import PasswordInput from "./PasswordInput";
 import { validateForm, SocialSignIn, AuthFormFooter } from "./AuthFormUtils";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 interface LoginFormProps {
   onSuccess?: (email: string, password: string) => void;
   isLoading?: boolean;
+  error?: string | null;
   redirectTo?: string;
 }
 
 const LoginForm: React.FC<LoginFormProps> = ({ 
   onSuccess, 
   isLoading: externalLoading,
+  error: externalError,
   redirectTo 
 }) => {
   const { t, language } = useLanguage();
@@ -26,18 +30,30 @@ const LoginForm: React.FC<LoginFormProps> = ({
     password: "",
   });
   const [internalLoading, setInternalLoading] = useState(false);
+  const [internalError, setInternalError] = useState<string | null>(null);
   const [errors, setErrors] = useState<{[key: string]: string}>({});
   
   const isLoading = externalLoading !== undefined ? externalLoading : internalLoading;
-
-  console.log("LoginForm - checking translations:", t("login"), t("email"));
+  
+  // When external error changes, update internal error state
+  useEffect(() => {
+    if (externalError) {
+      setInternalError(externalError);
+    }
+  }, [externalError]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
     
+    // Clear field-specific errors when user types
     if (errors[name]) {
       setErrors(prev => ({ ...prev, [name]: "" }));
+    }
+    
+    // Clear general error when user starts typing
+    if (internalError) {
+      setInternalError(null);
     }
   };
 
@@ -47,24 +63,34 @@ const LoginForm: React.FC<LoginFormProps> = ({
     // Prevent multiple submissions
     if (isLoading) return;
     
+    // Validate form
     const newErrors = validateForm(formData, "login", language);
     setErrors(newErrors);
     if (Object.keys(newErrors).length > 0) return;
     
+    // Clear any previous errors
+    setInternalError(null);
+    
+    // Set loading state if we're managing it internally
     if (externalLoading === undefined) {
       setInternalLoading(true);
     }
     
+    // Call onSuccess handler if provided
     if (onSuccess) {
       try {
         await onSuccess(formData.email, formData.password);
       } catch (error) {
         console.error("Login error in form:", error);
+        const errorMessage = error instanceof Error ? error.message : String(error);
+        setInternalError(errorMessage);
+        
         if (externalLoading === undefined) {
           setInternalLoading(false);
         }
       }
     } else {
+      // Handle demo mode (without actual authentication)
       setTimeout(() => {
         if (externalLoading === undefined) {
           setInternalLoading(false);
@@ -81,12 +107,27 @@ const LoginForm: React.FC<LoginFormProps> = ({
     }
   };
 
+  // Get text strings with fallbacks for consistent UI
+  const emailLabel = t("email") || (language === 'en' ? "Email" : "Correo electrónico");
+  const passwordLabel = t("password") || (language === 'en' ? "Password" : "Contraseña");
+  const loginText = t("login") || (language === 'en' ? "Login" : "Iniciar sesión");
+  const loadingText = t("loading") || (language === 'en' ? "Loading..." : "Cargando...");
+  const forgotPasswordText = language === 'en' ? "Forgot your password?" : "¿Olvidaste tu contraseña?";
+
   return (
     <div className="w-full max-w-md mx-auto">
       <form onSubmit={handleSubmit} className="space-y-6">
+        {/* Display general error message if present */}
+        {internalError && (
+          <Alert variant="destructive" className="mb-4">
+            <AlertCircle className="h-4 w-4 mr-2" />
+            <AlertDescription>{internalError}</AlertDescription>
+          </Alert>
+        )}
+        
         <AuthInput
           id="email"
-          name={t("email")}
+          name={emailLabel}
           type="email"
           value={formData.email}
           onChange={handleChange}
@@ -100,7 +141,7 @@ const LoginForm: React.FC<LoginFormProps> = ({
         
         <PasswordInput
           id="password"
-          name={t("password")}
+          name={passwordLabel}
           value={formData.password}
           onChange={handleChange}
           placeholder={language === 'en' ? "••••••••" : "••••••••"}
@@ -113,7 +154,7 @@ const LoginForm: React.FC<LoginFormProps> = ({
         <div className="flex items-center justify-end">
           <div className="text-sm">
             <Link to="/reset-password" className="font-medium text-ice-600 hover:text-ice-500">
-              {language === 'en' ? "Forgot your password?" : "¿Olvidaste tu contraseña?"}
+              {forgotPasswordText}
             </Link>
           </div>
         </div>
@@ -127,11 +168,11 @@ const LoginForm: React.FC<LoginFormProps> = ({
           >
             {!isLoading && (
               <>
-                {t("login")}
+                {loginText}
                 <ArrowRight className="ml-2 h-5 w-5" />
               </>
             )}
-            {isLoading && (t("loading"))}
+            {isLoading && (loadingText)}
           </ButtonCustom>
         </div>
       </form>

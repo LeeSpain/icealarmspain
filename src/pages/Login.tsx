@@ -8,13 +8,15 @@ import { useLanguage } from "@/context/LanguageContext";
 import { useAuth } from "@/context/AuthContext";
 import { toast } from "@/components/ui/use-toast";
 import { Card, CardContent } from "@/components/ui/card";
+import { Loader2 } from "lucide-react";
 
 const Login: React.FC = () => {
-  const { language } = useLanguage();
+  const { language, t } = useLanguage();
   const navigate = useNavigate();
   const location = useLocation();
   const { signIn, user, isAuthenticated, isLoading } = useAuth();
   const [loginInProgress, setLoginInProgress] = useState(false);
+  const [loginError, setLoginError] = useState<string | null>(null);
   const [redirectTriggered, setRedirectTriggered] = useState(false);
   
   // Check if there's a redirect parameter
@@ -36,13 +38,19 @@ const Login: React.FC = () => {
       const redirectTo = redirectParam || getDefaultRedirect(user.role);
       console.log("Redirecting authenticated user to:", redirectTo);
       
+      // Display success toast
+      toast({
+        title: language === 'en' ? "Login successful!" : "¡Inicio de sesión exitoso!",
+        description: language === 'en' ? "Redirecting to your dashboard..." : "Redirigiendo a tu panel...",
+      });
+      
       // Use a small delay to ensure the redirect happens properly
       setTimeout(() => {
         console.log("Executing redirect now");
         navigate(redirectTo, { replace: true });
-      }, 100);
+      }, 500); // Slightly longer delay for better user experience
     }
-  }, [isAuthenticated, isLoading, user, navigate, redirectParam, redirectTriggered]);
+  }, [isAuthenticated, isLoading, user, navigate, redirectParam, redirectTriggered, language]);
   
   // Helper function to determine default redirect based on role
   const getDefaultRedirect = (role: string) => {
@@ -67,19 +75,14 @@ const Login: React.FC = () => {
     if (loginInProgress) return; // Prevent multiple login attempts
     
     setLoginInProgress(true);
+    setLoginError(null);
+    
     try {
       console.log("Attempting login with:", email);
       const success = await signIn(email, password);
       
-      if (success) {
-        toast({
-          title: language === 'en' ? "Login successful!" : "¡Inicio de sesión exitoso!",
-          description: language === 'en' ? "Redirecting to your dashboard..." : "Redirigiendo a tu panel...",
-        });
-        
-        // The useEffect will handle the redirection
-        // Do not set loginInProgress to false here, maintain it until redirect completes
-      } else {
+      if (!success) {
+        setLoginError(language === 'en' ? "Invalid email or password" : "Correo o contraseña inválidos");
         toast({
           title: language === 'en' ? "Login failed" : "Error de inicio de sesión",
           description: language === 'en' ? "Invalid email or password" : "Correo o contraseña inválidos",
@@ -87,39 +90,30 @@ const Login: React.FC = () => {
         });
         setLoginInProgress(false);
       }
+      // The useEffect will handle the redirection and success toast if login succeeds
     } catch (error) {
       console.error("Login error:", error);
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      setLoginError(errorMessage);
       toast({
         title: language === 'en' ? "Login error" : "Error de inicio de sesión",
-        description: language === 'en' ? "Something went wrong" : "Algo salió mal",
+        description: language === 'en' ? errorMessage : "Algo salió mal",
         variant: "destructive",
       });
       setLoginInProgress(false);
     }
   };
   
-  // Show loading state while authentication is being checked
-  if (isLoading) {
+  // Render loading state if authentication is being checked or user is already authenticated
+  if (isLoading || (isAuthenticated && user)) {
     return (
       <div className="flex min-h-screen items-center justify-center">
         <div className="flex flex-col items-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-ice-600 mb-4"></div>
+          <Loader2 className="h-12 w-12 animate-spin text-ice-600 mb-4" />
           <p className="text-ice-700">
-            {language === 'en' ? 'Checking authentication...' : 'Verificando autenticación...'}
-          </p>
-        </div>
-      </div>
-    );
-  }
-  
-  // If already authenticated, show loading state (the useEffect will handle redirection)
-  if (isAuthenticated && user) {
-    return (
-      <div className="flex min-h-screen items-center justify-center">
-        <div className="flex flex-col items-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-ice-600 mb-4"></div>
-          <p className="text-ice-700">
-            {language === 'en' ? 'Redirecting to dashboard...' : 'Redirigiendo al panel...'}
+            {isLoading 
+              ? (language === 'en' ? 'Checking authentication...' : 'Verificando autenticación...')
+              : (language === 'en' ? 'Redirecting to dashboard...' : 'Redirigiendo al panel...')}
           </p>
         </div>
       </div>
@@ -146,6 +140,7 @@ const Login: React.FC = () => {
                 mode="login" 
                 onSuccess={handleLoginSuccess} 
                 isLoading={loginInProgress}
+                error={loginError}
                 redirectTo={redirectParam || undefined}
               />
               

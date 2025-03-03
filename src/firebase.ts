@@ -25,17 +25,26 @@ class MockAuth {
   async signInWithEmailAndPassword(email: string, password: string) {
     console.log("Mock signIn:", email);
     
+    // Simulate network delay
+    await new Promise(resolve => setTimeout(resolve, 800));
+    
+    // Validate email format
+    if (!email.includes('@') || !email.includes('.')) {
+      throw new Error("The email address is badly formatted.");
+    }
+    
     // Simulate successful sign-in for demo credentials
     if (
       (email === "admin@icealarm.es" && password === "admin123") ||
       (email === "member@icealarm.es" && password === "member123") ||
       (email === "agent@icealarm.es" && password === "agent123") || 
-      (password === 'admin123' || password === 'member123' || password === 'agent123')
+      (email.includes('admin') && password === 'admin123') ||
+      (email.includes('member') && password === 'member123') ||
+      (email.includes('agent') && password === 'agent123') ||
+      (email.includes('demo') && password.length >= 6)
     ) {
       // Create user based on email
       const displayName = email.split('@')[0];
-      const isAdmin = email === "admin@icealarm.es" || email.includes("admin");
-      const isAgent = email === "agent@icealarm.es" || email.includes("agent");
       
       this.currentUser = {
         uid: 'mock-uid-' + Date.now(),
@@ -50,12 +59,30 @@ class MockAuth {
     }
     
     // Simulate error for invalid credentials
-    throw new Error("Invalid email or password");
+    throw new Error("The password is invalid or the user does not have a password.");
   }
   
   // Mock implementation of createUserWithEmailAndPassword
   async createUserWithEmailAndPassword(email: string, password: string) {
     console.log("Mock signUp:", email);
+    
+    // Simulate network delay
+    await new Promise(resolve => setTimeout(resolve, 800));
+    
+    // Validate email format
+    if (!email.includes('@') || !email.includes('.')) {
+      throw new Error("The email address is badly formatted.");
+    }
+    
+    // Validate password
+    if (password.length < 6) {
+      throw new Error("The password must be at least 6 characters long.");
+    }
+    
+    // Simulate existing user error
+    if (email === "admin@icealarm.es" || email === "member@icealarm.es" || email === "agent@icealarm.es") {
+      throw new Error("The email address is already in use by another account.");
+    }
     
     this.currentUser = {
       uid: 'mock-uid-' + Date.now(),
@@ -71,8 +98,11 @@ class MockAuth {
   
   // Mock implementation of signOut
   async signOut() {
-    console.log("Logging out...");
     console.log("Logging out user:", this.currentUser?.email);
+    
+    // Simulate network delay
+    await new Promise(resolve => setTimeout(resolve, 300));
+    
     this.currentUser = null;
     
     // Notify all listeners that the auth state has changed
@@ -81,6 +111,9 @@ class MockAuth {
   
   // Mock implementation of updateProfile
   async updateProfile(user: any, profile: { displayName?: string, photoURL?: string }) {
+    // Simulate network delay
+    await new Promise(resolve => setTimeout(resolve, 300));
+    
     if (user) {
       user.displayName = profile.displayName || user.displayName;
       user.photoURL = profile.photoURL || user.photoURL;

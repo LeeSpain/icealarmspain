@@ -1,5 +1,7 @@
+
 import React, { createContext, useState, useEffect, useContext } from 'react';
 import { auth } from '../firebase';
+import { toast } from 'react-toastify';
 
 interface AuthContextProps {
   user: User | null;
@@ -31,7 +33,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [user, setUser] = useState<User | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [authInitialized, setAuthInitialized] = useState<boolean>(false);
 
+  // Initialize auth state listener
   useEffect(() => {
     console.log("AuthContext initializing and checking authentication state");
     const unsubscribe = auth.onAuthStateChanged(async (authUser) => {
@@ -39,16 +43,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       console.log("Auth state changed:", { authUser });
       
       if (authUser) {
-        // Here, we're using a mock role and language.
-        // In a real application, you'd fetch this data from your database.
-        const mockRole = authUser.email?.endsWith('@admin.com') || authUser.email === 'admin@icealarm.es' 
-          ? 'admin' 
-          : (authUser.email?.endsWith('@callcenter.com') || authUser.email === 'agent@icealarm.es' 
-            ? 'callcenter' 
-            : 'member');
+        // Determine role based on email
+        const mockRole = 
+          (authUser.email?.includes('admin') || authUser.email === 'admin@icealarm.es') 
+            ? 'admin' 
+            : (authUser.email?.includes('agent') || authUser.email === 'agent@icealarm.es' || authUser.email?.includes('callcenter')) 
+              ? 'callcenter' 
+              : 'member';
             
-        const mockLanguage = authUser.email?.endsWith('@es.com') ? 'es' : 'en';
-        const mockProfileCompleted = authUser.email?.startsWith('completed') ? true : false;
+        const mockLanguage = authUser.email?.includes('@es.com') ? 'es' : 'en';
+        const mockProfileCompleted = authUser.email?.includes('completed') ? true : false;
+        const currentDate = new Date().toISOString();
 
         const userData = {
           id: authUser.uid,
@@ -57,6 +62,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           role: mockRole as 'member' | 'callcenter' | 'admin',
           language: mockLanguage as 'en' | 'es',
           profileCompleted: mockProfileCompleted,
+          status: 'active' as 'active' | 'inactive',
+          lastLogin: currentDate,
         };
         
         console.log("Setting authenticated user:", userData);
@@ -67,7 +74,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setUser(null);
         setIsAuthenticated(false);
       }
+      
       setIsLoading(false);
+      setAuthInitialized(true);
     });
 
     return () => {
@@ -79,6 +88,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const signIn = async (email: string, password: string): Promise<boolean> => {
     console.log("SignIn attempt with email:", email);
     setIsLoading(true);
+    
     try {
       await auth.signInWithEmailAndPassword(email, password);
       console.log("SignIn successful");
@@ -87,7 +97,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     } catch (error: any) {
       console.error("Sign In Error:", error.message);
       setIsAuthenticated(false);
-      throw error;
+      
+      // Provide user-friendly error message
+      const errorMessage = 
+        error.message.includes("user-not-found") || 
+        error.message.includes("wrong-password") || 
+        error.message.includes("invalid-credential")
+          ? "Invalid email or password"
+          : error.message;
+          
+      throw new Error(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -100,6 +119,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       await auth.updateProfile(userCredential.user, { displayName: name });
 
       // After successful signup, update the user state
+      const currentDate = new Date().toISOString();
       setUser({
         id: userCredential.user.uid,
         name: name,
@@ -107,12 +127,27 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         role: 'member', // Default role for new users
         language: 'en', // Default language
         profileCompleted: false,
+        status: 'active',
+        lastLogin: currentDate,
       });
+      
       setIsAuthenticated(true);
+      toast.success("Account created successfully!");
     } catch (error: any) {
       console.error("Sign Up Error:", error.message);
       setIsAuthenticated(false);
-      throw error;
+      
+      // Provide user-friendly error message
+      let errorMessage = "Failed to create account";
+      if (error.message.includes("email-already-in-use")) {
+        errorMessage = "Email is already in use";
+      } else if (error.message.includes("invalid-email")) {
+        errorMessage = "Invalid email format";
+      } else if (error.message.includes("weak-password")) {
+        errorMessage = "Password is too weak";
+      }
+      
+      throw new Error(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -121,13 +156,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const logout = async () => {
     setIsLoading(true);
     try {
-      console.log("Logging out...");
       console.log("Logging out user:", user?.email);
       await auth.signOut();
       setIsAuthenticated(false);
       setUser(null);
+      toast.info("You have been logged out");
     } catch (error: any) {
       console.error("Logout Error:", error.message);
+      toast.error("Logout failed: " + error.message);
       throw error;
     } finally {
       setIsLoading(false);
@@ -143,8 +179,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         });
         // Update the user state with the new name
         setUser((prevUser) => prevUser ? { ...prevUser, name: name } : null);
+        toast.success("Profile updated successfully");
       } catch (error: any) {
         console.error("Update Profile Error:", error.message);
+        toast.error("Failed to update profile: " + error.message);
         throw error;
       } finally {
         setIsLoading(false);
@@ -159,6 +197,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         ...user,
         role
       });
+      toast.success(`User role updated to ${role}`);
     }
   };
 
@@ -169,9 +208,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         ...user,
         status: isActive ? 'active' : 'inactive'
       });
+      toast.success(`User status updated to ${isActive ? 'active' : 'inactive'}`);
     }
   };
 
+  // Create context value
   const value: AuthContextProps = {
     user,
     isAuthenticated,
@@ -184,7 +225,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     updateUserStatus,
   };
 
-  console.log("AuthContext state changed:", { isAuthenticated, user, isLoading });
+  console.log("AuthContext state changed:", { 
+    isAuthenticated, 
+    hasUser: !!user, 
+    isLoading, 
+    initialized: authInitialized 
+  });
 
   return (
     <AuthContext.Provider value={value}>

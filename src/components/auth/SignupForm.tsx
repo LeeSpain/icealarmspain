@@ -1,22 +1,25 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { ButtonCustom } from "@/components/ui/button-custom";
-import { Mail, User, ArrowRight, Phone } from "lucide-react";
+import { Mail, User, ArrowRight, Phone, AlertCircle } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
 import AuthInput from "./AuthInput";
 import PasswordInput from "./PasswordInput";
 import { validateForm, SocialSignIn, AuthFormFooter } from "./AuthFormUtils";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 interface SignupFormProps {
   onSuccess?: (email: string, password: string) => void;
   isLoading?: boolean;
+  error?: string | null;
   redirectTo?: string;
 }
 
 const SignupForm: React.FC<SignupFormProps> = ({ 
   onSuccess, 
   isLoading: externalLoading,
+  error: externalError,
   redirectTo 
 }) => {
   const { language } = useLanguage();
@@ -28,35 +31,65 @@ const SignupForm: React.FC<SignupFormProps> = ({
     confirmPassword: "",
     phone: "",
   });
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [internalLoading, setInternalLoading] = useState(false);
+  const [internalError, setInternalError] = useState<string | null>(null);
   const [errors, setErrors] = useState<{[key: string]: string}>({});
   
   const isLoading = externalLoading !== undefined ? externalLoading : internalLoading;
+
+  // When external error changes, update internal error state
+  useEffect(() => {
+    if (externalError) {
+      setInternalError(externalError);
+    }
+  }, [externalError]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
     
+    // Clear field-specific errors when user types
     if (errors[name]) {
       setErrors(prev => ({ ...prev, [name]: "" }));
+    }
+    
+    // Clear general error when user starts typing
+    if (internalError) {
+      setInternalError(null);
     }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    // Validate form
     const newErrors = validateForm(formData, "signup", language);
     setErrors(newErrors);
     if (Object.keys(newErrors).length > 0) return;
     
+    // Clear any previous errors
+    setInternalError(null);
+    
+    // Set loading state if we're managing it internally
     if (externalLoading === undefined) {
       setInternalLoading(true);
     }
     
+    // Call onSuccess handler if provided
     if (onSuccess) {
-      onSuccess(formData.email, formData.password);
+      try {
+        await onSuccess(formData.email, formData.password);
+      } catch (error) {
+        console.error("Signup error in form:", error);
+        const errorMessage = error instanceof Error ? error.message : String(error);
+        setInternalError(errorMessage);
+        
+        if (externalLoading === undefined) {
+          setInternalLoading(false);
+        }
+      }
     } else {
+      // Handle demo mode (without actual signup)
       setTimeout(() => {
         if (externalLoading === undefined) {
           setInternalLoading(false);
@@ -76,6 +109,14 @@ const SignupForm: React.FC<SignupFormProps> = ({
   return (
     <div className="w-full max-w-md mx-auto">
       <form onSubmit={handleSubmit} className="space-y-6">
+        {/* Display general error message if present */}
+        {internalError && (
+          <Alert variant="destructive" className="mb-4">
+            <AlertCircle className="h-4 w-4 mr-2" />
+            <AlertDescription>{internalError}</AlertDescription>
+          </Alert>
+        )}
+        
         <AuthInput
           id="name"
           name={language === 'en' ? "Full Name" : "Nombre Completo"}
@@ -145,6 +186,7 @@ const SignupForm: React.FC<SignupFormProps> = ({
             type="submit"
             className="w-full flex justify-center"
             isLoading={isLoading}
+            disabled={isLoading}
           >
             {!isLoading && (
               <>
