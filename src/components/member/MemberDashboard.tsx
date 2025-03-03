@@ -1,10 +1,8 @@
-
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { useLanguage } from "@/context/LanguageContext";
 import { Card, CardContent } from "@/components/ui/card";
-import { toast } from "react-toastify";
 import { CalendarDays, User, ArrowRight, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import SOSTile from "@/components/member/dashboard/SOSTile";
@@ -12,7 +10,7 @@ import GlucoseTile from "@/components/member/dashboard/GlucoseTile";
 import WeatherTile from "@/components/member/dashboard/WeatherTile";
 import NewsTile from "@/components/member/dashboard/NewsTile";
 import AIGuardianTile from "@/components/member/dashboard/AIGuardianTile";
-import NotificationSection from "@/components/member/dashboard/NotificationSection";
+import NotificationSection from "@/components/member/dashboard/notifications/NotificationSection";
 import { CartSection } from "@/components/member/dashboard/CartSection";
 import { useCart } from "@/components/payment/CartContext";
 
@@ -31,7 +29,6 @@ const MemberDashboard: React.FC = () => {
       setName(user.name || user.email);
     }
     
-    // Update date every minute
     const timer = setInterval(() => {
       setCurrentDate(new Date());
     }, 60000);
@@ -56,7 +53,6 @@ const MemberDashboard: React.FC = () => {
     return null;
   }
   
-  // Format the current date
   const formattedDate = currentDate.toLocaleDateString(
     language === 'en' ? 'en-US' : 'es-ES', 
     { 
@@ -75,7 +71,6 @@ const MemberDashboard: React.FC = () => {
     <div className="flex h-screen bg-ice-50/30">
       <div className="flex-1 overflow-auto">
         <div className="p-6">
-          {/* Welcome & Weather section */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
             <Card className="lg:col-span-3 shadow-md border-l-4 border-ice-600">
               <CardContent className="p-6">
@@ -123,7 +118,6 @@ const MemberDashboard: React.FC = () => {
             </Card>
           </div>
           
-          {/* Notifications and Cart section */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
             <div className="lg:col-span-2">
               <NotificationSection />
@@ -142,7 +136,6 @@ const MemberDashboard: React.FC = () => {
             </div>
           </div>
           
-          {/* Main dashboard tiles */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <SOSTile />
             <GlucoseTile />
