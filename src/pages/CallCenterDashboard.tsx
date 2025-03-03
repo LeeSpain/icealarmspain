@@ -43,7 +43,7 @@ const CallCenterDashboard: React.FC = () => {
 
       <main className={`flex-1 flex flex-col overflow-hidden transition-all duration-300`}>
         <Header 
-          title={activeSection.charAt(0).toUpperCase() + activeSection.slice(1).replace('-', ' ')}
+          activeSection={activeSection}
         />
         
         <div className="flex-1 overflow-auto p-6">
@@ -60,3 +60,4 @@ const CallCenterDashboard: React.FC = () => {
 };
 
 export default CallCenterDashboard;
+
