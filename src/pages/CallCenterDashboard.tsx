@@ -25,13 +25,10 @@ const CallCenterDashboard: React.FC = () => {
       } else if (user && user.role !== 'callcenter') {
         // Redirect based on role
         console.log("CallCenterDashboard - User has incorrect role:", user.role);
-        switch (user.role) {
-          case 'admin':
-            navigate('/admin');
-            break;
-          default:
-            navigate('/dashboard');
-            break;
+        if (user.role === 'admin') {
+          navigate('/admin');
+        } else {
+          navigate('/dashboard');
         }
       } else {
         console.log("CallCenterDashboard - User authenticated with correct role");

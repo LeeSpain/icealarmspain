@@ -58,9 +58,6 @@ const DashboardPage: React.FC = () => {
     );
   }
   
-  // Log rendering state for debugging
-  console.log("DashboardPage rendering - sidebarCollapsed:", sidebarCollapsed);
-  
   return (
     <div className="flex h-screen bg-ice-50/30">
       <MemberSidebar 

@@ -29,6 +29,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     console.log("AuthProvider - Checking local storage for user");
     const storedUser = localStorage.getItem('user');
+    
     if (storedUser) {
       try {
         const parsedUser = JSON.parse(storedUser);
@@ -42,8 +43,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       console.log("No user found in localStorage");
     }
     
-    // Set loading to false after a short delay to ensure state is consistent
-    setTimeout(() => setIsLoading(false), 500);
+    // Ensure loading state is completed
+    setIsLoading(false);
   }, []);
 
   // Mock users - in a real app, this would be authenticated against a backend
@@ -67,17 +68,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const { password, ...userWithoutPassword } = foundUser;
         console.log("User authenticated:", userWithoutPassword);
         
-        // Set user in local storage first
-        localStorage.setItem('user', JSON.stringify(userWithoutPassword));
-        
-        // Then update state
+        // Set user in state first
         setUser(userWithoutPassword);
         
-        // Give time for state to update before setting isLoading to false
-        setTimeout(() => {
-          setIsLoading(false);
-          console.log("Login complete, isLoading set to false");
-        }, 1000);
+        // Then update storage - this ensures the UI updates properly
+        localStorage.setItem('user', JSON.stringify(userWithoutPassword));
+        
+        // Set loading to false immediately
+        setIsLoading(false);
         
         return true;
       }
@@ -94,8 +92,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const logout = () => {
     console.log("Logging out user:", user?.email);
-    localStorage.removeItem('user');
+    // Clear state before storage
     setUser(null);
+    localStorage.removeItem('user');
   };
 
   const isAuthenticated = !!user;
