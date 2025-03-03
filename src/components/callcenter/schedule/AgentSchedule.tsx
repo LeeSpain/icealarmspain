@@ -61,22 +61,12 @@ const AgentSchedule: React.FC = () => {
           <CardHeader className="pb-3">
             <div className="flex justify-between items-center">
               <CardTitle>Schedule</CardTitle>
-              <TabsList>
-                <TabsTrigger
-                  value="week"
-                  onClick={() => setSelectedView("week")}
-                  className={selectedView === "week" ? "bg-primary text-primary-foreground" : ""}
-                >
-                  Week
-                </TabsTrigger>
-                <TabsTrigger
-                  value="day"
-                  onClick={() => setSelectedView("day")}
-                  className={selectedView === "day" ? "bg-primary text-primary-foreground" : ""}
-                >
-                  Day
-                </TabsTrigger>
-              </TabsList>
+              <Tabs value={selectedView} onValueChange={setSelectedView}>
+                <TabsList>
+                  <TabsTrigger value="week">Week</TabsTrigger>
+                  <TabsTrigger value="day">Day</TabsTrigger>
+                </TabsList>
+              </Tabs>
             </div>
           </CardHeader>
           <CardContent>

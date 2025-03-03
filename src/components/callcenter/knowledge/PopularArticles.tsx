@@ -6,9 +6,13 @@ import { Article } from "./types";
 
 interface PopularArticlesProps {
   articles: Article[];
+  onArticleClick?: (articleId: number) => void;
 }
 
-const PopularArticles: React.FC<PopularArticlesProps> = ({ articles }) => {
+const PopularArticles: React.FC<PopularArticlesProps> = ({ 
+  articles, 
+  onArticleClick 
+}) => {
   // Get the 5 most viewed articles
   const popularArticles = [...articles]
     .sort((a, b) => b.views - a.views)
@@ -25,7 +29,11 @@ const PopularArticles: React.FC<PopularArticlesProps> = ({ articles }) => {
       <CardContent>
         <ul className="space-y-2">
           {popularArticles.map(article => (
-            <li key={article.id} className="flex items-start space-x-2 py-1 cursor-pointer hover:text-ice-700">
+            <li 
+              key={article.id} 
+              className="flex items-start space-x-2 py-1 cursor-pointer hover:text-ice-700"
+              onClick={() => onArticleClick && onArticleClick(article.id)}
+            >
               <FileText className="h-4 w-4 text-muted-foreground mt-0.5" />
               <span className="text-sm leading-tight">{article.title}</span>
             </li>

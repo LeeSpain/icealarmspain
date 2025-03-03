@@ -41,26 +41,26 @@ const AgentDashboard: React.FC<AgentDashboardProps> = ({ setActiveSection }) => 
   
   return (
     <div className="space-y-4">
-      {/* Welcome Card with Urgent Notifications side by side */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        <div className="lg:col-span-2">
-          <WelcomeCard user={user} />
-        </div>
-        <div className="lg:col-span-1">
-          <UrgentNotifications 
-            notifications={getMockNotifications()} 
-            setActiveSection={setActiveSection} 
-          />
+      {/* Welcome Card with Urgent Notifications stacked (changed from side by side) */}
+      <div className="space-y-4">
+        <WelcomeCard user={user} />
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+          <div className="lg:col-span-1">
+            <UrgentNotifications 
+              notifications={getMockNotifications()} 
+              setActiveSection={setActiveSection} 
+            />
+          </div>
+          <div className="lg:col-span-2">
+            <StatsCards 
+              totalCalls={totalCalls}
+              avgResponseTime={avgResponseTime}
+              pendingTickets={pendingTickets.length}
+              criticalTickets={criticalTickets.length}
+            />
+          </div>
         </div>
       </div>
-      
-      {/* Stats Cards */}
-      <StatsCards 
-        totalCalls={totalCalls}
-        avgResponseTime={avgResponseTime}
-        pendingTickets={pendingTickets.length}
-        criticalTickets={criticalTickets.length}
-      />
       
       {/* Main Content Area with Pending Alerts and Activity Sidebar */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
