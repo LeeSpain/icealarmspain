@@ -8,10 +8,16 @@ interface StepsProps {
   className?: string;
 }
 
+// Define interface for Step component props
 interface StepProps {
   title: string;
   description?: string;
   icon?: React.ReactNode;
+  // Add these props to fix the TypeScript error
+  stepNumber?: number;
+  isActive?: boolean;
+  isCompleted?: boolean;
+  isLast?: boolean;
 }
 
 export const Steps = ({ currentStep, children, className }: StepsProps) => {
@@ -50,12 +56,7 @@ export const Step = ({
   isActive,
   isCompleted,
   isLast,
-}: StepProps & {
-  stepNumber?: number;
-  isActive?: boolean;
-  isCompleted?: boolean;
-  isLast?: boolean;
-}) => {
+}: StepProps) => {
   return (
     <div className="flex-1 relative">
       <div className="flex items-center mb-2">
