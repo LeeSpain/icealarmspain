@@ -1,4 +1,3 @@
-
 import React, { useEffect } from "react";
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
@@ -109,7 +108,7 @@ const Index: React.FC = () => {
               </p>
             </div>
             
-            <div className="bg-gradient-to-br from-gray-50 to-ice-50 rounded-xl shadow-lg overflow-hidden border border-ice-100">
+            <div className="max-w-4xl mx-auto bg-gradient-to-br from-gray-50 to-ice-50 rounded-xl shadow-lg overflow-hidden border border-ice-100">
               <div className="p-4 bg-white/50 backdrop-blur-sm border-b border-ice-100 flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <LayoutDashboard className="w-5 h-5 text-ice-600" />
@@ -131,7 +130,7 @@ const Index: React.FC = () => {
                         {[65, 85, 75, 92, 70, 88, 78].map((value, i) => (
                           <div key={i} className="h-full flex flex-col items-center justify-end">
                             <div 
-                              className="w-8 bg-gradient-to-t from-ice-500 to-ice-300 rounded-t-sm" 
+                              className="w-6 bg-gradient-to-t from-ice-500 to-ice-300 rounded-t-sm" 
                               style={{ height: `${value}%` }}
                             ></div>
                             <span className="text-xs mt-1 text-gray-500">{['M', 'T', 'W', 'T', 'F', 'S', 'S'][i]}</span>
@@ -154,8 +153,8 @@ const Index: React.FC = () => {
                         <span className="text-2xl font-bold text-ice-700">72</span>
                         <span className="text-sm text-gray-400">{language === 'en' ? 'bpm' : 'lpm'}</span>
                       </div>
-                      <div className="h-12 w-full mt-2">
-                        <div className="w-full h-6 bg-ice-50 rounded-full overflow-hidden">
+                      <div className="h-10 w-full mt-2">
+                        <div className="w-full h-4 bg-ice-50 rounded-full overflow-hidden">
                           <div className="h-full bg-ice-400 rounded-full" style={{ width: '72%' }}></div>
                         </div>
                       </div>
@@ -176,7 +175,7 @@ const Index: React.FC = () => {
                 </div>
                 
                 <div className="space-y-4">
-                  <div className="bg-white rounded-lg shadow-sm p-4 border border-ice-100 h-44">
+                  <div className="bg-white rounded-lg shadow-sm p-4 border border-ice-100 h-[160px]">
                     <h4 className="text-sm font-medium text-gray-500 mb-2">{language === 'en' ? 'Upcoming Medications' : 'Próximos Medicamentos'}</h4>
                     <div className="space-y-2">
                       {[
@@ -198,7 +197,7 @@ const Index: React.FC = () => {
                   <div className="bg-white rounded-lg shadow-sm p-4 border border-ice-100">
                     <h4 className="text-sm font-medium text-gray-500 mb-2">{language === 'en' ? 'Emergency Contact' : 'Contacto de Emergencia'}</h4>
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-500">JD</div>
+                      <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-500 text-sm">JD</div>
                       <div>
                         <p className="text-sm font-medium">John Doe</p>
                         <p className="text-xs text-gray-500">+34 612 345 678</p>
