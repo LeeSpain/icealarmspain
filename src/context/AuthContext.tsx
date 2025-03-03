@@ -1,248 +1,157 @@
 
-import React, { createContext, useState, useEffect, useContext } from 'react';
+import React, { createContext, useState, useContext, useEffect } from 'react';
 import { auth } from '../firebase';
-import { toast } from 'react-toastify';
 
-interface AuthContextProps {
+// Define the User type
+export interface User {
+  uid: string;
+  email: string | null;
+  name?: string | null;
+  displayName?: string | null;
+}
+
+// Define the AuthContext type
+interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
   isLoading: boolean;
-  signIn: (email: string, password: string) => Promise<boolean>;
-  signUp: (email: string, password: string, name: string) => Promise<void>;
+  login: (email: string, password: string) => Promise<User>;
+  signUp: (email: string, password: string) => Promise<User>;
   logout: () => Promise<void>;
-  updateUser: (name: string) => Promise<void>;
-  updateUserRole: (userId: string, role: 'member' | 'callcenter' | 'admin') => Promise<void>;
-  updateUserStatus: (userId: string, isActive: boolean) => Promise<void>;
+  updateUserProfile: (displayName: string) => Promise<void>;
 }
 
-export interface User {
-  id: string;
-  name: string | null;
-  email: string;
-  role: 'member' | 'callcenter' | 'admin';
-  language?: 'en' | 'es';
-  profileCompleted?: boolean;
-  status?: 'active' | 'inactive';
-  permissions?: string[];
-  lastLogin?: string;
-}
+// Create the AuthContext
+const AuthContext = createContext<AuthContextType>({
+  user: null,
+  isAuthenticated: false,
+  isLoading: true,
+  login: async () => {
+    throw new Error('login not implemented');
+    return {} as User;
+  },
+  signUp: async () => {
+    throw new Error('signUp not implemented');
+    return {} as User;
+  },
+  logout: async () => {
+    throw new Error('logout not implemented');
+  },
+  updateUserProfile: async () => {
+    throw new Error('updateUserProfile not implemented');
+  },
+});
 
-const AuthContext = createContext<AuthContextProps | undefined>(undefined);
-
+// Create the AuthProvider component
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [authInitialized, setAuthInitialized] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Initialize auth state listener
+  // Listen for auth state changes
   useEffect(() => {
-    console.log("AuthContext initializing and checking authentication state");
-    const unsubscribe = auth.onAuthStateChanged(async (authUser) => {
-      setIsLoading(true);
-      console.log("Auth state changed:", { authUser });
-      
+    const unsubscribe = auth.onAuthStateChanged((authUser) => {
       if (authUser) {
-        // Determine role based on email
-        const mockRole = 
-          (authUser.email?.includes('admin') || authUser.email === 'admin@icealarm.es') 
-            ? 'admin' 
-            : (authUser.email?.includes('agent') || authUser.email === 'agent@icealarm.es' || authUser.email?.includes('callcenter')) 
-              ? 'callcenter' 
-              : 'member';
-            
-        const mockLanguage = authUser.email?.includes('@es.com') ? 'es' : 'en';
-        const mockProfileCompleted = authUser.email?.includes('completed') ? true : false;
-        const currentDate = new Date().toISOString();
-
-        const userData = {
-          id: authUser.uid,
+        // User is signed in
+        const user: User = {
+          uid: authUser.uid,
+          email: authUser.email,
           name: authUser.displayName,
-          email: authUser.email || '',
-          role: mockRole as 'member' | 'callcenter' | 'admin',
-          language: mockLanguage as 'en' | 'es',
-          profileCompleted: mockProfileCompleted,
-          status: 'active' as 'active' | 'inactive',
-          lastLogin: currentDate,
+          displayName: authUser.displayName,
         };
-        
-        console.log("Setting authenticated user:", userData);
-        setUser(userData);
-        setIsAuthenticated(true);
+        setUser(user);
       } else {
-        console.log("No authenticated user found");
+        // User is signed out
         setUser(null);
-        setIsAuthenticated(false);
       }
-      
       setIsLoading(false);
-      setAuthInitialized(true);
     });
 
-    return () => {
-      console.log("Cleaning up auth listener");
-      unsubscribe();
-    };
+    // Cleanup subscription
+    return () => unsubscribe();
   }, []);
 
-  const signIn = async (email: string, password: string): Promise<boolean> => {
-    console.log("SignIn attempt with email:", email);
-    setIsLoading(true);
-    
+  // Login function
+  const login = async (email: string, password: string): Promise<User> => {
     try {
-      await auth.signInWithEmailAndPassword(email, password);
-      console.log("SignIn successful");
-      setIsAuthenticated(true);
-      return true;
-    } catch (error: any) {
-      console.error("Sign In Error:", error.message);
-      setIsAuthenticated(false);
-      
-      // Provide user-friendly error message
-      const errorMessage = 
-        error.message.includes("user-not-found") || 
-        error.message.includes("wrong-password") || 
-        error.message.includes("invalid-credential")
-          ? "Invalid email or password"
-          : error.message;
-          
-      throw new Error(errorMessage);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const signUp = async (email: string, password: string, name: string) => {
-    setIsLoading(true);
-    try {
-      const userCredential = await auth.createUserWithEmailAndPassword(email, password);
-      await auth.updateProfile(userCredential.user, { displayName: name });
-
-      // After successful signup, update the user state
-      const currentDate = new Date().toISOString();
-      setUser({
-        id: userCredential.user.uid,
-        name: name,
-        email: email,
-        role: 'member', // Default role for new users
-        language: 'en', // Default language
-        profileCompleted: false,
-        status: 'active',
-        lastLogin: currentDate,
-      });
-      
-      setIsAuthenticated(true);
-      toast.success("Account created successfully!");
-    } catch (error: any) {
-      console.error("Sign Up Error:", error.message);
-      setIsAuthenticated(false);
-      
-      // Provide user-friendly error message
-      let errorMessage = "Failed to create account";
-      if (error.message.includes("email-already-in-use")) {
-        errorMessage = "Email is already in use";
-      } else if (error.message.includes("invalid-email")) {
-        errorMessage = "Invalid email format";
-      } else if (error.message.includes("weak-password")) {
-        errorMessage = "Password is too weak";
+      const { user: authUser } = await auth.signInWithEmailAndPassword(email, password);
+      if (!authUser) {
+        throw new Error('Failed to get user after login');
       }
-      
-      throw new Error(errorMessage);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const logout = async () => {
-    setIsLoading(true);
-    try {
-      console.log("Logging out user:", user?.email);
-      await auth.signOut();
-      setIsAuthenticated(false);
-      setUser(null);
-      toast.info("You have been logged out");
-    } catch (error: any) {
-      console.error("Logout Error:", error.message);
-      toast.error("Logout failed: " + error.message);
+      const user: User = {
+        uid: authUser.uid,
+        email: authUser.email,
+        name: authUser.displayName,
+        displayName: authUser.displayName,
+      };
+      return user;
+    } catch (error) {
+      console.error('Login error:', error);
       throw error;
-    } finally {
-      setIsLoading(false);
     }
   };
 
-  const updateUser = async (name: string) => {
-    if (auth.currentUser) {
-      setIsLoading(true);
-      try {
-        await auth.updateProfile(auth.currentUser, {
-          displayName: name,
-        });
-        // Update the user state with the new name
-        setUser((prevUser) => prevUser ? { ...prevUser, name: name } : null);
-        toast.success("Profile updated successfully");
-      } catch (error: any) {
-        console.error("Update Profile Error:", error.message);
-        toast.error("Failed to update profile: " + error.message);
-        throw error;
-      } finally {
-        setIsLoading(false);
+  // Sign up function
+  const signUp = async (email: string, password: string): Promise<User> => {
+    try {
+      const { user: authUser } = await auth.createUserWithEmailAndPassword(email, password);
+      if (!authUser) {
+        throw new Error('Failed to get user after signup');
       }
+      const user: User = {
+        uid: authUser.uid,
+        email: authUser.email,
+        name: authUser.displayName,
+        displayName: authUser.displayName,
+      };
+      return user;
+    } catch (error) {
+      console.error('Signup error:', error);
+      throw error;
     }
   };
 
-  const updateUserRole = async (userId: string, role: 'member' | 'callcenter' | 'admin') => {
-    console.log(`Updating user ${userId} role to ${role}`);
-    if (user && user.id === userId) {
-      setUser({
-        ...user,
-        role
-      });
-      toast.success(`User role updated to ${role}`);
+  // Logout function
+  const logout = async (): Promise<void> => {
+    try {
+      await auth.signOut();
+    } catch (error) {
+      console.error('Logout error:', error);
+      throw error;
     }
   };
 
-  const updateUserStatus = async (userId: string, isActive: boolean) => {
-    console.log(`Updating user ${userId} status to ${isActive ? 'active' : 'inactive'}`);
-    if (user && user.id === userId) {
-      setUser({
-        ...user,
-        status: isActive ? 'active' : 'inactive'
-      });
-      toast.success(`User status updated to ${isActive ? 'active' : 'inactive'}`);
+  // Update user profile function
+  const updateUserProfile = async (displayName: string): Promise<void> => {
+    try {
+      if (auth.currentUser) {
+        await auth.updateProfile(auth.currentUser, { displayName });
+        setUser(prev => prev ? { ...prev, name: displayName, displayName } : null);
+      } else {
+        throw new Error('No user is signed in');
+      }
+    } catch (error) {
+      console.error('Update profile error:', error);
+      throw error;
     }
   };
 
-  // Create context value
-  const value: AuthContextProps = {
+  // Create the context value
+  const contextValue: AuthContextType = {
     user,
-    isAuthenticated,
+    isAuthenticated: !!user,
     isLoading,
-    signIn,
+    login,
     signUp,
     logout,
-    updateUser,
-    updateUserRole,
-    updateUserStatus,
+    updateUserProfile,
   };
 
-  console.log("AuthContext state changed:", { 
-    isAuthenticated, 
-    hasUser: !!user, 
-    isLoading, 
-    initialized: authInitialized 
-  });
-
   return (
-    <AuthContext.Provider value={value}>
+    <AuthContext.Provider value={contextValue}>
       {children}
     </AuthContext.Provider>
   );
 };
 
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error("useAuth must be used within an AuthProvider");
-  }
-  return context;
-};
+// Create the useAuth hook
+export const useAuth = () => useContext(AuthContext);

@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -81,12 +80,8 @@ const Join: React.FC = () => {
       return;
     }
     
-    // If user is not authenticated and we're not skipping signup, show signup form
-    if (!isAuthenticated && !skipSignup) {
-      setShowSignup(true);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-      return;
-    }
+    // Always allow proceeding to checkout even if not authenticated
+    // We'll only show signup form if the user explicitly requests it
     
     // Prepare order data for checkout
     const orderItems = selectedDevices.map(sd => {
@@ -110,7 +105,8 @@ const Join: React.FC = () => {
       shippingTotal: totals.totalShipping,
       monthlyTotal: totals.totalMonthlyBase,
       monthlyTax: totals.monthlyTax,
-      total: totals.totalWithShipping // Total one-time payment including tax and shipping
+      total: totals.totalWithShipping, // Total one-time payment including tax and shipping
+      isNewCustomer: !isAuthenticated // Add flag for new customer checkout
     };
     
     // Navigate to checkout with order data

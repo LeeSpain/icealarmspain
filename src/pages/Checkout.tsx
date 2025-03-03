@@ -34,18 +34,9 @@ const Checkout: React.FC = () => {
       navigate("/join");
     }
     
-    // If user is not authenticated, redirect to login
-    if (orderData && !isAuthenticated) {
-      toast.info(
-        language === "en"
-          ? "Please log in to complete your purchase."
-          : "Por favor inicia sesión para completar tu compra."
-      );
-      // Save order data in session storage to retrieve after login
-      sessionStorage.setItem("pendingOrder", JSON.stringify(orderData));
-      navigate("/login", { state: { redirectTo: "/checkout" } });
-    }
-  }, [orderData, isAuthenticated, navigate, language]);
+    // No longer redirecting to login if not authenticated
+    // We'll create an account during checkout for new customers
+  }, [orderData, navigate, language]);
   
   // Handle payment success
   const handlePaymentSuccess = (result: any) => {
@@ -65,8 +56,8 @@ const Checkout: React.FC = () => {
     navigate("/join");
   };
   
-  // If no order data and not authenticated, show loading
-  if (!orderData || !isAuthenticated) {
+  // If no order data, show loading
+  if (!orderData) {
     return (
       <div className="flex min-h-screen flex-col">
         <Navbar />
@@ -103,6 +94,7 @@ const Checkout: React.FC = () => {
                   items={orderData.items}
                   onSuccess={handlePaymentSuccess}
                   onCancel={handleCancel}
+                  isNewCustomer={orderData.isNewCustomer}
                 />
               </div>
               

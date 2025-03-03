@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useLanguage } from "@/context/LanguageContext";
 import { useToast } from "@/components/ui/use-toast";
@@ -8,9 +7,10 @@ import { ButtonCustom } from "@/components/ui/button-custom";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { CreditCard, ShoppingCart, AlertCircle, CheckCircle2 } from "lucide-react";
-import { payment } from "@/firebase";
+import { CreditCard, ShoppingCart, AlertCircle, CheckCircle2, User } from "lucide-react";
+import { payment, auth } from "@/firebase";
 import { useAuth } from "@/context/AuthContext";
+import { Tab, Tabs, TabList, TabPanel } from "@/components/ui/tabs";
 
 interface PaymentDetails {
   cardNumber: string;
@@ -18,6 +18,7 @@ interface PaymentDetails {
   cvc: string;
   name: string;
   email: string;
+  password?: string;
   address: {
     line1: string;
     line2: string;
@@ -33,12 +34,19 @@ interface PaymentFormProps {
   items: any[];
   onSuccess: (paymentResult: any) => void;
   onCancel: () => void;
+  isNewCustomer?: boolean;
 }
 
-const PaymentForm: React.FC<PaymentFormProps> = ({ amount, items, onSuccess, onCancel }) => {
+const PaymentForm: React.FC<PaymentFormProps> = ({ 
+  amount, 
+  items, 
+  onSuccess, 
+  onCancel,
+  isNewCustomer = false
+}) => {
   const { language } = useLanguage();
   const { toast } = useToast();
-  const { user } = useAuth();
+  const { user, signUp } = useAuth();
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [formData, setFormData] = useState<PaymentDetails>({
@@ -47,6 +55,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ amount, items, onSuccess, onC
     cvc: "",
     name: user?.name || "",
     email: user?.email || "",
+    password: "",
     address: {
       line1: "",
       line2: "",
@@ -65,7 +74,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ amount, items, onSuccess, onC
       setFormData((prev) => ({
         ...prev,
         [parent]: {
-          ...prev[parent as keyof PaymentDetails] as object,
+          ...(prev[parent as keyof PaymentDetails] as object),
           [child]: value,
         },
       }));
@@ -115,6 +124,38 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ amount, items, onSuccess, onC
     setError(null);
     
     try {
+      let userId = user?.uid;
+      let userEmail = user?.email;
+      
+      // If this is a new customer and we need to create an account
+      if (isNewCustomer && !user) {
+        if (!formData.password || formData.password.length < 6) {
+          throw new Error(language === 'en' 
+            ? "Please create a password (minimum 6 characters)" 
+            : "Por favor, crea una contraseña (mínimo 6 caracteres)");
+        }
+        
+        try {
+          // Create user account
+          const newUser = await signUp(formData.email, formData.password);
+          userId = newUser.uid;
+          userEmail = newUser.email;
+          
+          toast({
+            title: language === 'en' ? "Account Created" : "Cuenta Creada",
+            description: language === 'en' 
+              ? "Your account was created successfully!" 
+              : "¡Tu cuenta ha sido creada con éxito!",
+            variant: "default",
+          });
+        } catch (signupError) {
+          console.error("Error creating account:", signupError);
+          throw new Error(language === 'en'
+            ? "Failed to create account. Please try again."
+            : "Error al crear la cuenta. Por favor, inténtalo de nuevo.");
+        }
+      }
+      
       // Process payment
       const paymentResult = await payment.processPayment({
         amount,
@@ -123,7 +164,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ amount, items, onSuccess, onC
         cvc: formData.cvc,
         name: formData.name,
         items,
-        userId: user?.id,
+        userId: userId,
         email: formData.email,
         address: formData.address
       });
@@ -175,6 +216,52 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ amount, items, onSuccess, onC
               <AlertCircle className="h-4 w-4 mr-2" />
               <AlertDescription>{error}</AlertDescription>
             </Alert>
+          )}
+          
+          {isNewCustomer && !user && (
+            <div className="space-y-4">
+              <h3 className="text-lg font-medium flex items-center">
+                <User className="mr-2 h-5 w-5 text-ice-600" />
+                {language === 'en' ? "Create Your Account" : "Crea Tu Cuenta"}
+              </h3>
+              <div className="space-y-2">
+                <Label htmlFor="email">
+                  {language === 'en' ? "Email" : "Correo Electrónico"}
+                </Label>
+                <Input
+                  id="email"
+                  name="email"
+                  type="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  placeholder="your.email@example.com"
+                  required
+                  autoComplete="email"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="password">
+                  {language === 'en' ? "Create Password" : "Crear Contraseña"}
+                </Label>
+                <Input
+                  id="password"
+                  name="password"
+                  type="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  placeholder="••••••••"
+                  required
+                  minLength={6}
+                  autoComplete="new-password"
+                />
+                <p className="text-xs text-muted-foreground mt-1">
+                  {language === 'en' 
+                    ? "Minimum 6 characters. You'll use this to access your dashboard later." 
+                    : "Mínimo 6 caracteres. Usarás esto para acceder a tu panel más tarde."}
+                </p>
+              </div>
+              <Separator />
+            </div>
           )}
           
           <div className="space-y-4">
@@ -251,21 +338,23 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ amount, items, onSuccess, onC
               {language === 'en' ? "Billing Information" : "Información de Facturación"}
             </h3>
             
-            <div className="space-y-2">
-              <Label htmlFor="email">
-                {language === 'en' ? "Email" : "Correo Electrónico"}
-              </Label>
-              <Input
-                id="email"
-                name="email"
-                type="email"
-                value={formData.email}
-                onChange={handleChange}
-                placeholder="your.email@example.com"
-                required
-                autoComplete="email"
-              />
-            </div>
+            {!isNewCustomer && (
+              <div className="space-y-2">
+                <Label htmlFor="email">
+                  {language === 'en' ? "Email" : "Correo Electrónico"}
+                </Label>
+                <Input
+                  id="email"
+                  name="email"
+                  type="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  placeholder="your.email@example.com"
+                  required
+                  autoComplete="email"
+                />
+              </div>
+            )}
             
             <div className="space-y-2">
               <Label htmlFor="address.line1">
@@ -392,7 +481,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ amount, items, onSuccess, onC
             {!isProcessing && (
               <>
                 <CheckCircle2 className="mr-2 h-4 w-4" />
-                {language === 'en' ? "Complete Payment" : "Completar Pago"}
+                {language === 'en' ? "Complete Purchase" : "Completar Compra"}
               </>
             )}
             {isProcessing && (
