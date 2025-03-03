@@ -12,6 +12,7 @@ import AlertsManagement from "@/components/admin/AlertsManagement";
 import InventoryManagement from "@/components/admin/InventoryManagement";
 import ClientManagement from "@/components/admin/ClientManagement";
 import DeviceManagement from "@/components/admin/DeviceManagement";
+import AdminUsersManagement from "@/components/admin/AdminUsersManagement";
 
 const AdminDashboard: React.FC = () => {
   const [activeSection, setActiveSection] = useState<string>("dashboard");
@@ -85,6 +86,8 @@ const AdminDashboard: React.FC = () => {
       case "orders-list":
       case "inventory":
         return <InventoryManagement section={activeSection} />;
+      case "admin-users":
+        return <AdminUsersManagement />;
       case "orders":
       case "finance":
       case "sales":
@@ -110,7 +113,6 @@ const AdminDashboard: React.FC = () => {
       case "faqs":
       case "analytics":
       case "metrics":
-      case "admin-users":
       case "roles":
       case "permissions":
       case "general":

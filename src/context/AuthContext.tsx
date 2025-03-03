@@ -1,4 +1,3 @@
-
 import React, { createContext, useState, useEffect, useContext } from 'react';
 import { auth } from '../firebase';
 
@@ -10,6 +9,8 @@ interface AuthContextProps {
   signUp: (email: string, password: string, name: string) => Promise<void>;
   logout: () => Promise<void>;
   updateUser: (name: string) => Promise<void>;
+  updateUserRole: (userId: string, role: 'member' | 'callcenter' | 'admin') => Promise<void>;
+  updateUserStatus: (userId: string, isActive: boolean) => Promise<void>;
 }
 
 export interface User {
@@ -19,6 +20,9 @@ export interface User {
   role: 'member' | 'callcenter' | 'admin';
   language?: 'en' | 'es';
   profileCompleted?: boolean;
+  status?: 'active' | 'inactive';
+  permissions?: string[];
+  lastLogin?: string;
 }
 
 const AuthContext = createContext<AuthContextProps | undefined>(undefined);
@@ -148,6 +152,26 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  const updateUserRole = async (userId: string, role: 'member' | 'callcenter' | 'admin') => {
+    console.log(`Updating user ${userId} role to ${role}`);
+    if (user && user.id === userId) {
+      setUser({
+        ...user,
+        role
+      });
+    }
+  };
+
+  const updateUserStatus = async (userId: string, isActive: boolean) => {
+    console.log(`Updating user ${userId} status to ${isActive ? 'active' : 'inactive'}`);
+    if (user && user.id === userId) {
+      setUser({
+        ...user,
+        status: isActive ? 'active' : 'inactive'
+      });
+    }
+  };
+
   const value: AuthContextProps = {
     user,
     isAuthenticated,
@@ -156,6 +180,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     signUp,
     logout,
     updateUser,
+    updateUserRole,
+    updateUserStatus,
   };
 
   console.log("AuthContext state changed:", { isAuthenticated, user, isLoading });
