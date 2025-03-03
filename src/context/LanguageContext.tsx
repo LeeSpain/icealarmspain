@@ -75,7 +75,16 @@ const translations = {
     'features.title': 'Advanced Protection Features',
     'features.subtitle': 'ICE Alarm combines cutting-edge technology with personalized care',
     
-    // Specific features can be added as needed
+    // Expat Section
+    'expat.title': 'Expat Health Support Services',
+    'expat.subtitle': 'Specialized assistance for the international community',
+    'expat.desc': 'Our team of professionals provides dedicated health support services designed specifically for expatriates living in Spain.',
+    'expat.service.title': 'Multilingual Support',
+    'expat.service.desc': 'Get help in your preferred language with our team of multilingual support specialists available 24/7.',
+    'expat.translation.title': 'Document Translation',
+    'expat.translation.desc': 'We handle translation of medical documents, prescriptions, and health reports to ensure clear communication.',
+    'expat.emergency.title': 'Emergency Assistance',
+    'expat.emergency.desc': 'Immediate support during emergencies with professionals who understand expatriate needs and Spanish healthcare procedures.',
     
     // Footer
     'footer.rights': 'All rights reserved',
@@ -102,6 +111,17 @@ const translations = {
     // Features
     'features.title': 'Características de Protección Avanzada',
     'features.subtitle': 'ICE Alarm combina tecnología de vanguardia con atención personalizada',
+    
+    // Expat Section
+    'expat.title': 'Servicios de Apoyo Sanitario para Expatriados',
+    'expat.subtitle': 'Asistencia especializada para la comunidad internacional',
+    'expat.desc': 'Nuestro equipo de profesionales ofrece servicios de apoyo sanitario dedicados específicamente a expatriados que viven en España.',
+    'expat.service.title': 'Soporte Multilingüe',
+    'expat.service.desc': 'Reciba ayuda en su idioma preferido con nuestro equipo de especialistas multilingües disponibles 24/7.',
+    'expat.translation.title': 'Traducción de Documentos',
+    'expat.translation.desc': 'Nos encargamos de la traducción de documentos médicos, recetas e informes de salud para garantizar una comunicación clara.',
+    'expat.emergency.title': 'Asistencia de Emergencia',
+    'expat.emergency.desc': 'Apoyo inmediato durante emergencias con profesionales que comprenden las necesidades de los expatriados y los procedimientos sanitarios españoles.',
     
     // Footer
     'footer.rights': 'Todos los derechos reservados',
