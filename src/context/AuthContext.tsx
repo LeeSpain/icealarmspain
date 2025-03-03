@@ -1,126 +1,161 @@
+import React, { createContext, useState, useEffect, useContext } from 'react';
+import {
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  signOut,
+  onAuthStateChanged,
+  updateProfile,
+} from 'firebase/auth';
+import { auth } from '../firebase';
 
-import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
-
-// Define user types and roles
-export type UserRole = 'admin' | 'member' | 'callcenter' | null;
+interface AuthContextProps {
+  user: User | null;
+  isAuthenticated: boolean;
+  isLoading: boolean;
+  signIn: (email: string, password: string) => Promise<void>;
+  signUp: (email: string, password: string, name: string) => Promise<void>;
+  logout: () => Promise<void>;
+  updateUser: (name: string) => Promise<void>;
+}
 
 export interface User {
   id: string;
+  name: string | null;
   email: string;
-  name: string;
-  role: UserRole;
+  role: 'member' | 'callcenter' | 'admin';
+  language?: 'en' | 'es';
+  profileCompleted?: boolean;
 }
 
-interface AuthContextType {
-  user: User | null;
-  login: (email: string, password: string) => Promise<boolean>;
-  logout: () => void;
-  isAuthenticated: boolean;
-  isLoading: boolean;
-}
-
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+const AuthContext = createContext<AuthContextProps | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const initialized = useRef(false);
 
-  // Check local storage for user on initial load
   useEffect(() => {
-    if (initialized.current) return;
-    initialized.current = true;
-    
-    console.log("AuthProvider - Checking local storage for user");
-    const storedUser = localStorage.getItem('user');
-    
-    if (storedUser) {
-      try {
-        const parsedUser = JSON.parse(storedUser);
-        setUser(parsedUser);
-        console.log("Restored user from localStorage:", parsedUser);
-      } catch (e) {
-        console.error("Error parsing stored user:", e);
-        localStorage.removeItem('user');
+    const unsubscribe = onAuthStateChanged(auth, async (authUser) => {
+      setIsLoading(true);
+      if (authUser) {
+        // Here, we're using a mock role and language.
+        // In a real application, you'd fetch this data from your database.
+        const mockRole = authUser.email?.endsWith('@admin.com') ? 'admin' :
+                         authUser.email?.endsWith('@callcenter.com') ? 'callcenter' : 'member';
+        const mockLanguage = authUser.email?.endsWith('@es.com') ? 'es' : 'en';
+        const mockProfileCompleted = authUser.email?.startsWith('completed') ? true : false;
+
+        setUser({
+          id: authUser.uid,
+          name: authUser.displayName,
+          email: authUser.email || '',
+          role: mockRole as 'member' | 'callcenter' | 'admin',
+          language: mockLanguage,
+          profileCompleted: mockProfileCompleted,
+        });
+        setIsAuthenticated(true);
+      } else {
+        setUser(null);
+        setIsAuthenticated(false);
       }
-    } else {
-      console.log("No user found in localStorage");
-    }
-    
-    // Ensure loading state is completed
-    setIsLoading(false);
+      setIsLoading(false);
+    });
+
+    return () => unsubscribe();
   }, []);
 
-  // Mock users - in a real app, this would be authenticated against a backend
-  const mockUsers = [
-    { id: '1', email: 'admin@icealarm.es', password: 'admin123', name: 'Admin User', role: 'admin' as UserRole },
-    { id: '2', email: 'member@icealarm.es', password: 'member123', name: 'Maria Garcia', role: 'member' as UserRole },
-    { id: '3', email: 'agent@icealarm.es', password: 'agent123', name: 'Carlos Rodriguez', role: 'callcenter' as UserRole }
-  ];
-
-  const login = async (email: string, password: string): Promise<boolean> => {
+  const signIn = async (email: string, password: string) => {
     setIsLoading(true);
-    console.log("Login attempt with email:", email);
-    
     try {
-      // Simulate API request delay
-      await new Promise(resolve => setTimeout(resolve, 800));
-      
-      const foundUser = mockUsers.find(u => u.email === email && u.password === password);
-      
-      if (foundUser) {
-        const { password, ...userWithoutPassword } = foundUser;
-        console.log("User authenticated:", userWithoutPassword);
-        
-        // Important: Set user state first
-        setUser(userWithoutPassword);
-        
-        // Then update local storage
-        localStorage.setItem('user', JSON.stringify(userWithoutPassword));
-        
-        setIsLoading(false);
-        return true;
-      }
-      
-      console.log("Authentication failed for email:", email);
+      await signInWithEmailAndPassword(auth, email, password);
+      setIsAuthenticated(true);
+    } catch (error: any) {
+      console.error("Sign In Error:", error.message);
+      setIsAuthenticated(false);
+      throw error;
+    } finally {
       setIsLoading(false);
-      return false;
-    } catch (error) {
-      console.error("Login error:", error);
-      setIsLoading(false);
-      return false;
     }
   };
 
-  const logout = () => {
-    console.log("Logging out user:", user?.email);
-    // Important: clear state first
-    setUser(null);
-    localStorage.removeItem('user');
+  const signUp = async (email: string, password: string, name: string) => {
+    setIsLoading(true);
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      await updateProfile(userCredential.user, { displayName: name });
+
+      // After successful signup, update the user state
+      setUser({
+        id: userCredential.user.uid,
+        name: name,
+        email: email,
+        role: 'member', // Default role for new users
+        language: 'en', // Default language
+        profileCompleted: false,
+      });
+      setIsAuthenticated(true);
+    } catch (error: any) {
+      console.error("Sign Up Error:", error.message);
+      setIsAuthenticated(false);
+      throw error;
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const isAuthenticated = !!user;
-  
-  // For debugging
-  useEffect(() => {
-    console.log("AuthContext state changed:", { isAuthenticated, user, isLoading });
-  }, [isAuthenticated, user, isLoading]);
+  const logout = async () => {
+    setIsLoading(true);
+    try {
+      await signOut(auth);
+      setIsAuthenticated(false);
+      setUser(null);
+    } catch (error: any) {
+      console.error("Logout Error:", error.message);
+      throw error;
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-  const value = {
+  const updateUser = async (name: string) => {
+    if (auth.currentUser) {
+      setIsLoading(true);
+      try {
+        await updateProfile(auth.currentUser, {
+          displayName: name,
+        });
+        // Update the user state with the new name
+        setUser((prevUser) => prevUser ? { ...prevUser, name: name } : null);
+      } catch (error: any) {
+        console.error("Update Profile Error:", error.message);
+        throw error;
+      } finally {
+        setIsLoading(false);
+      }
+    }
+  };
+
+  const value: AuthContextProps = {
     user,
-    login,
-    logout,
     isAuthenticated,
-    isLoading
+    isLoading,
+    signIn,
+    signUp,
+    logout,
+    updateUser,
   };
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={value}>
+      {!isLoading && children}
+    </AuthContext.Provider>
+  );
 };
 
-export const useAuth = (): AuthContextType => {
+export const useAuth = () => {
   const context = useContext(AuthContext);
   if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
 };

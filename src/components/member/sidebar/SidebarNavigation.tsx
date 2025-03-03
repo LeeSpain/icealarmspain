@@ -10,7 +10,8 @@ import {
   User, 
   Settings, 
   HelpCircle, 
-  LogOut
+  LogOut,
+  FileText
 } from 'lucide-react';
 import SidebarItem from './SidebarItem';
 import SidebarSection from './SidebarSection';
@@ -125,6 +126,13 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({
               label={language === 'en' ? "Profile" : "Perfil"} 
               active={activePage === "profile"} 
               onClick={() => handleNavigation('/profile')}
+              collapsed={collapsed}
+            />
+            <SidebarItem 
+              icon={FileText} 
+              label={language === 'en' ? "Personal Details" : "Datos Personales"} 
+              active={activePage === "onboarding"} 
+              onClick={() => handleNavigation('/onboarding')}
               collapsed={collapsed}
             />
             <SidebarItem 

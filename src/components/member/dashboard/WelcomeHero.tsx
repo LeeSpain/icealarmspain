@@ -3,8 +3,9 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { useLanguage } from '@/context/LanguageContext';
 import { Button } from '@/components/ui/button';
-import { PlusCircle, ShoppingCart, Trash2, LogOut } from 'lucide-react';
+import { PlusCircle, ShoppingCart, Trash2, LogOut, FileText } from 'lucide-react';
 import { User } from '@/context/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 interface WelcomeHeroProps {
   onShowAddProducts: () => void;
@@ -24,6 +25,7 @@ export const WelcomeHero: React.FC<WelcomeHeroProps> = ({
   user
 }) => {
   const { language } = useLanguage();
+  const navigate = useNavigate();
   
   const getTimeBasedGreeting = () => {
     const hour = new Date().getHours();
@@ -62,6 +64,19 @@ export const WelcomeHero: React.FC<WelcomeHeroProps> = ({
                 ? 'Welcome to your ICE Alarm España dashboard' 
                 : 'Bienvenido a tu panel de ICE Alarm España'}
             </p>
+            
+            {/* Complete profile prompt if needed */}
+            {(!user?.profileCompleted) && (
+              <Button
+                onClick={() => navigate('/onboarding')}
+                className="mt-3 bg-ice-100 hover:bg-ice-200 text-ice-700"
+              >
+                <FileText className="mr-2 h-4 w-4" />
+                {language === 'en' 
+                  ? 'Complete your personal details' 
+                  : 'Completa tus datos personales'}
+              </Button>
+            )}
           </div>
           
           <div className="flex flex-wrap gap-2">

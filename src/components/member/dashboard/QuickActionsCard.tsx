@@ -2,7 +2,7 @@
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useLanguage } from "@/context/LanguageContext";
-import { Smile, Bell, Activity, Settings, ShoppingCart } from "lucide-react";
+import { Smile, Bell, Activity, Settings, ShoppingCart, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 
@@ -34,7 +34,17 @@ export const QuickActionsCard: React.FC<QuickActionsCardProps> = ({ hasDevices, 
               <Activity className="mr-2 h-4 w-4" />
               {language === 'en' ? 'View Reports' : 'Ver Informes'}
             </Button>
-            <Button variant="outline">
+            <Button 
+              variant="outline"
+              onClick={() => navigate('/profile')}
+            >
+              <FileText className="mr-2 h-4 w-4" />
+              {language === 'en' ? 'Personal Details' : 'Datos Personales'}
+            </Button>
+            <Button 
+              variant="outline"
+              onClick={() => navigate('/settings')}
+            >
               <Settings className="mr-2 h-4 w-4" />
               {language === 'en' ? 'Account Settings' : 'Configuración de Cuenta'}
             </Button>
@@ -52,8 +62,15 @@ export const QuickActionsCard: React.FC<QuickActionsCardProps> = ({ hasDevices, 
               variant="outline"
               onClick={() => navigate('/onboarding')}
             >
+              <FileText className="mr-2 h-4 w-4" />
+              {language === 'en' ? 'Complete Personal Details' : 'Completar Datos Personales'}
+            </Button>
+            <Button 
+              variant="outline"
+              onClick={() => navigate('/settings')}
+            >
               <Settings className="mr-2 h-4 w-4" />
-              {language === 'en' ? 'Complete Profile' : 'Completar Perfil'}
+              {language === 'en' ? 'Account Settings' : 'Configuración de Cuenta'}
             </Button>
           </>
         )}
