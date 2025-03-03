@@ -17,6 +17,7 @@ const Navbar: React.FC = () => {
   const location = useLocation();
   
   console.log("Navbar component rendering, path:", location.pathname);
+  console.log("Translations test - nav.home:", t("nav.home"));
   
   useEffect(() => {
     const handleScroll = () => {

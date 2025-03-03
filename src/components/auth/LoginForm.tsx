@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { ButtonCustom } from "@/components/ui/button-custom";
@@ -20,7 +19,7 @@ const LoginForm: React.FC<LoginFormProps> = ({
   isLoading: externalLoading,
   redirectTo 
 }) => {
-  const { language } = useLanguage();
+  const { t, language } = useLanguage();
   const { toast } = useToast();
   const [formData, setFormData] = useState({
     email: "",
@@ -30,6 +29,8 @@ const LoginForm: React.FC<LoginFormProps> = ({
   const [errors, setErrors] = useState<{[key: string]: string}>({});
   
   const isLoading = externalLoading !== undefined ? externalLoading : internalLoading;
+
+  console.log("LoginForm - checking translations:", t("login"), t("email"));
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -85,7 +86,7 @@ const LoginForm: React.FC<LoginFormProps> = ({
       <form onSubmit={handleSubmit} className="space-y-6">
         <AuthInput
           id="email"
-          name={language === 'en' ? "Email Address" : "Correo Electrónico"}
+          name={t("email")}
           type="email"
           value={formData.email}
           onChange={handleChange}
@@ -99,7 +100,7 @@ const LoginForm: React.FC<LoginFormProps> = ({
         
         <PasswordInput
           id="password"
-          name={language === 'en' ? "Password" : "Contraseña"}
+          name={t("password")}
           value={formData.password}
           onChange={handleChange}
           placeholder={language === 'en' ? "••••••••" : "••••••••"}
@@ -126,11 +127,11 @@ const LoginForm: React.FC<LoginFormProps> = ({
           >
             {!isLoading && (
               <>
-                {language === 'en' ? "Sign In" : "Iniciar Sesión"}
+                {t("login")}
                 <ArrowRight className="ml-2 h-5 w-5" />
               </>
             )}
-            {isLoading && (language === 'en' ? "Processing..." : "Procesando...")}
+            {isLoading && (t("loading"))}
           </ButtonCustom>
         </div>
       </form>

@@ -20,19 +20,34 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
   // Translation function
   const t = (key: string): string => {
-    // Fallback to English translations or key itself if translation not found
-    const englishValue = translations.en[key] || key;
-    
-    if (language === 'en') {
-      return englishValue;
+    try {
+      // Check if the key exists in the current language
+      if (language && translations[language] && translations[language][key]) {
+        return translations[language][key];
+      }
+      
+      // Fallback to English if the key doesn't exist in the current language
+      if (translations.en && translations.en[key]) {
+        return translations.en[key];
+      }
+      
+      // If all else fails, return the key itself for debugging
+      console.warn(`Translation missing for key: ${key}`);
+      return key;
+    } catch (error) {
+      console.error("Error in translation function:", error);
+      return key;
     }
-    
-    // Return Spanish translation if available, otherwise fallback to English or key itself
-    return translations.es[key] || englishValue;
+  };
+
+  const contextValue = {
+    language,
+    setLanguage,
+    t
   };
 
   return (
-    <LanguageContext.Provider value={{ language, setLanguage, t }}>
+    <LanguageContext.Provider value={contextValue}>
       {children}
     </LanguageContext.Provider>
   );
