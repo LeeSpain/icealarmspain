@@ -13,8 +13,8 @@ const Login: React.FC = () => {
   const { language } = useLanguage();
   const navigate = useNavigate();
   const location = useLocation();
-  const { login, user, isAuthenticated } = useAuth();
-  const [isLoading, setIsLoading] = useState(false);
+  const { login, user, isAuthenticated, isLoading } = useAuth();
+  const [loginInProgress, setLoginInProgress] = useState(false);
   
   // Check if there's a redirect parameter
   const searchParams = new URLSearchParams(location.search);
@@ -22,13 +22,15 @@ const Login: React.FC = () => {
   
   // Redirect if already logged in
   useEffect(() => {
-    console.log("Login page useEffect - isAuthenticated:", isAuthenticated, "user:", user);
-    if (isAuthenticated && user) {
+    console.log("Login page - Auth state:", { isAuthenticated, user, isLoading });
+    
+    // Only redirect if auth check is complete and user is authenticated
+    if (!isLoading && isAuthenticated && user) {
       const redirectTo = redirectParam || getDefaultRedirect(user.role);
       console.log("Redirecting authenticated user to:", redirectTo);
       navigate(redirectTo, { replace: true });
     }
-  }, [isAuthenticated, navigate, user, redirectParam]);
+  }, [isAuthenticated, navigate, user, redirectParam, isLoading]);
   
   // Helper function to determine default redirect based on role
   const getDefaultRedirect = (role: string | null) => {
@@ -50,7 +52,7 @@ const Login: React.FC = () => {
   }, []);
   
   const handleLoginSuccess = async (email: string, password: string) => {
-    setIsLoading(true);
+    setLoginInProgress(true);
     try {
       console.log("Attempting login with:", email);
       const success = await login(email, password);
@@ -61,14 +63,14 @@ const Login: React.FC = () => {
           description: language === 'en' ? "Redirecting to your dashboard..." : "Redirigiendo a tu panel...",
         });
         
-        // Navigation happens automatically in the useEffect
+        // The useEffect will handle the redirection
       } else {
         toast({
           title: language === 'en' ? "Login failed" : "Error de inicio de sesión",
           description: language === 'en' ? "Invalid email or password" : "Correo o contraseña inválidos",
           variant: "destructive",
         });
-        setIsLoading(false);
+        setLoginInProgress(false);
       }
     } catch (error) {
       console.error("Login error:", error);
@@ -77,9 +79,37 @@ const Login: React.FC = () => {
         description: language === 'en' ? "Something went wrong" : "Algo salió mal",
         variant: "destructive",
       });
-      setIsLoading(false);
+      setLoginInProgress(false);
     }
   };
+  
+  // Show loading state while authentication is being checked
+  if (isLoading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <div className="flex flex-col items-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-ice-600 mb-4"></div>
+          <p className="text-ice-700">
+            {language === 'en' ? 'Checking authentication...' : 'Verificando autenticación...'}
+          </p>
+        </div>
+      </div>
+    );
+  }
+  
+  // If already authenticated, return null (the useEffect will handle redirection)
+  if (isAuthenticated && user) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <div className="flex flex-col items-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-ice-600 mb-4"></div>
+          <p className="text-ice-700">
+            {language === 'en' ? 'Redirecting to dashboard...' : 'Redirigiendo al panel...'}
+          </p>
+        </div>
+      </div>
+    );
+  }
   
   return (
     <div className="flex flex-col min-h-screen">
@@ -100,7 +130,7 @@ const Login: React.FC = () => {
               <AuthForm 
                 mode="login" 
                 onSuccess={handleLoginSuccess} 
-                isLoading={isLoading}
+                isLoading={loginInProgress}
                 redirectTo={redirectParam || undefined}
               />
               

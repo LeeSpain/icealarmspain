@@ -27,6 +27,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   // Check local storage for user on initial load
   useEffect(() => {
+    console.log("AuthProvider - Checking local storage for user");
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
       try {
@@ -37,6 +38,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         console.error("Error parsing stored user:", e);
         localStorage.removeItem('user');
       }
+    } else {
+      console.log("No user found in localStorage");
     }
     setIsLoading(false);
   }, []);
@@ -78,6 +81,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const isAuthenticated = !!user;
+  
+  // For debugging
+  useEffect(() => {
+    console.log("AuthContext state changed:", { isAuthenticated, user, isLoading });
+  }, [isAuthenticated, user, isLoading]);
 
   const value = {
     user,
