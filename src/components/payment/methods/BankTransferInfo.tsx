@@ -48,7 +48,8 @@ const BankTransferInfo: React.FC<BankTransferInfoProps> = ({ language }) => {
         </p>
       </div>
       
-      <Alert variant="warning" className="bg-amber-50 border-amber-200">
+      {/* Changed from variant="warning" to variant="default" with custom styling */}
+      <Alert variant="default" className="bg-amber-50 border-amber-200">
         <AlertCircle className="h-4 w-4 text-amber-600" />
         <AlertDescription className="text-amber-800 text-sm">
           {language === 'en'
