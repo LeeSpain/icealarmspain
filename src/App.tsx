@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Routes, Route } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster";
@@ -37,9 +36,15 @@ import AdminDashboard from "@/pages/AdminDashboard";
 // Call Center Pages
 import CallCenterDashboard from "@/pages/CallCenterDashboard";
 
+// Add the CartProvider import
+import { CartProvider } from "@/components/payment/CartContext";
+
+// Add the Checkout import
+import Checkout from "@/pages/Checkout";
+
 function App() {
   return (
-    <>
+    <CartProvider>
       <Routes>
         <Route path="/" element={<Index />} />
         <Route path="/login" element={<Login />} />
@@ -77,10 +82,13 @@ function App() {
         {/* Call center routes */}
         <Route path="/call-center" element={<CallCenterDashboard />} />
         
+        {/* Add the checkout route */}
+        <Route path="/checkout" element={<Checkout />} />
+        
         <Route path="*" element={<NotFound />} />
       </Routes>
       <Toaster />
-    </>
+    </CartProvider>
   );
 }
 

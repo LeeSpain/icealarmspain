@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { ShoppingCart } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
 import { getDevices } from "@/components/devices/deviceData";
+import { useCart } from "@/components/payment/CartContext";
 import { toast } from "react-toastify";
 
 interface PurchaseCardProps {
@@ -14,9 +15,25 @@ interface PurchaseCardProps {
 
 const PurchaseCard: React.FC<PurchaseCardProps> = ({ onBuy, onSetupGuide }) => {
   const { language } = useLanguage();
+  const { addToCart } = useCart();
   const deviceData = getDevices(language).find(device => device.id === "sos");
   
   if (!deviceData) return null;
+  
+  const handleAddToCart = () => {
+    // Add device to cart
+    addToCart({
+      id: deviceData.id,
+      name: deviceData.name,
+      price: deviceData.price,
+      description: deviceData.description,
+      monthlyPrice: deviceData.monthlyService || 24.99,
+      image: '/lovable-uploads/ad65a632-e7ef-4c61-a20e-7b6ff282a87a.png'
+    });
+    
+    // Call original onBuy handler
+    onBuy();
+  };
   
   return (
     <Card className="border border-ice-100">
@@ -65,7 +82,7 @@ const PurchaseCard: React.FC<PurchaseCardProps> = ({ onBuy, onSetupGuide }) => {
               </div>
               
               <div className="flex gap-3">
-                <Button onClick={onBuy} className="flex-1">
+                <Button onClick={handleAddToCart} className="flex-1">
                   <ShoppingCart className="mr-2 h-4 w-4" />
                   {language === 'en' ? 'Add to My Account' : 'Añadir a Mi Cuenta'}
                 </Button>

@@ -1,190 +1,85 @@
-
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
-import { toast } from "react-toastify";
-import DeviceSetupGuide from "./DeviceSetupGuide";
-import { ArrowLeft } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/context/LanguageContext";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { toast } from "react-toastify";
+import { CalendarDays, BarChart4, Settings, HelpCircle, Plus, Check } from "lucide-react";
+import { SOSTile } from "@/components/member/dashboard/SOSTile";
+import { GlucoseTile } from "@/components/member/dashboard/GlucoseTile";
+import { WeatherTile } from "@/components/member/dashboard/WeatherTile";
+import { NewsTile } from "@/components/member/dashboard/NewsTile";
+import { CartSection } from "@/components/member/dashboard/CartSection";
+import { useCart } from "@/components/payment/CartContext";
 
-// Import refactored components
-import { WelcomeHero } from "./dashboard/WelcomeHero";
-import { DashboardOverview } from "./dashboard/DashboardOverview";
-import { DevicesSection } from "./dashboard/DevicesSection";
-import { ProductsSection } from "./dashboard/ProductsSection";
-import { CartSection } from "./dashboard/CartSection";
-import { QuickActionsCard } from "./dashboard/QuickActionsCard";
-
-// Import mock data
-import { mockUserDevices, availableProducts } from "./dashboard/data";
-
-const MemberDashboard = () => {
-  const { logout, user } = useAuth();
+const MemberDashboard: React.FC = () => {
+  const [name, setName] = useState<string | null>(null);
+  const { user, isAuthenticated, isLoading } = useAuth();
   const { language } = useLanguage();
-  const [showAddProducts, setShowAddProducts] = useState(false);
-  const [showSetupGuide, setShowSetupGuide] = useState(false);
-  const [setupDeviceType, setSetupDeviceType] = useState<'pendant' | 'monitor' | 'dispenser'>('pendant');
-  const [cart, setCart] = useState<any[]>([]);
-  const [userDevices, setUserDevices] = useState(mockUserDevices);
-  const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
-
-  // Simulate loading data
+  const { cart, removeFromCart } = useCart();
+  
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 800);
-    return () => clearTimeout(timer);
-  }, []);
-
-  const addToCart = (product: any) => {
-    const isInCart = cart.some(item => item.id === product.id);
-    if (!isInCart) {
-      setCart([...cart, product]);
-      toast.success(`${product.name} added to cart!`);
-    } else {
-      toast.info(`${product.name} is already in your cart`);
+    if (!isLoading && !isAuthenticated) {
+      navigate('/login');
+    } else if (user) {
+      setName(user.displayName || user.email);
     }
-  };
-
-  const removeFromCart = (productId: string) => {
-    setCart(cart.filter(item => item.id !== productId));
-    toast.info("Item removed from cart");
-  };
-
-  const checkout = () => {
-    if (cart.length > 0) {
-      toast.success("Order submitted successfully!");
-      setCart([]);
-    } else {
-      toast.error("Your cart is empty");
-    }
-  };
-
-  const handleStartSetup = (deviceType: 'pendant' | 'monitor' | 'dispenser') => {
-    setSetupDeviceType(deviceType);
-    setShowSetupGuide(true);
-    setShowAddProducts(false);
-  };
-
-  const handleSetupComplete = () => {
-    setShowSetupGuide(false);
-    
-    // Add the device to the user's devices
-    const newDevice = {
-      id: `dev-${userDevices.length + 1}`,
-      name: setupDeviceType === 'pendant' 
-        ? 'SOS Pendant' 
-        : setupDeviceType === 'monitor' 
-          ? 'Health Monitor' 
-          : 'Medical Dispenser',
-      status: 'active',
-      lastChecked: 'Now',
-      batteryLevel: '100%'
-    };
-    
-    setUserDevices([...userDevices, newDevice]);
-    
-    toast.success(
-      language === 'en'
-        ? `${newDevice.name} added to your devices!`
-        : `¡${newDevice.name} añadido a tus dispositivos!`
-    );
-  };
-
-  // For simulation, let's allow the user to clear their devices
-  const clearDevices = () => {
-    setUserDevices([]);
-    toast.info(
-      language === 'en'
-        ? 'All devices have been removed for demonstration purposes'
-        : 'Todos los dispositivos han sido eliminados con fines de demostración'
-    );
-  };
-
-  const handleLogout = () => {
-    logout();
-    navigate('/');
-  };
-
-  if (showSetupGuide) {
-    return (
-      <div className="p-4 md:p-6 max-w-3xl mx-auto">
-        <Button 
-          variant="outline" 
-          onClick={() => setShowSetupGuide(false)} 
-          className="mb-6 flex items-center gap-2"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          {language === 'en' ? 'Back to Dashboard' : 'Volver al Panel'}
-        </Button>
-        
-        <DeviceSetupGuide 
-          deviceType={setupDeviceType} 
-          onComplete={handleSetupComplete} 
-        />
-      </div>
-    );
-  }
-
+  }, [user, isAuthenticated, navigate, isLoading]);
+  
   if (isLoading) {
     return (
-      <div className="w-full h-full flex items-center justify-center p-12">
+      <div className="flex h-screen items-center justify-center bg-ice-50/30">
         <div className="flex flex-col items-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-ice-600 mb-4"></div>
           <p className="text-ice-700">
-            {language === 'en' ? 'Loading your dashboard...' : 'Cargando su panel...'}
+            {language === 'en' ? 'Loading dashboard...' : 'Cargando panel...'}
           </p>
         </div>
       </div>
     );
   }
-
+  
+  if (!isAuthenticated || !user) {
+    return null;
+  }
+  
   return (
-    <div className="w-full">
-      {/* Hero Welcome Section */}
-      <WelcomeHero 
-        onShowAddProducts={() => setShowAddProducts(!showAddProducts)}
-        showAddProducts={showAddProducts}
-        hasDevices={userDevices.length > 0}
-        onClearDevices={clearDevices}
-        onLogout={handleLogout}
-        user={user}
-      />
-
-      {/* Dashboard Overview */}
-      <DashboardOverview />
-
-      {/* My Devices Section */}
-      <DevicesSection 
-        devices={userDevices} 
-        onAddDevice={() => setShowAddProducts(true)} 
-      />
-
-      {/* Shopping Section (conditionally rendered) */}
-      {showAddProducts && (
-        <>
-          <ProductsSection 
-            products={availableProducts}
-            onAddToCart={addToCart}
-            onStartSetup={handleStartSetup}
-          />
-
-          {/* Shopping Cart */}
-          <CartSection 
-            cart={cart} 
-            onRemoveFromCart={removeFromCart} 
-            onCheckout={checkout} 
-          />
-        </>
-      )}
-
-      {/* Quick Actions */}
-      <QuickActionsCard 
-        hasDevices={userDevices.length > 0} 
-        onShowAddProducts={() => setShowAddProducts(true)} 
-      />
+    <div className="flex h-screen bg-ice-50/30">
+      <div className="flex-1 overflow-auto">
+        <div className="p-6">
+          <Card className="mb-8 border-t-4 border-ice-500">
+            <CardHeader>
+              <CardTitle className="text-2xl font-bold">
+                {language === 'en' ? `Welcome back, ${name}!` : `¡Bienvenido de nuevo, ${name}!`}
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-muted-foreground">
+                {language === 'en'
+                  ? 'Here\'s a summary of your ICE Alarm account.'
+                  : 'Aquí tienes un resumen de tu cuenta de ICE Alarm.'}
+              </p>
+            </CardContent>
+          </Card>
+          
+          {cart.length > 0 && (
+            <CartSection 
+              cart={cart} 
+              onRemoveFromCart={removeFromCart}
+              onCheckout={() => navigate('/checkout')}
+            />
+          )}
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <SOSTile />
+            <GlucoseTile />
+            <WeatherTile />
+            <NewsTile />
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
