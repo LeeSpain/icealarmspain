@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Shield, Plus, Search, Edit, Trash, UserCog } from "lucide-react";
 import { toast } from "react-toastify";
@@ -11,12 +12,21 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
   Dialog,
   DialogContent,
   DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogFooter,
 } from "@/components/ui/dialog";
 import {
   AlertDialog,
@@ -28,70 +38,80 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Textarea } from "@/components/ui/textarea";
 
+// Role interface definition
 interface Role {
   id: string;
   name: string;
   description: string;
-  usersCount: number;
-  isSystem: boolean;
+  status: "active" | "inactive";
   createdAt: string;
 }
 
 const initialRoles: Role[] = [
   {
     id: "1",
-    name: "Administrator",
-    description: "Full system access with all permissions",
-    usersCount: 3,
-    isSystem: true,
-    createdAt: "2023-06-10T10:00:00Z"
+    name: "Super Admin",
+    description: "Full access to all systems and features",
+    status: "active",
+    createdAt: "2023-01-15",
   },
   {
     id: "2",
-    name: "Call Center Agent",
-    description: "Access to call center features and client data",
-    usersCount: 8,
-    isSystem: true,
-    createdAt: "2023-06-10T10:00:00Z"
+    name: "Admin",
+    description: "Access to administrative features",
+    status: "active",
+    createdAt: "2023-02-10",
   },
   {
     id: "3",
-    name: "Device Manager",
-    description: "Manages device inventory and maintenance",
-    usersCount: 2,
-    isSystem: false,
-    createdAt: "2023-07-15T14:30:00Z"
+    name: "Support Manager",
+    description: "Manage support agents and tickets",
+    status: "active",
+    createdAt: "2023-03-05",
   },
   {
     id: "4",
-    name: "Support Specialist",
-    description: "Handles support tickets and customer inquiries",
-    usersCount: 0,
-    isSystem: false,
-    createdAt: "2023-08-22T09:15:00Z"
-  }
+    name: "Support Agent",
+    description: "Handle support tickets and customer inquiries",
+    status: "active",
+    createdAt: "2023-04-12",
+  },
+  {
+    id: "5",
+    name: "Inventory Manager",
+    description: "Manage product inventory and stock",
+    status: "active",
+    createdAt: "2023-05-20",
+  },
+  {
+    id: "6",
+    name: "Sales Representative",
+    description: "Handle sales and customer accounts",
+    status: "inactive",
+    createdAt: "2023-06-15",
+  },
 ];
 
 const RolesManagement: React.FC = () => {
   const [roles, setRoles] = useState<Role[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState("");
   const [filteredRoles, setFilteredRoles] = useState<Role[]>([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [loading, setLoading] = useState(true);
+  
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [currentRole, setCurrentRole] = useState<Role | null>(null);
-  const [formData, setFormData] = useState({
+  const [newRole, setNewRole] = useState<Omit<Role, 'id' | 'createdAt'>>({
     name: "",
     description: "",
+    status: "active",
   });
-  const { language, t } = useLanguage();
+  
+  const { t } = useLanguage();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -101,12 +121,12 @@ const RolesManagement: React.FC = () => {
         setRoles(initialRoles);
       } catch (error) {
         console.error("Error fetching roles:", error);
-        toast.error(t("adminDashboard.errorLoadingRoles"));
+        toast.error(t("error"));
       } finally {
         setLoading(false);
       }
     };
-
+    
     fetchData();
   }, [t]);
 
@@ -123,186 +143,160 @@ const RolesManagement: React.FC = () => {
   }, [searchQuery, roles]);
 
   const handleCreateRole = () => {
-    setFormData({
-      name: "",
-      description: "",
-    });
-    setIsCreateDialogOpen(true);
+    const roleToAdd: Role = {
+      id: `${Date.now()}`,
+      name: newRole.name,
+      description: newRole.description,
+      status: newRole.status,
+      createdAt: new Date().toISOString().split('T')[0],
+    };
+    
+    setRoles([...roles, roleToAdd]);
+    toast.success(t("adminDashboard.roleCreated"));
+    setIsCreateDialogOpen(false);
+    resetNewRoleForm();
   };
 
-  const handleEditRole = (role: Role) => {
+  const handleUpdateRole = () => {
+    if (!currentRole) return;
+    
+    const updatedRoles = roles.map(role => 
+      role.id === currentRole.id ? currentRole : role
+    );
+    
+    setRoles(updatedRoles);
+    toast.success(t("adminDashboard.roleUpdated"));
+    setIsEditDialogOpen(false);
+  };
+
+  const handleDeleteRole = () => {
+    if (!currentRole) return;
+    
+    const updatedRoles = roles.filter(role => role.id !== currentRole.id);
+    setRoles(updatedRoles);
+    toast.success(t("adminDashboard.roleDeleted"));
+    setIsDeleteDialogOpen(false);
+  };
+
+  const openEditDialog = (role: Role) => {
     setCurrentRole(role);
-    setFormData({
-      name: role.name,
-      description: role.description,
-    });
     setIsEditDialogOpen(true);
   };
 
-  const handleDeleteRole = (role: Role) => {
+  const openDeleteDialog = (role: Role) => {
     setCurrentRole(role);
     setIsDeleteDialogOpen(true);
   };
 
-  const submitCreateRole = () => {
-    if (!formData.name) {
-      toast.error(t("adminDashboard.fillRequiredFields"));
-      return;
-    }
-
-    const newRole: Role = {
-      id: Date.now().toString(),
-      name: formData.name,
-      description: formData.description,
-      usersCount: 0,
-      isSystem: false,
-      createdAt: new Date().toISOString(),
-    };
-
-    setRoles([...roles, newRole]);
-    setIsCreateDialogOpen(false);
-    toast.success(t("adminDashboard.roleCreatedSuccess"));
-  };
-
-  const submitEditRole = () => {
-    if (!currentRole || !formData.name) {
-      toast.error(t("adminDashboard.fillRequiredFields"));
-      return;
-    }
-
-    const updatedRoles = roles.map(role => {
-      if (role.id === currentRole.id) {
-        return {
-          ...role,
-          name: formData.name,
-          description: formData.description,
-        };
-      }
-      return role;
+  const resetNewRoleForm = () => {
+    setNewRole({
+      name: "",
+      description: "",
+      status: "active",
     });
-
-    setRoles(updatedRoles);
-    setIsEditDialogOpen(false);
-    toast.success(t("adminDashboard.roleUpdatedSuccess"));
-  };
-
-  const submitDeleteRole = () => {
-    if (!currentRole) return;
-
-    if (currentRole.usersCount > 0) {
-      toast.error(t("adminDashboard.cannotDeleteRoleWithUsers"));
-      setIsDeleteDialogOpen(false);
-      return;
-    }
-
-    const updatedRoles = roles.filter(role => role.id !== currentRole.id);
-    setRoles(updatedRoles);
-    setIsDeleteDialogOpen(false);
-    toast.success(t("adminDashboard.roleDeletedSuccess"));
   };
 
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h2 className="text-2xl font-bold text-ice-800">
-            {t("adminDashboard.rolesManagement")}
-          </h2>
+          <h2 className="text-2xl font-bold tracking-tight">{t("adminDashboard.rolesManagement")}</h2>
           <p className="text-muted-foreground">
-            {t("adminDashboard.rolesManagementDescription")}
+            {t("adminDashboard.totalRoles")}: {roles.length}
           </p>
         </div>
-        <Button onClick={handleCreateRole} className="flex items-center gap-2">
-          <Plus size={16} />
-          {t("adminDashboard.addRole")}
+        <Button onClick={() => setIsCreateDialogOpen(true)}>
+          <Plus className="mr-2 h-4 w-4" /> {t("adminDashboard.createRole")}
         </Button>
       </div>
 
-      <div className="flex justify-between items-center mb-4">
-        <div className="relative w-64">
-          <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+      <div className="flex items-center justify-between">
+        <div className="relative max-w-sm">
+          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
+            type="search"
             placeholder={t("adminDashboard.searchRoles")}
-            className="pl-8"
+            className="pl-8 w-[300px]"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
+        <div className="flex gap-2">
+          <Badge className="bg-green-100 text-green-800 hover:bg-green-200">
+            {t("adminDashboard.activeRoles")}: {roles.filter(r => r.status === "active").length}
+          </Badge>
+          <Badge className="bg-gray-100 text-gray-800 hover:bg-gray-200">
+            {t("adminDashboard.inactiveRoles")}: {roles.filter(r => r.status === "inactive").length}
+          </Badge>
+        </div>
       </div>
 
       {loading ? (
-        <div className="space-y-4">
-          {[...Array(4)].map((_, index) => (
-            <Skeleton key={index} className="h-16 w-full" />
-          ))}
-        </div>
+        <Card>
+          <CardContent className="py-10">
+            <div className="flex flex-col items-center justify-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
+              <p className="mt-4 text-muted-foreground">{t("loading")}</p>
+            </div>
+          </CardContent>
+        </Card>
+      ) : filteredRoles.length === 0 ? (
+        <Card>
+          <CardContent className="py-10">
+            <div className="flex flex-col items-center justify-center">
+              <UserCog className="h-12 w-12 text-muted-foreground mb-4" />
+              <p className="text-muted-foreground">{t("adminDashboard.noRolesFound")}</p>
+            </div>
+          </CardContent>
+        </Card>
       ) : (
-        <div className="bg-white rounded-md shadow">
+        <div className="bg-white rounded-md shadow-sm border">
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>{t("adminDashboard.roleName")}</TableHead>
-                <TableHead>{t("adminDashboard.description")}</TableHead>
-                <TableHead>{t("adminDashboard.usersAssigned")}</TableHead>
-                <TableHead>{t("adminDashboard.type")}</TableHead>
-                <TableHead>{t("adminDashboard.createdAt")}</TableHead>
-                <TableHead className="text-right">{t("adminDashboard.actions")}</TableHead>
+                <TableHead className="w-[200px]">{t("adminDashboard.roleName")}</TableHead>
+                <TableHead className="hidden md:table-cell">{t("adminDashboard.roleDescription")}</TableHead>
+                <TableHead className="hidden md:table-cell">{t("status")}</TableHead>
+                <TableHead className="hidden lg:table-cell">{t("adminDashboard.roleCreatedAt")}</TableHead>
+                <TableHead className="text-right">{t("actions")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filteredRoles.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={6} className="text-center py-6 text-muted-foreground">
-                    {t("adminDashboard.noRolesFound")}
+              {filteredRoles.map((role) => (
+                <TableRow key={role.id}>
+                  <TableCell className="font-medium flex items-center gap-2">
+                    <Shield className="h-4 w-4 text-muted-foreground" />
+                    {role.name}
+                  </TableCell>
+                  <TableCell className="hidden md:table-cell max-w-[300px] truncate">
+                    {role.description}
+                  </TableCell>
+                  <TableCell className="hidden md:table-cell">
+                    <Badge variant={role.status === "active" ? "default" : "outline"}>
+                      {role.status === "active" ? "Active" : "Inactive"}
+                    </Badge>
+                  </TableCell>
+                  <TableCell className="hidden lg:table-cell">{role.createdAt}</TableCell>
+                  <TableCell className="text-right">
+                    <div className="flex justify-end gap-2">
+                      <Button 
+                        variant="ghost" 
+                        size="icon"
+                        onClick={() => openEditDialog(role)}
+                      >
+                        <Edit className="h-4 w-4" />
+                      </Button>
+                      <Button 
+                        variant="ghost" 
+                        size="icon"
+                        onClick={() => openDeleteDialog(role)}
+                      >
+                        <Trash className="h-4 w-4" />
+                      </Button>
+                    </div>
                   </TableCell>
                 </TableRow>
-              ) : (
-                filteredRoles.map((role) => (
-                  <TableRow key={role.id}>
-                    <TableCell className="font-medium">
-                      <div className="flex items-center gap-2">
-                        <Shield size={16} className="text-ice-600" />
-                        {role.name}
-                      </div>
-                    </TableCell>
-                    <TableCell>{role.description}</TableCell>
-                    <TableCell>{role.usersCount}</TableCell>
-                    <TableCell>
-                      <Badge 
-                        variant={role.isSystem ? "secondary" : "default"}
-                        className={role.isSystem ? "bg-blue-100 text-blue-800 hover:bg-blue-100" : ""}
-                      >
-                        {role.isSystem ? t("adminDashboard.system") : t("adminDashboard.custom")}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      {new Date(role.createdAt).toLocaleDateString()}
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <div className="flex justify-end gap-2">
-                        <Button 
-                          variant="outline" 
-                          size="sm" 
-                          onClick={() => handleEditRole(role)}
-                          disabled={role.isSystem}
-                        >
-                          <Edit size={16} className="mr-1" />
-                          {t("adminDashboard.edit")}
-                        </Button>
-                        <Button 
-                          variant="destructive" 
-                          size="sm" 
-                          onClick={() => handleDeleteRole(role)}
-                          disabled={role.isSystem || role.usersCount > 0}
-                        >
-                          <Trash size={16} className="mr-1" />
-                          {t("adminDashboard.delete")}
-                        </Button>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))
-              )}
+              ))}
             </TableBody>
           </Table>
         </div>
@@ -311,44 +305,40 @@ const RolesManagement: React.FC = () => {
       <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
         <DialogContent className="sm:max-w-[500px]">
           <DialogHeader>
-            <DialogTitle>
-              {t("adminDashboard.addNewRole")}
-            </DialogTitle>
+            <DialogTitle>{t("adminDashboard.createRole")}</DialogTitle>
             <DialogDescription>
-              {t("adminDashboard.createRoleDescription")}
+              {t("adminDashboard.createRole")}
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="name" className="text-right">
+              <label htmlFor="name" className="text-right text-sm font-medium col-span-1">
                 {t("adminDashboard.roleName")}
-              </Label>
+              </label>
               <Input
                 id="name"
-                value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                placeholder={t("adminDashboard.roleNamePlaceholder")}
                 className="col-span-3"
+                value={newRole.name}
+                onChange={(e) => setNewRole({...newRole, name: e.target.value})}
               />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="description" className="text-right">
-                {t("adminDashboard.description")}
-              </Label>
-              <Input
+              <label htmlFor="description" className="text-right text-sm font-medium col-span-1">
+                {t("adminDashboard.roleDescription")}
+              </label>
+              <Textarea
                 id="description"
-                value={formData.description}
-                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                placeholder={t("adminDashboard.roleDescriptionPlaceholder")}
                 className="col-span-3"
+                value={newRole.description}
+                onChange={(e) => setNewRole({...newRole, description: e.target.value})}
               />
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setIsCreateDialogOpen(false)}>
-              {t("adminDashboard.cancel")}
-            </Button>
-            <Button onClick={submitCreateRole}>
-              {t("adminDashboard.createRole")}
-            </Button>
+            <Button variant="outline" onClick={() => setIsCreateDialogOpen(false)}>{t("cancel")}</Button>
+            <Button onClick={handleCreateRole}>{t("adminDashboard.saveRole")}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -356,44 +346,40 @@ const RolesManagement: React.FC = () => {
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
         <DialogContent className="sm:max-w-[500px]">
           <DialogHeader>
-            <DialogTitle>
-              {t("adminDashboard.editRole")}
-            </DialogTitle>
+            <DialogTitle>{t("adminDashboard.editRole")}</DialogTitle>
             <DialogDescription>
-              {t("adminDashboard.editRoleDescription")}
+              {t("adminDashboard.editRole")}
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="edit-name" className="text-right">
+              <label htmlFor="edit-name" className="text-right text-sm font-medium col-span-1">
                 {t("adminDashboard.roleName")}
-              </Label>
+              </label>
               <Input
                 id="edit-name"
-                value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                placeholder={t("adminDashboard.roleNamePlaceholder")}
                 className="col-span-3"
+                value={currentRole?.name || ""}
+                onChange={(e) => setCurrentRole(currentRole ? {...currentRole, name: e.target.value} : null)}
               />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="edit-description" className="text-right">
-                {t("adminDashboard.description")}
-              </Label>
-              <Input
+              <label htmlFor="edit-description" className="text-right text-sm font-medium col-span-1">
+                {t("adminDashboard.roleDescription")}
+              </label>
+              <Textarea
                 id="edit-description"
-                value={formData.description}
-                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                placeholder={t("adminDashboard.roleDescriptionPlaceholder")}
                 className="col-span-3"
+                value={currentRole?.description || ""}
+                onChange={(e) => setCurrentRole(currentRole ? {...currentRole, description: e.target.value} : null)}
               />
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setIsEditDialogOpen(false)}>
-              {t("adminDashboard.cancel")}
-            </Button>
-            <Button onClick={submitEditRole}>
-              {t("adminDashboard.updateRole")}
-            </Button>
+            <Button variant="outline" onClick={() => setIsEditDialogOpen(false)}>{t("cancel")}</Button>
+            <Button onClick={handleUpdateRole}>{t("adminDashboard.saveRole")}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -409,11 +395,9 @@ const RolesManagement: React.FC = () => {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>
-              {t("adminDashboard.cancel")}
-            </AlertDialogCancel>
-            <AlertDialogAction onClick={submitDeleteRole} className="bg-red-600">
-              {t("adminDashboard.delete")}
+            <AlertDialogCancel>{t("cancel")}</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDeleteRole} className="bg-red-600 hover:bg-red-700">
+              {t("adminDashboard.deleteRole")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

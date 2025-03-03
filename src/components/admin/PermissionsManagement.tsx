@@ -12,18 +12,33 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
   Dialog,
   DialogContent,
   DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogFooter,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
-import { Skeleton } from "@/components/ui/skeleton";
 import {
   Select,
   SelectContent,
@@ -31,21 +46,23 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Switch } from "@/components/ui/switch";
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Checkbox } from "@/components/ui/checkbox";
 
+// Permission interface definition
 interface Permission {
   id: string;
   name: string;
-  description: string;
-  category: string;
-  roles: string[];
+  key: string;
+  group: string;
+  createdAt: string;
 }
 
 interface Role {
@@ -53,101 +70,129 @@ interface Role {
   name: string;
 }
 
-// Initial mock data
-const initialCategories = [
-  "Users & Clients",
-  "Devices",
-  "Call Center",
-  "Operations",
-  "System",
-  "Reports",
-  "Billing"
-];
-
-const initialRoles: Role[] = [
-  { id: "1", name: "Administrator" },
-  { id: "2", name: "Call Center Agent" },
-  { id: "3", name: "Device Manager" },
-  { id: "4", name: "Support Specialist" }
-];
-
+// Initial mock data for permissions
 const initialPermissions: Permission[] = [
   {
     id: "1",
-    name: "users.view",
-    description: "View users and their details",
-    category: "Users & Clients",
-    roles: ["1", "2"] // Administrator, Call Center Agent
+    name: "View Users",
+    key: "users:view",
+    group: "Users",
+    createdAt: "2023-01-10",
   },
   {
     id: "2",
-    name: "users.manage",
-    description: "Create, edit and delete users",
-    category: "Users & Clients",
-    roles: ["1"] // Administrator only
+    name: "Create Users",
+    key: "users:create",
+    group: "Users",
+    createdAt: "2023-01-10",
   },
   {
     id: "3",
-    name: "devices.view",
-    description: "View device information",
-    category: "Devices",
-    roles: ["1", "2", "3"] // Administrator, Call Center Agent, Device Manager
+    name: "Edit Users",
+    key: "users:edit",
+    group: "Users",
+    createdAt: "2023-01-10",
   },
   {
     id: "4",
-    name: "devices.manage",
-    description: "Add, edit and delete devices",
-    category: "Devices",
-    roles: ["1", "3"] // Administrator, Device Manager
+    name: "Delete Users",
+    key: "users:delete",
+    group: "Users",
+    createdAt: "2023-01-10",
   },
   {
     id: "5",
-    name: "callcenter.manage",
-    description: "Manage call center operations",
-    category: "Call Center",
-    roles: ["1", "2"] // Administrator, Call Center Agent
+    name: "View Devices",
+    key: "devices:view",
+    group: "Devices",
+    createdAt: "2023-01-15",
   },
   {
     id: "6",
-    name: "reports.view",
-    description: "View reports and analytics",
-    category: "Reports",
-    roles: ["1", "3"] // Administrator, Device Manager
+    name: "Edit Devices",
+    key: "devices:edit",
+    group: "Devices",
+    createdAt: "2023-01-15",
   },
   {
     id: "7",
-    name: "system.settings",
-    description: "Manage system settings",
-    category: "System",
-    roles: ["1"] // Administrator only
+    name: "View Roles",
+    key: "roles:view",
+    group: "Roles",
+    createdAt: "2023-01-20",
   },
   {
     id: "8",
-    name: "billing.manage",
-    description: "Manage billing and invoices",
-    category: "Billing",
-    roles: ["1"] // Administrator only
-  }
+    name: "Edit Roles",
+    key: "roles:edit",
+    group: "Roles",
+    createdAt: "2023-01-20",
+  },
+  {
+    id: "9",
+    name: "View Reports",
+    key: "reports:view",
+    group: "Reports",
+    createdAt: "2023-01-25",
+  },
+  {
+    id: "10",
+    name: "Create Reports",
+    key: "reports:create",
+    group: "Reports",
+    createdAt: "2023-01-25",
+  },
 ];
+
+// Initial mock data for roles
+const initialRoles: Role[] = [
+  { id: "1", name: "Super Admin" },
+  { id: "2", name: "Admin" },
+  { id: "3", name: "Support Manager" },
+  { id: "4", name: "Support Agent" },
+  { id: "5", name: "Inventory Manager" },
+];
+
+// Mock permissions-roles assignments
+const initialPermissionRoles: Record<string, string[]> = {
+  "1": ["1", "2", "3"],
+  "2": ["1", "2"],
+  "3": ["1", "2"],
+  "4": ["1"],
+  "5": ["1", "2", "3", "4", "5"],
+  "6": ["1", "2", "5"],
+  "7": ["1", "2"],
+  "8": ["1"],
+  "9": ["1", "2", "3"],
+  "10": ["1", "2"],
+};
 
 const PermissionsManagement: React.FC = () => {
   const [permissions, setPermissions] = useState<Permission[]>([]);
-  const [roles, setRoles] = useState<Role[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState("");
   const [filteredPermissions, setFilteredPermissions] = useState<Permission[]>([]);
-  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
-  const [isAssignDialogOpen, setIsAssignDialogOpen] = useState(false);
-  const [currentPermission, setCurrentPermission] = useState<Permission | null>(null);
-  const [formData, setFormData] = useState({
-    name: "",
-    description: "",
-    category: ""
-  });
+  const [searchQuery, setSearchQuery] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [filterGroup, setFilterGroup] = useState<string>("all");
+  
+  const [permissionRoles, setPermissionRoles] = useState<Record<string, string[]>>(initialPermissionRoles);
+  const [roles, setRoles] = useState<Role[]>([]);
   const [selectedRoles, setSelectedRoles] = useState<string[]>([]);
-  const [categoryFilter, setCategoryFilter] = useState<string>("all");
-  const [roleFilter, setRoleFilter] = useState<string>("all");
+  
+  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [isAssignRolesDialogOpen, setIsAssignRolesDialogOpen] = useState(false);
+  const [currentPermission, setCurrentPermission] = useState<Permission | null>(null);
+  const [newPermission, setNewPermission] = useState<Omit<Permission, 'id' | 'createdAt'>>({
+    name: "",
+    key: "",
+    group: "Users",
+  });
+  
   const { t } = useLanguage();
+
+  // Groups for permissions
+  const permissionGroups = ["Users", "Devices", "Roles", "Reports", "Settings", "Other"];
 
   useEffect(() => {
     // Simulate loading data from API
@@ -160,235 +205,241 @@ const PermissionsManagement: React.FC = () => {
         setRoles(initialRoles);
       } catch (error) {
         console.error("Error fetching permissions:", error);
-        toast.error(t("adminDashboard.errorLoadingPermissions"));
+        toast.error(t("error"));
       } finally {
         setLoading(false);
       }
     };
-
+    
     fetchData();
   }, [t]);
 
   useEffect(() => {
-    // Filter permissions based on search query, category, and role
+    // Filter permissions based on search query and group filter
     let filtered = permissions;
     
     if (searchQuery) {
-      const query = searchQuery.toLowerCase();
       filtered = filtered.filter(permission => 
-        permission.name.toLowerCase().includes(query) || 
-        permission.description.toLowerCase().includes(query)
+        permission.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+        permission.key.toLowerCase().includes(searchQuery.toLowerCase())
       );
     }
     
-    if (categoryFilter !== "all") {
-      filtered = filtered.filter(permission => permission.category === categoryFilter);
-    }
-    
-    if (roleFilter !== "all") {
-      filtered = filtered.filter(permission => permission.roles.includes(roleFilter));
+    if (filterGroup !== "all") {
+      filtered = filtered.filter(permission => permission.group === filterGroup);
     }
     
     setFilteredPermissions(filtered);
-  }, [searchQuery, permissions, categoryFilter, roleFilter]);
+  }, [searchQuery, filterGroup, permissions]);
 
   const handleCreatePermission = () => {
-    setFormData({
-      name: "",
-      description: "",
-      category: initialCategories[0]
-    });
-    setIsCreateDialogOpen(true);
-  };
-
-  const handleAssignRoles = (permission: Permission) => {
-    setCurrentPermission(permission);
-    setSelectedRoles(permission.roles);
-    setIsAssignDialogOpen(true);
-  };
-
-  const submitCreatePermission = () => {
-    if (!formData.name || !formData.description || !formData.category) {
-      toast.error(t("adminDashboard.fillRequiredFields"));
-      return;
-    }
-
-    const newPermission: Permission = {
-      id: Date.now().toString(),
-      name: formData.name,
-      description: formData.description,
-      category: formData.category,
-      roles: []
+    const permissionToAdd: Permission = {
+      id: `${Date.now()}`,
+      name: newPermission.name,
+      key: newPermission.key,
+      group: newPermission.group,
+      createdAt: new Date().toISOString().split('T')[0],
     };
-
-    setPermissions([...permissions, newPermission]);
+    
+    setPermissions([...permissions, permissionToAdd]);
+    toast.success(t("adminDashboard.permissionCreated"));
     setIsCreateDialogOpen(false);
-    toast.success(t("adminDashboard.permissionCreatedSuccess"));
+    resetNewPermissionForm();
   };
 
-  const submitAssignRoles = () => {
+  const handleUpdatePermission = () => {
     if (!currentPermission) return;
-
-    const updatedPermissions = permissions.map(permission => {
-      if (permission.id === currentPermission.id) {
-        return {
-          ...permission,
-          roles: selectedRoles
-        };
-      }
-      return permission;
-    });
-
+    
+    const updatedPermissions = permissions.map(permission => 
+      permission.id === currentPermission.id ? currentPermission : permission
+    );
+    
     setPermissions(updatedPermissions);
-    setIsAssignDialogOpen(false);
-    toast.success(t("adminDashboard.rolesAssignedSuccess"));
+    toast.success(t("adminDashboard.permissionUpdated"));
+    setIsEditDialogOpen(false);
   };
 
-  const toggleRole = (roleId: string) => {
-    setSelectedRoles(prevRoles => {
-      if (prevRoles.includes(roleId)) {
-        return prevRoles.filter(id => id !== roleId);
-      } else {
-        return [...prevRoles, roleId];
-      }
+  const handleDeletePermission = () => {
+    if (!currentPermission) return;
+    
+    const updatedPermissions = permissions.filter(permission => permission.id !== currentPermission.id);
+    const updatedPermissionRoles = { ...permissionRoles };
+    delete updatedPermissionRoles[currentPermission.id];
+    
+    setPermissions(updatedPermissions);
+    setPermissionRoles(updatedPermissionRoles);
+    toast.success(t("adminDashboard.permissionDeleted"));
+    setIsDeleteDialogOpen(false);
+  };
+
+  const handleAssignRoles = () => {
+    if (!currentPermission) return;
+    
+    const updatedPermissionRoles = {
+      ...permissionRoles,
+      [currentPermission.id]: selectedRoles,
+    };
+    
+    setPermissionRoles(updatedPermissionRoles);
+    toast.success(t("adminDashboard.permissionAssigned"));
+    setIsAssignRolesDialogOpen(false);
+  };
+
+  const openEditDialog = (permission: Permission) => {
+    setCurrentPermission(permission);
+    setIsEditDialogOpen(true);
+  };
+
+  const openDeleteDialog = (permission: Permission) => {
+    setCurrentPermission(permission);
+    setIsDeleteDialogOpen(true);
+  };
+
+  const openAssignRolesDialog = (permission: Permission) => {
+    setCurrentPermission(permission);
+    setSelectedRoles(permissionRoles[permission.id] || []);
+    setIsAssignRolesDialogOpen(true);
+  };
+
+  const resetNewPermissionForm = () => {
+    setNewPermission({
+      name: "",
+      key: "",
+      group: "Users",
     });
   };
 
-  const getRoleNameById = (roleId: string) => {
-    const role = roles.find(r => r.id === roleId);
-    return role ? role.name : "Unknown";
+  const handleRoleCheckboxChange = (roleId: string) => {
+    setSelectedRoles(prev => 
+      prev.includes(roleId)
+        ? prev.filter(id => id !== roleId)
+        : [...prev, roleId]
+    );
   };
 
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h2 className="text-2xl font-bold text-ice-800">
-            {t("adminDashboard.permissionsManagement")}
-          </h2>
+          <h2 className="text-2xl font-bold tracking-tight">{t("adminDashboard.permissionsManagement")}</h2>
           <p className="text-muted-foreground">
-            {t("adminDashboard.permissionsManagementDescription")}
+            {t("adminDashboard.totalPermissions")}: {permissions.length}
           </p>
         </div>
-        <Button onClick={handleCreatePermission} className="flex items-center gap-2">
-          <Plus size={16} />
-          {t("adminDashboard.addPermission")}
+        <Button onClick={() => setIsCreateDialogOpen(true)}>
+          <Plus className="mr-2 h-4 w-4" /> {t("adminDashboard.createPermission")}
         </Button>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>{t("adminDashboard.filters")}</CardTitle>
-          <CardDescription>{t("adminDashboard.filtersDescription")}</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="flex gap-4">
-            <div className="flex-1">
-              <Label>{t("adminDashboard.search")}</Label>
-              <div className="relative">
-                <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-                <Input
-                  placeholder={t("adminDashboard.searchPermissions")}
-                  className="pl-8"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                />
-              </div>
-            </div>
-            <div>
-              <Label>{t("adminDashboard.category")}</Label>
-              <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-                <SelectTrigger className="w-[200px]">
-                  <SelectValue placeholder={t("adminDashboard.selectCategory")} />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">{t("adminDashboard.allCategories")}</SelectItem>
-                  {initialCategories.map(category => (
-                    <SelectItem key={category} value={category}>{category}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div>
-              <Label>{t("adminDashboard.role")}</Label>
-              <Select value={roleFilter} onValueChange={setRoleFilter}>
-                <SelectTrigger className="w-[200px]">
-                  <SelectValue placeholder={t("adminDashboard.selectRole")} />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">{t("adminDashboard.allRoles")}</SelectItem>
-                  {roles.map(role => (
-                    <SelectItem key={role.id} value={role.id}>{role.name}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="relative max-w-sm">
+          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+          <Input
+            type="search"
+            placeholder={t("adminDashboard.searchPermissions")}
+            className="pl-8 w-full md:w-[300px]"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+        </div>
+        <div className="flex items-center gap-2">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" size="sm" className="h-8 gap-1">
+                <Filter className="h-3.5 w-3.5" />
+                <span>{filterGroup === "all" ? t("filter") : filterGroup}</span>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>{t("adminDashboard.permissionGroup")}</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={() => setFilterGroup("all")}>All Groups</DropdownMenuItem>
+              {permissionGroups.map(group => (
+                <DropdownMenuItem key={group} onClick={() => setFilterGroup(group)}>
+                  {group}
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      </div>
 
       {loading ? (
-        <div className="space-y-4">
-          {[...Array(4)].map((_, index) => (
-            <Skeleton key={index} className="h-16 w-full" />
-          ))}
-        </div>
+        <Card>
+          <CardContent className="py-10">
+            <div className="flex flex-col items-center justify-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
+              <p className="mt-4 text-muted-foreground">{t("loading")}</p>
+            </div>
+          </CardContent>
+        </Card>
+      ) : filteredPermissions.length === 0 ? (
+        <Card>
+          <CardContent className="py-10">
+            <div className="flex flex-col items-center justify-center">
+              <Lock className="h-12 w-12 text-muted-foreground mb-4" />
+              <p className="text-muted-foreground">{t("adminDashboard.noPermissionsFound")}</p>
+            </div>
+          </CardContent>
+        </Card>
       ) : (
-        <div className="bg-white rounded-md shadow">
+        <div className="bg-white rounded-md shadow-sm border">
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>{t("adminDashboard.permissionName")}</TableHead>
-                <TableHead>{t("adminDashboard.description")}</TableHead>
-                <TableHead>{t("adminDashboard.category")}</TableHead>
-                <TableHead>{t("adminDashboard.assignedRoles")}</TableHead>
-                <TableHead className="text-right">{t("adminDashboard.actions")}</TableHead>
+                <TableHead className="w-[200px]">{t("adminDashboard.permissionName")}</TableHead>
+                <TableHead className="hidden md:table-cell">{t("adminDashboard.permissionKey")}</TableHead>
+                <TableHead className="hidden lg:table-cell">{t("adminDashboard.permissionGroup")}</TableHead>
+                <TableHead className="hidden lg:table-cell">{t("adminDashboard.permissionCreatedAt")}</TableHead>
+                <TableHead className="text-right">{t("actions")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filteredPermissions.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={5} className="text-center py-6 text-muted-foreground">
-                    {t("adminDashboard.noPermissionsFound")}
+              {filteredPermissions.map((permission) => (
+                <TableRow key={permission.id}>
+                  <TableCell className="font-medium flex items-center gap-2">
+                    <Lock className="h-4 w-4 text-muted-foreground" />
+                    {permission.name}
                   </TableCell>
-                </TableRow>
-              ) : (
-                filteredPermissions.map((permission) => (
-                  <TableRow key={permission.id}>
-                    <TableCell className="font-medium">
-                      <div className="flex items-center gap-2">
-                        <Lock size={16} className="text-ice-600" />
-                        {permission.name}
-                      </div>
-                    </TableCell>
-                    <TableCell>{permission.description}</TableCell>
-                    <TableCell>
-                      <Badge variant="outline">
-                        {permission.category}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex flex-wrap gap-1">
-                        {permission.roles.map(roleId => (
-                          <Badge key={roleId} variant="secondary" className="bg-blue-100 text-blue-800">
-                            {getRoleNameById(roleId)}
-                          </Badge>
-                        ))}
-                      </div>
-                    </TableCell>
-                    <TableCell className="text-right">
+                  <TableCell className="hidden md:table-cell font-mono text-sm">
+                    {permission.key}
+                  </TableCell>
+                  <TableCell className="hidden lg:table-cell">
+                    <Badge variant="outline">{permission.group}</Badge>
+                  </TableCell>
+                  <TableCell className="hidden lg:table-cell">{permission.createdAt}</TableCell>
+                  <TableCell className="text-right">
+                    <div className="flex justify-end gap-2">
                       <Button 
                         variant="outline" 
-                        size="sm" 
-                        onClick={() => handleAssignRoles(permission)}
+                        size="sm"
+                        className="h-8"
+                        onClick={() => openAssignRolesDialog(permission)}
                       >
-                        <Settings size={16} className="mr-1" />
-                        {t("adminDashboard.manageRoles")}
+                        {t("adminDashboard.assignRoles")}
                       </Button>
-                    </TableCell>
-                  </TableRow>
-                ))
-              )}
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="icon">
+                            <Settings className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem onClick={() => openEditDialog(permission)}>
+                            {t("edit")}
+                          </DropdownMenuItem>
+                          <DropdownMenuItem 
+                            onClick={() => openDeleteDialog(permission)}
+                            className="text-red-600"
+                          >
+                            {t("delete")}
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
             </TableBody>
           </Table>
         </div>
@@ -398,68 +449,144 @@ const PermissionsManagement: React.FC = () => {
       <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
         <DialogContent className="sm:max-w-[500px]">
           <DialogHeader>
-            <DialogTitle>
-              {t("adminDashboard.addNewPermission")}
-            </DialogTitle>
+            <DialogTitle>{t("adminDashboard.createPermission")}</DialogTitle>
             <DialogDescription>
-              {t("adminDashboard.createPermissionDescription")}
+              {t("adminDashboard.createPermission")}
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="name" className="text-right">
+              <label htmlFor="name" className="text-right text-sm font-medium col-span-1">
                 {t("adminDashboard.permissionName")}
-              </Label>
+              </label>
               <Input
                 id="name"
-                value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                placeholder={t("adminDashboard.permissionNamePlaceholder")}
                 className="col-span-3"
+                value={newPermission.name}
+                onChange={(e) => setNewPermission({...newPermission, name: e.target.value})}
               />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="description" className="text-right">
-                {t("adminDashboard.description")}
-              </Label>
+              <label htmlFor="key" className="text-right text-sm font-medium col-span-1">
+                {t("adminDashboard.permissionKey")}
+              </label>
               <Input
-                id="description"
-                value={formData.description}
-                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                id="key"
+                placeholder={t("adminDashboard.permissionKeyPlaceholder")}
                 className="col-span-3"
+                value={newPermission.key}
+                onChange={(e) => setNewPermission({...newPermission, key: e.target.value})}
               />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="category" className="text-right">
-                {t("adminDashboard.category")}
-              </Label>
-              <Select 
-                value={formData.category} 
-                onValueChange={(value) => setFormData({ ...formData, category: value })}
+              <label htmlFor="group" className="text-right text-sm font-medium col-span-1">
+                {t("adminDashboard.permissionGroup")}
+              </label>
+              <Select
+                value={newPermission.group}
+                onValueChange={(value) => setNewPermission({...newPermission, group: value})}
               >
                 <SelectTrigger className="col-span-3">
-                  <SelectValue placeholder={t("adminDashboard.selectCategory")} />
+                  <SelectValue placeholder="Select a group" />
                 </SelectTrigger>
                 <SelectContent>
-                  {initialCategories.map(category => (
-                    <SelectItem key={category} value={category}>{category}</SelectItem>
+                  {permissionGroups.map(group => (
+                    <SelectItem key={group} value={group}>{group}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setIsCreateDialogOpen(false)}>
-              {t("adminDashboard.cancel")}
-            </Button>
-            <Button onClick={submitCreatePermission}>
-              {t("adminDashboard.createPermission")}
-            </Button>
+            <Button variant="outline" onClick={() => setIsCreateDialogOpen(false)}>{t("cancel")}</Button>
+            <Button onClick={handleCreatePermission}>{t("adminDashboard.savePermission")}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
+      {/* Edit Permission Dialog */}
+      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <DialogTitle>{t("adminDashboard.editPermission")}</DialogTitle>
+            <DialogDescription>
+              {t("adminDashboard.editPermission")}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid grid-cols-4 items-center gap-4">
+              <label htmlFor="edit-name" className="text-right text-sm font-medium col-span-1">
+                {t("adminDashboard.permissionName")}
+              </label>
+              <Input
+                id="edit-name"
+                placeholder={t("adminDashboard.permissionNamePlaceholder")}
+                className="col-span-3"
+                value={currentPermission?.name || ""}
+                onChange={(e) => setCurrentPermission(currentPermission ? {...currentPermission, name: e.target.value} : null)}
+              />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <label htmlFor="edit-key" className="text-right text-sm font-medium col-span-1">
+                {t("adminDashboard.permissionKey")}
+              </label>
+              <Input
+                id="edit-key"
+                placeholder={t("adminDashboard.permissionKeyPlaceholder")}
+                className="col-span-3"
+                value={currentPermission?.key || ""}
+                onChange={(e) => setCurrentPermission(currentPermission ? {...currentPermission, key: e.target.value} : null)}
+              />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <label htmlFor="edit-group" className="text-right text-sm font-medium col-span-1">
+                {t("adminDashboard.permissionGroup")}
+              </label>
+              <Select
+                value={currentPermission?.group || ""}
+                onValueChange={(value) => setCurrentPermission(currentPermission ? {...currentPermission, group: value} : null)}
+              >
+                <SelectTrigger className="col-span-3">
+                  <SelectValue placeholder="Select a group" />
+                </SelectTrigger>
+                <SelectContent>
+                  {permissionGroups.map(group => (
+                    <SelectItem key={group} value={group}>{group}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsEditDialogOpen(false)}>{t("cancel")}</Button>
+            <Button onClick={handleUpdatePermission}>{t("adminDashboard.savePermission")}</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Permission Dialog */}
+      <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              {t("adminDashboard.areYouSure")}
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              {t("adminDashboard.deletePermissionWarning")}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>{t("cancel")}</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDeletePermission} className="bg-red-600 hover:bg-red-700">
+              {t("adminDashboard.deletePermission")}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
       {/* Assign Roles Dialog */}
-      <Dialog open={isAssignDialogOpen} onOpenChange={setIsAssignDialogOpen}>
+      <Dialog open={isAssignRolesDialogOpen} onOpenChange={setIsAssignRolesDialogOpen}>
         <DialogContent className="sm:max-w-[500px]">
           <DialogHeader>
             <DialogTitle>
@@ -475,26 +602,25 @@ const PermissionsManagement: React.FC = () => {
           <div className="py-4">
             <div className="space-y-4">
               {roles.map(role => (
-                <div key={role.id} className="flex items-center justify-between p-2 rounded hover:bg-gray-50">
-                  <div className="flex items-center gap-2">
-                    <Shield size={16} className="text-ice-600" />
-                    <span>{role.name}</span>
-                  </div>
-                  <Switch
+                <div key={role.id} className="flex items-center space-x-2">
+                  <Checkbox 
+                    id={`role-${role.id}`} 
                     checked={selectedRoles.includes(role.id)}
-                    onCheckedChange={() => toggleRole(role.id)}
+                    onCheckedChange={() => handleRoleCheckboxChange(role.id)}
                   />
+                  <label 
+                    htmlFor={`role-${role.id}`}
+                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                  >
+                    {role.name}
+                  </label>
                 </div>
               ))}
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setIsAssignDialogOpen(false)}>
-              {t("adminDashboard.cancel")}
-            </Button>
-            <Button onClick={submitAssignRoles}>
-              {t("adminDashboard.saveAssignments")}
-            </Button>
+            <Button variant="outline" onClick={() => setIsAssignRolesDialogOpen(false)}>{t("cancel")}</Button>
+            <Button onClick={handleAssignRoles}>{t("save")}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
