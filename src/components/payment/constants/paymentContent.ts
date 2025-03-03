@@ -18,7 +18,11 @@ export const paymentContent = {
     securedByPaypal: "Secured by PayPal",
     bankTransferDetails: "Bank Transfer Details",
     bankTransferReference: "Reference",
-    bankTransferNote: "Please include the reference number in your transfer. Payments typically process within 1-3 business days."
+    bankTransferNote: "Please include the reference number in your transfer. Payments typically process within 1-3 business days.",
+    paypalBenefits: "PayPal Benefits",
+    paypalFast: "Fast and secure checkout process",
+    paypalNoCardDetails: "No need to enter your card details on our site",
+    paypalProtection: "Purchase protection for eligible items"
   },
   es: {
     title: "Método de Pago",
@@ -38,6 +42,10 @@ export const paymentContent = {
     securedByPaypal: "Protegido por PayPal",
     bankTransferDetails: "Detalles de Transferencia Bancaria",
     bankTransferReference: "Referencia",
-    bankTransferNote: "Por favor incluya el número de referencia en su transferencia. Los pagos generalmente se procesan dentro de 1-3 días hábiles."
+    bankTransferNote: "Por favor incluya el número de referencia en su transferencia. Los pagos generalmente se procesan dentro de 1-3 días hábiles.",
+    paypalBenefits: "Beneficios de PayPal",
+    paypalFast: "Proceso de pago rápido y seguro",
+    paypalNoCardDetails: "No es necesario ingresar los datos de su tarjeta en nuestro sitio",
+    paypalProtection: "Protección de compra para artículos elegibles"
   }
 };

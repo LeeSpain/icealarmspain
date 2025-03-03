@@ -1,13 +1,21 @@
 
 import React from "react";
-import { Info, ArrowRightCircle } from "lucide-react";
+import { Info, ArrowRightCircle, Lock, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { paymentContent } from "../constants/paymentContent";
 
 interface PayPalInfoProps {
   language: 'en' | 'es';
 }
 
 const PayPalInfo: React.FC<PayPalInfoProps> = ({ language }) => {
+  const content = paymentContent[language];
+  
+  const handleContinueToPayPal = () => {
+    // In a real implementation, this would redirect to PayPal
+    window.open("https://www.paypal.com", "_blank", "noopener,noreferrer");
+  };
+  
   return (
     <div className="mt-6 space-y-4">
       <div className="p-4 bg-muted rounded-md flex items-start">
@@ -26,20 +34,64 @@ const PayPalInfo: React.FC<PayPalInfoProps> = ({ language }) => {
         </div>
       </div>
       
-      <Button className="w-full flex items-center justify-center" variant="outline">
+      <div className="border rounded-md p-4 bg-white">
+        <h3 className="font-medium text-sm mb-3">
+          {language === 'en' ? "PayPal Benefits" : "Beneficios de PayPal"}
+        </h3>
+        
+        <div className="space-y-3">
+          <div className="flex items-start">
+            <CheckCircle className="w-4 h-4 text-green-500 mr-2 mt-0.5" />
+            <p className="text-sm">
+              {language === 'en' 
+                ? "Fast and secure checkout process"
+                : "Proceso de pago rápido y seguro"}
+            </p>
+          </div>
+          
+          <div className="flex items-start">
+            <CheckCircle className="w-4 h-4 text-green-500 mr-2 mt-0.5" />
+            <p className="text-sm">
+              {language === 'en'
+                ? "No need to enter your card details on our site"
+                : "No es necesario ingresar los datos de su tarjeta en nuestro sitio"}
+            </p>
+          </div>
+          
+          <div className="flex items-start">
+            <CheckCircle className="w-4 h-4 text-green-500 mr-2 mt-0.5" />
+            <p className="text-sm">
+              {language === 'en'
+                ? "Purchase protection for eligible items"
+                : "Protección de compra para artículos elegibles"}
+            </p>
+          </div>
+        </div>
+      </div>
+      
+      <Button 
+        className="w-full flex items-center justify-center" 
+        variant="default"
+        onClick={handleContinueToPayPal}
+      >
         <span>{language === 'en' ? "Continue to PayPal" : "Continuar a PayPal"}</span>
         <ArrowRightCircle className="ml-2 h-4 w-4" />
       </Button>
       
       <div className="flex items-center justify-center mt-2">
-        <img 
-          src="https://www.paypalobjects.com/webstatic/mktg/logo/pp_cc_mark_37x23.jpg" 
-          alt="PayPal and Credit Card Acceptance Mark" 
-          className="h-6" 
-        />
-        <p className="text-xs text-muted-foreground ml-2">
-          {language === 'en' ? "Secured by PayPal" : "Protegido por PayPal"}
-        </p>
+        <div className="flex items-center justify-center p-1.5 bg-white rounded border">
+          <img 
+            src="https://www.paypalobjects.com/webstatic/mktg/logo/pp_cc_mark_37x23.jpg" 
+            alt="PayPal and Credit Card Acceptance Mark" 
+            className="h-6" 
+          />
+        </div>
+        <div className="flex items-center ml-2">
+          <Lock className="h-3.5 w-3.5 text-green-600 mr-1" />
+          <p className="text-xs text-muted-foreground">
+            {language === 'en' ? "Secured by PayPal" : "Protegido por PayPal"}
+          </p>
+        </div>
       </div>
     </div>
   );

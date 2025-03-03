@@ -1,14 +1,19 @@
 
-import React from "react";
-import { Info, Copy, Check } from "lucide-react";
+import React, { useState } from "react";
+import { Info, Copy, Check, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { useToast } from "@/components/ui/use-toast";
+import { paymentContent } from "../constants/paymentContent";
 
 interface BankTransferInfoProps {
   language: 'en' | 'es';
 }
 
 const BankTransferInfo: React.FC<BankTransferInfoProps> = ({ language }) => {
-  const [copied, setCopied] = React.useState(false);
+  const content = paymentContent[language];
+  const { toast } = useToast();
+  const [copiedField, setCopiedField] = useState<string | null>(null);
   
   const bankDetails = {
     bankName: "Banco Santander",
@@ -18,10 +23,18 @@ const BankTransferInfo: React.FC<BankTransferInfoProps> = ({ language }) => {
     reference: "ORD-" + Math.floor(100000 + Math.random() * 900000)
   };
   
-  const copyToClipboard = (text: string) => {
-    navigator.clipboard.writeText(text);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+  const copyToClipboard = (text: string, field: string) => {
+    navigator.clipboard.writeText(text).then(() => {
+      setCopiedField(field);
+      toast({
+        description: language === 'en' 
+          ? `Copied ${field} to clipboard` 
+          : `${field} copiado al portapapeles`,
+        duration: 2000,
+      });
+      
+      setTimeout(() => setCopiedField(null), 2000);
+    });
   };
   
   return (
@@ -34,6 +47,15 @@ const BankTransferInfo: React.FC<BankTransferInfoProps> = ({ language }) => {
             : "Recibirá nuestros datos bancarios para completar la transferencia. Su pedido se procesará después de la confirmación del pago."}
         </p>
       </div>
+      
+      <Alert variant="warning" className="bg-amber-50 border-amber-200">
+        <AlertCircle className="h-4 w-4 text-amber-600" />
+        <AlertDescription className="text-amber-800 text-sm">
+          {language === 'en'
+            ? "Important: Please include your reference number in the transfer description so we can identify your payment."
+            : "Importante: Por favor incluya su número de referencia en la descripción de la transferencia para que podamos identificar su pago."}
+        </AlertDescription>
+      </Alert>
       
       <div className="border rounded-md p-4">
         <h3 className="font-medium text-sm mb-3">
@@ -65,9 +87,10 @@ const BankTransferInfo: React.FC<BankTransferInfoProps> = ({ language }) => {
                 variant="ghost"
                 size="icon"
                 className="h-8 w-8 ml-1"
-                onClick={() => copyToClipboard(bankDetails.iban)}
+                onClick={() => copyToClipboard(bankDetails.iban, language === 'en' ? "IBAN" : "IBAN")}
+                aria-label={language === 'en' ? "Copy IBAN" : "Copiar IBAN"}
               >
-                {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+                {copiedField === "IBAN" ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
               </Button>
             </div>
           </div>
@@ -76,11 +99,22 @@ const BankTransferInfo: React.FC<BankTransferInfoProps> = ({ language }) => {
             <span className="text-muted-foreground">
               {language === 'en' ? "SWIFT/BIC:" : "SWIFT/BIC:"}
             </span>
-            <span className="font-mono">{bankDetails.swift}</span>
+            <div className="flex items-center">
+              <span className="font-mono">{bankDetails.swift}</span>
+              <Button 
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8 ml-1"
+                onClick={() => copyToClipboard(bankDetails.swift, language === 'en' ? "SWIFT" : "SWIFT")}
+                aria-label={language === 'en' ? "Copy SWIFT" : "Copiar SWIFT"}
+              >
+                {copiedField === "SWIFT" ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+              </Button>
+            </div>
           </div>
           
           <div className="flex justify-between items-center">
-            <span className="text-muted-foreground">
+            <span className="text-muted-foreground font-medium">
               {language === 'en' ? "Reference:" : "Referencia:"}
             </span>
             <div className="flex items-center">
@@ -89,13 +123,48 @@ const BankTransferInfo: React.FC<BankTransferInfoProps> = ({ language }) => {
                 variant="ghost"
                 size="icon"
                 className="h-8 w-8 ml-1"
-                onClick={() => copyToClipboard(bankDetails.reference)}
+                onClick={() => copyToClipboard(bankDetails.reference, language === 'en' ? "Reference" : "Referencia")}
+                aria-label={language === 'en' ? "Copy Reference" : "Copiar Referencia"}
               >
-                {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+                {copiedField === "Reference" || copiedField === "Referencia" ? 
+                  <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
               </Button>
             </div>
           </div>
         </div>
+      </div>
+      
+      <div className="p-4 border rounded-md bg-white">
+        <h3 className="font-medium text-sm mb-2">
+          {language === 'en' ? "Transfer Instructions" : "Instrucciones de Transferencia"}
+        </h3>
+        <ol className="space-y-2 text-sm list-decimal pl-5">
+          <li>
+            {language === 'en'
+              ? "Log in to your online banking or visit your local bank branch."
+              : "Inicie sesión en su banca online o visite su sucursal bancaria local."}
+          </li>
+          <li>
+            {language === 'en'
+              ? "Set up a new payee/recipient using the bank details above."
+              : "Configure un nuevo beneficiario utilizando los datos bancarios anteriores."}
+          </li>
+          <li>
+            {language === 'en'
+              ? "Enter the amount to be transferred."
+              : "Ingrese el monto a transferir."}
+          </li>
+          <li className="font-medium">
+            {language === 'en'
+              ? "IMPORTANT: Include your reference number in the transfer description."
+              : "IMPORTANTE: Incluya su número de referencia en la descripción de la transferencia."}
+          </li>
+          <li>
+            {language === 'en'
+              ? "Complete the transfer and save or take a screenshot of the confirmation."
+              : "Complete la transferencia y guarde o tome una captura de pantalla de la confirmación."}
+          </li>
+        </ol>
       </div>
       
       <div className="text-xs text-muted-foreground">
