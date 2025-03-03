@@ -15,29 +15,29 @@ const Login: React.FC = () => {
   const location = useLocation();
   const { login, user, isAuthenticated, isLoading } = useAuth();
   const [loginInProgress, setLoginInProgress] = useState(false);
-  const [redirectAttempted, setRedirectAttempted] = useState(false);
   
   // Check if there's a redirect parameter
   const searchParams = new URLSearchParams(location.search);
   const redirectParam = searchParams.get('redirect');
   
-  // Redirect if already logged in
+  // Handle redirection after successful authentication
   useEffect(() => {
     console.log("Login page - Auth state:", { isAuthenticated, user, isLoading });
     
-    // Only redirect if auth check is complete, user is authenticated, and we haven't already tried to redirect
-    if (!isLoading && isAuthenticated && user && !redirectAttempted) {
-      setRedirectAttempted(true); // Prevent multiple redirects
+    // Only redirect if auth check is complete and user is authenticated
+    if (!isLoading && isAuthenticated && user) {
+      console.log("User authenticated, preparing to redirect");
       
+      // Determine where to redirect based on user role
       const redirectTo = redirectParam || getDefaultRedirect(user.role);
       console.log("Redirecting authenticated user to:", redirectTo);
       
-      // Use a slight delay to ensure state is fully updated before redirect
+      // Use a sufficient delay to ensure all state updates have propagated
       setTimeout(() => {
         navigate(redirectTo, { replace: true });
-      }, 100);
+      }, 1500);
     }
-  }, [isAuthenticated, navigate, user, redirectParam, isLoading, redirectAttempted]);
+  }, [isAuthenticated, isLoading, user, navigate, redirectParam]);
   
   // Helper function to determine default redirect based on role
   const getDefaultRedirect = (role: string | null) => {

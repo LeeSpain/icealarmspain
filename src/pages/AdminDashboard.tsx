@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { ToastContainer } from 'react-toastify';
 import { useNavigate } from "react-router-dom";
@@ -25,16 +24,13 @@ const AdminDashboard: React.FC = () => {
   const { t } = useLanguage();
   const { user, isAuthenticated, isLoading } = useAuth();
   const navigate = useNavigate();
-  const [redirectAttempted, setRedirectAttempted] = useState(false);
 
   // Check authentication and redirect if needed
   useEffect(() => {
-    console.log("AdminDashboard - Checking authentication:", isAuthenticated, "user:", user, "isLoading:", isLoading);
+    console.log("AdminDashboard - Auth state:", { isAuthenticated, user, isLoading });
     
-    // Only process redirects once and when authentication is confirmed
-    if (!isLoading && !redirectAttempted) {
-      setRedirectAttempted(true);
-      
+    // Only process redirects when loading is complete
+    if (!isLoading) {
       if (!isAuthenticated) {
         console.log("AdminDashboard - Not authenticated, redirecting to login");
         navigate('/login');
@@ -53,7 +49,7 @@ const AdminDashboard: React.FC = () => {
         console.log("AdminDashboard - User authenticated with correct role");
       }
     }
-  }, [isAuthenticated, user, navigate, isLoading, redirectAttempted]);
+  }, [isAuthenticated, user, navigate, isLoading]);
 
   // Show loading state while authentication is being checked
   if (isLoading) {

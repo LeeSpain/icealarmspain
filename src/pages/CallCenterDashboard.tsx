@@ -12,16 +12,13 @@ const CallCenterDashboard: React.FC = () => {
   const [selectedClient, setSelectedClient] = useState<number | null>(null);
   const { user, isAuthenticated, isLoading } = useAuth();
   const navigate = useNavigate();
-  const [redirectAttempted, setRedirectAttempted] = useState(false);
 
   // Redirect if not logged in or not a call center agent
   useEffect(() => {
-    console.log("CallCenterDashboard - Checking authentication:", isAuthenticated, "user:", user, "isLoading:", isLoading);
+    console.log("CallCenterDashboard - Auth state:", { isAuthenticated, user, isLoading });
     
-    // Only process redirects once and when authentication is confirmed
-    if (!isLoading && !redirectAttempted) {
-      setRedirectAttempted(true);
-      
+    // Only process redirects when loading is complete
+    if (!isLoading) {
       if (!isAuthenticated) {
         console.log("CallCenterDashboard - Not authenticated, redirecting to login");
         navigate('/login');
@@ -40,7 +37,7 @@ const CallCenterDashboard: React.FC = () => {
         console.log("CallCenterDashboard - User authenticated with correct role");
       }
     }
-  }, [isAuthenticated, user, navigate, isLoading, redirectAttempted]);
+  }, [isAuthenticated, user, navigate, isLoading]);
 
   // Show loading state while authentication is being checked
   if (isLoading) {

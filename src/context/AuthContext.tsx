@@ -41,8 +41,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     } else {
       console.log("No user found in localStorage");
     }
-    // Important: Set isLoading to false AFTER user state is set
-    setTimeout(() => setIsLoading(false), 100); // Small delay to ensure state updates properly
+    
+    // Set loading to false after a short delay to ensure state is consistent
+    setTimeout(() => setIsLoading(false), 500);
   }, []);
 
   // Mock users - in a real app, this would be authenticated against a backend
@@ -66,15 +67,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const { password, ...userWithoutPassword } = foundUser;
         console.log("User authenticated:", userWithoutPassword);
         
-        // Set user first, then update localStorage
-        setUser(userWithoutPassword);
+        // Set user in local storage first
         localStorage.setItem('user', JSON.stringify(userWithoutPassword));
         
-        // Ensure we have a small delay before setting isLoading to false
+        // Then update state
+        setUser(userWithoutPassword);
+        
+        // Give time for state to update before setting isLoading to false
         setTimeout(() => {
           setIsLoading(false);
           console.log("Login complete, isLoading set to false");
-        }, 100);
+        }, 1000);
         
         return true;
       }
@@ -91,8 +94,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const logout = () => {
     console.log("Logging out user:", user?.email);
-    setUser(null);
     localStorage.removeItem('user');
+    setUser(null);
   };
 
   const isAuthenticated = !!user;
