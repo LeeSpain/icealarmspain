@@ -1,23 +1,91 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Brain, MessageSquare, Bot, ShieldCheck, Lightbulb } from "lucide-react";
+import { Brain, MessageSquare, Bot, ShieldCheck, Lightbulb, Activity, BellRing, PlusSquare } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
+import { useAuth } from "@/context/AuthContext";
 import { toast } from "react-toastify";
+import { getDevices } from "@/components/devices/deviceData";
+import { NotificationType } from './notifications/types';
+
+// Topics the AI can help with
+const AI_TOPICS = {
+  en: [
+    { id: 'health', label: 'Health Data', icon: <Activity className="h-4 w-4" /> },
+    { id: 'devices', label: 'Device Setup', icon: <BellRing className="h-4 w-4" /> },
+    { id: 'medications', label: 'Medications', icon: <PlusSquare className="h-4 w-4" /> },
+  ],
+  es: [
+    { id: 'health', label: 'Datos de Salud', icon: <Activity className="h-4 w-4" /> },
+    { id: 'devices', label: 'Configuración de Dispositivos', icon: <BellRing className="h-4 w-4" /> },
+    { id: 'medications', label: 'Medicamentos', icon: <PlusSquare className="h-4 w-4" /> },
+  ]
+};
+
+// Knowledge base for the AI to reference
+const KNOWLEDGE_BASE = {
+  health: {
+    en: [
+      "Your blood pressure readings show a stable trend over the past month.",
+      "Your glucose levels have been within the normal range during the last week.",
+      "Remember to keep track of your daily water intake.",
+      "Regular physical activity can help maintain healthy blood pressure."
+    ],
+    es: [
+      "Sus lecturas de presión arterial muestran una tendencia estable durante el último mes.",
+      "Sus niveles de glucosa han estado dentro del rango normal durante la última semana.",
+      "Recuerde llevar un registro de su consumo diario de agua.",
+      "La actividad física regular puede ayudar a mantener una presión arterial saludable."
+    ]
+  },
+  devices: {
+    en: [
+      "To set up your SOS Pendant, press and hold the main button for 5 seconds until it flashes blue.",
+      "The Glucose Monitor needs to be calibrated once every 14 days for accurate readings.",
+      "For optimal performance, charge your devices overnight when battery is below 30%.",
+      "Place the Medical Dispenser on a flat, stable surface away from direct sunlight."
+    ],
+    es: [
+      "Para configurar su Colgante SOS, mantenga presionado el botón principal durante 5 segundos hasta que parpadee en azul.",
+      "El Monitor de Glucosa debe calibrarse una vez cada 14 días para lecturas precisas.",
+      "Para un rendimiento óptimo, cargue sus dispositivos durante la noche cuando la batería esté por debajo del 30%.",
+      "Coloque el Dispensador Médico en una superficie plana y estable, alejada de la luz solar directa."
+    ]
+  },
+  medications: {
+    en: [
+      "Your medication schedule has been updated based on your doctor's recent recommendations.",
+      "It's important to take your medications at the same time each day for optimal effectiveness.",
+      "Store your medications in a cool, dry place away from direct sunlight.",
+      "If you experience any side effects, contact your healthcare provider immediately."
+    ],
+    es: [
+      "Su horario de medicación ha sido actualizado según las recomendaciones recientes de su médico.",
+      "Es importante tomar sus medicamentos a la misma hora cada día para una efectividad óptima.",
+      "Guarde sus medicamentos en un lugar fresco y seco, alejado de la luz solar directa.",
+      "Si experimenta algún efecto secundario, contacte a su proveedor de salud inmediatamente."
+    ]
+  }
+};
 
 const AIGuardianTile: React.FC = () => {
   const { language } = useLanguage();
+  const { user } = useAuth();
   const [isInteracting, setIsInteracting] = useState(false);
-  const [messages, setMessages] = useState<Array<{text: string, type: 'guardian' | 'user'}>>([
-    {
-      text: language === 'en' 
-        ? "Hello! I'm your AI Guardian. How can I assist you today?" 
-        : "¡Hola! Soy tu Guardian AI. ¿Cómo puedo ayudarte hoy?",
-      type: 'guardian'
-    }
-  ]);
+  const [messages, setMessages] = useState<Array<{text: string, type: 'guardian' | 'user'}>>([]);
   const [input, setInput] = useState("");
+  const [selectedTopic, setSelectedTopic] = useState<string | null>(null);
+  const devices = getDevices(language);
+  
+  // Initialize the chat with a greeting message
+  useEffect(() => {
+    const greeting = language === 'en' 
+      ? `Hello${user?.name ? `, ${user.name}` : ''}! I'm your AI Guardian. How can I assist you today?` 
+      : `¡Hola${user?.name ? `, ${user.name}` : ''}! Soy tu Guardian AI. ¿Cómo puedo ayudarte hoy?`;
+    
+    setMessages([{ text: greeting, type: 'guardian' }]);
+  }, [language, user]);
   
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -26,29 +94,68 @@ const AIGuardianTile: React.FC = () => {
     // Add user message
     setMessages(prev => [...prev, {text: input, type: 'user'}]);
     
-    // Simulate AI response
-    setTimeout(() => {
-      const responses = {
+    // Process user query
+    processUserQuery(input);
+    
+    setInput("");
+  };
+  
+  const processUserQuery = (query: string) => {
+    const lowercaseQuery = query.toLowerCase();
+    let responseText = '';
+    
+    // Determine the topic based on keywords in the query
+    if (lowercaseQuery.includes('glucose') || lowercaseQuery.includes('blood') || lowercaseQuery.includes('health') || 
+        lowercaseQuery.includes('glucosa') || lowercaseQuery.includes('sangre') || lowercaseQuery.includes('salud')) {
+      responseFromKnowledgeBase('health');
+    } 
+    else if (lowercaseQuery.includes('setup') || lowercaseQuery.includes('device') || lowercaseQuery.includes('monitor') || 
+             lowercaseQuery.includes('pendant') || lowercaseQuery.includes('configurar') || lowercaseQuery.includes('dispositivo')) {
+      responseFromKnowledgeBase('devices');
+    } 
+    else if (lowercaseQuery.includes('medication') || lowercaseQuery.includes('medicine') || lowercaseQuery.includes('pill') || 
+             lowercaseQuery.includes('medicamento') || lowercaseQuery.includes('medicina') || lowercaseQuery.includes('pastilla')) {
+      responseFromKnowledgeBase('medications');
+    } 
+    else {
+      // General response if no specific topic is identified
+      const generalResponses = {
         en: [
-          "I'm monitoring your vital signs and everything looks normal today.",
-          "Your medication schedule is updated. Would you like me to remind you when it's time to take them?",
-          "I've noticed your blood pressure readings are more stable this week. Great job keeping up with your medication!",
-          "Is there anything specific you'd like to know about your health data?"
+          "I can help you with health monitoring, device setup, or medication management. What would you like to know about?",
+          "I'm here to assist with your health data, device configuration, or medication schedule. How can I help today?",
+          "Feel free to ask me about your health metrics, how to set up your devices, or about your medications."
         ],
         es: [
-          "Estoy monitoreando tus signos vitales y todo se ve normal hoy.",
-          "Tu horario de medicación está actualizado. ¿Quieres que te recuerde cuando sea hora de tomarlos?",
-          "He notado que tus lecturas de presión arterial son más estables esta semana. ¡Buen trabajo manteniendo tu medicación!",
-          "¿Hay algo específico que te gustaría saber sobre tus datos de salud?"
+          "Puedo ayudarte con el monitoreo de salud, configuración de dispositivos o gestión de medicamentos. ¿Sobre qué te gustaría saber?",
+          "Estoy aquí para ayudarte con tus datos de salud, configuración de dispositivos o horario de medicamentos. ¿Cómo puedo ayudarte hoy?",
+          "No dudes en preguntarme sobre tus métricas de salud, cómo configurar tus dispositivos o sobre tus medicamentos."
         ]
       };
       
-      const randomResponse = responses[language === 'en' ? 'en' : 'es'][Math.floor(Math.random() * responses[language === 'en' ? 'en' : 'es'].length)];
+      const randomIndex = Math.floor(Math.random() * generalResponses[language === 'en' ? 'en' : 'es'].length);
+      responseText = generalResponses[language === 'en' ? 'en' : 'es'][randomIndex];
       
-      setMessages(prev => [...prev, {text: randomResponse, type: 'guardian'}]);
+      setTimeout(() => {
+        setMessages(prev => [...prev, {text: responseText, type: 'guardian'}]);
+      }, 1000);
+    }
+  };
+  
+  const responseFromKnowledgeBase = (topic: string) => {
+    const topicResponses = KNOWLEDGE_BASE[topic as keyof typeof KNOWLEDGE_BASE][language === 'en' ? 'en' : 'es'];
+    const randomIndex = Math.floor(Math.random() * topicResponses.length);
+    const responseText = topicResponses[randomIndex];
+    
+    setTimeout(() => {
+      setMessages(prev => [...prev, {text: responseText, type: 'guardian'}]);
     }, 1000);
     
-    setInput("");
+    setSelectedTopic(topic);
+  };
+  
+  const handleTopicSelect = (topic: string) => {
+    setSelectedTopic(topic);
+    responseFromKnowledgeBase(topic);
   };
   
   const handleStartInteraction = () => {
@@ -71,7 +178,7 @@ const AIGuardianTile: React.FC = () => {
       <CardContent className="p-4">
         {isInteracting ? (
           <div className="space-y-4">
-            <div className="h-48 overflow-y-auto space-y-2 bg-slate-50 p-3 rounded-md">
+            <div className="h-48 overflow-y-auto space-y-2 bg-slate-50 p-3 rounded-md" id="chat-container">
               {messages.map((message, idx) => (
                 <div 
                   key={idx} 
@@ -90,6 +197,33 @@ const AIGuardianTile: React.FC = () => {
                     </p>
                   </div>
                 </div>
+              ))}
+            </div>
+            
+            {selectedTopic && (
+              <div className="flex flex-wrap gap-2 text-xs">
+                <span className="font-medium text-guardian-600">
+                  {language === 'en' ? 'Discussing:' : 'Discutiendo:'}
+                </span>
+                <span className="px-2 py-0.5 bg-guardian-100 text-guardian-700 rounded-full flex items-center">
+                  {AI_TOPICS[language === 'en' ? 'en' : 'es'].find(t => t.id === selectedTopic)?.icon}
+                  <span className="ml-1">
+                    {AI_TOPICS[language === 'en' ? 'en' : 'es'].find(t => t.id === selectedTopic)?.label}
+                  </span>
+                </span>
+              </div>
+            )}
+            
+            <div className="flex flex-wrap gap-2">
+              {AI_TOPICS[language === 'en' ? 'en' : 'es'].map(topic => (
+                <button
+                  key={topic.id}
+                  onClick={() => handleTopicSelect(topic.id)}
+                  className="px-2 py-1 text-xs bg-slate-100 hover:bg-slate-200 rounded-md flex items-center"
+                >
+                  {topic.icon}
+                  <span className="ml-1">{topic.label}</span>
+                </button>
               ))}
             </div>
             
