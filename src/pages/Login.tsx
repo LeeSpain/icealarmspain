@@ -13,7 +13,7 @@ const Login: React.FC = () => {
   const { language } = useLanguage();
   const navigate = useNavigate();
   const location = useLocation();
-  const { login, user, isAuthenticated, isLoading } = useAuth();
+  const { signIn, user, isAuthenticated, isLoading } = useAuth();
   const [loginInProgress, setLoginInProgress] = useState(false);
   const [redirectTriggered, setRedirectTriggered] = useState(false);
   
@@ -69,7 +69,7 @@ const Login: React.FC = () => {
     setLoginInProgress(true);
     try {
       console.log("Attempting login with:", email);
-      const success = await login(email, password);
+      const success = await signIn(email, password);
       
       if (success) {
         toast({

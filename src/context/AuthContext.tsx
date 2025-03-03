@@ -1,18 +1,12 @@
+
 import React, { createContext, useState, useEffect, useContext } from 'react';
-import {
-  signInWithEmailAndPassword,
-  createUserWithEmailAndPassword,
-  signOut,
-  onAuthStateChanged,
-  updateProfile,
-} from 'firebase/auth';
 import { auth } from '../firebase';
 
 interface AuthContextProps {
   user: User | null;
   isAuthenticated: boolean;
   isLoading: boolean;
-  signIn: (email: string, password: string) => Promise<void>;
+  signIn: (email: string, password: string) => Promise<boolean>;
   signUp: (email: string, password: string, name: string) => Promise<void>;
   logout: () => Promise<void>;
   updateUser: (name: string) => Promise<void>;
@@ -35,7 +29,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (authUser) => {
+    const unsubscribe = auth.onAuthStateChanged(async (authUser) => {
       setIsLoading(true);
       if (authUser) {
         // Here, we're using a mock role and language.
@@ -50,7 +44,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           name: authUser.displayName,
           email: authUser.email || '',
           role: mockRole as 'member' | 'callcenter' | 'admin',
-          language: mockLanguage,
+          language: mockLanguage as 'en' | 'es',
           profileCompleted: mockProfileCompleted,
         });
         setIsAuthenticated(true);
@@ -64,11 +58,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return () => unsubscribe();
   }, []);
 
-  const signIn = async (email: string, password: string) => {
+  const signIn = async (email: string, password: string): Promise<boolean> => {
     setIsLoading(true);
     try {
-      await signInWithEmailAndPassword(auth, email, password);
+      await auth.signInWithEmailAndPassword(email, password);
       setIsAuthenticated(true);
+      return true;
     } catch (error: any) {
       console.error("Sign In Error:", error.message);
       setIsAuthenticated(false);
@@ -81,8 +76,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const signUp = async (email: string, password: string, name: string) => {
     setIsLoading(true);
     try {
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      await updateProfile(userCredential.user, { displayName: name });
+      const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+      await auth.updateProfile(userCredential.user, { displayName: name });
 
       // After successful signup, update the user state
       setUser({
@@ -106,7 +101,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const logout = async () => {
     setIsLoading(true);
     try {
-      await signOut(auth);
+      await auth.signOut();
       setIsAuthenticated(false);
       setUser(null);
     } catch (error: any) {
@@ -121,7 +116,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (auth.currentUser) {
       setIsLoading(true);
       try {
-        await updateProfile(auth.currentUser, {
+        await auth.updateProfile(auth.currentUser, {
           displayName: name,
         });
         // Update the user state with the new name
