@@ -66,9 +66,19 @@ const CreateTicketDialog: React.FC<CreateTicketDialogProps> = ({
             <textarea 
               id="description" 
               value={newTicket.description} 
-              onChange={(e) => setNewTicket({...newTicket, description: e.target.value})}
+              onChange={(e) => setNewTicket({...newTicket, description: e.target.value, message: e.target.value})}
               className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
               placeholder="Detailed description of the issue" 
+            />
+          </div>
+          
+          <div className="grid gap-2">
+            <Label htmlFor="category">Category</Label>
+            <Input 
+              id="category" 
+              value={newTicket.category} 
+              onChange={(e) => setNewTicket({...newTicket, category: e.target.value})}
+              placeholder="Ticket category" 
             />
           </div>
           
@@ -77,7 +87,7 @@ const CreateTicketDialog: React.FC<CreateTicketDialogProps> = ({
             <select 
               id="priority" 
               value={newTicket.priority} 
-              onChange={(e) => setNewTicket({...newTicket, priority: e.target.value})}
+              onChange={(e) => setNewTicket({...newTicket, priority: e.target.value as 'low' | 'medium' | 'high'})}
               className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
             >
               <option value="low">Low</option>

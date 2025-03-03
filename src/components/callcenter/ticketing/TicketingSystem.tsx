@@ -18,11 +18,13 @@ const TicketingSystem: React.FC<TicketingSystemProps> = ({ onClientSelect }) => 
   const [selectedTicket, setSelectedTicket] = useState<number | null>(null);
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [newTicket, setNewTicket] = useState<NewTicketForm>({
-    clientId: "",
+    clientId: 0, // Initialize with number 0 instead of empty string
     clientName: "",
     subject: "",
-    description: "",
-    priority: "medium"
+    description: "", // Added to match the interface
+    message: "", // Added to match the interface
+    priority: "medium", // Use literal string type
+    category: "" // Added to match the interface
   });
   
   // Filter states
@@ -74,15 +76,17 @@ const TicketingSystem: React.FC<TicketingSystemProps> = ({ onClientSelect }) => 
       return;
     }
     
-    const newTicketObj = {
+    const newTicketObj: Ticket = {
       id: tickets.length + 1,
-      clientId: parseInt(newTicket.clientId) || tickets.length + 100,
+      clientId: typeof newTicket.clientId === 'string' ? parseInt(newTicket.clientId) || tickets.length + 100 : newTicket.clientId,
       clientName: newTicket.clientName,
       subject: newTicket.subject,
+      message: newTicket.description || "", // Use description as message if provided
       status: "open" as const,
-      priority: newTicket.priority as "high" | "medium" | "low",
+      priority: newTicket.priority,
       created: new Date().toISOString(),
-      lastUpdated: new Date().toISOString()
+      lastUpdated: new Date().toISOString(),
+      category: newTicket.category || "General" // Default to General if not provided
     };
     
     setTickets([...tickets, newTicketObj]);
@@ -91,11 +95,13 @@ const TicketingSystem: React.FC<TicketingSystemProps> = ({ onClientSelect }) => 
     
     // Reset form
     setNewTicket({
-      clientId: "",
+      clientId: 0, // Reset to number
       clientName: "",
       subject: "",
       description: "",
-      priority: "medium"
+      message: "",
+      priority: "medium",
+      category: ""
     });
   };
 
@@ -116,9 +122,11 @@ const TicketingSystem: React.FC<TicketingSystemProps> = ({ onClientSelect }) => 
     const newNote: InternalNote = {
       id: internalNotes.length + 1,
       ticketId: ticketId,
-      agentName: "Support Agent", // This would typically come from the logged-in user
+      createdBy: "Support Agent", // Use createdBy from the interface
       content: content,
-      timestamp: new Date().toISOString()
+      createdAt: new Date().toISOString(),
+      agentName: "Support Agent", // Add to match component usage
+      timestamp: new Date().toISOString() // Add to match component usage
     };
     
     setInternalNotes([...internalNotes, newNote]);

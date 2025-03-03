@@ -7,12 +7,14 @@ interface SidebarNavigationProps {
   activeSection: string;
   setActiveSection: (section: string) => void;
   collapsed: boolean;
+  onLogout?: () => void; // Add onLogout prop to match usage in Sidebar
 }
 
 const SidebarNavigation: React.FC<SidebarNavigationProps> = ({ 
   activeSection, 
   setActiveSection, 
-  collapsed 
+  collapsed,
+  onLogout 
 }) => {
   return (
     <div className="space-y-1">

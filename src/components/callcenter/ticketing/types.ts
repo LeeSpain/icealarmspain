@@ -21,6 +21,11 @@ export interface Message {
   sentBy: string;
   sentAt: string;
   isInternal: boolean;
+  // Added properties to match usage in components
+  sender: string;
+  isClient: boolean;
+  message: string;
+  timestamp: string;
 }
 
 export interface InternalNote {
@@ -29,13 +34,18 @@ export interface InternalNote {
   content: string;
   createdBy: string;
   createdAt: string;
+  // Added properties to match usage in components
+  agentName: string;
+  timestamp: string;
 }
 
 export interface NewTicketForm {
-  clientId: number;
+  clientId: number | string; // Allow both number and string types
   clientName: string;
   subject: string;
   message: string;
   priority: 'low' | 'medium' | 'high';
   category: string;
+  // Add description to match component usage
+  description: string;
 }
