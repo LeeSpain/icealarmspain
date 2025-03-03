@@ -13,12 +13,17 @@ const DashboardPage: React.FC = () => {
   const navigate = useNavigate();
   
   useEffect(() => {
-    console.log("DashboardPage - Checking authentication:", isAuthenticated);
+    console.log("DashboardPage - Checking authentication:", isAuthenticated, "user:", user);
     // Redirect to login if not authenticated
     if (!isAuthenticated) {
       navigate('/login');
+    } else if (user && user.role !== 'member' && user.role !== 'admin') {
+      // If user is not a member or admin, redirect to appropriate dashboard
+      if (user.role === 'callcenter') {
+        navigate('/call-center');
+      }
     }
-  }, [isAuthenticated, navigate]);
+  }, [isAuthenticated, navigate, user]);
   
   console.log("DashboardPage rendering - sidebarCollapsed:", sidebarCollapsed);
   

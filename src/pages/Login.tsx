@@ -26,7 +26,7 @@ const Login: React.FC = () => {
     if (isAuthenticated && user) {
       const redirectTo = redirectParam || getDefaultRedirect(user.role);
       console.log("Redirecting authenticated user to:", redirectTo);
-      navigate(redirectTo);
+      navigate(redirectTo, { replace: true });
     }
   }, [isAuthenticated, navigate, user, redirectParam]);
   
@@ -37,6 +37,8 @@ const Login: React.FC = () => {
         return '/admin';
       case 'callcenter':
         return '/call-center';
+      case 'member':
+        return '/dashboard';
       default:
         return '/dashboard';
     }
@@ -109,7 +111,7 @@ const Login: React.FC = () => {
                 <div className="mt-2 space-y-1 text-xs text-muted-foreground">
                   <p><strong>{language === 'en' ? "Admin:" : "Administrador:"}</strong> admin@icealarm.es / admin123</p>
                   <p><strong>{language === 'en' ? "Member:" : "Miembro:"}</strong> member@icealarm.es / member123</p>
-                  <p><strong>{language === 'en' ? "Call Center:" : "Centro de Llamadas:"}</strong> callcenter@icealarm.es / call123</p>
+                  <p><strong>{language === 'en' ? "Call Center:" : "Centro de Llamadas:"}</strong> agent@icealarm.es / agent123</p>
                 </div>
               </div>
             </CardContent>

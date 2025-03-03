@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
 // Define user types and roles
@@ -28,7 +29,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
-      setUser(JSON.parse(storedUser));
+      try {
+        const parsedUser = JSON.parse(storedUser);
+        setUser(parsedUser);
+        console.log("Restored user from localStorage:", parsedUser);
+      } catch (e) {
+        console.error("Error parsing stored user:", e);
+        localStorage.removeItem('user');
+      }
     }
     setIsLoading(false);
   }, []);
@@ -42,6 +50,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const login = async (email: string, password: string): Promise<boolean> => {
     setIsLoading(true);
+    console.log("Login attempt with email:", email);
     
     // Simulate API request delay
     await new Promise(resolve => setTimeout(resolve, 1000));
@@ -50,26 +59,31 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     
     if (foundUser) {
       const { password, ...userWithoutPassword } = foundUser;
+      console.log("User authenticated:", userWithoutPassword);
       setUser(userWithoutPassword);
       localStorage.setItem('user', JSON.stringify(userWithoutPassword));
       setIsLoading(false);
       return true;
     }
     
+    console.log("Authentication failed for email:", email);
     setIsLoading(false);
     return false;
   };
 
   const logout = () => {
+    console.log("Logging out user:", user?.email);
     setUser(null);
     localStorage.removeItem('user');
   };
+
+  const isAuthenticated = !!user;
 
   const value = {
     user,
     login,
     logout,
-    isAuthenticated: !!user,
+    isAuthenticated,
     isLoading
   };
 
