@@ -13,7 +13,7 @@ interface StepProps {
   title: string;
   description?: string;
   icon?: React.ReactNode;
-  // Add these props to fix the TypeScript error
+  // Props added to fix the TypeScript error
   stepNumber?: number;
   isActive?: boolean;
   isCompleted?: boolean;
@@ -31,7 +31,8 @@ export const Steps = ({ currentStep, children, className }: StepsProps) => {
   // Clone and enhance each Step component with additional props
   const enhancedSteps = React.Children.map(children, (child, index) => {
     if (React.isValidElement(child) && child.type === Step) {
-      return React.cloneElement(child, {
+      // Use proper typing for cloneElement
+      return React.cloneElement(child as React.ReactElement<StepProps>, {
         stepNumber: index + 1,
         isActive: index + 1 === currentStep,
         isCompleted: index + 1 < currentStep,
