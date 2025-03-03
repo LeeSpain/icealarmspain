@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { 
   LayoutDashboard, 
@@ -183,7 +184,9 @@ const Sidebar: React.FC<SidebarProps> = ({ activeSection, setActiveSection, coll
         {sidebarSections.map((section, index) => (
           <div key={index} className="mb-6">
             {section.title && (
-              <h3 className="font-medium text-sm text-ice-500 mb-2">{t(`adminDashboard.${section.title.toLowerCase().replace(' ', '')}`)}</h3>
+              <h3 className="font-medium text-sm text-ice-500 mb-2">
+                {t(`adminDashboard.${section.title.toLowerCase().replace(/\s+/g, '')}`)}
+              </h3>
             )}
             <ul className="space-y-1">
               {section.items.map((item) => (
@@ -199,7 +202,7 @@ const Sidebar: React.FC<SidebarProps> = ({ activeSection, setActiveSection, coll
                     onClick={() => handleSectionClick(item.id)}
                   >
                     <item.icon className="w-4 h-4 mr-2" />
-                    <span>{t(`adminDashboard.${item.label.toLowerCase().replace(' ', '')}`)}</span>
+                    <span>{t(`adminDashboard.${item.label.toLowerCase().replace(/\s+/g, '')}`)}</span>
                   </Link>
                 </li>
               ))}
