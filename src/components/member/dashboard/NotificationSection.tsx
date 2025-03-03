@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Bell, MessageCircle, Activity, Pill, Check, X } from "lucide-react";
@@ -8,44 +7,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useLanguage } from "@/context/LanguageContext";
 import { toast } from "react-toastify";
 
-// Mock notification data - In a real app, this would come from an API
-const getMockNotifications = () => {
-  return [
-    {
-      id: '1',
-      type: 'message',
-      title: 'New message from Call Center',
-      message: 'Please confirm your appointment for tomorrow at 3:00 PM.',
-      time: new Date(Date.now() - 1000 * 60 * 30), // 30 minutes ago
-      read: false
-    },
-    {
-      id: '2',
-      type: 'glucose',
-      title: 'Glucose Level Alert',
-      message: 'Your glucose reading is 180 mg/dL. This is above your target range.',
-      time: new Date(Date.now() - 1000 * 60 * 120), // 2 hours ago
-      read: false
-    },
-    {
-      id: '3',
-      type: 'medication',
-      title: 'Medication Reminder',
-      message: 'Time to take your evening dose of Metformin.',
-      time: new Date(Date.now() - 1000 * 60 * 240), // 4 hours ago
-      read: true
-    },
-    {
-      id: '4',
-      type: 'system',
-      title: 'Device Update Available',
-      message: 'A firmware update is available for your SOS Pendant. Please sync your device.',
-      time: new Date(Date.now() - 1000 * 60 * 60 * 24), // 1 day ago
-      read: true
-    }
-  ];
-};
-
 interface Notification {
   id: string;
   type: 'message' | 'glucose' | 'medication' | 'system';
@@ -54,6 +15,43 @@ interface Notification {
   time: Date;
   read: boolean;
 }
+
+const getMockNotifications = (): Notification[] => {
+  return [
+    {
+      id: '1',
+      type: 'message' as const,
+      title: 'New message from Call Center',
+      message: 'Please confirm your appointment for tomorrow at 3:00 PM.',
+      time: new Date(Date.now() - 1000 * 60 * 30), // 30 minutes ago
+      read: false
+    },
+    {
+      id: '2',
+      type: 'glucose' as const,
+      title: 'Glucose Level Alert',
+      message: 'Your glucose reading is 180 mg/dL. This is above your target range.',
+      time: new Date(Date.now() - 1000 * 60 * 120), // 2 hours ago
+      read: false
+    },
+    {
+      id: '3',
+      type: 'medication' as const,
+      title: 'Medication Reminder',
+      message: 'Time to take your evening dose of Metformin.',
+      time: new Date(Date.now() - 1000 * 60 * 240), // 4 hours ago
+      read: true
+    },
+    {
+      id: '4',
+      type: 'system' as const,
+      title: 'Device Update Available',
+      message: 'A firmware update is available for your SOS Pendant. Please sync your device.',
+      time: new Date(Date.now() - 1000 * 60 * 60 * 24), // 1 day ago
+      read: true
+    }
+  ];
+};
 
 const NotificationSection: React.FC = () => {
   const { language } = useLanguage();
@@ -91,7 +89,6 @@ const NotificationSection: React.FC = () => {
     );
   };
   
-  // Filter notifications based on active tab
   const filteredNotifications = notifications.filter(notification => {
     if (activeTab === "all") return true;
     if (activeTab === "unread") return !notification.read;
@@ -113,7 +110,7 @@ const NotificationSection: React.FC = () => {
     }
   };
   
-  const getNotificationIcon = (type: string) => {
+  const getNotificationIcon = (type: Notification['type']) => {
     switch (type) {
       case 'message':
         return <MessageCircle className="h-4 w-4 text-blue-500" />;
