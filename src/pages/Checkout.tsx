@@ -9,8 +9,10 @@ import PaymentSuccess from "@/components/payment/PaymentSuccess";
 import CheckoutSteps from "@/components/checkout/CheckoutSteps";
 import BillingInfoSummary from "@/components/checkout/BillingInfoSummary";
 import { useCheckout } from "@/components/checkout/useCheckout";
+import { useLanguage } from "@/context/LanguageContext";
 
 const Checkout: React.FC = () => {
+  const { language } = useLanguage();
   const {
     step,
     loading,
