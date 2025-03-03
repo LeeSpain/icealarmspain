@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { useQuestionnaire } from './QuestionnaireContext';
-import { questions } from './QuestionData';
+import { questions } from './questions';
 import QuestionCard from './QuestionCard';
 import ProgressIndicator from './ProgressIndicator';
 import NavigationControls from './NavigationControls';

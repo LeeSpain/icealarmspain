@@ -1,7 +1,6 @@
-
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 import { MultiEntry } from './types';
-import { questions } from './QuestionData';
+import { questions } from './questions';
 
 // Define the shape of our context
 interface QuestionnaireContextType {
