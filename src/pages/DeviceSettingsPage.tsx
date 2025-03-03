@@ -1,11 +1,10 @@
-
 import React, { useState } from "react";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import MemberSidebar from "@/components/member/MemberSidebar";
 import { useLanguage } from "@/context/LanguageContext";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { DeviceSettings, AlertCircle, Bell, Settings, Battery, Wifi, MapPin } from "lucide-react";
+import { AlertCircle, Bell, Settings, Battery, Wifi, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
@@ -255,7 +254,7 @@ const DeviceSettingsPage: React.FC = () => {
               <Card>
                 <CardHeader>
                   <div className="flex items-center gap-2">
-                    <DeviceSettings className="h-5 w-5 text-ice-500" />
+                    <Settings className="h-5 w-5 text-ice-500" />
                     <CardTitle>
                       {language === 'en' ? 'Device Information' : 'Información del Dispositivo'}
                     </CardTitle>
