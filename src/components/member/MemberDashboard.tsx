@@ -7,10 +7,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { toast } from "react-toastify";
 import { CalendarDays, BarChart4, Settings, HelpCircle, Plus, Check } from "lucide-react";
-import { SOSTile } from "@/components/member/dashboard/SOSTile";
-import { GlucoseTile } from "@/components/member/dashboard/GlucoseTile";
-import { WeatherTile } from "@/components/member/dashboard/WeatherTile";
-import { NewsTile } from "@/components/member/dashboard/NewsTile";
+import SOSTile from "@/components/member/dashboard/SOSTile";
+import GlucoseTile from "@/components/member/dashboard/GlucoseTile";
+import WeatherTile from "@/components/member/dashboard/WeatherTile";
+import NewsTile from "@/components/member/dashboard/NewsTile";
 import { CartSection } from "@/components/member/dashboard/CartSection";
 import { useCart } from "@/components/payment/CartContext";
 

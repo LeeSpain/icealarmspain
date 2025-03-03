@@ -10,7 +10,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { CreditCard, ShoppingCart, AlertCircle, CheckCircle2, User } from "lucide-react";
 import { payment, auth } from "@/firebase";
 import { useAuth } from "@/context/AuthContext";
-import { Tab, Tabs, TabList, TabPanel } from "@/components/ui/tabs";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 
 interface PaymentDetails {
   cardNumber: string;
