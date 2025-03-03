@@ -21,6 +21,28 @@ export const es: Record<string, string> = {
   "loading": "Cargando",
   "noData": "No hay datos disponibles",
 
+  // Navbar
+  "nav.home": "Inicio",
+  "nav.devices": "Dispositivos",
+  "nav.pricing": "Precios",
+  "nav.about_us": "Sobre Nosotros",
+  "nav.contact": "Contacto",
+  "nav.login": "Iniciar Sesión",
+  "nav.signup": "Únete Ahora",
+  "nav.logout": "Cerrar Sesión",
+  "nav.dashboard": "Panel",
+
+  // Expat Section
+  "expat.title": "Servicios de Apoyo para Expatriados",
+  "expat.subtitle": "Ayudándote a sentirte como en casa, dondequiera que estés",
+  "expat.desc": "Nuestros servicios especializados garantizan que las barreras idiomáticas y las diferencias culturales no obstaculicen tu salud y seguridad.",
+  "expat.service.title": "Soporte Multilingüe 24/7",
+  "expat.service.desc": "Obtén ayuda en tu idioma preferido a cualquier hora del día o de la noche. Nuestros agentes hablan más de 12 idiomas.",
+  "expat.translation.title": "Traducción de Documentos",
+  "expat.translation.desc": "Podemos ayudarte a traducir documentos médicos importantes y recetas para asegurar que recibas la atención adecuada.",
+  "expat.emergency.title": "Asistencia de Emergencia",
+  "expat.emergency.desc": "En caso de emergencia, ofrecemos servicios de traducción en tiempo real con personal médico y podemos dirigirte a instalaciones amigables para expatriados.",
+
   // Admin Dashboard
   "adminDashboard.title": "Panel de Administración",
   "adminDashboard.administration": "Administración",

@@ -21,6 +21,28 @@ export const en: Record<string, string> = {
   "loading": "Loading",
   "noData": "No data available",
 
+  // Navbar
+  "nav.home": "Home",
+  "nav.devices": "Devices",
+  "nav.pricing": "Pricing",
+  "nav.about_us": "About Us",
+  "nav.contact": "Contact",
+  "nav.login": "Login",
+  "nav.signup": "Join Now",
+  "nav.logout": "Logout",
+  "nav.dashboard": "Dashboard",
+
+  // Expat Section
+  "expat.title": "Expat Support Services",
+  "expat.subtitle": "Helping you feel at home, wherever you are",
+  "expat.desc": "Our specialized services ensure that language barriers and cultural differences don't stand in the way of your health and safety.",
+  "expat.service.title": "24/7 Multilingual Support",
+  "expat.service.desc": "Get help in your preferred language any time of day or night. Our agents speak over 12 languages.",
+  "expat.translation.title": "Document Translation",
+  "expat.translation.desc": "We can help translate important medical documents and prescriptions to ensure you get the right care.",
+  "expat.emergency.title": "Emergency Assistance",
+  "expat.emergency.desc": "In case of emergency, we provide real-time translation services with medical personnel and can direct you to expat-friendly facilities.",
+
   // Admin Dashboard
   "adminDashboard.title": "Admin Dashboard",
   "adminDashboard.administration": "Administration",
