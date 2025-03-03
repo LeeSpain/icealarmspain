@@ -40,15 +40,19 @@ const AgentDashboard: React.FC<AgentDashboardProps> = ({ setActiveSection }) => 
   const avgResponseTime = mockCallData.responseTime.reduce((sum, item) => sum + item.value, 0) / mockCallData.responseTime.length;
   
   return (
-    <div className="space-y-6">
-      {/* Welcome Card */}
-      <WelcomeCard user={user} />
-
-      {/* Urgent Notifications */}
-      <UrgentNotifications 
-        notifications={getMockNotifications()} 
-        setActiveSection={setActiveSection} 
-      />
+    <div className="space-y-4">
+      {/* Welcome Card with Urgent Notifications side by side */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        <div className="lg:col-span-2">
+          <WelcomeCard user={user} />
+        </div>
+        <div className="lg:col-span-1">
+          <UrgentNotifications 
+            notifications={getMockNotifications()} 
+            setActiveSection={setActiveSection} 
+          />
+        </div>
+      </div>
       
       {/* Stats Cards */}
       <StatsCards 
@@ -59,7 +63,7 @@ const AgentDashboard: React.FC<AgentDashboardProps> = ({ setActiveSection }) => 
       />
       
       {/* Main Content Area with Pending Alerts and Activity Sidebar */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         <PendingAlerts pendingTickets={pendingTickets} />
         <ActivitySidebar recentCalls={recentCalls} upcomingTasks={upcomingTasks} />
       </div>

@@ -32,12 +32,11 @@ const UrgentNotifications: React.FC<UrgentNotificationsProps> = ({
   // Filter pending high priority tickets
   const urgentTickets = mockTickets.filter(ticket => 
     ticket.status !== 'closed' && ticket.priority === 'high'
-  ).slice(0, 3);
+  ).slice(0, 2); // Reduced from 3 to 2 items
   
-  // Mock data for urgent chats
+  // Mock data for urgent chats - reduced to just one item
   const urgentChats = [
-    { id: 1, clientName: "Maria García", message: "I'm having trouble with my medical dispenser", time: "5m ago", unread: true },
-    { id: 2, clientName: "John Smith", message: "My glucose monitor isn't sending readings", time: "15m ago", unread: true }
+    { id: 1, clientName: "Maria García", message: "I'm having trouble with my medical dispenser", time: "5m ago", unread: true }
   ];
   
   const handleViewAll = (section: string) => {
@@ -52,22 +51,22 @@ const UrgentNotifications: React.FC<UrgentNotificationsProps> = ({
   const totalUrgentItems = urgentNotifications.length + urgentTickets.length + urgentChats.length;
   
   return (
-    <Card className="border-l-4 border-red-500 shadow-md">
-      <CardHeader className="pb-3">
+    <Card className="border-l-4 border-red-500 shadow-md h-full">
+      <CardHeader className="pb-2 pt-3">
         <div className="flex justify-between items-center">
-          <CardTitle className="text-lg font-bold flex items-center">
-            <AlertTriangle className="h-5 w-5 text-red-500 mr-2" />
+          <CardTitle className="text-sm font-bold flex items-center">
+            <AlertTriangle className="h-4 w-4 text-red-500 mr-1" />
             Urgent & Important
           </CardTitle>
-          <Badge variant="destructive" className="ml-2">
+          <Badge variant="destructive" className="ml-2 text-xs py-0">
             {totalUrgentItems} items
           </Badge>
         </div>
-        <CardDescription>
+        <CardDescription className="text-xs">
           Critical items requiring immediate attention
         </CardDescription>
       </CardHeader>
-      <CardContent className="space-y-4">
+      <CardContent className="space-y-2 pb-3 pt-0">
         <MedicalAlertsSection 
           notifications={notifications} 
           handleViewAll={handleViewAll} 
