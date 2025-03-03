@@ -11,6 +11,7 @@ import GlucoseTile from "@/components/member/dashboard/GlucoseTile";
 import WeatherTile from "@/components/member/dashboard/WeatherTile";
 import NewsTile from "@/components/member/dashboard/NewsTile";
 import AIGuardianTile from "@/components/member/dashboard/AIGuardianTile";
+import NotificationSection from "@/components/member/dashboard/NotificationSection";
 import { CartSection } from "@/components/member/dashboard/CartSection";
 import { useCart } from "@/components/payment/CartContext";
 
@@ -95,18 +96,22 @@ const MemberDashboard: React.FC = () => {
             </div>
           </div>
           
-          {cart.length > 0 && (
-            <CartSection 
-              cart={cart} 
-              onRemoveFromCart={removeFromCart}
-              onCheckout={() => navigate('/checkout')}
-            />
-          )}
-          
-          {/* AI Guardian section */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-            <div className="md:col-span-2 lg:col-span-3">
-              <AIGuardianTile />
+          {/* Notifications and Cart section */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+            <div className="lg:col-span-2">
+              <NotificationSection />
+            </div>
+            
+            <div className="lg:col-span-1">
+              {cart.length > 0 ? (
+                <CartSection 
+                  cart={cart} 
+                  onRemoveFromCart={removeFromCart}
+                  onCheckout={() => navigate('/checkout')}
+                />
+              ) : (
+                <AIGuardianTile />
+              )}
             </div>
           </div>
           
