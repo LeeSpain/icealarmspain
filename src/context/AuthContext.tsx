@@ -29,39 +29,55 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
+    console.log("AuthContext initializing and checking authentication state");
     const unsubscribe = auth.onAuthStateChanged(async (authUser) => {
       setIsLoading(true);
+      console.log("Auth state changed:", { authUser });
+      
       if (authUser) {
         // Here, we're using a mock role and language.
         // In a real application, you'd fetch this data from your database.
-        const mockRole = authUser.email?.endsWith('@admin.com') ? 'admin' :
-                         authUser.email?.endsWith('@callcenter.com') ? 'callcenter' : 'member';
+        const mockRole = authUser.email?.endsWith('@admin.com') || authUser.email === 'admin@icealarm.es' 
+          ? 'admin' 
+          : (authUser.email?.endsWith('@callcenter.com') || authUser.email === 'agent@icealarm.es' 
+            ? 'callcenter' 
+            : 'member');
+            
         const mockLanguage = authUser.email?.endsWith('@es.com') ? 'es' : 'en';
         const mockProfileCompleted = authUser.email?.startsWith('completed') ? true : false;
 
-        setUser({
+        const userData = {
           id: authUser.uid,
           name: authUser.displayName,
           email: authUser.email || '',
           role: mockRole as 'member' | 'callcenter' | 'admin',
           language: mockLanguage as 'en' | 'es',
           profileCompleted: mockProfileCompleted,
-        });
+        };
+        
+        console.log("Setting authenticated user:", userData);
+        setUser(userData);
         setIsAuthenticated(true);
       } else {
+        console.log("No authenticated user found");
         setUser(null);
         setIsAuthenticated(false);
       }
       setIsLoading(false);
     });
 
-    return () => unsubscribe();
+    return () => {
+      console.log("Cleaning up auth listener");
+      unsubscribe();
+    };
   }, []);
 
   const signIn = async (email: string, password: string): Promise<boolean> => {
+    console.log("SignIn attempt with email:", email);
     setIsLoading(true);
     try {
       await auth.signInWithEmailAndPassword(email, password);
+      console.log("SignIn successful");
       setIsAuthenticated(true);
       return true;
     } catch (error: any) {
@@ -101,6 +117,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const logout = async () => {
     setIsLoading(true);
     try {
+      console.log("Logging out...");
+      console.log("Logging out user:", user?.email);
       await auth.signOut();
       setIsAuthenticated(false);
       setUser(null);
@@ -140,9 +158,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     updateUser,
   };
 
+  console.log("AuthContext state changed:", { isAuthenticated, user, isLoading });
+
   return (
     <AuthContext.Provider value={value}>
-      {!isLoading && children}
+      {children}
     </AuthContext.Provider>
   );
 };

@@ -5,27 +5,47 @@
 // Mock auth implementation to avoid requiring actual Firebase credentials during development
 class MockAuth {
   currentUser: any = null;
+  authStateListeners: Array<(user: any | null) => void> = [];
   
   // Mock implementation of onAuthStateChanged
   onAuthStateChanged(callback: (user: any | null) => void) {
-    // Initialize with no user
+    // Add the callback to our listeners array
+    this.authStateListeners.push(callback);
+    
+    // Immediately call the callback with the current user state
     setTimeout(() => callback(this.currentUser), 100);
     
     // Return a function that would normally unsubscribe from the auth state listener
-    return () => {};
+    return () => {
+      this.authStateListeners = this.authStateListeners.filter(cb => cb !== callback);
+    };
   }
   
   // Mock implementation of signInWithEmailAndPassword
   async signInWithEmailAndPassword(email: string, password: string) {
     console.log("Mock signIn:", email);
     
-    // Simulate successful sign-in
-    if (password === 'admin123' || password === 'member123' || password === 'agent123') {
+    // Simulate successful sign-in for demo credentials
+    if (
+      (email === "admin@icealarm.es" && password === "admin123") ||
+      (email === "member@icealarm.es" && password === "member123") ||
+      (email === "agent@icealarm.es" && password === "agent123") || 
+      (password === 'admin123' || password === 'member123' || password === 'agent123')
+    ) {
+      // Create user based on email
+      const displayName = email.split('@')[0];
+      const isAdmin = email === "admin@icealarm.es" || email.includes("admin");
+      const isAgent = email === "agent@icealarm.es" || email.includes("agent");
+      
       this.currentUser = {
         uid: 'mock-uid-' + Date.now(),
         email: email,
-        displayName: email.split('@')[0],
+        displayName: displayName.charAt(0).toUpperCase() + displayName.slice(1),
       };
+      
+      // Notify all listeners that the auth state has changed
+      this.authStateListeners.forEach(callback => callback(this.currentUser));
+      
       return { user: this.currentUser };
     }
     
@@ -43,6 +63,9 @@ class MockAuth {
       displayName: '',
     };
     
+    // Notify all listeners that the auth state has changed
+    this.authStateListeners.forEach(callback => callback(this.currentUser));
+    
     return { user: this.currentUser };
   }
   
@@ -51,6 +74,9 @@ class MockAuth {
     console.log("Logging out...");
     console.log("Logging out user:", this.currentUser?.email);
     this.currentUser = null;
+    
+    // Notify all listeners that the auth state has changed
+    this.authStateListeners.forEach(callback => callback(null));
   }
   
   // Mock implementation of updateProfile
@@ -58,6 +84,14 @@ class MockAuth {
     if (user) {
       user.displayName = profile.displayName || user.displayName;
       user.photoURL = profile.photoURL || user.photoURL;
+      
+      // If this is the current user, update it
+      if (this.currentUser && this.currentUser.uid === user.uid) {
+        this.currentUser = { ...this.currentUser, ...user };
+        
+        // Notify all listeners that the auth state has changed
+        this.authStateListeners.forEach(callback => callback(this.currentUser));
+      }
     }
   }
 }

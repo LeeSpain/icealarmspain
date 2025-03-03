@@ -36,7 +36,7 @@ const Login: React.FC = () => {
       const redirectTo = redirectParam || getDefaultRedirect(user.role);
       console.log("Redirecting authenticated user to:", redirectTo);
       
-      // Use a small delay to ensure the redirect doesn't happen too quickly
+      // Use a small delay to ensure the redirect happens properly
       setTimeout(() => {
         console.log("Executing redirect now");
         navigate(redirectTo, { replace: true });
@@ -45,7 +45,7 @@ const Login: React.FC = () => {
   }, [isAuthenticated, isLoading, user, navigate, redirectParam, redirectTriggered]);
   
   // Helper function to determine default redirect based on role
-  const getDefaultRedirect = (role: string | null) => {
+  const getDefaultRedirect = (role: string) => {
     switch (role) {
       case 'admin':
         return '/admin';
