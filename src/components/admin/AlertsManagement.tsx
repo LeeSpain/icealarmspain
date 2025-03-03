@@ -1,389 +1,457 @@
 
 import React, { useState } from "react";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
+import { 
+  Card, 
+  CardContent, 
+  CardDescription, 
+  CardHeader, 
+  CardTitle 
+} from "@/components/ui/card";
+import { 
+  Tabs, 
+  TabsContent, 
+  TabsList, 
+  TabsTrigger 
+} from "@/components/ui/tabs";
+import {
+  Bell,
+  AlertTriangle,
+  CheckCircle,
+  Clock,
+  Filter,
+  Search,
+  Eye,
+  MoreHorizontal,
+  Calendar
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { AlertTriangle, Bell, Check, Filter, Info, Search, X } from "lucide-react";
-import { toast } from "react-toastify";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
 
-// Mock data for alerts
+// Simulate fake data for alerts
 const mockAlerts = [
-  { 
-    id: "ALT-1023", 
-    deviceId: "DEV-5421", 
-    type: "SOS", 
-    priority: "high", 
-    status: "active", 
-    timestamp: "2023-08-12T14:22:36", 
-    location: "Madrid, Spain",
-    client: "Maria García",
-    description: "SOS button pressed twice. No response from client."
-  },
-  { 
-    id: "ALT-1022", 
-    deviceId: "DEV-2187", 
-    type: "Fall", 
-    priority: "high", 
-    status: "active", 
-    timestamp: "2023-08-12T13:45:19", 
+  {
+    id: "AL-1234",
+    clientName: "Maria García",
+    clientId: "CL-7891",
+    deviceType: "SOS Pendant",
+    deviceId: "DEV-45678",
+    alertType: "Emergency",
+    status: "Open",
+    priority: "High",
+    timestamp: "2023-09-15T14:23:00",
     location: "Barcelona, Spain",
-    client: "Juan Martínez",
-    description: "Fall detected. Client confirmed emergency via call."
+    description: "SOS button activated",
+    responders: ["Agent ID-123", "Local Emergency"],
+    resolution: "",
+    notes: "Client reported chest pain"
   },
-  { 
-    id: "ALT-1021", 
-    deviceId: "DEV-3340", 
-    type: "Inactivity", 
-    priority: "medium", 
-    status: "active", 
-    timestamp: "2023-08-12T11:20:05", 
+  {
+    id: "AL-1235",
+    clientName: "John Smith",
+    clientId: "CL-7892",
+    deviceType: "Health Monitor",
+    deviceId: "DEV-45679",
+    alertType: "Health",
+    status: "In Progress",
+    priority: "Medium",
+    timestamp: "2023-09-15T15:30:00",
+    location: "Madrid, Spain",
+    description: "Abnormal heart rate detected",
+    responders: ["Agent ID-124"],
+    resolution: "",
+    notes: "Contacting family members"
+  },
+  {
+    id: "AL-1236",
+    clientName: "Anna Williams",
+    clientId: "CL-7893",
+    deviceType: "Medical Dispenser",
+    deviceId: "DEV-45680",
+    alertType: "Medication",
+    status: "Resolved",
+    priority: "Low",
+    timestamp: "2023-09-15T08:15:00",
     location: "Valencia, Spain",
-    client: "Ana Rodríguez",
-    description: "No movement detected for 12 hours."
+    description: "Missed medication dose",
+    responders: ["Agent ID-125"],
+    resolution: "Client contacted and took medication",
+    notes: "Follow up scheduled"
   },
-  { 
-    id: "ALT-1020", 
-    deviceId: "DEV-1195", 
-    type: "Battery", 
-    priority: "low", 
-    status: "resolved", 
-    timestamp: "2023-08-12T10:17:42", 
-    location: "Sevilla, Spain",
-    client: "Carlos López",
-    description: "Device battery below 10%."
+  {
+    id: "AL-1237",
+    clientName: "Thomas Brown",
+    clientId: "CL-7894",
+    deviceType: "SOS Pendant",
+    deviceId: "DEV-45681",
+    alertType: "Fall",
+    status: "Open",
+    priority: "High",
+    timestamp: "2023-09-15T16:45:00",
+    location: "Seville, Spain",
+    description: "Fall detected",
+    responders: ["Agent ID-126", "Local Emergency"],
+    resolution: "",
+    notes: "Ambulance dispatched"
   },
-  { 
-    id: "ALT-1019", 
-    deviceId: "DEV-4233", 
-    type: "Connection", 
-    priority: "medium", 
-    status: "resolved", 
-    timestamp: "2023-08-12T09:05:31", 
-    location: "Málaga, Spain",
-    client: "Elena Fernández",
-    description: "Device lost connection for more than 1 hour."
+  {
+    id: "AL-1238",
+    clientName: "Sofia Rodriguez",
+    clientId: "CL-7895",
+    deviceType: "Health Monitor",
+    deviceId: "DEV-45682",
+    alertType: "Health",
+    status: "Resolved",
+    priority: "Medium",
+    timestamp: "2023-09-14T11:20:00",
+    location: "Malaga, Spain",
+    description: "Low blood oxygen level",
+    responders: ["Agent ID-127"],
+    resolution: "False alarm, device calibration issue",
+    notes: "Device replaced"
   },
-  { 
-    id: "ALT-1018", 
-    deviceId: "DEV-5102", 
-    type: "SOS", 
-    priority: "high", 
-    status: "resolved", 
-    timestamp: "2023-08-11T22:42:18", 
-    location: "Zaragoza, Spain",
-    client: "David Sánchez",
-    description: "SOS button pressed. Client confirmed false alarm."
-  },
-  { 
-    id: "ALT-1017", 
-    deviceId: "DEV-3871", 
-    type: "Geofence", 
-    priority: "medium", 
-    status: "resolved", 
-    timestamp: "2023-08-11T18:30:54", 
+  {
+    id: "AL-1239",
+    clientName: "James Wilson",
+    clientId: "CL-7896",
+    deviceType: "Medical Dispenser",
+    deviceId: "DEV-45683",
+    alertType: "Device",
+    status: "In Progress",
+    priority: "Low",
+    timestamp: "2023-09-15T09:10:00",
     location: "Bilbao, Spain",
-    client: "Sofía Gómez",
-    description: "Client left defined safe area."
+    description: "Low battery warning",
+    responders: ["Agent ID-128"],
+    resolution: "",
+    notes: "Technician scheduled"
   },
+  {
+    id: "AL-1240",
+    clientName: "Emma García",
+    clientId: "CL-7897",
+    deviceType: "SOS Pendant",
+    deviceId: "DEV-45684",
+    alertType: "Emergency",
+    status: "Resolved",
+    priority: "High",
+    timestamp: "2023-09-14T22:05:00",
+    location: "Granada, Spain",
+    description: "SOS button activated",
+    responders: ["Agent ID-129", "Local Emergency"],
+    resolution: "Client needed assistance getting up, no injuries",
+    notes: "Follow-up wellness check scheduled"
+  }
 ];
 
-// Mock data for incidents
+// Simulate incident data
 const mockIncidents = [
   {
-    id: "INC-423",
-    alertId: "ALT-992",
-    client: "Luis Torres",
-    status: "resolved",
-    priority: "high",
-    responders: ["Agent 24", "Medical Team 7"],
-    openedAt: "2023-08-10T15:26:39",
-    closedAt: "2023-08-10T16:42:12",
-    resolution: "Medical assistance provided. Client hospitalized."
+    id: "INC-2345",
+    title: "Multiple device failures in Barcelona region",
+    status: "Open",
+    priority: "High",
+    affectedUsers: 23,
+    affectedDevices: 23,
+    createdAt: "2023-09-14T10:15:00",
+    updatedAt: "2023-09-15T14:30:00",
+    assignedTo: "Tech Team Alpha",
+    description: "Multiple SOS Pendants reporting connectivity issues in the Barcelona region",
+    actions: "Investigating network provider issues in the area"
   },
   {
-    id: "INC-422",
-    alertId: "ALT-987",
-    client: "Carmen Ruiz",
-    status: "resolved",
-    priority: "medium",
-    responders: ["Agent 17"],
-    openedAt: "2023-08-09T22:14:28",
-    closedAt: "2023-08-09T22:35:47",
-    resolution: "False alarm confirmed by family member."
+    id: "INC-2346",
+    title: "Medication dispenser software glitch",
+    status: "In Progress",
+    priority: "Medium",
+    affectedUsers: 15,
+    affectedDevices: 15,
+    createdAt: "2023-09-15T09:30:00",
+    updatedAt: "2023-09-15T13:45:00",
+    assignedTo: "Software Team",
+    description: "Medication dispensers with firmware version 2.3 are not syncing properly with the central system",
+    actions: "Developing hotfix for the affected devices"
   },
   {
-    id: "INC-421",
-    alertId: "ALT-981",
-    client: "Antonio Morales",
-    status: "resolved",
-    priority: "high",
-    responders: ["Agent 31", "Police Unit 8", "Medical Team 3"],
-    openedAt: "2023-08-09T14:02:17",
-    closedAt: "2023-08-09T15:18:33",
-    resolution: "Emergency services provided assistance. Client stable."
+    id: "INC-2347",
+    title: "False alarms from health monitors",
+    status: "Resolved",
+    priority: "Medium",
+    affectedUsers: 8,
+    affectedDevices: 8,
+    createdAt: "2023-09-13T16:20:00",
+    updatedAt: "2023-09-14T11:10:00",
+    assignedTo: "Quality Assurance Team",
+    description: "Series of false alarms from health monitors reporting abnormal heart rates",
+    actions: "Calibration issue identified and fixed remotely"
   },
   {
-    id: "INC-420",
-    alertId: "ALT-979",
-    client: "Pablo Serrano",
-    status: "resolved",
-    priority: "low",
-    responders: ["Agent 12"],
-    openedAt: "2023-08-09T10:45:09",
-    closedAt: "2023-08-09T11:02:51",
-    resolution: "Device battery replaced by family member."
+    id: "INC-2348",
+    title: "Call center phone system outage",
+    status: "Resolved",
+    priority: "Critical",
+    affectedUsers: 150,
+    affectedDevices: 0,
+    createdAt: "2023-09-14T08:05:00",
+    updatedAt: "2023-09-14T10:30:00",
+    assignedTo: "IT Infrastructure Team",
+    description: "Complete outage of the call center phone system affecting all incoming emergency calls",
+    actions: "Failover system activated, root cause identified as power surge, systems restored"
   },
   {
-    id: "INC-419",
-    alertId: "ALT-974",
-    client: "Isabel Castro",
-    status: "resolved",
-    priority: "medium",
-    responders: ["Agent 28", "Technical Team 2"],
-    openedAt: "2023-08-08T19:23:05",
-    closedAt: "2023-08-08T20:15:40",
-    resolution: "Connection issue resolved remotely."
-  },
+    id: "INC-2349",
+    title: "Mobile app login issues",
+    status: "In Progress",
+    priority: "Low",
+    affectedUsers: 34,
+    affectedDevices: 0,
+    createdAt: "2023-09-15T11:45:00",
+    updatedAt: "2023-09-15T14:20:00",
+    assignedTo: "Mobile Development Team",
+    description: "Users reporting inability to log in to the mobile app after the latest update",
+    actions: "Investigating authentication service issues"
+  }
+];
+
+// Emergency response time data for the chart
+const responseTimeData = [
+  { name: "Jan", responseTime: 2.8 },
+  { name: "Feb", responseTime: 2.5 },
+  { name: "Mar", responseTime: 2.2 },
+  { name: "Apr", responseTime: 2.6 },
+  { name: "May", responseTime: 2.4 },
+  { name: "Jun", responseTime: 2.1 },
+  { name: "Jul", responseTime: 1.9 },
+  { name: "Aug", responseTime: 2.0 },
+  { name: "Sep", responseTime: 2.3 },
 ];
 
 const AlertsManagement: React.FC = () => {
+  const [selectedTab, setSelectedTab] = useState("active-alerts");
   const [searchTerm, setSearchTerm] = useState("");
-  const [statusFilter, setStatusFilter] = useState("all");
-  const [priorityFilter, setPriorityFilter] = useState("all");
-  const [typeFilter, setTypeFilter] = useState("all");
-
+  const [selectedAlert, setSelectedAlert] = useState<any>(null);
+  const [isAlertDetailsOpen, setIsAlertDetailsOpen] = useState(false);
+  const [isIncidentDetailsOpen, setIsIncidentDetailsOpen] = useState(false);
+  const [selectedIncident, setSelectedIncident] = useState<any>(null);
+  
+  // Filter alerts based on search term and status
   const filteredAlerts = mockAlerts.filter(alert => {
-    return (
-      (searchTerm === "" || 
-       alert.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-       alert.client.toLowerCase().includes(searchTerm.toLowerCase()) ||
-       alert.deviceId.toLowerCase().includes(searchTerm.toLowerCase())) &&
-      (statusFilter === "all" || alert.status === statusFilter) &&
-      (priorityFilter === "all" || alert.priority === priorityFilter) &&
-      (typeFilter === "all" || alert.type === typeFilter)
-    );
+    const matchesSearch = 
+      alert.clientName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      alert.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      alert.alertType.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    if (selectedTab === "active-alerts") {
+      return matchesSearch && (alert.status === "Open" || alert.status === "In Progress");
+    } else if (selectedTab === "resolved-alerts") {
+      return matchesSearch && alert.status === "Resolved";
+    } else if (selectedTab === "all-alerts") {
+      return matchesSearch;
+    }
+    return false;
   });
 
-  const handleResolveAlert = (alertId: string) => {
-    toast.success(`Alert ${alertId} marked as resolved`);
+  const filteredIncidents = mockIncidents.filter(incident => {
+    const matchesSearch = 
+      incident.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      incident.id.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    if (selectedTab === "active-incidents") {
+      return matchesSearch && (incident.status === "Open" || incident.status === "In Progress");
+    } else if (selectedTab === "resolved-incidents") {
+      return matchesSearch && incident.status === "Resolved";
+    } else if (selectedTab === "all-incidents") {
+      return matchesSearch;
+    }
+    return false;
+  });
+
+  const viewAlertDetails = (alert: any) => {
+    setSelectedAlert(alert);
+    setIsAlertDetailsOpen(true);
   };
 
-  const handleEscalateAlert = (alertId: string) => {
-    toast.info(`Alert ${alertId} escalated to emergency services`);
+  const viewIncidentDetails = (incident: any) => {
+    setSelectedIncident(incident);
+    setIsIncidentDetailsOpen(true);
   };
 
-  const handleAssignAlert = (alertId: string) => {
-    toast.info(`Alert ${alertId} assigned to available agent`);
-  };
-
-  const getPriorityBadgeColor = (priority: string) => {
-    switch (priority) {
-      case "high":
-        return "bg-red-500";
-      case "medium":
-        return "bg-amber-500";
-      case "low":
-        return "bg-blue-500";
+  const getStatusClass = (status: string) => {
+    switch (status) {
+      case "Open":
+        return "bg-red-100 text-red-800";
+      case "In Progress":
+        return "bg-amber-100 text-amber-800";
+      case "Resolved":
+        return "bg-green-100 text-green-800";
       default:
-        return "bg-gray-500";
+        return "bg-gray-100 text-gray-800";
+    }
+  };
+
+  const getPriorityClass = (priority: string) => {
+    switch (priority) {
+      case "High":
+        return "bg-red-100 text-red-800";
+      case "Medium":
+        return "bg-amber-100 text-amber-800";
+      case "Low":
+        return "bg-blue-100 text-blue-800";
+      case "Critical":
+        return "bg-purple-100 text-purple-800";
+      default:
+        return "bg-gray-100 text-gray-800";
     }
   };
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-2 sm:space-y-0">
+      <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">Alerts Management</h1>
-          <p className="text-muted-foreground">Monitor and respond to system alerts and incidents</p>
+          <h2 className="text-3xl font-bold tracking-tight">Alerts & Incidents Management</h2>
+          <p className="text-muted-foreground">
+            Monitor and manage alerts and system incidents
+          </p>
         </div>
-        <div className="flex space-x-2">
-          <Button variant="destructive" className="flex items-center gap-1">
-            <AlertTriangle className="h-4 w-4" />
-            <span>Active Alerts: {mockAlerts.filter(a => a.status === "active").length}</span>
+        <div className="flex items-center gap-2">
+          <Button>
+            <Bell className="mr-2 h-4 w-4" />
+            Configure Alerts
           </Button>
         </div>
       </div>
 
-      <Tabs defaultValue="active">
-        <TabsList className="mb-4">
-          <TabsTrigger value="active">Active Alerts</TabsTrigger>
-          <TabsTrigger value="all">All Alerts</TabsTrigger>
-          <TabsTrigger value="incidents">Incident History</TabsTrigger>
-          <TabsTrigger value="protocols">Emergency Protocols</TabsTrigger>
-        </TabsList>
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Active Alerts</CardTitle>
+            <AlertTriangle className="h-4 w-4 text-amber-500" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">
+              {mockAlerts.filter(a => a.status !== "Resolved").length}
+            </div>
+            <p className="text-xs text-muted-foreground">
+              {mockAlerts.filter(a => a.status === "Open").length} open, {mockAlerts.filter(a => a.status === "In Progress").length} in progress
+            </p>
+          </CardContent>
+        </Card>
 
-        <TabsContent value="active">
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle>Active Alerts</CardTitle>
-              <CardDescription>
-                Real-time alerts requiring attention. {mockAlerts.filter(a => a.status === "active").length} active alerts.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="flex flex-col sm:flex-row gap-4 mb-4">
-                <div className="relative flex-1">
-                  <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">High Priority</CardTitle>
+            <AlertTriangle className="h-4 w-4 text-red-500" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">
+              {mockAlerts.filter(a => a.priority === "High" && a.status !== "Resolved").length}
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Requiring immediate attention
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Avg. Response Time</CardTitle>
+            <Clock className="h-4 w-4 text-ice-500" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">2.1 min</div>
+            <p className="text-xs text-muted-foreground">
+              <span className="text-green-500">↓ 0.2 min</span> from last month
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Active Incidents</CardTitle>
+            <AlertTriangle className="h-4 w-4 text-amber-500" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">
+              {mockIncidents.filter(i => i.status !== "Resolved").length}
+            </div>
+            <p className="text-xs text-muted-foreground">
+              System issues requiring attention
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+
+      <Card>
+        <CardHeader>
+          <Tabs defaultValue="active-alerts" onValueChange={setSelectedTab}>
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+              <TabsList className="grid grid-cols-2 sm:grid-cols-4 w-full sm:w-auto">
+                <TabsTrigger value="active-alerts">Active Alerts</TabsTrigger>
+                <TabsTrigger value="resolved-alerts">Resolved Alerts</TabsTrigger>
+                <TabsTrigger value="active-incidents">Active Incidents</TabsTrigger>
+                <TabsTrigger value="resolved-incidents">Resolved Incidents</TabsTrigger>
+              </TabsList>
+              
+              <div className="flex items-center gap-2">
+                <div className="relative">
+                  <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                   <Input
-                    placeholder="Search alerts..."
-                    className="pl-8"
+                    type="search"
+                    placeholder="Search..."
+                    className="pl-8 w-full sm:w-[200px] lg:w-[300px]"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                   />
                 </div>
-                <div className="flex gap-2">
-                  <Select value={priorityFilter} onValueChange={setPriorityFilter}>
-                    <SelectTrigger className="w-[130px]">
-                      <Filter className="h-4 w-4 mr-2" />
-                      <SelectValue placeholder="Priority" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All Priorities</SelectItem>
-                      <SelectItem value="high">High</SelectItem>
-                      <SelectItem value="medium">Medium</SelectItem>
-                      <SelectItem value="low">Low</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  
-                  <Select value={typeFilter} onValueChange={setTypeFilter}>
-                    <SelectTrigger className="w-[130px]">
-                      <Filter className="h-4 w-4 mr-2" />
-                      <SelectValue placeholder="Type" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All Types</SelectItem>
-                      <SelectItem value="SOS">SOS</SelectItem>
-                      <SelectItem value="Fall">Fall</SelectItem>
-                      <SelectItem value="Inactivity">Inactivity</SelectItem>
-                      <SelectItem value="Battery">Battery</SelectItem>
-                      <SelectItem value="Connection">Connection</SelectItem>
-                      <SelectItem value="Geofence">Geofence</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
+                <Button variant="outline" size="icon">
+                  <Filter className="h-4 w-4" />
+                </Button>
+                <Button variant="outline" size="icon">
+                  <Calendar className="h-4 w-4" />
+                </Button>
               </div>
+            </div>
 
-              {filteredAlerts.filter(a => a.status === "active").length === 0 ? (
-                <div className="text-center py-8">
-                  <Info className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-                  <h3 className="text-lg font-medium">No active alerts match your filters</h3>
-                  <p className="text-muted-foreground mt-1">Try changing your search or filter criteria</p>
-                </div>
-              ) : (
-                <div className="space-y-4">
-                  {filteredAlerts
-                    .filter(alert => alert.status === "active")
-                    .map(alert => (
-                      <Alert key={alert.id} className="border-l-4 border-red-500">
-                        <div className="flex justify-between">
-                          <div className="flex items-start">
-                            <AlertTriangle className="h-5 w-5 text-red-500 mr-2" />
-                            <div>
-                              <AlertTitle className="flex items-center gap-2">
-                                {alert.id} - {alert.type} Alert
-                                <Badge className={`${getPriorityBadgeColor(alert.priority)} text-white`}>
-                                  {alert.priority}
-                                </Badge>
-                              </AlertTitle>
-                              <AlertDescription className="mt-1">
-                                <div className="text-sm text-muted-foreground mb-1">
-                                  {new Date(alert.timestamp).toLocaleString()} | {alert.location} | Client: {alert.client}
-                                </div>
-                                <p className="font-medium">{alert.description}</p>
-                              </AlertDescription>
-                            </div>
-                          </div>
-                          <div className="flex gap-2">
-                            <Button 
-                              size="sm" 
-                              variant="outline"
-                              onClick={() => handleAssignAlert(alert.id)}
-                            >
-                              Assign
-                            </Button>
-                            <Button 
-                              size="sm" 
-                              variant="outline"
-                              onClick={() => handleEscalateAlert(alert.id)}
-                            >
-                              Escalate
-                            </Button>
-                            <Button 
-                              size="sm" 
-                              variant="secondary"
-                              onClick={() => handleResolveAlert(alert.id)}
-                            >
-                              <Check className="h-4 w-4 mr-1" />
-                              Resolve
-                            </Button>
-                          </div>
-                        </div>
-                      </Alert>
-                    ))
-                  }
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="all">
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle>All Alerts</CardTitle>
-              <CardDescription>Complete history of system alerts</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="flex flex-col sm:flex-row gap-4 mb-4">
-                <div className="relative flex-1">
-                  <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    placeholder="Search alerts..."
-                    className="pl-8"
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                  />
-                </div>
-                <div className="flex gap-2">
-                  <Select value={statusFilter} onValueChange={setStatusFilter}>
-                    <SelectTrigger className="w-[130px]">
-                      <Filter className="h-4 w-4 mr-2" />
-                      <SelectValue placeholder="Status" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All Status</SelectItem>
-                      <SelectItem value="active">Active</SelectItem>
-                      <SelectItem value="resolved">Resolved</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  
-                  <Select value={priorityFilter} onValueChange={setPriorityFilter}>
-                    <SelectTrigger className="w-[130px]">
-                      <Filter className="h-4 w-4 mr-2" />
-                      <SelectValue placeholder="Priority" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All Priorities</SelectItem>
-                      <SelectItem value="high">High</SelectItem>
-                      <SelectItem value="medium">Medium</SelectItem>
-                      <SelectItem value="low">Low</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-
+            <TabsContent value="active-alerts" className="space-y-4">
               <div className="rounded-md border">
                 <Table>
                   <TableHeader>
                     <TableRow>
                       <TableHead>Alert ID</TableHead>
-                      <TableHead>Type</TableHead>
                       <TableHead>Client</TableHead>
+                      <TableHead>Type</TableHead>
                       <TableHead>Status</TableHead>
                       <TableHead>Priority</TableHead>
                       <TableHead>Time</TableHead>
@@ -391,208 +459,410 @@ const AlertsManagement: React.FC = () => {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {filteredAlerts.length === 0 ? (
-                      <TableRow>
-                        <TableCell colSpan={7} className="text-center py-4 text-muted-foreground">
-                          No alerts match your search criteria
-                        </TableCell>
-                      </TableRow>
-                    ) : (
-                      filteredAlerts.map(alert => (
+                    {filteredAlerts.length > 0 ? (
+                      filteredAlerts.map((alert) => (
                         <TableRow key={alert.id}>
                           <TableCell className="font-medium">{alert.id}</TableCell>
-                          <TableCell>{alert.type}</TableCell>
-                          <TableCell>{alert.client}</TableCell>
+                          <TableCell>{alert.clientName}</TableCell>
+                          <TableCell>{alert.alertType}</TableCell>
                           <TableCell>
-                            <Badge
-                              variant={alert.status === "active" ? "destructive" : "outline"}
-                            >
+                            <Badge variant="outline" className={getStatusClass(alert.status)}>
                               {alert.status}
                             </Badge>
                           </TableCell>
                           <TableCell>
-                            <Badge className={`${getPriorityBadgeColor(alert.priority)} text-white`}>
+                            <Badge variant="outline" className={getPriorityClass(alert.priority)}>
                               {alert.priority}
                             </Badge>
                           </TableCell>
+                          <TableCell>{new Date(alert.timestamp).toLocaleString()}</TableCell>
                           <TableCell>
-                            {new Date(alert.timestamp).toLocaleString()}
-                          </TableCell>
-                          <TableCell>
-                            <div className="flex gap-2">
-                              <Button size="sm" variant="outline" className="h-8 px-2 text-xs">
-                                View
+                            <div className="flex items-center gap-2">
+                              <Button 
+                                variant="ghost" 
+                                size="sm" 
+                                onClick={() => viewAlertDetails(alert)}
+                              >
+                                <Eye className="h-4 w-4" />
                               </Button>
-                              {alert.status === "active" && (
-                                <Button 
-                                  size="sm" 
-                                  variant="secondary" 
-                                  className="h-8 px-2 text-xs"
-                                  onClick={() => handleResolveAlert(alert.id)}
-                                >
-                                  Resolve
-                                </Button>
-                              )}
+                              <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                  <Button variant="ghost" size="sm">
+                                    <MoreHorizontal className="h-4 w-4" />
+                                  </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end">
+                                  <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                                  <DropdownMenuSeparator />
+                                  <DropdownMenuItem>Assign</DropdownMenuItem>
+                                  <DropdownMenuItem>Change Priority</DropdownMenuItem>
+                                  <DropdownMenuItem>Mark as Resolved</DropdownMenuItem>
+                                  <DropdownMenuSeparator />
+                                  <DropdownMenuItem>View Client Details</DropdownMenuItem>
+                                </DropdownMenuContent>
+                              </DropdownMenu>
                             </div>
                           </TableCell>
                         </TableRow>
                       ))
+                    ) : (
+                      <TableRow>
+                        <TableCell colSpan={7} className="text-center py-4">
+                          No active alerts found
+                        </TableCell>
+                      </TableRow>
                     )}
                   </TableBody>
                 </Table>
               </div>
-            </CardContent>
-            <CardFooter className="flex justify-between">
-              <div className="text-sm text-muted-foreground">
-                Showing {filteredAlerts.length} of {mockAlerts.length} alerts
-              </div>
-              <div className="flex gap-2">
-                <Button variant="outline" size="sm" disabled>Previous</Button>
-                <Button variant="outline" size="sm" disabled>Next</Button>
-              </div>
-            </CardFooter>
-          </Card>
-        </TabsContent>
+            </TabsContent>
 
-        <TabsContent value="incidents">
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle>Incident History</CardTitle>
-              <CardDescription>Record of all resolved incidents and their outcomes</CardDescription>
-            </CardHeader>
-            <CardContent>
+            <TabsContent value="resolved-alerts" className="space-y-4">
+              <div className="rounded-md border">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Alert ID</TableHead>
+                      <TableHead>Client</TableHead>
+                      <TableHead>Type</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead>Priority</TableHead>
+                      <TableHead>Time</TableHead>
+                      <TableHead>Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {filteredAlerts.length > 0 ? (
+                      filteredAlerts.map((alert) => (
+                        <TableRow key={alert.id}>
+                          <TableCell className="font-medium">{alert.id}</TableCell>
+                          <TableCell>{alert.clientName}</TableCell>
+                          <TableCell>{alert.alertType}</TableCell>
+                          <TableCell>
+                            <Badge variant="outline" className={getStatusClass(alert.status)}>
+                              {alert.status}
+                            </Badge>
+                          </TableCell>
+                          <TableCell>
+                            <Badge variant="outline" className={getPriorityClass(alert.priority)}>
+                              {alert.priority}
+                            </Badge>
+                          </TableCell>
+                          <TableCell>{new Date(alert.timestamp).toLocaleString()}</TableCell>
+                          <TableCell>
+                            <Button 
+                              variant="ghost" 
+                              size="sm" 
+                              onClick={() => viewAlertDetails(alert)}
+                            >
+                              <Eye className="h-4 w-4" />
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      ))
+                    ) : (
+                      <TableRow>
+                        <TableCell colSpan={7} className="text-center py-4">
+                          No resolved alerts found
+                        </TableCell>
+                      </TableRow>
+                    )}
+                  </TableBody>
+                </Table>
+              </div>
+            </TabsContent>
+
+            <TabsContent value="active-incidents" className="space-y-4">
               <div className="rounded-md border">
                 <Table>
                   <TableHeader>
                     <TableRow>
                       <TableHead>Incident ID</TableHead>
-                      <TableHead>Related Alert</TableHead>
-                      <TableHead>Client</TableHead>
+                      <TableHead>Title</TableHead>
+                      <TableHead>Status</TableHead>
                       <TableHead>Priority</TableHead>
-                      <TableHead>Responders</TableHead>
-                      <TableHead>Opened</TableHead>
-                      <TableHead>Resolution</TableHead>
+                      <TableHead>Affected Users</TableHead>
+                      <TableHead>Last Updated</TableHead>
+                      <TableHead>Actions</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {mockIncidents.map(incident => (
-                      <TableRow key={incident.id}>
-                        <TableCell className="font-medium">{incident.id}</TableCell>
-                        <TableCell>{incident.alertId}</TableCell>
-                        <TableCell>{incident.client}</TableCell>
-                        <TableCell>
-                          <Badge className={`${getPriorityBadgeColor(incident.priority)} text-white`}>
-                            {incident.priority}
-                          </Badge>
-                        </TableCell>
-                        <TableCell>
-                          <div className="text-xs">
-                            {incident.responders.join(", ")}
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          {new Date(incident.openedAt).toLocaleString()}
-                        </TableCell>
-                        <TableCell className="max-w-xs truncate" title={incident.resolution}>
-                          {incident.resolution}
+                    {filteredIncidents.length > 0 ? (
+                      filteredIncidents.map((incident) => (
+                        <TableRow key={incident.id}>
+                          <TableCell className="font-medium">{incident.id}</TableCell>
+                          <TableCell>{incident.title}</TableCell>
+                          <TableCell>
+                            <Badge variant="outline" className={getStatusClass(incident.status)}>
+                              {incident.status}
+                            </Badge>
+                          </TableCell>
+                          <TableCell>
+                            <Badge variant="outline" className={getPriorityClass(incident.priority)}>
+                              {incident.priority}
+                            </Badge>
+                          </TableCell>
+                          <TableCell>{incident.affectedUsers}</TableCell>
+                          <TableCell>{new Date(incident.updatedAt).toLocaleString()}</TableCell>
+                          <TableCell>
+                            <div className="flex items-center gap-2">
+                              <Button 
+                                variant="ghost" 
+                                size="sm" 
+                                onClick={() => viewIncidentDetails(incident)}
+                              >
+                                <Eye className="h-4 w-4" />
+                              </Button>
+                              <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                  <Button variant="ghost" size="sm">
+                                    <MoreHorizontal className="h-4 w-4" />
+                                  </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end">
+                                  <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                                  <DropdownMenuSeparator />
+                                  <DropdownMenuItem>Assign Team</DropdownMenuItem>
+                                  <DropdownMenuItem>Change Priority</DropdownMenuItem>
+                                  <DropdownMenuItem>Mark as Resolved</DropdownMenuItem>
+                                  <DropdownMenuItem>Create Update</DropdownMenuItem>
+                                </DropdownMenuContent>
+                              </DropdownMenu>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))
+                    ) : (
+                      <TableRow>
+                        <TableCell colSpan={7} className="text-center py-4">
+                          No active incidents found
                         </TableCell>
                       </TableRow>
-                    ))}
+                    )}
                   </TableBody>
                 </Table>
               </div>
-            </CardContent>
-            <CardFooter className="flex justify-between">
-              <div className="text-sm text-muted-foreground">
-                Showing {mockIncidents.length} of {mockIncidents.length} incidents
-              </div>
-              <div className="flex gap-2">
-                <Button variant="outline" size="sm" disabled>Previous</Button>
-                <Button variant="outline" size="sm" disabled>Next</Button>
-              </div>
-            </CardFooter>
-          </Card>
-        </TabsContent>
+            </TabsContent>
 
-        <TabsContent value="protocols">
-          <Card>
-            <CardHeader>
-              <CardTitle>Emergency Protocols</CardTitle>
-              <CardDescription>
-                Standard procedures for different types of alerts and emergencies
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="p-4 border rounded-lg">
-                <h3 className="text-lg font-semibold flex items-center gap-2 mb-2">
-                  <div className="bg-red-500 text-white p-1.5 rounded-full">
-                    <AlertTriangle className="h-4 w-4" />
-                  </div>
-                  SOS Button Protocol
-                </h3>
-                <ol className="space-y-2 ml-8 list-decimal">
-                  <li>Immediately attempt contact with the client via the device</li>
-                  <li>If no response within 30 seconds, call emergency contacts</li>
-                  <li>If still no response, dispatch emergency services to the client's location</li>
-                  <li>Maintain open communication line until situation is resolved</li>
-                  <li>Document all actions taken and the final resolution</li>
-                </ol>
+            <TabsContent value="resolved-incidents" className="space-y-4">
+              <div className="rounded-md border">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Incident ID</TableHead>
+                      <TableHead>Title</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead>Priority</TableHead>
+                      <TableHead>Affected Users</TableHead>
+                      <TableHead>Last Updated</TableHead>
+                      <TableHead>Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {filteredIncidents.length > 0 ? (
+                      filteredIncidents.map((incident) => (
+                        <TableRow key={incident.id}>
+                          <TableCell className="font-medium">{incident.id}</TableCell>
+                          <TableCell>{incident.title}</TableCell>
+                          <TableCell>
+                            <Badge variant="outline" className={getStatusClass(incident.status)}>
+                              {incident.status}
+                            </Badge>
+                          </TableCell>
+                          <TableCell>
+                            <Badge variant="outline" className={getPriorityClass(incident.priority)}>
+                              {incident.priority}
+                            </Badge>
+                          </TableCell>
+                          <TableCell>{incident.affectedUsers}</TableCell>
+                          <TableCell>{new Date(incident.updatedAt).toLocaleString()}</TableCell>
+                          <TableCell>
+                            <Button 
+                              variant="ghost" 
+                              size="sm" 
+                              onClick={() => viewIncidentDetails(incident)}
+                            >
+                              <Eye className="h-4 w-4" />
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      ))
+                    ) : (
+                      <TableRow>
+                        <TableCell colSpan={7} className="text-center py-4">
+                          No resolved incidents found
+                        </TableCell>
+                      </TableRow>
+                    )}
+                  </TableBody>
+                </Table>
               </div>
+            </TabsContent>
+          </Tabs>
+        </CardHeader>
+      </Card>
 
-              <div className="p-4 border rounded-lg">
-                <h3 className="text-lg font-semibold flex items-center gap-2 mb-2">
-                  <div className="bg-red-500 text-white p-1.5 rounded-full">
-                    <AlertTriangle className="h-4 w-4" />
+      {/* Alert Details Dialog */}
+      <Dialog open={isAlertDetailsOpen} onOpenChange={setIsAlertDetailsOpen}>
+        <DialogContent className="max-w-3xl">
+          <DialogHeader>
+            <DialogTitle>Alert Details: {selectedAlert?.id}</DialogTitle>
+            <DialogDescription>
+              Complete information about this alert
+            </DialogDescription>
+          </DialogHeader>
+          
+          {selectedAlert && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-4">
+                <div>
+                  <h3 className="text-sm font-medium text-gray-500">Client Information</h3>
+                  <p className="text-base">{selectedAlert.clientName} (ID: {selectedAlert.clientId})</p>
+                </div>
+                
+                <div>
+                  <h3 className="text-sm font-medium text-gray-500">Device Information</h3>
+                  <p className="text-base">{selectedAlert.deviceType} (ID: {selectedAlert.deviceId})</p>
+                </div>
+                
+                <div>
+                  <h3 className="text-sm font-medium text-gray-500">Alert Type</h3>
+                  <p className="text-base">{selectedAlert.alertType}</p>
+                </div>
+                
+                <div>
+                  <h3 className="text-sm font-medium text-gray-500">Status & Priority</h3>
+                  <div className="flex space-x-2 mt-1">
+                    <Badge className={getStatusClass(selectedAlert.status)}>{selectedAlert.status}</Badge>
+                    <Badge className={getPriorityClass(selectedAlert.priority)}>{selectedAlert.priority}</Badge>
                   </div>
-                  Fall Detection Protocol
-                </h3>
-                <ol className="space-y-2 ml-8 list-decimal">
-                  <li>Attempt immediate contact with the client via the device</li>
-                  <li>If client confirms the fall, assess severity and need for medical assistance</li>
-                  <li>If no response or client requests help, notify emergency contacts</li>
-                  <li>For severe falls or if client is in distress, dispatch emergency services</li>
-                  <li>Follow up within 24 hours to check on client's condition</li>
-                </ol>
+                </div>
+                
+                <div>
+                  <h3 className="text-sm font-medium text-gray-500">Timestamp</h3>
+                  <p className="text-base">{new Date(selectedAlert.timestamp).toLocaleString()}</p>
+                </div>
+                
+                <div>
+                  <h3 className="text-sm font-medium text-gray-500">Location</h3>
+                  <p className="text-base">{selectedAlert.location}</p>
+                </div>
               </div>
+              
+              <div className="space-y-4">
+                <div>
+                  <h3 className="text-sm font-medium text-gray-500">Description</h3>
+                  <p className="text-base">{selectedAlert.description}</p>
+                </div>
+                
+                <div>
+                  <h3 className="text-sm font-medium text-gray-500">Responders</h3>
+                  <ul className="list-disc pl-5 mt-1">
+                    {selectedAlert.responders.map((responder: string, index: number) => (
+                      <li key={index}>{responder}</li>
+                    ))}
+                  </ul>
+                </div>
+                
+                <div>
+                  <h3 className="text-sm font-medium text-gray-500">Resolution</h3>
+                  <p className="text-base">{selectedAlert.resolution || "Pending resolution"}</p>
+                </div>
+                
+                <div>
+                  <h3 className="text-sm font-medium text-gray-500">Notes</h3>
+                  <p className="text-base">{selectedAlert.notes}</p>
+                </div>
+              </div>
+            </div>
+          )}
+          
+          <DialogFooter className="sm:justify-between">
+            <div className="flex gap-2">
+              <Button variant="outline" className="gap-1">
+                <CheckCircle className="h-4 w-4" />
+                Mark as Resolved
+              </Button>
+              <Button variant="outline">View Client Profile</Button>
+            </div>
+            <Button variant="default" onClick={() => setIsAlertDetailsOpen(false)}>Close</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
-              <div className="p-4 border rounded-lg">
-                <h3 className="text-lg font-semibold flex items-center gap-2 mb-2">
-                  <div className="bg-amber-500 text-white p-1.5 rounded-full">
-                    <AlertTriangle className="h-4 w-4" />
+      {/* Incident Details Dialog */}
+      <Dialog open={isIncidentDetailsOpen} onOpenChange={setIsIncidentDetailsOpen}>
+        <DialogContent className="max-w-3xl">
+          <DialogHeader>
+            <DialogTitle>Incident Details: {selectedIncident?.id}</DialogTitle>
+            <DialogDescription>
+              Complete information about this system incident
+            </DialogDescription>
+          </DialogHeader>
+          
+          {selectedIncident && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-4">
+                <div>
+                  <h3 className="text-sm font-medium text-gray-500">Title</h3>
+                  <p className="text-base font-medium">{selectedIncident.title}</p>
+                </div>
+                
+                <div>
+                  <h3 className="text-sm font-medium text-gray-500">Status & Priority</h3>
+                  <div className="flex space-x-2 mt-1">
+                    <Badge className={getStatusClass(selectedIncident.status)}>{selectedIncident.status}</Badge>
+                    <Badge className={getPriorityClass(selectedIncident.priority)}>{selectedIncident.priority}</Badge>
                   </div>
-                  Inactivity Alert Protocol
-                </h3>
-                <ol className="space-y-2 ml-8 list-decimal">
-                  <li>Check system logs for any recent activity or technical issues</li>
-                  <li>Call the client's primary phone number</li>
-                  <li>Contact emergency contacts if no response from client</li>
-                  <li>For extended inactivity (>24 hours), consider wellness check</li>
-                  <li>Document the cause of inactivity and resolution</li>
-                </ol>
+                </div>
+                
+                <div>
+                  <h3 className="text-sm font-medium text-gray-500">Created</h3>
+                  <p className="text-base">{new Date(selectedIncident.createdAt).toLocaleString()}</p>
+                </div>
+                
+                <div>
+                  <h3 className="text-sm font-medium text-gray-500">Last Updated</h3>
+                  <p className="text-base">{new Date(selectedIncident.updatedAt).toLocaleString()}</p>
+                </div>
+                
+                <div>
+                  <h3 className="text-sm font-medium text-gray-500">Assigned To</h3>
+                  <p className="text-base">{selectedIncident.assignedTo}</p>
+                </div>
               </div>
-
-              <div className="p-4 border rounded-lg">
-                <h3 className="text-lg font-semibold flex items-center gap-2 mb-2">
-                  <div className="bg-blue-500 text-white p-1.5 rounded-full">
-                    <AlertTriangle className="h-4 w-4" />
-                  </div>
-                  Device Technical Issue Protocol
-                </h3>
-                <ol className="space-y-2 ml-8 list-decimal">
-                  <li>Conduct remote diagnostics of the device</li>
-                  <li>Attempt to resolve connection issues remotely if applicable</li>
-                  <li>For battery issues, contact client or caregiver to charge or replace batteries</li>
-                  <li>Schedule technical service if remote resolution is not possible</li>
-                  <li>Provide temporary replacement device if necessary</li>
-                </ol>
+              
+              <div className="space-y-4">
+                <div>
+                  <h3 className="text-sm font-medium text-gray-500">Description</h3>
+                  <p className="text-base">{selectedIncident.description}</p>
+                </div>
+                
+                <div>
+                  <h3 className="text-sm font-medium text-gray-500">Current Actions</h3>
+                  <p className="text-base">{selectedIncident.actions}</p>
+                </div>
+                
+                <div>
+                  <h3 className="text-sm font-medium text-gray-500">Impact</h3>
+                  <p className="text-base">Affecting {selectedIncident.affectedUsers} users and {selectedIncident.affectedDevices} devices</p>
+                </div>
               </div>
-            </CardContent>
-            <CardFooter>
-              <Button>Download All Protocols</Button>
-            </CardFooter>
-          </Card>
-        </TabsContent>
-      </Tabs>
+            </div>
+          )}
+          
+          <DialogFooter className="sm:justify-between">
+            <div className="flex gap-2">
+              <Button variant="outline" className="gap-1">
+                <CheckCircle className="h-4 w-4" />
+                Mark as Resolved
+              </Button>
+              <Button variant="outline">Create Update</Button>
+            </div>
+            <Button variant="default" onClick={() => setIsIncidentDetailsOpen(false)}>Close</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
