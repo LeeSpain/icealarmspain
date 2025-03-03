@@ -23,6 +23,7 @@ interface CartContextType {
   clearCart: () => void;
   getTotalItems: () => number;
   getTotalPrice: () => number;
+  totalPrice?: number; // Adding for backward compatibility, will be deprecated
 }
 
 // Create context with default values
@@ -44,6 +45,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const { toast } = useToast();
   const { language } = useLanguage();
   const [cart, setCart] = useState<CartItem[]>([]);
+  const [totalPrice, setTotalPrice] = useState<number>(0);
   
   // Load cart from localStorage on mount
   useEffect(() => {
@@ -61,6 +63,14 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // Save cart to localStorage whenever it changes
   useEffect(() => {
     localStorage.setItem("cart", JSON.stringify(cart));
+    // Update total price whenever cart changes
+    const total = cart.reduce((total, item) => {
+      const itemPrice = typeof item.price === 'string' 
+        ? parseFloat(item.price.replace(/[^0-9.]/g, '')) 
+        : item.price;
+      return total + (itemPrice * item.quantity);
+    }, 0);
+    setTotalPrice(total);
   }, [cart]);
   
   // Add product to cart
@@ -160,6 +170,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
         clearCart,
         getTotalItems,
         getTotalPrice,
+        totalPrice, // Include for backward compatibility
       }}
     >
       {children}
