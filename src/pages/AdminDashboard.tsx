@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { ToastContainer, toast } from 'react-toastify';
 import { useNavigate } from "react-router-dom";
@@ -7,6 +8,10 @@ import Sidebar from "@/components/admin/Sidebar";
 import DashboardMetrics from "@/components/admin/DashboardMetrics";
 import UserManagement from "@/components/admin/UserManagement";
 import PlaceholderSection from "@/components/admin/PlaceholderSection";
+import AlertsManagement from "@/components/admin/AlertsManagement";
+import InventoryManagement from "@/components/admin/InventoryManagement";
+import ClientManagement from "@/components/admin/ClientManagement";
+import DeviceManagement from "@/components/admin/DeviceManagement";
 
 const AdminDashboard: React.FC = () => {
   const [activeSection, setActiveSection] = useState<string>("dashboard");
@@ -64,6 +69,62 @@ const AdminDashboard: React.FC = () => {
     );
   }
 
+  // Render the appropriate section based on activeSection
+  const renderActiveSection = () => {
+    switch (activeSection) {
+      case "dashboard":
+        return <DashboardMetrics dashboardMetrics={dashboardMetrics} />;
+      case "users":
+        return <UserManagement />;
+      case "clients":
+        return <ClientManagement />;
+      case "devices":
+        return <DeviceManagement />;
+      case "alerts":
+        return <AlertsManagement />;
+      case "orders-list":
+      case "inventory":
+        return <InventoryManagement section={activeSection} />;
+      case "orders":
+      case "finance":
+      case "sales":
+      case "invoices":
+      case "reports":
+      case "settings":
+      case "device-monitoring":
+      case "device-maintenance":
+      case "call-center":
+      case "call-logs":
+      case "agent-performance":
+      case "client-details":
+      case "client-onboarding":
+      case "incidents":
+      case "emergency":
+      case "regions":
+      case "products":
+      case "product-catalog":
+      case "product-pricing":
+      case "subscriptions":
+      case "support":
+      case "knowledge-base":
+      case "faqs":
+      case "analytics":
+      case "metrics":
+      case "admin-users":
+      case "roles":
+      case "permissions":
+      case "general":
+      case "security":
+      case "notifications":
+        return <PlaceholderSection 
+          title={activeSection.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')} 
+          description={`Manage ${activeSection.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')} section`} 
+        />;
+      default:
+        return <DashboardMetrics dashboardMetrics={dashboardMetrics} />;
+    }
+  };
+
   // Dummy data for dashboard metrics
   const dashboardMetrics = {
     totalRevenue: "€2,543,960",
@@ -84,32 +145,6 @@ const AdminDashboard: React.FC = () => {
       { id: 4, type: "Payment", description: "Payment of €34,500 received from Hotel Group", time: "Yesterday" },
       { id: 5, type: "Maintenance", description: "Scheduled maintenance completed for 156 devices", time: "2 days ago" },
     ]
-  };
-
-  // Render the appropriate section based on activeSection
-  const renderActiveSection = () => {
-    switch (activeSection) {
-      case "dashboard":
-        return <DashboardMetrics dashboardMetrics={dashboardMetrics} />;
-      case "users":
-        return <UserManagement />;
-      case "clients":
-      case "devices":
-      case "orders":
-      case "orders-list":
-      case "inventory":
-      case "finance":
-      case "sales":
-      case "invoices":
-      case "reports":
-      case "settings":
-        return <PlaceholderSection 
-          title={activeSection} 
-          description={`Manage ${activeSection} section`} 
-        />;
-      default:
-        return <DashboardMetrics dashboardMetrics={dashboardMetrics} />;
-    }
   };
 
   return (
