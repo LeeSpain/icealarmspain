@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
@@ -11,6 +10,7 @@ import ChatSystem from "@/components/callcenter/chat/ChatSystem";
 import ClientDetails from "@/components/callcenter/ClientDetails";
 import CallStats from "@/components/callcenter/stats/CallStats";
 import PlaceholderSection from "@/components/callcenter/dashboard/placeholder-section";
+import DeviceManagement from "@/components/callcenter/devices/DeviceManagement";
 
 const CallCenterDashboard: React.FC = () => {
   const [activeSection, setActiveSection] = useState("dashboard");
@@ -19,17 +19,14 @@ const CallCenterDashboard: React.FC = () => {
   const { user, isAuthenticated, isLoading } = useAuth();
   const navigate = useNavigate();
 
-  // Redirect if not logged in or not a call center agent
   useEffect(() => {
     console.log("CallCenterDashboard - Auth state:", { isAuthenticated, user, isLoading });
     
-    // Only process redirects when loading is complete
     if (!isLoading) {
       if (!isAuthenticated) {
         console.log("CallCenterDashboard - Not authenticated, redirecting to login");
         navigate('/login');
       } else if (user && user.role !== 'callcenter') {
-        // Redirect based on role
         console.log("CallCenterDashboard - User has incorrect role:", user.role);
         if (user.role === 'admin') {
           navigate('/admin');
@@ -42,7 +39,6 @@ const CallCenterDashboard: React.FC = () => {
     }
   }, [isAuthenticated, user, navigate, isLoading]);
 
-  // Show loading state while authentication is being checked
   if (isLoading) {
     return (
       <div className="flex h-screen items-center justify-center bg-ice-50/30">
@@ -54,7 +50,6 @@ const CallCenterDashboard: React.FC = () => {
     );
   }
 
-  // Only render if user is authenticated and has call center role
   if (!isAuthenticated || !user || user.role !== 'callcenter') {
     return (
       <div className="flex h-screen items-center justify-center bg-ice-50/30">
@@ -66,7 +61,6 @@ const CallCenterDashboard: React.FC = () => {
     );
   }
 
-  // Render the appropriate section based on activeSection
   const renderActiveSection = () => {
     switch (activeSection) {
       case "dashboard":
@@ -77,13 +71,11 @@ const CallCenterDashboard: React.FC = () => {
         return <ChatSystem />;
       case "clients":
         return <ClientDetails selectedClientId={selectedClient} />;
+      case "devices":
+        return <DeviceManagement />;
       case "stats":
         return <CallStats />;
       case "all-clients":
-      case "clients-alerts":
-      case "clients-history":
-      case "clients-devices":
-      case "stats-performance":
       case "schedule":
       case "knowledge":
       case "notifications":
@@ -96,7 +88,6 @@ const CallCenterDashboard: React.FC = () => {
 
   return (
     <div className="flex h-screen bg-ice-50/30">
-      {/* Sidebar */}
       <Sidebar
         activeSection={activeSection}
         setActiveSection={setActiveSection}
@@ -105,7 +96,6 @@ const CallCenterDashboard: React.FC = () => {
         user={user}
       />
       
-      {/* Main Content */}
       <div className="flex-1 overflow-auto transition-all duration-300">
         <div className="p-6 w-full">
           <ToastContainer />

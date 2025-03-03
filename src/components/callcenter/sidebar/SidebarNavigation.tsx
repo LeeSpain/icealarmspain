@@ -1,13 +1,12 @@
-
 import React from "react";
-import { BarChart3, Users, TicketIcon, MessageCircle, BarChart2, Calendar, BookOpen, Bell, UserCircle } from "lucide-react";
+import { BarChart3, Users, TicketIcon, MessageCircle, BarChart2, Calendar, BookOpen, Bell, UserCircle, HardDrive } from "lucide-react";
 import SidebarItem from "./SidebarItem";
 
 interface SidebarNavigationProps {
   activeSection: string;
   setActiveSection: (section: string) => void;
   collapsed: boolean;
-  onLogout?: () => void; // Add onLogout prop to match usage in Sidebar
+  onLogout?: () => void;
 }
 
 const SidebarNavigation: React.FC<SidebarNavigationProps> = ({ 
@@ -44,17 +43,17 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({
 
       <SidebarItem 
         icon={Users}
-        label="All Clients"
-        active={activeSection === "all-clients"}
-        onClick={() => setActiveSection("all-clients")}
-        collapsed={collapsed}
-      />
-
-      <SidebarItem 
-        icon={Users}
-        label="Client Information"
+        label="Client Management"
         active={activeSection === "clients"}
         onClick={() => setActiveSection("clients")}
+        collapsed={collapsed}
+      />
+      
+      <SidebarItem 
+        icon={HardDrive}
+        label="Device Management"
+        active={activeSection === "devices"}
+        onClick={() => setActiveSection("devices")}
         collapsed={collapsed}
       />
 
