@@ -1,6 +1,8 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { ToastContainer } from 'react-toastify';
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/context/AuthContext";
 import 'react-toastify/dist/ReactToastify.css';
 import { 
   Briefcase, 
@@ -21,6 +23,61 @@ const AdminDashboard: React.FC = () => {
   const [activeSection, setActiveSection] = useState<string>("dashboard");
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const { t } = useLanguage();
+  const { user, isAuthenticated, isLoading } = useAuth();
+  const navigate = useNavigate();
+  const [redirectAttempted, setRedirectAttempted] = useState(false);
+
+  // Check authentication and redirect if needed
+  useEffect(() => {
+    console.log("AdminDashboard - Checking authentication:", isAuthenticated, "user:", user, "isLoading:", isLoading);
+    
+    // Only process redirects once and when authentication is confirmed
+    if (!isLoading && !redirectAttempted) {
+      setRedirectAttempted(true);
+      
+      if (!isAuthenticated) {
+        console.log("AdminDashboard - Not authenticated, redirecting to login");
+        navigate('/login');
+      } else if (user && user.role !== 'admin') {
+        // Redirect based on role
+        console.log("AdminDashboard - User has incorrect role:", user.role);
+        switch (user.role) {
+          case 'callcenter':
+            navigate('/call-center');
+            break;
+          default:
+            navigate('/dashboard');
+            break;
+        }
+      } else {
+        console.log("AdminDashboard - User authenticated with correct role");
+      }
+    }
+  }, [isAuthenticated, user, navigate, isLoading, redirectAttempted]);
+
+  // Show loading state while authentication is being checked
+  if (isLoading) {
+    return (
+      <div className="flex h-screen items-center justify-center bg-background">
+        <div className="flex flex-col items-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-ice-600 mb-4"></div>
+          <p className="text-ice-700">Loading admin dashboard...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Only render if user is authenticated and has admin role
+  if (!isAuthenticated || !user || user.role !== 'admin') {
+    return (
+      <div className="flex h-screen items-center justify-center bg-background">
+        <div className="flex flex-col items-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-ice-600 mb-4"></div>
+          <p className="text-ice-700">Redirecting...</p>
+        </div>
+      </div>
+    );
+  }
 
   // Dummy data for dashboard metrics
   const dashboardMetrics = {

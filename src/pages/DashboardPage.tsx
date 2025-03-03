@@ -1,32 +1,39 @@
 
 import React, { useState, useEffect } from "react";
-import MemberSidebar from "@/components/member/MemberSidebar";
-import MemberDashboard from "@/components/member/MemberDashboard";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import MemberSidebar from "@/components/member/MemberSidebar";
+import MemberDashboard from "@/components/member/MemberDashboard";
 
 const DashboardPage: React.FC = () => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const { isAuthenticated, user, isLoading } = useAuth();
   const navigate = useNavigate();
+  const [redirectAttempted, setRedirectAttempted] = useState(false);
   
   useEffect(() => {
-    console.log("DashboardPage - Auth state:", { isAuthenticated, user, isLoading });
+    console.log("DashboardPage - Auth state:", { isAuthenticated, user, isLoading, redirectAttempted });
     
-    // Only redirect if authentication check is complete and user is not authenticated
-    if (!isLoading && !isAuthenticated) {
-      console.log("DashboardPage - Redirecting to login - not authenticated");
-      navigate('/login');
-    } else if (!isLoading && isAuthenticated && user && user.role !== 'member' && user.role !== 'admin') {
-      // If user is authenticated but not a member or admin, redirect to appropriate dashboard
-      console.log("DashboardPage - Redirecting to role-specific dashboard", user.role);
-      if (user.role === 'callcenter') {
-        navigate('/call-center');
+    // Only redirect if authentication check is complete and not already attempted
+    if (!isLoading && !redirectAttempted) {
+      setRedirectAttempted(true);
+      
+      if (!isAuthenticated) {
+        console.log("DashboardPage - Redirecting to login - not authenticated");
+        navigate('/login');
+      } else if (user && user.role !== 'member' && user.role !== 'admin') {
+        // If user is authenticated but not a member or admin, redirect to appropriate dashboard
+        console.log("DashboardPage - Redirecting to role-specific dashboard", user.role);
+        if (user.role === 'callcenter') {
+          navigate('/call-center');
+        }
+      } else {
+        console.log("DashboardPage - User authenticated and correct role, rendering dashboard");
       }
     }
-  }, [isAuthenticated, navigate, user, isLoading]);
+  }, [isAuthenticated, navigate, user, isLoading, redirectAttempted]);
   
   // Show loading state while authentication is being checked
   if (isLoading) {
@@ -42,7 +49,14 @@ const DashboardPage: React.FC = () => {
   
   // Only render dashboard if user is authenticated and is a member or admin
   if (!isAuthenticated || !user) {
-    return null; // This will be replaced by the redirect in the useEffect
+    return (
+      <div className="flex h-screen items-center justify-center bg-ice-50/30">
+        <div className="flex flex-col items-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-ice-600 mb-4"></div>
+          <p className="text-ice-700">Redirecting to login...</p>
+        </div>
+      </div>
+    );
   }
   
   console.log("DashboardPage rendering - sidebarCollapsed:", sidebarCollapsed);

@@ -10,26 +10,61 @@ const CallCenterDashboard: React.FC = () => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [activeSection, setActiveSection] = useState("dashboard");
   const [selectedClient, setSelectedClient] = useState<number | null>(null);
-  const { user, isAuthenticated } = useAuth();
+  const { user, isAuthenticated, isLoading } = useAuth();
   const navigate = useNavigate();
+  const [redirectAttempted, setRedirectAttempted] = useState(false);
 
-  // Redirect if not logged in or not an call center agent
+  // Redirect if not logged in or not a call center agent
   useEffect(() => {
-    console.log("CallCenterDashboard - Checking authentication:", isAuthenticated, "user:", user);
-    if (!isAuthenticated) {
-      navigate('/login');
-    } else if (user && user.role !== 'callcenter') {
-      // Redirect based on role
-      switch (user.role) {
-        case 'admin':
-          navigate('/admin');
-          break;
-        default:
-          navigate('/dashboard');
-          break;
+    console.log("CallCenterDashboard - Checking authentication:", isAuthenticated, "user:", user, "isLoading:", isLoading);
+    
+    // Only process redirects once and when authentication is confirmed
+    if (!isLoading && !redirectAttempted) {
+      setRedirectAttempted(true);
+      
+      if (!isAuthenticated) {
+        console.log("CallCenterDashboard - Not authenticated, redirecting to login");
+        navigate('/login');
+      } else if (user && user.role !== 'callcenter') {
+        // Redirect based on role
+        console.log("CallCenterDashboard - User has incorrect role:", user.role);
+        switch (user.role) {
+          case 'admin':
+            navigate('/admin');
+            break;
+          default:
+            navigate('/dashboard');
+            break;
+        }
+      } else {
+        console.log("CallCenterDashboard - User authenticated with correct role");
       }
     }
-  }, [isAuthenticated, user, navigate]);
+  }, [isAuthenticated, user, navigate, isLoading, redirectAttempted]);
+
+  // Show loading state while authentication is being checked
+  if (isLoading) {
+    return (
+      <div className="flex h-screen items-center justify-center bg-background">
+        <div className="flex flex-col items-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-ice-600 mb-4"></div>
+          <p className="text-ice-700">Loading call center dashboard...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Only render if user is authenticated and has call center role
+  if (!isAuthenticated || !user || user.role !== 'callcenter') {
+    return (
+      <div className="flex h-screen items-center justify-center bg-background">
+        <div className="flex flex-col items-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-ice-600 mb-4"></div>
+          <p className="text-ice-700">Redirecting...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex h-screen bg-background">

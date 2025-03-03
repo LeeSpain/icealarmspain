@@ -41,7 +41,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     } else {
       console.log("No user found in localStorage");
     }
-    setIsLoading(false);
+    // Important: Set isLoading to false AFTER user state is set
+    setTimeout(() => setIsLoading(false), 100); // Small delay to ensure state updates properly
   }, []);
 
   // Mock users - in a real app, this would be authenticated against a backend
@@ -55,23 +56,37 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setIsLoading(true);
     console.log("Login attempt with email:", email);
     
-    // Simulate API request delay
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    const foundUser = mockUsers.find(u => u.email === email && u.password === password);
-    
-    if (foundUser) {
-      const { password, ...userWithoutPassword } = foundUser;
-      console.log("User authenticated:", userWithoutPassword);
-      setUser(userWithoutPassword);
-      localStorage.setItem('user', JSON.stringify(userWithoutPassword));
+    try {
+      // Simulate API request delay
+      await new Promise(resolve => setTimeout(resolve, 800));
+      
+      const foundUser = mockUsers.find(u => u.email === email && u.password === password);
+      
+      if (foundUser) {
+        const { password, ...userWithoutPassword } = foundUser;
+        console.log("User authenticated:", userWithoutPassword);
+        
+        // Set user first, then update localStorage
+        setUser(userWithoutPassword);
+        localStorage.setItem('user', JSON.stringify(userWithoutPassword));
+        
+        // Ensure we have a small delay before setting isLoading to false
+        setTimeout(() => {
+          setIsLoading(false);
+          console.log("Login complete, isLoading set to false");
+        }, 100);
+        
+        return true;
+      }
+      
+      console.log("Authentication failed for email:", email);
       setIsLoading(false);
-      return true;
+      return false;
+    } catch (error) {
+      console.error("Login error:", error);
+      setIsLoading(false);
+      return false;
     }
-    
-    console.log("Authentication failed for email:", email);
-    setIsLoading(false);
-    return false;
   };
 
   const logout = () => {

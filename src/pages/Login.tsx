@@ -15,6 +15,7 @@ const Login: React.FC = () => {
   const location = useLocation();
   const { login, user, isAuthenticated, isLoading } = useAuth();
   const [loginInProgress, setLoginInProgress] = useState(false);
+  const [redirectAttempted, setRedirectAttempted] = useState(false);
   
   // Check if there's a redirect parameter
   const searchParams = new URLSearchParams(location.search);
@@ -24,13 +25,19 @@ const Login: React.FC = () => {
   useEffect(() => {
     console.log("Login page - Auth state:", { isAuthenticated, user, isLoading });
     
-    // Only redirect if auth check is complete and user is authenticated
-    if (!isLoading && isAuthenticated && user) {
+    // Only redirect if auth check is complete, user is authenticated, and we haven't already tried to redirect
+    if (!isLoading && isAuthenticated && user && !redirectAttempted) {
+      setRedirectAttempted(true); // Prevent multiple redirects
+      
       const redirectTo = redirectParam || getDefaultRedirect(user.role);
       console.log("Redirecting authenticated user to:", redirectTo);
-      navigate(redirectTo, { replace: true });
+      
+      // Use a slight delay to ensure state is fully updated before redirect
+      setTimeout(() => {
+        navigate(redirectTo, { replace: true });
+      }, 100);
     }
-  }, [isAuthenticated, navigate, user, redirectParam, isLoading]);
+  }, [isAuthenticated, navigate, user, redirectParam, isLoading, redirectAttempted]);
   
   // Helper function to determine default redirect based on role
   const getDefaultRedirect = (role: string | null) => {
@@ -52,6 +59,8 @@ const Login: React.FC = () => {
   }, []);
   
   const handleLoginSuccess = async (email: string, password: string) => {
+    if (loginInProgress) return; // Prevent multiple login attempts
+    
     setLoginInProgress(true);
     try {
       console.log("Attempting login with:", email);
@@ -97,7 +106,7 @@ const Login: React.FC = () => {
     );
   }
   
-  // If already authenticated, return null (the useEffect will handle redirection)
+  // If already authenticated, show loading state (the useEffect will handle redirection)
   if (isAuthenticated && user) {
     return (
       <div className="flex min-h-screen items-center justify-center">
