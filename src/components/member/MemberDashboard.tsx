@@ -11,6 +11,7 @@ import SOSTile from "@/components/member/dashboard/SOSTile";
 import GlucoseTile from "@/components/member/dashboard/GlucoseTile";
 import WeatherTile from "@/components/member/dashboard/WeatherTile";
 import NewsTile from "@/components/member/dashboard/NewsTile";
+import AIGuardianTile from "@/components/member/dashboard/AIGuardianTile";
 import { CartSection } from "@/components/member/dashboard/CartSection";
 import { useCart } from "@/components/payment/CartContext";
 
@@ -72,6 +73,13 @@ const MemberDashboard: React.FC = () => {
               onCheckout={() => navigate('/checkout')}
             />
           )}
+          
+          {/* Add the AIGuardianTile at the beginning of the grid for prominence */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
+            <div className="md:col-span-2">
+              <AIGuardianTile />
+            </div>
+          </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <SOSTile />
