@@ -1,5 +1,5 @@
 
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 
 // Define user types and roles
 export type UserRole = 'admin' | 'member' | 'callcenter' | null;
@@ -24,9 +24,13 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const initialized = useRef(false);
 
   // Check local storage for user on initial load
   useEffect(() => {
+    if (initialized.current) return;
+    initialized.current = true;
+    
     console.log("AuthProvider - Checking local storage for user");
     const storedUser = localStorage.getItem('user');
     
@@ -68,15 +72,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const { password, ...userWithoutPassword } = foundUser;
         console.log("User authenticated:", userWithoutPassword);
         
-        // Set user in state first
+        // Important: Set user state first
         setUser(userWithoutPassword);
         
-        // Then update storage - this ensures the UI updates properly
+        // Then update local storage
         localStorage.setItem('user', JSON.stringify(userWithoutPassword));
         
-        // Set loading to false immediately
         setIsLoading(false);
-        
         return true;
       }
       
@@ -92,7 +94,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const logout = () => {
     console.log("Logging out user:", user?.email);
-    // Clear state before storage
+    // Important: clear state first
     setUser(null);
     localStorage.removeItem('user');
   };

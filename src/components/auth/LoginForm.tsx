@@ -43,6 +43,9 @@ const LoginForm: React.FC<LoginFormProps> = ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    // Prevent multiple submissions
+    if (isLoading) return;
+    
     const newErrors = validateForm(formData, "login", language);
     setErrors(newErrors);
     if (Object.keys(newErrors).length > 0) return;
@@ -52,7 +55,14 @@ const LoginForm: React.FC<LoginFormProps> = ({
     }
     
     if (onSuccess) {
-      onSuccess(formData.email, formData.password);
+      try {
+        await onSuccess(formData.email, formData.password);
+      } catch (error) {
+        console.error("Login error in form:", error);
+        if (externalLoading === undefined) {
+          setInternalLoading(false);
+        }
+      }
     } else {
       setTimeout(() => {
         if (externalLoading === undefined) {
@@ -112,6 +122,7 @@ const LoginForm: React.FC<LoginFormProps> = ({
             type="submit"
             className="w-full flex justify-center"
             isLoading={isLoading}
+            disabled={isLoading}
           >
             {!isLoading && (
               <>

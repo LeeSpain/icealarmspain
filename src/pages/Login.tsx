@@ -15,6 +15,7 @@ const Login: React.FC = () => {
   const location = useLocation();
   const { login, user, isAuthenticated, isLoading } = useAuth();
   const [loginInProgress, setLoginInProgress] = useState(false);
+  const [redirectTriggered, setRedirectTriggered] = useState(false);
   
   // Check if there's a redirect parameter
   const searchParams = new URLSearchParams(location.search);
@@ -22,22 +23,26 @@ const Login: React.FC = () => {
   
   // Handle redirection after successful authentication
   useEffect(() => {
-    console.log("Login page - Auth state:", { isAuthenticated, user, isLoading });
+    console.log("Login page - Auth state:", { isAuthenticated, user, isLoading, redirectTriggered });
     
-    // Only redirect if auth check is complete and user is authenticated
-    if (!isLoading && isAuthenticated && user) {
+    // Only redirect if auth check is complete, user is authenticated, and no redirect has been triggered yet
+    if (!isLoading && isAuthenticated && user && !redirectTriggered) {
       console.log("User authenticated, preparing to redirect");
+      
+      // Set flag to prevent multiple redirects
+      setRedirectTriggered(true);
       
       // Determine where to redirect based on user role
       const redirectTo = redirectParam || getDefaultRedirect(user.role);
       console.log("Redirecting authenticated user to:", redirectTo);
       
-      // Use a sufficient delay to ensure all state updates have propagated
+      // Use a small delay to ensure the redirect doesn't happen too quickly
       setTimeout(() => {
+        console.log("Executing redirect now");
         navigate(redirectTo, { replace: true });
-      }, 1500);
+      }, 100);
     }
-  }, [isAuthenticated, isLoading, user, navigate, redirectParam]);
+  }, [isAuthenticated, isLoading, user, navigate, redirectParam, redirectTriggered]);
   
   // Helper function to determine default redirect based on role
   const getDefaultRedirect = (role: string | null) => {
@@ -73,6 +78,7 @@ const Login: React.FC = () => {
         });
         
         // The useEffect will handle the redirection
+        // Do not set loginInProgress to false here, maintain it until redirect completes
       } else {
         toast({
           title: language === 'en' ? "Login failed" : "Error de inicio de sesión",
