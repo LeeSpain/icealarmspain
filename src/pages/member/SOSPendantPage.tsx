@@ -54,7 +54,7 @@ const SOSPendantMemberPage: React.FC = () => {
           setCollapsed={setSidebarCollapsed}
         />
         
-        <div className={`flex-1 overflow-auto transition-all duration-300 ${sidebarCollapsed ? 'ml-16' : 'ml-64'}`}>
+        <div className="flex-1 overflow-auto transition-all duration-300">
           <div className="p-6">
             <Button 
               variant="outline" 
@@ -82,7 +82,7 @@ const SOSPendantMemberPage: React.FC = () => {
         setCollapsed={setSidebarCollapsed}
       />
       
-      <div className={`flex-1 overflow-auto transition-all duration-300 ${sidebarCollapsed ? 'ml-16' : 'ml-64'}`}>
+      <div className="flex-1 overflow-auto transition-all duration-300">
         <div className="p-6">
           <div className="mb-6">
             <h1 className="text-2xl font-bold flex items-center gap-2">

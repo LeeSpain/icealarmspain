@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -47,7 +48,7 @@ const DeviceSettingsPage: React.FC = () => {
         setCollapsed={setSidebarCollapsed}
       />
       
-      <div className={`flex-1 overflow-auto transition-all duration-300`}>
+      <div className="flex-1 overflow-auto transition-all duration-300">
         <div className="p-6 max-w-7xl mx-auto">
           <ToastContainer />
           
