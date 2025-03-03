@@ -4,6 +4,8 @@ import MemberSidebar from "@/components/member/MemberSidebar";
 import MemberDashboard from "@/components/member/MemberDashboard";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const DashboardPage: React.FC = () => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
@@ -30,6 +32,7 @@ const DashboardPage: React.FC = () => {
       
       <div className="flex-1 overflow-auto transition-all duration-300">
         <div className="p-6 w-full">
+          <ToastContainer />
           <MemberDashboard />
         </div>
       </div>

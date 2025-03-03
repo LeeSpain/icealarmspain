@@ -89,7 +89,56 @@ const translations = {
     // Footer
     'footer.rights': 'All rights reserved',
     
-    // Add more translations as needed
+    // Dashboard
+    'dashboard.welcome': 'Welcome back',
+    'dashboard.overview': 'Dashboard Overview',
+    'dashboard.devices': 'My Devices',
+    'dashboard.add_device': 'Add Device',
+    'dashboard.no_devices': 'No devices found',
+    'dashboard.setup_device': 'Set Up Device',
+    'dashboard.status': 'Status',
+    'dashboard.battery': 'Battery',
+    'dashboard.active_devices': 'Active Devices',
+    'dashboard.alert_status': 'Alert Status',
+    'dashboard.next_checkup': 'Next Check-up',
+    
+    // Device Pages
+    'device.settings': 'Device Settings',
+    'device.status': 'Device Status',
+    'device.battery': 'Battery Level',
+    'device.last_check': 'Last Checked',
+    'device.configure': 'Configure Device',
+    'device.alerts': 'Device Alerts',
+    'device.history': 'Usage History',
+    
+    // Help & Support
+    'help.title': 'Help & Support',
+    'help.faq': 'Frequently Asked Questions',
+    'help.contact': 'Contact Support',
+    'help.resources': 'Resources',
+    'help.chat': 'Live Chat',
+    
+    // Settings
+    'settings.title': 'Settings',
+    'settings.notifications': 'Notification Settings',
+    'settings.language': 'Language & Display',
+    'settings.privacy': 'Privacy & Data',
+    'settings.devices': 'Device Connections',
+    
+    // Profile
+    'profile.title': 'Profile Settings',
+    'profile.personal': 'Personal Information',
+    'profile.account': 'Account Settings',
+    'profile.emergency': 'Emergency Contacts',
+    'profile.security': 'Security Settings',
+    
+    // Health Metrics
+    'health.metrics': 'Health Metrics',
+    'health.glucose': 'Blood Glucose',
+    'health.heart_rate': 'Heart Rate',
+    'health.blood_pressure': 'Blood Pressure',
+    'health.medications': 'Medications',
+    'health.upcoming': 'Upcoming Checkups',
   },
   es: {
     // Navigation
@@ -126,6 +175,55 @@ const translations = {
     // Footer
     'footer.rights': 'Todos los derechos reservados',
     
-    // Add more translations as needed
+    // Dashboard
+    'dashboard.welcome': 'Bienvenido de nuevo',
+    'dashboard.overview': 'Resumen del Panel',
+    'dashboard.devices': 'Mis Dispositivos',
+    'dashboard.add_device': 'Añadir Dispositivo',
+    'dashboard.no_devices': 'No se encontraron dispositivos',
+    'dashboard.setup_device': 'Configurar Dispositivo',
+    'dashboard.status': 'Estado',
+    'dashboard.battery': 'Batería',
+    'dashboard.active_devices': 'Dispositivos Activos',
+    'dashboard.alert_status': 'Estado de Alerta',
+    'dashboard.next_checkup': 'Próxima Revisión',
+    
+    // Device Pages
+    'device.settings': 'Configuración de Dispositivo',
+    'device.status': 'Estado del Dispositivo',
+    'device.battery': 'Nivel de Batería',
+    'device.last_check': 'Última Verificación',
+    'device.configure': 'Configurar Dispositivo',
+    'device.alerts': 'Alertas del Dispositivo',
+    'device.history': 'Historial de Uso',
+    
+    // Help & Support
+    'help.title': 'Ayuda y Soporte',
+    'help.faq': 'Preguntas Frecuentes',
+    'help.contact': 'Contactar Soporte',
+    'help.resources': 'Recursos',
+    'help.chat': 'Chat en Vivo',
+    
+    // Settings
+    'settings.title': 'Configuración',
+    'settings.notifications': 'Configuración de Notificaciones',
+    'settings.language': 'Idioma y Visualización',
+    'settings.privacy': 'Privacidad y Datos',
+    'settings.devices': 'Conexiones de Dispositivos',
+    
+    // Profile
+    'profile.title': 'Configuración de Perfil',
+    'profile.personal': 'Información Personal',
+    'profile.account': 'Configuración de Cuenta',
+    'profile.emergency': 'Contactos de Emergencia',
+    'profile.security': 'Configuración de Seguridad',
+    
+    // Health Metrics
+    'health.metrics': 'Métricas de Salud',
+    'health.glucose': 'Glucosa en Sangre',
+    'health.heart_rate': 'Ritmo Cardíaco',
+    'health.blood_pressure': 'Presión Arterial',
+    'health.medications': 'Medicamentos',
+    'health.upcoming': 'Próximas Revisiones',
   }
 };

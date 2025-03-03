@@ -60,4 +60,3 @@ const CallCenterDashboard: React.FC = () => {
 };
 
 export default CallCenterDashboard;
-

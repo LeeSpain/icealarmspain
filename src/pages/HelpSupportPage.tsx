@@ -1,108 +1,17 @@
 
 import React, { useState } from "react";
-import { ToastContainer, toast } from 'react-toastify';
+import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import MemberSidebar from "@/components/member/MemberSidebar";
 import { useLanguage } from "@/context/LanguageContext";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { HelpCircle, Book, MessageSquare, Phone, FileText, Send, Search } from "lucide-react";
+import { MessageSquare, HelpCircle, FileText, ExternalLink, PhoneCall } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-
-// FAQ data
-const faqData = [
-  {
-    question: {
-      en: "How do I set up my new device?",
-      es: "¿Cómo configuro mi nuevo dispositivo?"
-    },
-    answer: {
-      en: "To set up a new device, go to the Dashboard and click on 'Explore Products', then select your device and follow the step-by-step setup guide.",
-      es: "Para configurar un nuevo dispositivo, ve al Panel de Control y haz clic en 'Explorar Productos', luego selecciona tu dispositivo y sigue la guía de configuración paso a paso."
-    }
-  },
-  {
-    question: {
-      en: "What should I do if my device is not working?",
-      es: "¿Qué debo hacer si mi dispositivo no funciona?"
-    },
-    answer: {
-      en: "If your device is not working, try to reboot it first by pressing the power button for 10 seconds. If the issue persists, check the battery level and connectivity. For further assistance, contact our support team.",
-      es: "Si tu dispositivo no funciona, intenta reiniciarlo primero presionando el botón de encendido durante 10 segundos. Si el problema persiste, verifica el nivel de batería y la conectividad. Para más ayuda, contacta a nuestro equipo de soporte."
-    }
-  },
-  {
-    question: {
-      en: "How do I update my emergency contacts?",
-      es: "¿Cómo actualizo mis contactos de emergencia?"
-    },
-    answer: {
-      en: "To update your emergency contacts, go to your Profile page, scroll down to the Emergency Contact section, and click on Edit. Add or remove contacts as needed and save your changes.",
-      es: "Para actualizar tus contactos de emergencia, ve a tu página de Perfil, desplázate hacia abajo hasta la sección de Contacto de Emergencia y haz clic en Editar. Añade o elimina contactos según sea necesario y guarda tus cambios."
-    }
-  },
-  {
-    question: {
-      en: "How accurate is the fall detection?",
-      es: "¿Qué tan precisa es la detección de caídas?"
-    },
-    answer: {
-      en: "Our fall detection technology has an accuracy rate of over 95%. The system uses multiple sensors and AI algorithms to distinguish between normal movements and actual falls to minimize false alarms.",
-      es: "Nuestra tecnología de detección de caídas tiene una tasa de precisión superior al 95%. El sistema utiliza múltiples sensores y algoritmos de IA para distinguir entre movimientos normales y caídas reales para minimizar las falsas alarmas."
-    }
-  },
-  {
-    question: {
-      en: "Can I use the SOS Pendant in the shower?",
-      es: "¿Puedo usar el Colgante SOS en la ducha?"
-    },
-    answer: {
-      en: "Yes, the SOS Pendant is water-resistant with an IP67 rating, which means it can be worn in the shower and is protected against temporary immersion in water up to 1 meter for 30 minutes.",
-      es: "Sí, el Colgante SOS es resistente al agua con clasificación IP67, lo que significa que se puede usar en la ducha y está protegido contra la inmersión temporal en agua de hasta 1 metro durante 30 minutos."
-    }
-  }
-];
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
 const HelpSupportPage: React.FC = () => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-  const { language } = useLanguage();
-  const [searchQuery, setSearchQuery] = useState("");
-  const [contactForm, setContactForm] = useState({
-    name: "",
-    email: "",
-    subject: "",
-    message: ""
-  });
-  
-  const handleContactChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setContactForm({
-      ...contactForm,
-      [e.target.name]: e.target.value
-    });
-  };
-  
-  const handleContactSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    toast.success(
-      language === 'en' 
-        ? "Your message has been sent! We'll respond shortly." 
-        : "¡Tu mensaje ha sido enviado! Responderemos pronto."
-    );
-    setContactForm({
-      name: "",
-      email: "",
-      subject: "",
-      message: ""
-    });
-  };
-  
-  const filteredFaqs = searchQuery 
-    ? faqData.filter(faq => 
-        faq.question[language === 'en' ? 'en' : 'es'].toLowerCase().includes(searchQuery.toLowerCase()) ||
-        faq.answer[language === 'en' ? 'en' : 'es'].toLowerCase().includes(searchQuery.toLowerCase())
-      )
-    : faqData;
+  const { language, t } = useLanguage();
   
   return (
     <div className="flex h-screen bg-ice-50/30">
@@ -112,7 +21,7 @@ const HelpSupportPage: React.FC = () => {
         setCollapsed={setSidebarCollapsed}
       />
       
-      <div className={`flex-1 overflow-auto transition-all duration-300 ${sidebarCollapsed ? 'ml-16' : 'ml-64'}`}>
+      <div className={`flex-1 overflow-auto transition-all duration-300`}>
         <div className="p-6 max-w-7xl mx-auto">
           <ToastContainer />
           
@@ -122,183 +31,161 @@ const HelpSupportPage: React.FC = () => {
             </h1>
             <p className="text-ice-700">
               {language === 'en' 
-                ? 'Find answers to your questions or contact our support team' 
-                : 'Encuentra respuestas a tus preguntas o contacta a nuestro equipo de soporte'}
+                ? 'Get assistance with your ICE Alarm service and devices' 
+                : 'Obtén asistencia con tu servicio y dispositivos ICE Alarm'}
             </p>
           </div>
           
-          <div className="mb-6">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
-              <Input 
-                placeholder={language === 'en' ? "Search for help..." : "Buscar ayuda..."} 
-                className="pl-10"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-            </div>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-            <Card>
-              <CardContent className="p-6 flex flex-col items-center text-center">
-                <Book className="h-10 w-10 text-ice-500 mb-4" />
-                <h3 className="font-medium text-lg mb-2">
-                  {language === 'en' ? 'User Guides' : 'Guías de Usuario'}
-                </h3>
-                <p className="text-sm text-muted-foreground mb-4">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+            <Card className="col-span-1 lg:col-span-2">
+              <CardHeader>
+                <div className="flex items-center gap-2">
+                  <MessageSquare className="h-5 w-5 text-ice-500" />
+                  <CardTitle>
+                    {language === 'en' ? 'Frequently Asked Questions' : 'Preguntas Frecuentes'}
+                  </CardTitle>
+                </div>
+                <CardDescription>
                   {language === 'en' 
-                    ? 'Access detailed instructions for all our products' 
-                    : 'Accede a instrucciones detalladas para todos nuestros productos'}
-                </p>
-                <Button variant="outline">
-                  {language === 'en' ? 'Browse Guides' : 'Explorar Guías'}
-                </Button>
+                    ? 'Quick answers to common questions' 
+                    : 'Respuestas rápidas a preguntas comunes'}
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Accordion type="single" collapsible className="w-full">
+                  <AccordionItem value="item-1">
+                    <AccordionTrigger>
+                      {language === 'en' 
+                        ? 'How do I set up my SOS Pendant?' 
+                        : '¿Cómo configuro mi Colgante SOS?'}
+                    </AccordionTrigger>
+                    <AccordionContent>
+                      {language === 'en' 
+                        ? 'To set up your SOS Pendant, first ensure it\'s fully charged. Then, press and hold the power button for 3 seconds until the LED light flashes blue. Open the ICE Alarm app on your smartphone, go to "Devices" and select "Add Device." Follow the on-screen instructions to complete the pairing process.' 
+                        : 'Para configurar su Colgante SOS, primero asegúrese de que esté completamente cargado. Luego, mantenga presionado el botón de encendido durante 3 segundos hasta que la luz LED parpadee en azul. Abra la aplicación ICE Alarm en su smartphone, vaya a "Dispositivos" y seleccione "Agregar dispositivo". Siga las instrucciones en pantalla para completar el proceso de emparejamiento.'}
+                    </AccordionContent>
+                  </AccordionItem>
+                  
+                  <AccordionItem value="item-2">
+                    <AccordionTrigger>
+                      {language === 'en' 
+                        ? 'What happens when I press the SOS button?' 
+                        : '¿Qué sucede cuando presiono el botón SOS?'}
+                    </AccordionTrigger>
+                    <AccordionContent>
+                      {language === 'en' 
+                        ? 'When you press and hold the SOS button for 3 seconds, your device will immediately alert our 24/7 monitoring center. An agent will attempt to contact you through the device\'s speakerphone. If you don\'t respond, we\'ll contact your emergency contacts and, if necessary, dispatch emergency services to your GPS location.' 
+                        : 'Cuando presiona y mantiene presionado el botón SOS durante 3 segundos, su dispositivo alertará inmediatamente a nuestro centro de monitoreo 24/7. Un agente intentará contactarlo a través del altavoz del dispositivo. Si no responde, contactaremos a sus contactos de emergencia y, si es necesario, enviaremos servicios de emergencia a su ubicación GPS.'}
+                    </AccordionContent>
+                  </AccordionItem>
+                  
+                  <AccordionItem value="item-3">
+                    <AccordionTrigger>
+                      {language === 'en' 
+                        ? 'How accurate is the GPS location?' 
+                        : '¿Qué tan precisa es la ubicación GPS?'}
+                    </AccordionTrigger>
+                    <AccordionContent>
+                      {language === 'en' 
+                        ? 'Our devices use advanced GPS technology that provides location accuracy within 2-5 meters outdoors. Indoors, the accuracy may vary depending on building materials and structure, but our systems use Wi-Fi and cellular triangulation as backup to ensure we can locate you even when GPS signal is limited.' 
+                        : 'Nuestros dispositivos utilizan tecnología GPS avanzada que proporciona una precisión de ubicación de 2-5 metros en exteriores. En interiores, la precisión puede variar según los materiales y la estructura del edificio, pero nuestros sistemas utilizan Wi-Fi y triangulación celular como respaldo para garantizar que podamos localizarlo incluso cuando la señal GPS es limitada.'}
+                    </AccordionContent>
+                  </AccordionItem>
+                  
+                  <AccordionItem value="item-4">
+                    <AccordionTrigger>
+                      {language === 'en' 
+                        ? 'How long does the battery last?' 
+                        : '¿Cuánto dura la batería?'}
+                    </AccordionTrigger>
+                    <AccordionContent>
+                      {language === 'en' 
+                        ? 'The SOS Pendant battery typically lasts 3-5 days on a single charge, depending on usage. The Glucose Monitor has a battery life of up to 14 days, while the Medical Dispenser should remain plugged in but includes a 24-hour backup battery in case of power outages.' 
+                        : 'La batería del Colgante SOS generalmente dura de 3 a 5 días con una sola carga, dependiendo del uso. El Monitor de Glucosa tiene una duración de batería de hasta 14 días, mientras que el Dispensador Médico debe permanecer enchufado, pero incluye una batería de respaldo de 24 horas en caso de cortes de energía.'}
+                    </AccordionContent>
+                  </AccordionItem>
+                  
+                  <AccordionItem value="item-5">
+                    <AccordionTrigger>
+                      {language === 'en' 
+                        ? 'How do I update my emergency contacts?' 
+                        : '¿Cómo actualizo mis contactos de emergencia?'}
+                    </AccordionTrigger>
+                    <AccordionContent>
+                      {language === 'en' 
+                        ? 'You can update your emergency contacts by going to your Profile page, selecting "Emergency Contacts," and then using the edit or add buttons to modify your contact list. Changes take effect immediately across all your devices.' 
+                        : 'Puede actualizar sus contactos de emergencia yendo a su página de Perfil, seleccionando "Contactos de Emergencia" y luego usando los botones de editar o agregar para modificar su lista de contactos. Los cambios surten efecto inmediatamente en todos sus dispositivos.'}
+                    </AccordionContent>
+                  </AccordionItem>
+                </Accordion>
               </CardContent>
             </Card>
             
-            <Card>
-              <CardContent className="p-6 flex flex-col items-center text-center">
-                <MessageSquare className="h-10 w-10 text-ice-500 mb-4" />
-                <h3 className="font-medium text-lg mb-2">
-                  {language === 'en' ? 'Live Chat' : 'Chat en Vivo'}
-                </h3>
-                <p className="text-sm text-muted-foreground mb-4">
-                  {language === 'en' 
-                    ? 'Chat with our support team in real-time' 
-                    : 'Chatea con nuestro equipo de soporte en tiempo real'}
-                </p>
-                <Button className="bg-ice-600 hover:bg-ice-700">
-                  {language === 'en' ? 'Start Chat' : 'Iniciar Chat'}
-                </Button>
-              </CardContent>
-            </Card>
-            
-            <Card>
-              <CardContent className="p-6 flex flex-col items-center text-center">
-                <Phone className="h-10 w-10 text-ice-500 mb-4" />
-                <h3 className="font-medium text-lg mb-2">
-                  {language === 'en' ? 'Phone Support' : 'Soporte Telefónico'}
-                </h3>
-                <p className="text-sm text-muted-foreground mb-4">
-                  {language === 'en' 
-                    ? 'Speak with our customer service' 
-                    : 'Habla con nuestro servicio al cliente'}
-                </p>
-                <Button variant="outline">
-                  {language === 'en' ? '+34 900 123 456' : '+34 900 123 456'}
-                </Button>
-              </CardContent>
-            </Card>
-          </div>
-          
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
-            <div className="lg:col-span-2">
+            <div className="space-y-6">
               <Card>
                 <CardHeader>
                   <div className="flex items-center gap-2">
-                    <HelpCircle className="h-5 w-5 text-ice-500" />
+                    <PhoneCall className="h-5 w-5 text-ice-500" />
                     <CardTitle>
-                      {language === 'en' ? 'Frequently Asked Questions' : 'Preguntas Frecuentes'}
+                      {language === 'en' ? 'Contact Support' : 'Contactar Soporte'}
                     </CardTitle>
                   </div>
-                  <CardDescription>
-                    {language === 'en' 
-                      ? 'Quick answers to common questions' 
-                      : 'Respuestas rápidas a preguntas comunes'}
-                  </CardDescription>
                 </CardHeader>
-                <CardContent>
-                  <div className="space-y-6">
-                    {filteredFaqs.length > 0 ? (
-                      filteredFaqs.map((faq, index) => (
-                        <div key={index} className="border-b pb-4 last:border-0">
-                          <h3 className="font-medium text-lg mb-2">
-                            {faq.question[language === 'en' ? 'en' : 'es']}
-                          </h3>
-                          <p className="text-muted-foreground">
-                            {faq.answer[language === 'en' ? 'en' : 'es']}
-                          </p>
-                        </div>
-                      ))
-                    ) : (
-                      <div className="text-center py-8">
-                        <p className="text-muted-foreground">
-                          {language === 'en' 
-                            ? 'No results found. Try a different search term.' 
-                            : 'No se encontraron resultados. Intenta con un término de búsqueda diferente.'}
-                        </p>
-                      </div>
-                    )}
+                <CardContent className="space-y-4">
+                  <div className="flex items-center gap-3">
+                    <PhoneCall size={18} className="text-ice-500" />
+                    <div>
+                      <h3 className="font-medium text-sm">
+                        {language === 'en' ? '24/7 Support Line' : 'Línea de Soporte 24/7'}
+                      </h3>
+                      <p className="text-xs text-muted-foreground">
+                        +34 900 123 456
+                      </p>
+                    </div>
                   </div>
+                  
+                  <div className="flex items-center gap-3">
+                    <MessageSquare size={18} className="text-ice-500" />
+                    <div>
+                      <h3 className="font-medium text-sm">
+                        {language === 'en' ? 'Email Support' : 'Soporte por Email'}
+                      </h3>
+                      <p className="text-xs text-muted-foreground">
+                        support@icealarm.com
+                      </p>
+                    </div>
+                  </div>
+                  
+                  <Button className="w-full bg-ice-600 hover:bg-ice-700">
+                    {language === 'en' ? 'Start Live Chat' : 'Iniciar Chat en Vivo'}
+                  </Button>
                 </CardContent>
               </Card>
-            </div>
-            
-            <div>
+              
               <Card>
                 <CardHeader>
                   <div className="flex items-center gap-2">
                     <FileText className="h-5 w-5 text-ice-500" />
                     <CardTitle>
-                      {language === 'en' ? 'Contact Us' : 'Contáctanos'}
+                      {language === 'en' ? 'Resources' : 'Recursos'}
                     </CardTitle>
                   </div>
-                  <CardDescription>
-                    {language === 'en' 
-                      ? 'Send us a message and we\'ll respond soon' 
-                      : 'Envíanos un mensaje y responderemos pronto'}
-                  </CardDescription>
                 </CardHeader>
-                <CardContent>
-                  <form onSubmit={handleContactSubmit} className="space-y-4">
-                    <div className="space-y-2">
-                      <Input 
-                        name="name"
-                        value={contactForm.name}
-                        onChange={handleContactChange}
-                        placeholder={language === 'en' ? "Your name" : "Tu nombre"}
-                        required
-                      />
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <Input 
-                        name="email"
-                        type="email"
-                        value={contactForm.email}
-                        onChange={handleContactChange}
-                        placeholder={language === 'en' ? "Your email" : "Tu email"}
-                        required
-                      />
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <Input 
-                        name="subject"
-                        value={contactForm.subject}
-                        onChange={handleContactChange}
-                        placeholder={language === 'en' ? "Subject" : "Asunto"}
-                        required
-                      />
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <Textarea 
-                        name="message"
-                        value={contactForm.message}
-                        onChange={handleContactChange}
-                        placeholder={language === 'en' ? "Your message" : "Tu mensaje"}
-                        rows={4}
-                        required
-                      />
-                    </div>
-                    
-                    <Button type="submit" className="w-full bg-ice-600 hover:bg-ice-700">
-                      <Send className="mr-2 h-4 w-4" />
-                      {language === 'en' ? 'Send Message' : 'Enviar Mensaje'}
-                    </Button>
-                  </form>
+                <CardContent className="space-y-4">
+                  <Button variant="outline" className="w-full justify-start">
+                    <HelpCircle className="mr-2 h-4 w-4" />
+                    {language === 'en' ? 'User Guides' : 'Guías de Usuario'}
+                  </Button>
+                  
+                  <Button variant="outline" className="w-full justify-start">
+                    <FileText className="mr-2 h-4 w-4" />
+                    {language === 'en' ? 'Device Manuals' : 'Manuales de Dispositivos'}
+                  </Button>
+                  
+                  <Button variant="outline" className="w-full justify-start">
+                    <ExternalLink className="mr-2 h-4 w-4" />
+                    {language === 'en' ? 'Video Tutorials' : 'Tutoriales en Video'}
+                  </Button>
                 </CardContent>
               </Card>
             </div>

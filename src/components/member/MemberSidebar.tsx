@@ -5,6 +5,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import SidebarHeader from './sidebar/SidebarHeader';
 import SidebarNavigation from './sidebar/SidebarNavigation';
+import { useLanguage } from '@/context/LanguageContext';
 
 interface MemberSidebarProps {
   activePage?: string;
@@ -18,6 +19,7 @@ const MemberSidebar: React.FC<MemberSidebarProps> = ({
   setCollapsed = () => {}
 }) => {
   const { logout, user } = useAuth();
+  const { language } = useLanguage();
   const navigate = useNavigate();
   const location = useLocation();
   
@@ -31,11 +33,11 @@ const MemberSidebar: React.FC<MemberSidebarProps> = ({
     if (path === '/profile') return 'profile';
     if (path === '/settings') return 'settings';
     if (path === '/help') return 'help';
-    if (path === '/health/metrics') return 'health-metrics';
-    if (path === '/health/medications') return 'medications';
-    if (path === '/devices/sos-pendant') return 'sos-pendant';
-    if (path === '/devices/glucose-monitor') return 'glucose-monitor';
-    if (path === '/devices/medical-dispenser') return 'medical-dispenser';
+    if (path.startsWith('/health/metrics')) return 'health-metrics';
+    if (path.startsWith('/health/medications')) return 'medications';
+    if (path.startsWith('/devices/sos-pendant')) return 'sos-pendant';
+    if (path.startsWith('/devices/glucose-monitor')) return 'glucose-monitor';
+    if (path.startsWith('/devices/medical-dispenser')) return 'medical-dispenser';
     
     return activePage;
   };

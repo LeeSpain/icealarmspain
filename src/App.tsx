@@ -29,6 +29,7 @@ import HelpSupportPage from './pages/HelpSupportPage';
 import SOSPendantMemberPage from './pages/member/SOSPendantPage';
 import MedicalDispenserMemberPage from './pages/member/MedicalDispenserPage';
 import GlucoseMonitorMemberPage from './pages/member/GlucoseMonitorPage';
+import DeviceSettingsPage from './pages/DeviceSettingsPage';
 
 // Join Page
 import Join from './pages/Join';
@@ -76,6 +77,7 @@ function App() {
         <Route path="/devices/sos-pendant" element={<SOSPendantMemberPage />} />
         <Route path="/devices/glucose-monitor" element={<GlucoseMonitorMemberPage />} />
         <Route path="/devices/medical-dispenser" element={<MedicalDispenserMemberPage />} />
+        <Route path="/devices/settings/:deviceId" element={<DeviceSettingsPage />} />
         
         {/* Admin Dashboard */}
         <Route path="/admin" element={<AdminDashboard />} />
