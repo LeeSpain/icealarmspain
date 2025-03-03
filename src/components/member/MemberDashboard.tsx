@@ -5,7 +5,8 @@ import { useAuth } from "@/context/AuthContext";
 import { useLanguage } from "@/context/LanguageContext";
 import { Card, CardContent } from "@/components/ui/card";
 import { toast } from "react-toastify";
-import { CalendarDays } from "lucide-react";
+import { CalendarDays, User, ArrowRight, Shield } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import SOSTile from "@/components/member/dashboard/SOSTile";
 import GlucoseTile from "@/components/member/dashboard/GlucoseTile";
 import WeatherTile from "@/components/member/dashboard/WeatherTile";
@@ -65,6 +66,10 @@ const MemberDashboard: React.FC = () => {
       day: 'numeric' 
     }
   );
+
+  const handlePersonalDetailsClick = () => {
+    navigate('/personal-details');
+  };
   
   return (
     <div className="flex h-screen bg-ice-50/30">
@@ -72,28 +77,50 @@ const MemberDashboard: React.FC = () => {
         <div className="p-6">
           {/* Welcome & Weather section */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-            <Card className="lg:col-span-2 shadow-md">
+            <Card className="lg:col-span-3 shadow-md border-l-4 border-ice-600">
               <CardContent className="p-6">
-                <div className="flex flex-col">
-                  <h2 className="text-2xl font-bold text-gray-800">
-                    {language === 'en' ? `Welcome back, ${name}!` : `¡Bienvenido de nuevo, ${name}!`}
-                  </h2>
-                  <p className="text-muted-foreground mb-3">
-                    {language === 'en'
-                      ? 'Here\'s a summary of your ICE Alarm account.'
-                      : 'Aquí tienes un resumen de tu cuenta de ICE Alarm.'}
-                  </p>
-                  <div className="flex items-center text-sm text-gray-500 mt-2">
-                    <CalendarDays className="h-4 w-4 mr-2" />
-                    <span>{formattedDate}</span>
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
+                  <div className="flex flex-col mb-4 md:mb-0">
+                    <div className="flex items-center text-sm text-gray-500 mb-2">
+                      <CalendarDays className="h-4 w-4 mr-2" />
+                      <span>{formattedDate}</span>
+                    </div>
+                    <h2 className="text-2xl font-bold text-gray-800 mb-1">
+                      {language === 'en' ? `Welcome back, ${name}!` : `¡Bienvenido de nuevo, ${name}!`}
+                    </h2>
+                    <p className="text-muted-foreground text-sm">
+                      {language === 'en'
+                        ? 'Here\'s a summary of your ICE Alarm account.'
+                        : 'Aquí tienes un resumen de tu cuenta de ICE Alarm.'}
+                    </p>
+                  </div>
+                  
+                  <div className="flex flex-col sm:flex-row gap-4">
+                    <WeatherTile />
+                    
+                    {!user.profileCompleted && (
+                      <Button 
+                        onClick={handlePersonalDetailsClick}
+                        className="bg-ice-600 hover:bg-ice-700 flex items-center"
+                      >
+                        <User className="mr-2 h-4 w-4" />
+                        <span>
+                          {language === 'en' ? 'Complete Personal Details' : 'Completar Datos Personales'}
+                        </span>
+                        <ArrowRight className="ml-2 h-4 w-4" />
+                      </Button>
+                    )}
+                  </div>
+                </div>
+                
+                <div className="mt-4 flex flex-wrap gap-3">
+                  <div className="inline-flex items-center gap-2 px-3 py-1 bg-ice-100 border border-ice-200 rounded-full text-ice-700 text-sm">
+                    <Shield className="h-4 w-4" />
+                    <span>{language === 'en' ? 'Protected' : 'Protegido'}</span>
                   </div>
                 </div>
               </CardContent>
             </Card>
-            
-            <div className="lg:col-span-1">
-              <WeatherTile />
-            </div>
           </div>
           
           {/* Notifications and Cart section */}
