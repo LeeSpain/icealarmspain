@@ -1,6 +1,5 @@
-
 import React, { useState, useEffect } from "react";
-import { Shield, Plus, Search, Edit, Trash, Check, X, UserCog } from "lucide-react";
+import { Shield, Plus, Search, Edit, Trash, UserCog } from "lucide-react";
 import { toast } from "react-toastify";
 import { useLanguage } from "@/context/LanguageContext";
 import {
@@ -44,7 +43,6 @@ interface Role {
   createdAt: string;
 }
 
-// Initial mock data for roles
 const initialRoles: Role[] = [
   {
     id: "1",
@@ -96,11 +94,9 @@ const RolesManagement: React.FC = () => {
   const { language, t } = useLanguage();
 
   useEffect(() => {
-    // Simulate loading data from API
     const fetchData = async () => {
       setLoading(true);
       try {
-        // In a real app, this would be an API call
         await new Promise(resolve => setTimeout(resolve, 1000));
         setRoles(initialRoles);
       } catch (error) {
@@ -115,7 +111,6 @@ const RolesManagement: React.FC = () => {
   }, [t]);
 
   useEffect(() => {
-    // Filter roles based on search query
     if (searchQuery) {
       const filtered = roles.filter(role => 
         role.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
@@ -313,7 +308,6 @@ const RolesManagement: React.FC = () => {
         </div>
       )}
 
-      {/* Create Role Dialog */}
       <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
         <DialogContent className="sm:max-w-[500px]">
           <DialogHeader>
@@ -359,7 +353,6 @@ const RolesManagement: React.FC = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Edit Role Dialog */}
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
         <DialogContent className="sm:max-w-[500px]">
           <DialogHeader>
@@ -405,7 +398,6 @@ const RolesManagement: React.FC = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Delete Role Dialog */}
       <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
@@ -413,7 +405,7 @@ const RolesManagement: React.FC = () => {
               {t("adminDashboard.areYouSure")}
             </AlertDialogTitle>
             <AlertDialogDescription>
-              {t("adminDashboard.deleteRoleWarning", { roleName: currentRole?.name })}
+              {t("adminDashboard.deleteRoleWarning")}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

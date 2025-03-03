@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from "react";
-import { Lock, Search, CheckCircle, XCircle, Plus, Settings, Filter } from "lucide-react";
+import { Lock, Search, Plus, Settings, Filter, Shield } from "lucide-react";
 import { toast } from "react-toastify";
 import { useLanguage } from "@/context/LanguageContext";
 import {
@@ -466,9 +466,10 @@ const PermissionsManagement: React.FC = () => {
               {t("adminDashboard.assignRoles")}
             </DialogTitle>
             <DialogDescription>
-              {currentPermission && (
-                t("adminDashboard.assignRolesDescription", { permissionName: currentPermission.name })
-              )}
+              {currentPermission ? 
+                t("adminDashboard.assignRolesDescription") :
+                ""
+              }
             </DialogDescription>
           </DialogHeader>
           <div className="py-4">
