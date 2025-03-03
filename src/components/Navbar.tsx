@@ -11,13 +11,15 @@ import { useAuth } from "@/context/AuthContext";
 const Navbar: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const { user, logout, isAuthenticated } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   
+  // Add debugging to track the translation system
   console.log("Navbar component rendering, path:", location.pathname);
-  console.log("Translations test - nav.home:", t("nav.home"));
+  console.log("Current language:", language);
+  console.log("Available translations:", t("nav.home"), t("nav.devices"), t("nav.signup"));
   
   useEffect(() => {
     const handleScroll = () => {
@@ -45,12 +47,13 @@ const Navbar: React.FC = () => {
     return user?.role === 'admin' ? "/admin" : "/dashboard";
   };
   
+  // Use hardcoded strings as fallback to ensure something displays in preview
   const navLinks = [
-    { name: t("nav.home"), href: "/", isAnchor: false },
-    { name: t("nav.devices"), href: "/products", isAnchor: false },
-    { name: t("nav.pricing"), href: "/join", isAnchor: false },
-    { name: t("nav.about_us"), href: "/about", isAnchor: false },
-    { name: t("nav.contact"), href: "/contact", isAnchor: false },
+    { name: language === 'en' ? "Home" : "Inicio", href: "/", isAnchor: false },
+    { name: language === 'en' ? "Devices" : "Dispositivos", href: "/products", isAnchor: false },
+    { name: language === 'en' ? "Pricing" : "Precios", href: "/join", isAnchor: false },
+    { name: language === 'en' ? "About Us" : "Sobre Nosotros", href: "/about", isAnchor: false },
+    { name: language === 'en' ? "Contact" : "Contacto", href: "/contact", isAnchor: false },
   ];
   
   const renderNavLink = (link: { name: string; href: string; isAnchor: boolean }, onClick?: () => void) => {
@@ -76,6 +79,11 @@ const Navbar: React.FC = () => {
       );
     }
   };
+  
+  // Use hardcoded strings as fallbacks for important UI elements
+  const loginText = language === 'en' ? "Login" : "Iniciar Sesión";
+  const signupText = language === 'en' ? "Sign Up" : "Registrarse";
+  const logoutText = language === 'en' ? "Logout" : "Cerrar Sesión";
   
   return (
     <header 
@@ -108,19 +116,19 @@ const Navbar: React.FC = () => {
                 </span>
                 <ButtonCustom variant="ghost" size="sm" onClick={handleLogout}>
                   <LogOut className="w-4 h-4 mr-1" />
-                  {t("nav.logout")}
+                  {logoutText}
                 </ButtonCustom>
               </div>
             ) : (
               <>
                 <Link to="/login">
                   <ButtonCustom variant="ghost" size="sm">
-                    {t("nav.login")}
+                    {loginText}
                   </ButtonCustom>
                 </Link>
                 <Link to="/join">
                   <ButtonCustom>
-                    {t("nav.signup")}
+                    {signupText}
                   </ButtonCustom>
                 </Link>
               </>
@@ -158,18 +166,18 @@ const Navbar: React.FC = () => {
               {isAuthenticated ? (
                 <ButtonCustom onClick={handleLogout} className="w-full">
                   <LogOut className="w-4 h-4 mr-2" />
-                  {t("nav.logout")}
+                  {logoutText}
                 </ButtonCustom>
               ) : (
                 <>
                   <Link to="/login" onClick={() => setIsMobileMenuOpen(false)}>
                     <ButtonCustom variant="outline" size="sm" className="w-full">
-                      {t("nav.login")}
+                      {loginText}
                     </ButtonCustom>
                   </Link>
                   <Link to="/join" onClick={() => setIsMobileMenuOpen(false)}>
                     <ButtonCustom className="w-full">
-                      {t("nav.signup")}
+                      {signupText}
                     </ButtonCustom>
                   </Link>
                 </>
