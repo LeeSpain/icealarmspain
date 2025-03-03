@@ -125,7 +125,7 @@ const DashboardPreview: React.FC = () => {
             <Link to="/dashboard">
               <ButtonCustom size="sm" className="group">
                 <span className="flex items-center">
-                  {language === 'en' ? 'Try Our Dashboard Demo' : 'Pruebe Nuestra Demo del Panel'}
+                  {language === 'en' ? 'See Dashboard Example' : 'Ver Ejemplo del Panel'}
                   <ArrowUpCircle className="ml-2 h-4 w-4 rotate-90 transition group-hover:translate-x-1" />
                 </span>
               </ButtonCustom>
