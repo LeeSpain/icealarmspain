@@ -12,7 +12,7 @@ interface AuthFormProps {
 }
 
 const AuthForm: React.FC<AuthFormProps> = ({ mode, onSuccess, isLoading, redirectTo }) => {
-  console.log("AuthForm rendering, mode:", mode);
+  console.log("AuthForm rendering, mode:", mode, "redirectTo:", redirectTo);
   
   return (
     <>
