@@ -56,6 +56,26 @@ const Checkout: React.FC = () => {
     navigate("/join");
   };
   
+  // Handle test payment (for development only)
+  const handleTestPayment = () => {
+    const testResult = {
+      id: "test-" + Date.now(),
+      amount: orderData.total,
+      status: "success",
+      date: new Date().toISOString(),
+      method: "Test Payment",
+      items: orderData.items
+    };
+    
+    toast.success(
+      language === "en"
+        ? "Test payment processed successfully!"
+        : "¡Pago de prueba procesado con éxito!"
+    );
+    
+    handlePaymentSuccess(testResult);
+  };
+  
   // If no order data, show loading
   if (!orderData) {
     return (
@@ -79,7 +99,8 @@ const Checkout: React.FC = () => {
       <ScrollToTop />
       <Navbar />
       
-      <main className="flex-grow bg-ice-50/30 py-12">
+      {/* Added extra spacing with mt-24 to move content below header */}
+      <main className="flex-grow bg-ice-50/30 py-12 mt-24">
         <div className="container mx-auto px-4">
           {paymentComplete ? (
             <PaymentSuccess 
@@ -87,21 +108,40 @@ const Checkout: React.FC = () => {
               orderData={orderData}
             />
           ) : (
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-              <div className="lg:col-span-2">
-                <PaymentForm 
-                  amount={orderData.total}
-                  items={orderData.items}
-                  onSuccess={handlePaymentSuccess}
-                  onCancel={handleCancel}
-                  isNewCustomer={orderData.isNewCustomer}
-                />
+            <>
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div className="lg:col-span-2">
+                  <PaymentForm 
+                    amount={orderData.total}
+                    items={orderData.items}
+                    onSuccess={handlePaymentSuccess}
+                    onCancel={handleCancel}
+                    isNewCustomer={orderData.isNewCustomer}
+                  />
+                </div>
+                
+                <div className="lg:col-span-1">
+                  <OrderSummary orderData={orderData} />
+                </div>
               </div>
               
-              <div className="lg:col-span-1">
-                <OrderSummary orderData={orderData} />
+              {/* Test payment link for development */}
+              <div className="mt-8 text-center border-t pt-6">
+                <button
+                  onClick={handleTestPayment}
+                  className="text-sm text-ice-600 hover:text-ice-800 underline"
+                >
+                  {language === 'en' 
+                    ? "Complete purchase with test payment (Development Only)" 
+                    : "Completar compra con pago de prueba (Solo desarrollo)"}
+                </button>
+                <p className="text-xs text-gray-500 mt-1">
+                  {language === 'en'
+                    ? "This option is for testing purposes only and will be removed in production."
+                    : "Esta opción es solo para pruebas y se eliminará en producción."}
+                </p>
               </div>
-            </div>
+            </>
           )}
         </div>
       </main>
