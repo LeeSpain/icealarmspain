@@ -11,7 +11,8 @@ import {
   Settings, 
   HelpCircle, 
   LogOut,
-  FileText
+  FileText,
+  MessageCircle
 } from 'lucide-react';
 import SidebarItem from './SidebarItem';
 import SidebarSection from './SidebarSection';
@@ -79,6 +80,14 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({
             collapsed={collapsed}
           />
           
+          <SidebarItem 
+            icon={MessageCircle} 
+            label={language === 'en' ? "Support Chat" : "Chat de Soporte"} 
+            active={activePage === "chat"} 
+            onClick={() => handleNavigation('/chat')}
+            collapsed={collapsed}
+          />
+          
           <SidebarSection title={language === 'en' ? "Devices" : "Dispositivos"} collapsed={collapsed}>
             <SidebarItem 
               icon={BellRing} 
@@ -132,7 +141,7 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({
               icon={FileText} 
               label={language === 'en' ? "Personal Details" : "Datos Personales"} 
               active={activePage === "onboarding"} 
-              onClick={() => handleNavigation('/onboarding')}
+              onClick={() => handleNavigation('/personal-details')}
               collapsed={collapsed}
             />
             <SidebarItem 
