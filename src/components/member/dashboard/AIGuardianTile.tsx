@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Brain, MessageSquare, Robot, ShieldCheck, Lightbulb } from "lucide-react";
+import { Brain, MessageSquare, Bot, ShieldCheck, Lightbulb } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
 import { toast } from "react-toastify";
 
@@ -83,7 +83,7 @@ const AIGuardianTile: React.FC = () => {
                 >
                   <div className="flex items-start gap-2">
                     {message.type === 'guardian' && (
-                      <Robot className="h-4 w-4 mt-0.5 text-guardian-600 flex-shrink-0" />
+                      <Bot className="h-4 w-4 mt-0.5 text-guardian-600 flex-shrink-0" />
                     )}
                     <p className="text-sm">
                       {message.text}
