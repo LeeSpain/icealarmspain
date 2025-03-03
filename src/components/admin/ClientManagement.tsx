@@ -58,6 +58,7 @@ import {
   FileText,
   AlertCircle,
   Bell,
+  Settings,
 } from "lucide-react";
 
 // Mock client data
