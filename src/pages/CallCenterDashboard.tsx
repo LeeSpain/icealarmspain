@@ -3,12 +3,16 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import Sidebar from "@/components/callcenter/sidebar/Sidebar";
-import Header from "@/components/callcenter/dashboard/Header";
-import DashboardContent from "@/components/callcenter/dashboard/DashboardContent";
+import AgentDashboard from "@/components/callcenter/dashboard/AgentDashboard";
+import TicketingSystem from "@/components/callcenter/ticketing/TicketingSystem";
+import ChatSystem from "@/components/callcenter/chat/ChatSystem";
+import ClientDetails from "@/components/callcenter/ClientDetails";
+import CallStats from "@/components/callcenter/stats/CallStats";
+import PlaceholderSection from "@/components/callcenter/dashboard/placeholder-section";
 
 const CallCenterDashboard: React.FC = () => {
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [activeSection, setActiveSection] = useState("dashboard");
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [selectedClient, setSelectedClient] = useState<number | null>(null);
   const { user, isAuthenticated, isLoading } = useAuth();
   const navigate = useNavigate();
@@ -60,8 +64,37 @@ const CallCenterDashboard: React.FC = () => {
     );
   }
 
+  // Render the appropriate section based on activeSection
+  const renderActiveSection = () => {
+    switch (activeSection) {
+      case "dashboard":
+        return <AgentDashboard setActiveSection={setActiveSection} />;
+      case "tickets":
+        return <TicketingSystem onClientSelect={setSelectedClient} />;
+      case "chat":
+        return <ChatSystem />;
+      case "clients":
+        return <ClientDetails selectedClientId={selectedClient} />;
+      case "stats":
+        return <CallStats />;
+      case "all-clients":
+      case "clients-alerts":
+      case "clients-history":
+      case "clients-devices":
+      case "stats-performance":
+      case "schedule":
+      case "knowledge":
+      case "notifications":
+      case "profile":
+        return <PlaceholderSection title={activeSection} />;
+      default:
+        return <AgentDashboard setActiveSection={setActiveSection} />;
+    }
+  };
+
   return (
-    <div className="flex h-screen bg-background">
+    <div className="flex h-screen overflow-hidden bg-background">
+      {/* Sidebar */}
       <Sidebar
         activeSection={activeSection}
         setActiveSection={setActiveSection}
@@ -69,21 +102,28 @@ const CallCenterDashboard: React.FC = () => {
         setCollapsed={setSidebarCollapsed}
         user={user}
       />
-
-      <main className={`flex-1 flex flex-col overflow-hidden transition-all duration-300`}>
-        <Header 
-          activeSection={activeSection}
-        />
+      
+      {/* Main Content */}
+      <div className="flex-1 overflow-auto">
+        <header className="sticky top-0 z-10 bg-background border-b px-6 py-4">
+          <h1 className="text-2xl font-bold">
+            {activeSection === "dashboard" && "Dashboard"}
+            {activeSection === "tickets" && "Support Tickets"}
+            {activeSection === "chat" && "Chat System"}
+            {activeSection === "clients" && "Client Information"}
+            {activeSection === "all-clients" && "All Clients"}
+            {activeSection === "stats" && "Call Center Stats"}
+            {activeSection === "schedule" && "Agent Schedule"}
+            {activeSection === "knowledge" && "Knowledge Base"}
+            {activeSection === "notifications" && "Notifications"}
+            {activeSection === "profile" && "Agent Profile"}
+          </h1>
+        </header>
         
-        <div className="flex-1 overflow-auto p-6">
-          <DashboardContent 
-            activeSection={activeSection}
-            selectedClient={selectedClient}
-            setSelectedClient={setSelectedClient}
-            setActiveSection={setActiveSection}
-          />
-        </div>
-      </main>
+        <main className="p-6">
+          {renderActiveSection()}
+        </main>
+      </div>
     </div>
   );
 };

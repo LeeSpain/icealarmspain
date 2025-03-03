@@ -1,45 +1,28 @@
 
 import React from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { ArrowLeft } from "lucide-react";
+import { CircleHelp } from "lucide-react";
 
 interface PlaceholderSectionProps {
   title: string;
 }
 
 const PlaceholderSection: React.FC<PlaceholderSectionProps> = ({ title }) => {
-  // Format the title to be more readable
+  // Format the title for display
   const formatTitle = (title: string) => {
-    // Replace hyphens with spaces and capitalize each word
-    const formatted = title
-      .split('-')
-      .join(' ')
-      .split(' ')
+    return title
+      .split("-")
       .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(' ');
-    
-    return formatted;
+      .join(" ");
   };
 
   return (
-    <Card className="h-full w-full">
-      <CardHeader>
-        <CardTitle>{formatTitle(title)}</CardTitle>
-      </CardHeader>
-      <CardContent className="flex flex-col items-center justify-center h-[80%]">
-        <div className="text-center">
-          <h3 className="text-2xl font-bold mb-2">Coming Soon</h3>
-          <p className="text-muted-foreground mb-6">
-            This feature is currently under development and will be available soon.
-          </p>
-          <Button variant="outline" onClick={() => window.history.back()}>
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Go Back
-          </Button>
-        </div>
-      </CardContent>
-    </Card>
+    <div className="flex flex-col items-center justify-center h-[calc(100vh-12rem)] bg-muted/20 rounded-lg border border-dashed p-10 text-center">
+      <CircleHelp className="h-16 w-16 text-muted-foreground mb-4" />
+      <h2 className="text-2xl font-medium mb-2">{formatTitle(title)}</h2>
+      <p className="text-muted-foreground max-w-md mx-auto">
+        This section is currently under development. Coming soon to enhance your call center experience!
+      </p>
+    </div>
   );
 };
 
