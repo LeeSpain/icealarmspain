@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { useLanguage } from "@/context/LanguageContext";
@@ -23,7 +22,7 @@ interface CartContextType {
   clearCart: () => void;
   getTotalItems: () => number;
   getTotalPrice: () => number;
-  totalPrice?: number; // Adding for backward compatibility, will be deprecated
+  totalPrice: number; // Changed from optional to required
 }
 
 // Create context with default values
@@ -35,6 +34,7 @@ const CartContext = createContext<CartContextType>({
   clearCart: () => {},
   getTotalItems: () => 0,
   getTotalPrice: () => 0,
+  totalPrice: 0,
 });
 
 // Custom hook to use the cart context
@@ -170,7 +170,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
         clearCart,
         getTotalItems,
         getTotalPrice,
-        totalPrice, // Include for backward compatibility
+        totalPrice,
       }}
     >
       {children}

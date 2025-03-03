@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useLanguage } from "@/context/LanguageContext";
@@ -12,6 +11,38 @@ import PaymentForm from "@/components/payment/PaymentForm";
 import PaymentMethod from "@/components/payment/PaymentMethod";
 import PaymentSuccess from "@/components/payment/PaymentSuccess";
 import { toast } from "react-toastify";
+
+interface OrderSummaryProps {
+  orderData: {
+    total: number;
+    items: any[];
+    membershipType: string;
+    deviceCount: number;
+    oneTimeTotal: number;
+    productTax: number;
+    shippingTotal: number;
+    monthlyTotal: number;
+    monthlyTax: number;
+  };
+}
+
+interface PaymentFormProps {
+  amount: number;
+  items: any[];
+  onSuccess: (data: any) => void;
+  onCancel: () => void;
+}
+
+interface PaymentSuccessProps {
+  result: {
+    success: boolean;
+    orderId: string;
+    orderDate: string;
+    amount: number;
+    last4: string;
+  };
+  orderData: any;
+}
 
 const Checkout: React.FC = () => {
   const { language } = useLanguage();

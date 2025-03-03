@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useLanguage } from "@/context/LanguageContext";
@@ -57,14 +56,11 @@ const DeviceActivation: React.FC = () => {
     }
   };
 
-  // Function to handle device detection
   const detectDevice = () => {
     setLoading(true);
     setActivationProgress(10);
     
-    // Simulate device detection
     setTimeout(() => {
-      // Determine device type based on deviceId from URL or default to glucose
       const detectedType = deviceId?.includes("pendant") 
         ? "pendant" 
         : deviceId?.includes("dispenser") 
@@ -78,7 +74,6 @@ const DeviceActivation: React.FC = () => {
     }, 2000);
   };
   
-  // Function to verify activation code
   const verifyActivationCode = () => {
     if (activationCode.length < 6) {
       toast({
@@ -94,7 +89,6 @@ const DeviceActivation: React.FC = () => {
     setLoading(true);
     setActivationProgress(30);
     
-    // Simulate verification
     setTimeout(() => {
       setLoading(false);
       setActivationProgress(40);
@@ -102,7 +96,6 @@ const DeviceActivation: React.FC = () => {
     }, 1500);
   };
   
-  // Function to connect to WiFi
   const connectToWifi = () => {
     if (!wifiNetwork || !wifiPassword) {
       toast({
@@ -118,7 +111,6 @@ const DeviceActivation: React.FC = () => {
     setLoading(true);
     setActivationProgress(50);
     
-    // Simulate WiFi connection
     setTimeout(() => {
       setLoading(false);
       setActivationProgress(60);
@@ -126,7 +118,6 @@ const DeviceActivation: React.FC = () => {
     }, 3000);
   };
   
-  // Function to set up device
   const setupDevice = () => {
     if (!deviceName || !deviceLocation) {
       toast({
@@ -142,7 +133,6 @@ const DeviceActivation: React.FC = () => {
     setLoading(true);
     setActivationProgress(70);
     
-    // Simulate device setup
     setTimeout(() => {
       setLoading(false);
       setActivationProgress(80);
@@ -150,7 +140,6 @@ const DeviceActivation: React.FC = () => {
     }, 2500);
   };
   
-  // Function to complete activation
   const completeActivation = () => {
     if (!acceptedTerms) {
       toast({
@@ -166,27 +155,23 @@ const DeviceActivation: React.FC = () => {
     setLoading(true);
     setActivationProgress(90);
     
-    // Simulate final activation
     setTimeout(() => {
       setLoading(false);
       setActivationProgress(100);
       
-      // Show success toast
       toast({
-        title: language === 'en' ? "Activation Complete" : "Activación Completa",
-        description: language === 'en' 
-          ? `Your ${deviceTypes[deviceType as keyof typeof deviceTypes].name} has been successfully activated!` 
-          : `¡Su ${deviceTypes[deviceType as keyof typeof deviceTypes].name} ha sido activado con éxito!`,
         variant: "default",
+        title: language === 'en' ? "Device Activated Successfully" : "Dispositivo Activado Exitosamente",
+        description: language === 'en' 
+          ? `Your ${deviceTypes[deviceType as keyof typeof deviceTypes].name} has been activated.` 
+          : `Su ${deviceTypes[deviceType as keyof typeof deviceTypes].name} ha sido activado.`,
       });
       
       setStep(6);
     }, 2000);
   };
   
-  // Function to finish and navigate
   const finishSetup = () => {
-    // Navigate to the device-specific page based on type
     switch (deviceType) {
       case "glucose":
         navigate("/glucose-monitor");
@@ -201,17 +186,15 @@ const DeviceActivation: React.FC = () => {
         navigate("/dashboard");
     }
     
-    // Show a toast to confirm
     toast({
-      title: language === 'en' ? "Setup Complete" : "Configuración Completa",
-      description: language === 'en' 
-        ? "You can now start using your device" 
-        : "Ahora puede comenzar a usar su dispositivo",
       variant: "default",
+      title: language === 'en' ? "Setup Complete" : "Configuración Completa",
+      description: language === 'en'
+        ? "Your device has been activated and is ready to use."
+        : "Su dispositivo ha sido activado y está listo para usar.",
     });
   };
   
-  // Function to handle OTP verification for the SMS verification step
   const verifyOTP = () => {
     if (otpValue.length < 6) {
       toast({
@@ -226,17 +209,14 @@ const DeviceActivation: React.FC = () => {
     
     setLoading(true);
     
-    // Simulate OTP verification
     setTimeout(() => {
       setLoading(false);
-      // Navigate to the device activation flow
-      setDeviceType("glucose"); // Default to glucose if not specified
+      setDeviceType("glucose");
       setStep(1);
       setActivationProgress(0);
     }, 1500);
   };
   
-  // Get the current step title
   const getStepTitle = () => {
     switch (step) {
       case 1:
