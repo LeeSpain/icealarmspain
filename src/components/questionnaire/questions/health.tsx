@@ -1,7 +1,7 @@
 
 import React from "react";
 import { Question } from "../types";
-import { AlertCircle, Heart, Pill, UserCircle } from "lucide-react";
+import { AlertCircle, Heart } from "lucide-react";
 
 export const healthQuestions: Question[] = [
   {
