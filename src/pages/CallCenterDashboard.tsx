@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
@@ -9,8 +10,11 @@ import TicketingSystem from "@/components/callcenter/ticketing/TicketingSystem";
 import ChatSystem from "@/components/callcenter/chat/ChatSystem";
 import ClientDetails from "@/components/callcenter/ClientDetails";
 import CallStats from "@/components/callcenter/stats/CallStats";
-import PlaceholderSection from "@/components/callcenter/dashboard/placeholder-section";
 import DeviceManagement from "@/components/callcenter/devices/DeviceManagement";
+import AgentSchedule from "@/components/callcenter/schedule/AgentSchedule";
+import KnowledgeBase from "@/components/callcenter/knowledge/KnowledgeBase";
+import NotificationCenter from "@/components/callcenter/notifications/NotificationCenter";
+import AgentProfile from "@/components/callcenter/profile/AgentProfile";
 
 const CallCenterDashboard: React.FC = () => {
   const [activeSection, setActiveSection] = useState("dashboard");
@@ -75,12 +79,14 @@ const CallCenterDashboard: React.FC = () => {
         return <DeviceManagement />;
       case "stats":
         return <CallStats />;
-      case "all-clients":
       case "schedule":
+        return <AgentSchedule />;
       case "knowledge":
+        return <KnowledgeBase />;
       case "notifications":
+        return <NotificationCenter />;
       case "profile":
-        return <PlaceholderSection title={activeSection} />;
+        return <AgentProfile />;
       default:
         return <AgentDashboard setActiveSection={setActiveSection} />;
     }

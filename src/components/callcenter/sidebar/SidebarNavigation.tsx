@@ -1,5 +1,6 @@
+
 import React from "react";
-import { BarChart3, Users, TicketIcon, MessageCircle, BarChart2, Calendar, BookOpen, Bell, UserCircle, HardDrive } from "lucide-react";
+import { BarChart3, Users, TicketIcon, MessageCircle, BarChart2, Calendar, BookOpen, Bell, UserCircle, HardDrive, Cpu } from "lucide-react";
 import SidebarItem from "./SidebarItem";
 
 interface SidebarNavigationProps {
@@ -50,7 +51,7 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({
       />
       
       <SidebarItem 
-        icon={HardDrive}
+        icon={Cpu}
         label="Device Management"
         active={activeSection === "devices"}
         onClick={() => setActiveSection("devices")}
