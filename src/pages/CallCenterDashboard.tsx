@@ -2,6 +2,8 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import Sidebar from "@/components/callcenter/sidebar/Sidebar";
 import AgentDashboard from "@/components/callcenter/dashboard/AgentDashboard";
 import TicketingSystem from "@/components/callcenter/ticketing/TicketingSystem";
@@ -43,7 +45,7 @@ const CallCenterDashboard: React.FC = () => {
   // Show loading state while authentication is being checked
   if (isLoading) {
     return (
-      <div className="flex h-screen items-center justify-center bg-background">
+      <div className="flex h-screen items-center justify-center bg-ice-50/30">
         <div className="flex flex-col items-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-ice-600 mb-4"></div>
           <p className="text-ice-700">Loading call center dashboard...</p>
@@ -55,7 +57,7 @@ const CallCenterDashboard: React.FC = () => {
   // Only render if user is authenticated and has call center role
   if (!isAuthenticated || !user || user.role !== 'callcenter') {
     return (
-      <div className="flex h-screen items-center justify-center bg-background">
+      <div className="flex h-screen items-center justify-center bg-ice-50/30">
         <div className="flex flex-col items-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-ice-600 mb-4"></div>
           <p className="text-ice-700">Redirecting...</p>
@@ -93,7 +95,7 @@ const CallCenterDashboard: React.FC = () => {
   };
 
   return (
-    <div className="flex h-screen overflow-hidden bg-background">
+    <div className="flex h-screen bg-ice-50/30">
       {/* Sidebar */}
       <Sidebar
         activeSection={activeSection}
@@ -104,25 +106,11 @@ const CallCenterDashboard: React.FC = () => {
       />
       
       {/* Main Content */}
-      <div className="flex-1 overflow-auto">
-        <header className="sticky top-0 z-10 bg-background border-b px-6 py-4">
-          <h1 className="text-2xl font-bold">
-            {activeSection === "dashboard" && "Dashboard"}
-            {activeSection === "tickets" && "Support Tickets"}
-            {activeSection === "chat" && "Chat System"}
-            {activeSection === "clients" && "Client Information"}
-            {activeSection === "all-clients" && "All Clients"}
-            {activeSection === "stats" && "Call Center Stats"}
-            {activeSection === "schedule" && "Agent Schedule"}
-            {activeSection === "knowledge" && "Knowledge Base"}
-            {activeSection === "notifications" && "Notifications"}
-            {activeSection === "profile" && "Agent Profile"}
-          </h1>
-        </header>
-        
-        <main className="p-6">
+      <div className="flex-1 overflow-auto transition-all duration-300">
+        <div className="p-6 w-full">
+          <ToastContainer />
           {renderActiveSection()}
-        </main>
+        </div>
       </div>
     </div>
   );

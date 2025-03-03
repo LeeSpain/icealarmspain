@@ -1,18 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { ToastContainer } from 'react-toastify';
+import { ToastContainer, toast } from 'react-toastify';
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import 'react-toastify/dist/ReactToastify.css';
-import { 
-  Briefcase, 
-  Smartphone, 
-  ShoppingCart, 
-  DollarSign, 
-  BarChart3 
-} from "lucide-react";
-import { useLanguage } from "@/context/LanguageContext";
-
-// Import components
 import Sidebar from "@/components/admin/Sidebar";
 import DashboardMetrics from "@/components/admin/DashboardMetrics";
 import UserManagement from "@/components/admin/UserManagement";
@@ -21,7 +11,6 @@ import PlaceholderSection from "@/components/admin/PlaceholderSection";
 const AdminDashboard: React.FC = () => {
   const [activeSection, setActiveSection] = useState<string>("dashboard");
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-  const { t } = useLanguage();
   const { user, isAuthenticated, isLoading } = useAuth();
   const navigate = useNavigate();
 
@@ -54,7 +43,7 @@ const AdminDashboard: React.FC = () => {
   // Show loading state while authentication is being checked
   if (isLoading) {
     return (
-      <div className="flex h-screen items-center justify-center bg-background">
+      <div className="flex h-screen items-center justify-center bg-ice-50/30">
         <div className="flex flex-col items-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-ice-600 mb-4"></div>
           <p className="text-ice-700">Loading admin dashboard...</p>
@@ -66,7 +55,7 @@ const AdminDashboard: React.FC = () => {
   // Only render if user is authenticated and has admin role
   if (!isAuthenticated || !user || user.role !== 'admin') {
     return (
-      <div className="flex h-screen items-center justify-center bg-background">
+      <div className="flex h-screen items-center justify-center bg-ice-50/30">
         <div className="flex flex-col items-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-ice-600 mb-4"></div>
           <p className="text-ice-700">Redirecting...</p>
@@ -105,64 +94,26 @@ const AdminDashboard: React.FC = () => {
       case "users":
         return <UserManagement />;
       case "clients":
-        return (
-          <PlaceholderSection 
-            title="Client Management" 
-            description="Manage your clients and their accounts" 
-            icon={<Briefcase className="h-5 w-5" />} 
-          />
-        );
       case "devices":
-        return (
-          <PlaceholderSection 
-            title="Device Management" 
-            description="Manage all IceAlarm devices and their status" 
-            icon={<Smartphone className="h-5 w-5" />} 
-          />
-        );
       case "orders":
       case "orders-list":
       case "inventory":
-        return (
-          <PlaceholderSection 
-            title="Orders & Inventory" 
-            description="Manage orders, shipping, and inventory levels" 
-            icon={<ShoppingCart className="h-5 w-5" />} 
-          />
-        );
       case "finance":
       case "sales":
       case "invoices":
-        return (
-          <PlaceholderSection 
-            title="Sales & Finance" 
-            description="Track sales, revenue, and financial performance" 
-            icon={<DollarSign className="h-5 w-5" />} 
-          />
-        );
       case "reports":
-        return (
-          <PlaceholderSection 
-            title="Reports & Analytics" 
-            description="Access detailed reports and business analytics" 
-            icon={<BarChart3 className="h-5 w-5" />} 
-          />
-        );
       case "settings":
-        return (
-          <PlaceholderSection 
-            title="Settings" 
-            description="Manage system settings and configurations" 
-            icon={<BarChart3 className="h-5 w-5" />} 
-          />
-        );
+        return <PlaceholderSection 
+          title={activeSection} 
+          description={`Manage ${activeSection} section`} 
+        />;
       default:
         return <DashboardMetrics dashboardMetrics={dashboardMetrics} />;
     }
   };
 
   return (
-    <div className="flex h-screen overflow-hidden bg-background">
+    <div className="flex h-screen bg-ice-50/30">
       <ToastContainer />
       
       {/* Sidebar */}
@@ -174,27 +125,10 @@ const AdminDashboard: React.FC = () => {
       />
       
       {/* Main Content */}
-      <div className="flex-1 overflow-auto">
-        <header className="sticky top-0 z-10 bg-background border-b px-6 py-4">
-          <h1 className="text-2xl font-bold">
-            {activeSection === "dashboard" && "Dashboard"}
-            {activeSection === "users" && "User Management"}
-            {activeSection === "clients" && "Client Management"}
-            {activeSection === "devices" && "Device Management"}
-            {activeSection === "orders" && "Orders & Inventory"}
-            {activeSection === "orders-list" && "Orders List"}
-            {activeSection === "inventory" && "Inventory Management"}
-            {activeSection === "finance" && "Sales & Finance"}
-            {activeSection === "sales" && "Sales Analytics"}
-            {activeSection === "invoices" && "Invoices & Billing"}
-            {activeSection === "reports" && "Reports & Analytics"}
-            {activeSection === "settings" && "Settings"}
-          </h1>
-        </header>
-        
-        <main className="p-6">
+      <div className="flex-1 overflow-auto transition-all duration-300">
+        <div className="p-6 w-full">
           {renderActiveSection()}
-        </main>
+        </div>
       </div>
     </div>
   );

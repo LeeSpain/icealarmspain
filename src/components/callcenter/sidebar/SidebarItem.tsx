@@ -1,76 +1,36 @@
 
-import React, { useState } from "react";
-import { ChevronLeft, ChevronRight, LucideIcon } from "lucide-react";
+import React from 'react';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 
 interface SidebarItemProps {
-  icon: LucideIcon;
+  icon: React.ElementType;
   label: string;
-  active?: boolean;
   onClick?: () => void;
-  children?: React.ReactNode;
+  active?: boolean;
   collapsed?: boolean;
 }
 
 const SidebarItem: React.FC<SidebarItemProps> = ({ 
   icon: Icon, 
   label, 
-  active = false, 
-  onClick,
-  children,
+  onClick, 
+  active = false,
   collapsed = false
 }) => {
-  const [isOpen, setIsOpen] = useState(false);
-  const hasChildren = !!children;
-  
-  if (collapsed) {
-    return (
-      <div 
-        className={`flex justify-center p-2 rounded-md cursor-pointer mb-1 ${
-          active ? "bg-primary/10 text-primary" : "hover:bg-accent"
-        }`}
-        onClick={() => hasChildren ? setIsOpen(!isOpen) : onClick && onClick()}
-      >
-        <Icon className="h-5 w-5" />
-      </div>
-    );
-  }
-  
-  if (hasChildren) {
-    return (
-      <div className="mb-1">
-        <div 
-          className={`flex items-center justify-between px-3 py-2 rounded-md cursor-pointer ${
-            active ? "bg-primary/10 text-primary" : "hover:bg-accent"
-          }`}
-          onClick={() => setIsOpen(!isOpen)}
-        >
-          <div className="flex items-center">
-            <Icon className="mr-2 h-5 w-5" />
-            <span className="text-sm font-medium">{label}</span>
-          </div>
-          <div>
-            {isOpen ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
-          </div>
-        </div>
-        {isOpen && (
-          <div className="ml-6 mt-1 space-y-1">
-            {children}
-          </div>
-        )}
-      </div>
-    );
-  }
-  
   return (
-    <div 
-      className={`flex items-center px-3 py-2 rounded-md cursor-pointer mb-1 ${
-        active ? "bg-primary/10 text-primary" : "hover:bg-accent"
-      }`}
+    <Button
+      variant="ghost"
+      className={cn(
+        "w-full justify-start mb-1",
+        active ? "bg-ice-100 text-ice-700" : "hover:bg-ice-50 text-gray-600",
+        collapsed ? "px-2" : "px-3"
+      )}
       onClick={onClick}
     >
-      <Icon className="mr-2 h-5 w-5" />
-      <span className="text-sm font-medium">{label}</span>
-    </div>
+      <Icon className={cn("h-5 w-5", collapsed ? "mr-0" : "mr-2")} />
+      {!collapsed && <span>{label}</span>}
+    </Button>
   );
 };
 
