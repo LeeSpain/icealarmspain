@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
@@ -24,7 +25,7 @@ const MemberDashboard: React.FC = () => {
     if (!isLoading && !isAuthenticated) {
       navigate('/login');
     } else if (user) {
-      setName(user.displayName || user.email);
+      setName(user.name || user.email);
     }
   }, [user, isAuthenticated, navigate, isLoading]);
   

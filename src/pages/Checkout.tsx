@@ -8,7 +8,7 @@ import Footer from "@/components/Footer";
 import PaymentForm from "@/components/payment/PaymentForm";
 import OrderSummary from "@/components/payment/OrderSummary";
 import PaymentSuccess from "@/components/payment/PaymentSuccess";
-import { ScrollToTop } from "@/components/layout/ScrollToTop";
+import ScrollToTop from "@/components/layout/ScrollToTop";
 import { useAuth } from "@/context/AuthContext";
 import 'react-toastify/dist/ReactToastify.css';
 

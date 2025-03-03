@@ -45,7 +45,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ amount, items, onSuccess, onC
     cardNumber: "",
     expiryDate: "",
     cvc: "",
-    name: user?.displayName || "",
+    name: user?.name || "",
     email: user?.email || "",
     address: {
       line1: "",
@@ -65,7 +65,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ amount, items, onSuccess, onC
       setFormData((prev) => ({
         ...prev,
         [parent]: {
-          ...prev[parent as keyof PaymentDetails],
+          ...prev[parent as keyof PaymentDetails] as object,
           [child]: value,
         },
       }));
@@ -123,7 +123,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ amount, items, onSuccess, onC
         cvc: formData.cvc,
         name: formData.name,
         items,
-        userId: user?.uid,
+        userId: user?.id,
         email: formData.email,
         address: formData.address
       });
