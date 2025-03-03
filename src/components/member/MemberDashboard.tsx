@@ -3,10 +3,9 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { useLanguage } from "@/context/LanguageContext";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import { toast } from "react-toastify";
-import { CalendarDays, BarChart4, Settings, HelpCircle, Plus, Check } from "lucide-react";
+import { CalendarDays } from "lucide-react";
 import SOSTile from "@/components/member/dashboard/SOSTile";
 import GlucoseTile from "@/components/member/dashboard/GlucoseTile";
 import WeatherTile from "@/components/member/dashboard/WeatherTile";
@@ -21,6 +20,7 @@ const MemberDashboard: React.FC = () => {
   const { language } = useLanguage();
   const navigate = useNavigate();
   const { cart, removeFromCart } = useCart();
+  const [currentDate, setCurrentDate] = useState(new Date());
   
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
@@ -28,6 +28,13 @@ const MemberDashboard: React.FC = () => {
     } else if (user) {
       setName(user.name || user.email);
     }
+    
+    // Update date every minute
+    const timer = setInterval(() => {
+      setCurrentDate(new Date());
+    }, 60000);
+    
+    return () => clearInterval(timer);
   }, [user, isAuthenticated, navigate, isLoading]);
   
   if (isLoading) {
@@ -47,24 +54,46 @@ const MemberDashboard: React.FC = () => {
     return null;
   }
   
+  // Format the current date
+  const formattedDate = currentDate.toLocaleDateString(
+    language === 'en' ? 'en-US' : 'es-ES', 
+    { 
+      weekday: 'long', 
+      year: 'numeric', 
+      month: 'long', 
+      day: 'numeric' 
+    }
+  );
+  
   return (
     <div className="flex h-screen bg-ice-50/30">
       <div className="flex-1 overflow-auto">
         <div className="p-6">
-          <Card className="mb-8 border-t-4 border-ice-500">
-            <CardHeader>
-              <CardTitle className="text-2xl font-bold">
-                {language === 'en' ? `Welcome back, ${name}!` : `¡Bienvenido de nuevo, ${name}!`}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-muted-foreground">
-                {language === 'en'
-                  ? 'Here\'s a summary of your ICE Alarm account.'
-                  : 'Aquí tienes un resumen de tu cuenta de ICE Alarm.'}
-              </p>
-            </CardContent>
-          </Card>
+          {/* Welcome & Weather section */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+            <Card className="lg:col-span-2 shadow-md">
+              <CardContent className="p-6">
+                <div className="flex flex-col">
+                  <h2 className="text-2xl font-bold text-gray-800">
+                    {language === 'en' ? `Welcome back, ${name}!` : `¡Bienvenido de nuevo, ${name}!`}
+                  </h2>
+                  <p className="text-muted-foreground mb-3">
+                    {language === 'en'
+                      ? 'Here\'s a summary of your ICE Alarm account.'
+                      : 'Aquí tienes un resumen de tu cuenta de ICE Alarm.'}
+                  </p>
+                  <div className="flex items-center text-sm text-gray-500 mt-2">
+                    <CalendarDays className="h-4 w-4 mr-2" />
+                    <span>{formattedDate}</span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+            
+            <div className="lg:col-span-1">
+              <WeatherTile />
+            </div>
+          </div>
           
           {cart.length > 0 && (
             <CartSection 
@@ -74,17 +103,17 @@ const MemberDashboard: React.FC = () => {
             />
           )}
           
-          {/* Add the AIGuardianTile at the beginning of the grid for prominence */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
-            <div className="md:col-span-2">
+          {/* AI Guardian section */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+            <div className="md:col-span-2 lg:col-span-3">
               <AIGuardianTile />
             </div>
           </div>
           
+          {/* Main dashboard tiles */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <SOSTile />
             <GlucoseTile />
-            <WeatherTile />
             <NewsTile />
           </div>
         </div>

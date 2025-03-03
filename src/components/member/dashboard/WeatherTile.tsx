@@ -8,9 +8,9 @@ const WeatherTile: React.FC = () => {
   const { language } = useLanguage();
   
   return (
-    <Card className="overflow-hidden">
-      <CardHeader className="bg-amber-500 text-white p-4 flex flex-row items-center">
-        <CardTitle className="text-lg flex items-center">
+    <Card className="shadow-md h-full">
+      <CardHeader className="border-b pb-3">
+        <CardTitle className="text-lg flex items-center text-amber-500">
           <Sun className="mr-2 h-5 w-5" />
           {language === 'en' ? 'Weather' : 'Clima'}
         </CardTitle>

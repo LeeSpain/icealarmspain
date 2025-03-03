@@ -61,9 +61,9 @@ const AIGuardianTile: React.FC = () => {
   };
   
   return (
-    <Card className="overflow-hidden">
-      <CardHeader className="bg-guardian-600 text-white p-4 flex flex-row items-center">
-        <CardTitle className="text-lg flex items-center">
+    <Card className="shadow-md">
+      <CardHeader className="border-b pb-3">
+        <CardTitle className="text-lg flex items-center text-guardian-600">
           <Brain className="mr-2 h-5 w-5" />
           {language === 'en' ? 'AI Guardian' : 'Guardian AI'}
         </CardTitle>
@@ -77,8 +77,8 @@ const AIGuardianTile: React.FC = () => {
                   key={idx} 
                   className={`p-2 rounded-lg ${
                     message.type === 'guardian' 
-                      ? 'bg-guardian-100 border-l-4 border-guardian-500' 
-                      : 'bg-ice-100 border-l-4 border-ice-500 ml-6'
+                      ? 'bg-guardian-50 border-l-4 border-guardian-500' 
+                      : 'bg-ice-50 border-l-4 border-ice-500 ml-6'
                   }`}
                 >
                   <div className="flex items-start gap-2">
