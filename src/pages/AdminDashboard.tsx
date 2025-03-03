@@ -3,7 +3,10 @@ import React, { useState, useEffect } from "react";
 import { ToastContainer, toast } from 'react-toastify';
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
+import { useLanguage } from "@/context/LanguageContext";
 import 'react-toastify/dist/ReactToastify.css';
+
+// Admin components imports
 import Sidebar from "@/components/admin/Sidebar";
 import DashboardMetrics from "@/components/admin/DashboardMetrics";
 import UserManagement from "@/components/admin/UserManagement";
@@ -13,11 +16,14 @@ import InventoryManagement from "@/components/admin/InventoryManagement";
 import ClientManagement from "@/components/admin/ClientManagement";
 import DeviceManagement from "@/components/admin/DeviceManagement";
 import AdminUsersManagement from "@/components/admin/AdminUsersManagement";
+import RolesManagement from "@/components/admin/RolesManagement";
+import PermissionsManagement from "@/components/admin/PermissionsManagement";
 
 const AdminDashboard: React.FC = () => {
   const [activeSection, setActiveSection] = useState<string>("dashboard");
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const { user, isAuthenticated, isLoading } = useAuth();
+  const { t, language } = useLanguage();
   const navigate = useNavigate();
 
   // Check authentication and redirect if needed
@@ -52,7 +58,9 @@ const AdminDashboard: React.FC = () => {
       <div className="flex h-screen items-center justify-center bg-ice-50/30">
         <div className="flex flex-col items-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-ice-600 mb-4"></div>
-          <p className="text-ice-700">Loading admin dashboard...</p>
+          <p className="text-ice-700">
+            {language === 'en' ? 'Loading admin dashboard...' : 'Cargando panel de administración...'}
+          </p>
         </div>
       </div>
     );
@@ -64,7 +72,9 @@ const AdminDashboard: React.FC = () => {
       <div className="flex h-screen items-center justify-center bg-ice-50/30">
         <div className="flex flex-col items-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-ice-600 mb-4"></div>
-          <p className="text-ice-700">Redirecting...</p>
+          <p className="text-ice-700">
+            {language === 'en' ? 'Redirecting...' : 'Redirigiendo...'}
+          </p>
         </div>
       </div>
     );
@@ -83,11 +93,16 @@ const AdminDashboard: React.FC = () => {
         return <DeviceManagement />;
       case "alerts":
         return <AlertsManagement />;
+      case "admin-users":
+        return <AdminUsersManagement />;
+      case "roles":
+        return <RolesManagement />;  
+      case "permissions":
+        return <PermissionsManagement />;
       case "orders-list":
       case "inventory":
         return <InventoryManagement section={activeSection} />;
-      case "admin-users":
-        return <AdminUsersManagement />;
+      // Use PlaceholderSection for less important or not yet implemented sections
       case "orders":
       case "finance":
       case "sales":
@@ -113,8 +128,6 @@ const AdminDashboard: React.FC = () => {
       case "faqs":
       case "analytics":
       case "metrics":
-      case "roles":
-      case "permissions":
       case "general":
       case "security":
       case "notifications":
