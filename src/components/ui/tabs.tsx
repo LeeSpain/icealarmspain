@@ -51,4 +51,5 @@ const TabsContent = React.forwardRef<
 ))
 TabsContent.displayName = TabsPrimitive.Content.displayName
 
-export { Tabs, TabsList, TabsTrigger, TabsContent as TabPanel, TabsList as TabList }
+// Export components with both names to support existing code
+export { Tabs, TabsList, TabsTrigger, TabsContent, TabsContent as TabPanel, TabsList as TabList }

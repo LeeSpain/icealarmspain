@@ -1,56 +1,57 @@
 
-import React from "react";
+import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { AlertCircle } from "lucide-react";
-import { useLanguage } from "@/context/LanguageContext";
+import { AlertCircle, ShieldAlert } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
+import { useLanguage } from "@/context/LanguageContext";
 
-export const SOSTile: React.FC = () => {
-  const { language } = useLanguage();
+interface SOSTileProps {
+  onClick?: () => void;
+}
+
+const SOSTile: React.FC<SOSTileProps> = ({ onClick }) => {
   const navigate = useNavigate();
+  const { language } = useLanguage();
   
-  const handleEmergencyTrigger = () => {
-    toast.info(
-      language === 'en' 
-        ? 'SOS alert has been triggered. Help is on the way.' 
-        : 'La alerta SOS ha sido activada. La ayuda está en camino.'
-    );
+  const handleClick = () => {
+    if (onClick) {
+      onClick();
+    } else {
+      navigate('/devices/sos-pendant');
+    }
   };
   
   return (
-    <Card className="flex flex-col shadow-sm border-2 border-ice-100 hover:border-red-200 transition-all">
-      <CardHeader className="bg-red-50 pb-2">
-        <CardTitle className="text-md font-medium text-red-800 flex items-center">
-          <AlertCircle className="h-5 w-5 mr-2 text-red-600" />
-          {language === 'en' ? 'SOS Emergency' : 'Emergencia SOS'}
+    <Card 
+      className="overflow-hidden cursor-pointer hover:shadow-md transition-shadow"
+      onClick={handleClick}
+    >
+      <CardHeader className="bg-red-600 text-white p-4 flex flex-row items-center">
+        <CardTitle className="text-lg flex items-center">
+          <ShieldAlert className="mr-2 h-5 w-5" />
+          {language === 'en' ? 'SOS Device Status' : 'Estado del Dispositivo SOS'}
         </CardTitle>
       </CardHeader>
-      <CardContent className="pt-4 flex-grow flex flex-col justify-between">
-        <p className="text-sm text-gray-600 mb-4">
+      <CardContent className="p-4">
+        <div className="flex items-center">
+          <div className="w-3 h-3 bg-green-500 rounded-full mr-2"></div>
+          <span className="text-sm font-medium">
+            {language === 'en' ? 'Active & Connected' : 'Activo y Conectado'}
+          </span>
+        </div>
+        <div className="mt-3 text-sm text-muted-foreground">
           {language === 'en' 
-            ? 'One-touch emergency assistance when you need it.' 
-            : 'Asistencia de emergencia con un solo toque cuando la necesites.'}
-        </p>
-        
-        <div className="flex flex-col space-y-2">
-          <Button 
-            variant="destructive" 
-            className="w-full text-sm py-1"
-            onClick={handleEmergencyTrigger}
-          >
-            {language === 'en' ? 'Trigger SOS Alert' : 'Activar Alerta SOS'}
-          </Button>
-          <Button 
-            variant="outline" 
-            className="w-full text-sm py-1"
-            onClick={() => navigate('/devices/sos-pendant')}
-          >
-            {language === 'en' ? 'Manage SOS Pendant' : 'Gestionar Colgante SOS'}
-          </Button>
+            ? 'Last emergency test: 3 days ago' 
+            : 'Última prueba de emergencia: hace 3 días'}
+        </div>
+        <div className="mt-2 text-sm text-muted-foreground">
+          {language === 'en' 
+            ? 'Battery: 78%' 
+            : 'Batería: 78%'}
         </div>
       </CardContent>
     </Card>
   );
 };
+
+export default SOSTile;

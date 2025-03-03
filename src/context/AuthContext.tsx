@@ -5,9 +5,13 @@ import { auth } from '../firebase';
 // Define the User type
 export interface User {
   uid: string;
+  id?: string;
   email: string | null;
   name?: string | null;
   displayName?: string | null;
+  role?: string;
+  profileCompleted?: boolean;
+  language?: string;
 }
 
 // Define the AuthContext type
@@ -16,6 +20,7 @@ interface AuthContextType {
   isAuthenticated: boolean;
   isLoading: boolean;
   login: (email: string, password: string) => Promise<User>;
+  signIn: (email: string, password: string) => Promise<boolean>;
   signUp: (email: string, password: string) => Promise<User>;
   logout: () => Promise<void>;
   updateUserProfile: (displayName: string) => Promise<void>;
@@ -29,6 +34,10 @@ const AuthContext = createContext<AuthContextType>({
   login: async () => {
     throw new Error('login not implemented');
     return {} as User;
+  },
+  signIn: async () => {
+    throw new Error('signIn not implemented');
+    return false;
   },
   signUp: async () => {
     throw new Error('signUp not implemented');
@@ -54,9 +63,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         // User is signed in
         const user: User = {
           uid: authUser.uid,
+          id: authUser.uid, // Add id property that matches uid
           email: authUser.email,
           name: authUser.displayName,
           displayName: authUser.displayName,
+          role: determineUserRole(authUser.email || ''), // Add role based on email
+          profileCompleted: false, // Default value
+          language: 'en', // Default language
         };
         setUser(user);
       } else {
@@ -70,6 +83,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return () => unsubscribe();
   }, []);
 
+  // Helper function to determine user role based on email
+  const determineUserRole = (email: string): string => {
+    if (email.includes('admin')) {
+      return 'admin';
+    } else if (email.includes('agent')) {
+      return 'callcenter';
+    } else {
+      return 'member';
+    }
+  };
+
   // Login function
   const login = async (email: string, password: string): Promise<User> => {
     try {
@@ -79,14 +103,29 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
       const user: User = {
         uid: authUser.uid,
+        id: authUser.uid,
         email: authUser.email,
         name: authUser.displayName,
         displayName: authUser.displayName,
+        role: determineUserRole(email),
+        profileCompleted: false,
+        language: 'en',
       };
       return user;
     } catch (error) {
       console.error('Login error:', error);
       throw error;
+    }
+  };
+
+  // SignIn function (alternative name for login, needed for compatibility)
+  const signIn = async (email: string, password: string): Promise<boolean> => {
+    try {
+      await login(email, password);
+      return true;
+    } catch (error) {
+      console.error('SignIn error:', error);
+      return false;
     }
   };
 
@@ -99,9 +138,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
       const user: User = {
         uid: authUser.uid,
+        id: authUser.uid,
         email: authUser.email,
         name: authUser.displayName,
         displayName: authUser.displayName,
+        role: determineUserRole(email),
+        profileCompleted: false,
+        language: 'en',
       };
       return user;
     } catch (error) {
@@ -141,6 +184,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     isAuthenticated: !!user,
     isLoading,
     login,
+    signIn,
     signUp,
     logout,
     updateUserProfile,

@@ -1,66 +1,57 @@
 
-import React, { useState } from "react";
+import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Activity, Info } from "lucide-react";
-import { useLanguage } from "@/context/LanguageContext";
+import { Activity, TrendingUp } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useLanguage } from "@/context/LanguageContext";
 
-export const GlucoseTile: React.FC = () => {
-  const { language } = useLanguage();
+interface GlucoseTileProps {
+  onClick?: () => void;
+}
+
+const GlucoseTile: React.FC<GlucoseTileProps> = ({ onClick }) => {
   const navigate = useNavigate();
-  const [lastReading] = useState<number>(114);
-  const [timestamp] = useState<string>("12:30 PM");
+  const { language } = useLanguage();
   
-  // Determine the status of glucose level
-  const getStatusColor = (value: number) => {
-    if (value < 70) return "text-red-600";
-    if (value > 180) return "text-orange-600";
-    return "text-green-600";
+  const handleClick = () => {
+    if (onClick) {
+      onClick();
+    } else {
+      navigate('/devices/glucose-monitor');
+    }
   };
   
   return (
-    <Card className="flex flex-col shadow-sm border-2 border-ice-100 hover:border-green-200 transition-all">
-      <CardHeader className="bg-green-50 pb-2">
-        <CardTitle className="text-md font-medium text-green-800 flex items-center">
-          <Activity className="h-5 w-5 mr-2 text-green-600" />
+    <Card 
+      className="overflow-hidden cursor-pointer hover:shadow-md transition-shadow"
+      onClick={handleClick}
+    >
+      <CardHeader className="bg-blue-600 text-white p-4 flex flex-row items-center">
+        <CardTitle className="text-lg flex items-center">
+          <Activity className="mr-2 h-5 w-5" />
           {language === 'en' ? 'Glucose Monitor' : 'Monitor de Glucosa'}
         </CardTitle>
       </CardHeader>
-      <CardContent className="pt-4 flex-grow flex flex-col justify-between">
-        <div>
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-sm text-gray-600">
-              {language === 'en' ? 'Last Reading:' : 'Última Lectura:'}
-            </span>
-            <span className="text-sm text-gray-500">{timestamp}</span>
-          </div>
-          <div className="flex items-center justify-center mb-4">
-            <span className={`text-3xl font-bold ${getStatusColor(lastReading)}`}>
-              {lastReading}
-            </span>
-            <span className="text-sm ml-1 text-gray-600">mg/dL</span>
-          </div>
-          <div className="text-xs flex items-center justify-center mb-4 text-gray-500">
-            <Info className="h-3 w-3 mr-1" />
-            <span>
-              {language === 'en'
-                ? 'Normal range: 70-180 mg/dL'
-                : 'Rango normal: 70-180 mg/dL'}
-            </span>
-          </div>
+      <CardContent className="p-4">
+        <div className="flex items-center">
+          <div className="w-3 h-3 bg-green-500 rounded-full mr-2"></div>
+          <span className="text-sm font-medium">
+            {language === 'en' ? 'Last Reading: Normal' : 'Última Lectura: Normal'}
+          </span>
         </div>
-        
-        <div className="flex flex-col space-y-2">
-          <Button 
-            variant="outline" 
-            className="w-full text-sm py-1"
-            onClick={() => navigate('/devices/glucose-monitor')}
-          >
-            {language === 'en' ? 'View Detailed History' : 'Ver Historial Detallado'}
-          </Button>
+        <div className="mt-3 flex items-center">
+          <span className="text-2xl font-semibold">103</span>
+          <span className="ml-1 text-sm">mg/dL</span>
+          <TrendingUp className="ml-2 h-4 w-4 text-green-500" />
+        </div>
+        <div className="mt-2 text-sm text-muted-foreground">
+          {language === 'en' 
+            ? 'Taken 1 hour ago' 
+            : 'Tomada hace 1 hora'}
         </div>
       </CardContent>
     </Card>
   );
 };
+
+export default GlucoseTile;
