@@ -76,32 +76,31 @@ const AgentProfile: React.FC = () => {
         
         <Card className="md:col-span-3">
           <CardHeader className="pb-2">
-            <Tabs defaultValue="info" value={activeTab} onValueChange={setActiveTab}>
+            <Tabs defaultValue={activeTab} value={activeTab} onValueChange={setActiveTab}>
               <TabsList>
                 <TabsTrigger value="info">Personal Info</TabsTrigger>
                 <TabsTrigger value="performance">Performance</TabsTrigger>
                 <TabsTrigger value="skills">Skills & Training</TabsTrigger>
                 <TabsTrigger value="preferences">Preferences</TabsTrigger>
               </TabsList>
+            
+              <TabsContent value="info" className="mt-4">
+                <ProfileInfo />
+              </TabsContent>
+              
+              <TabsContent value="performance" className="mt-4">
+                <PerformanceMetrics data={performanceData} />
+              </TabsContent>
+              
+              <TabsContent value="skills" className="mt-4">
+                <SkillsTraining />
+              </TabsContent>
+              
+              <TabsContent value="preferences" className="mt-4">
+                <Preferences />
+              </TabsContent>
             </Tabs>
           </CardHeader>
-          <CardContent>
-            <TabsContent value="info" className="mt-0">
-              <ProfileInfo />
-            </TabsContent>
-            
-            <TabsContent value="performance" className="mt-0">
-              <PerformanceMetrics data={performanceData} />
-            </TabsContent>
-            
-            <TabsContent value="skills" className="mt-0">
-              <SkillsTraining />
-            </TabsContent>
-            
-            <TabsContent value="preferences" className="mt-0">
-              <Preferences />
-            </TabsContent>
-          </CardContent>
         </Card>
       </div>
     </div>

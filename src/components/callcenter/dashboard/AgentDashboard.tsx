@@ -5,7 +5,7 @@ import { mockCallData } from "../stats/mock-data";
 import { mockTickets } from "../ticketing/mock-data";
 import { getMockNotifications } from "../notifications/mock-notifications";
 
-// Import the new components
+// Import the components
 import WelcomeCard from "./components/WelcomeCard";
 import UrgentNotifications from "./UrgentNotifications";
 import StatsCards from "./components/StatsCards";
@@ -41,34 +41,38 @@ const AgentDashboard: React.FC<AgentDashboardProps> = ({ setActiveSection }) => 
   
   return (
     <div className="space-y-4">
-      {/* Welcome Card with Urgent Notifications stacked (changed from side by side) */}
-      <div className="space-y-4">
-        <WelcomeCard user={user} />
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-          <div className="lg:col-span-1">
-            <UrgentNotifications 
-              notifications={getMockNotifications()} 
-              setActiveSection={setActiveSection} 
-            />
-          </div>
-          <div className="lg:col-span-2">
-            <StatsCards 
-              totalCalls={totalCalls}
-              avgResponseTime={avgResponseTime}
-              pendingTickets={pendingTickets.length}
-              criticalTickets={criticalTickets.length}
-            />
-          </div>
+      {/* Top row - Welcome Card & Stats Cards */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        <div className="lg:col-span-1">
+          <WelcomeCard user={user} />
+        </div>
+        <div className="lg:col-span-2">
+          <StatsCards 
+            totalCalls={totalCalls}
+            avgResponseTime={avgResponseTime}
+            pendingTickets={pendingTickets.length}
+            criticalTickets={criticalTickets.length}
+          />
         </div>
       </div>
       
-      {/* Main Content Area with Pending Alerts and Activity Sidebar */}
+      {/* Middle row - Urgent Notifications, Pending Alerts and Activity Sidebar */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        <PendingAlerts pendingTickets={pendingTickets} />
-        <ActivitySidebar recentCalls={recentCalls} upcomingTasks={upcomingTasks} />
+        <div className="lg:col-span-1">
+          <UrgentNotifications 
+            notifications={getMockNotifications()} 
+            setActiveSection={setActiveSection} 
+          />
+        </div>
+        <div className="lg:col-span-1">
+          <PendingAlerts pendingTickets={pendingTickets} />
+        </div>
+        <div className="lg:col-span-1">
+          <ActivitySidebar recentCalls={recentCalls} upcomingTasks={upcomingTasks} />
+        </div>
       </div>
       
-      {/* Device Monitoring */}
+      {/* Bottom row - Device Monitoring */}
       <DeviceMonitoring />
       
       {/* Assistance Footer */}
