@@ -24,6 +24,8 @@ export const usePaymentForm = (
     name: user?.name || "",
     email: user?.email || "",
     password: "",
+    phone: "",   // Initialize phone property
+    nie: "",     // Initialize NIE property
     address: {
       line1: "",
       line2: "",

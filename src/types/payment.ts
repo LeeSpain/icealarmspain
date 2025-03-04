@@ -15,6 +15,8 @@ export interface PaymentDetails {
   name: string;
   email: string;
   password?: string;
+  phone?: string;  // Added phone property
+  nie?: string;    // Added NIE property
   address: PaymentAddress;
 }
 
