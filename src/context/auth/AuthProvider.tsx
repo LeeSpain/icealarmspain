@@ -1,6 +1,6 @@
 
-import React, { useState, useEffect } from 'react';
-import { auth, firebaseAuth } from '../../firebase';
+import React, { useState, useEffect, useRef } from 'react';
+import { auth, firebaseAuth } from '../../services/firebase';
 import { User, AuthContextType } from './types';
 import { determineUserRole } from './utils';
 import { AuthContext } from './context';
@@ -10,6 +10,14 @@ import * as authFunctions from './authFunctions';
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const isMounted = useRef(true);
+
+  // Set up cleanup function to prevent memory leaks
+  useEffect(() => {
+    return () => {
+      isMounted.current = false;
+    };
+  }, []);
 
   // Listen for auth state changes
   useEffect(() => {
@@ -32,6 +40,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
     
     const unsubscribe = auth.onAuthStateChanged((authUser) => {
+      if (!isMounted.current) return;
+      
       if (authUser) {
         // User is signed in
         const user: User = {
@@ -55,13 +65,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     });
 
     // Cleanup subscription
-    return () => unsubscribe();
+    return () => {
+      unsubscribe();
+      isMounted.current = false;
+    };
   }, []);
 
   // Create wrapped versions of the auth functions that can update state
   const wrappedUpdateUserProfile = async (displayName: string): Promise<void> => {
     await authFunctions.updateUserProfile(displayName);
-    setUser(prev => prev ? { ...prev, name: displayName, displayName } : null);
+    if (isMounted.current) {
+      setUser(prev => prev ? { ...prev, name: displayName, displayName } : null);
+    }
   };
 
   // Create the context value
