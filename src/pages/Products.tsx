@@ -1,20 +1,27 @@
 
-import React, { useEffect } from "react";
+import React, { useEffect, useCallback } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import DeviceShowcase from "@/components/DeviceShowcase";
 import { ButtonCustom } from "@/components/ui/button-custom";
 import { useLanguage } from "@/context/LanguageContext";
 import { ArrowRight, CheckCircle, Shield, Sparkles } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Products: React.FC = () => {
   const { t, language } = useLanguage();
+  const navigate = useNavigate();
 
   // Add effect for scrolling to top on mount
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
+  
+  const handleCheckoutClick = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    console.log("Products page: Checkout button clicked - navigating to /checkout");
+    navigate("/checkout");
+  }, [navigate]);
 
   const featuresList = language === 'en' ? [
     "Real-time health monitoring",
@@ -100,11 +107,14 @@ const Products: React.FC = () => {
                       <span className="absolute inset-0 bg-gradient-to-r from-ice-500 to-ice-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-0"></span>
                     </ButtonCustom>
                   </Link>
-                  <Link to="/checkout">
-                    <ButtonCustom variant="outline" size="lg" className="border-ice-200 hover:border-ice-300 shadow-sm">
-                      {language === 'en' ? 'Start Checkout Process' : 'Iniciar Proceso de Compra'}
-                    </ButtonCustom>
-                  </Link>
+                  <ButtonCustom 
+                    variant="outline" 
+                    size="lg" 
+                    className="border-ice-200 hover:border-ice-300 shadow-sm"
+                    onClick={handleCheckoutClick}
+                  >
+                    {language === 'en' ? 'Start Checkout Process' : 'Iniciar Proceso de Compra'}
+                  </ButtonCustom>
                 </div>
               </div>
             </div>
@@ -158,11 +168,13 @@ const Products: React.FC = () => {
                 : "Únase a miles de clientes satisfechos que confían en ICE Alarm España para sus necesidades de monitoreo de salud y respuesta de emergencia."}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link to="/checkout">
-                <ButtonCustom variant="secondary" size="lg">
-                  {language === 'en' ? "Start Checkout Process" : "Iniciar Proceso de Compra"}
-                </ButtonCustom>
-              </Link>
+              <ButtonCustom 
+                variant="secondary" 
+                size="lg"
+                onClick={handleCheckoutClick}
+              >
+                {language === 'en' ? "Start Checkout Process" : "Iniciar Proceso de Compra"}
+              </ButtonCustom>
               <Link to="/contact">
                 <ButtonCustom variant="outline" size="lg" className="text-white border-white hover:bg-white/10">
                   {language === 'en' ? "Contact Our Team" : "Contactar a Nuestro Equipo"}

@@ -1,7 +1,7 @@
 
-import React from "react";
+import React, { useCallback } from "react";
 import { Check } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { ButtonCustom } from "@/components/ui/button-custom";
 
 interface PricingPlanProps {
@@ -17,6 +17,14 @@ interface PricingPlanProps {
 }
 
 const PricingPlan: React.FC<PricingPlanProps> = ({ plan, language, index }) => {
+  const navigate = useNavigate();
+  
+  const handleCheckoutClick = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    console.log("PricingPlan: Select Plan button clicked - navigating to /checkout");
+    navigate("/checkout");
+  }, [navigate]);
+
   return (
     <div 
       className={`relative bg-white rounded-3xl shadow-subtle overflow-hidden border transition-all duration-300 hover:shadow-lg animate-slide-up ${
@@ -59,11 +67,9 @@ const PricingPlan: React.FC<PricingPlanProps> = ({ plan, language, index }) => {
               {language === 'en' ? "View Devices" : "Ver Dispositivos"}
             </ButtonCustom>
           </Link>
-          <Link to="/checkout">
-            <ButtonCustom className="w-full">
-              {language === 'en' ? "Select Plan" : "Seleccionar Plan"}
-            </ButtonCustom>
-          </Link>
+          <ButtonCustom className="w-full" onClick={handleCheckoutClick}>
+            {language === 'en' ? "Select Plan" : "Seleccionar Plan"}
+          </ButtonCustom>
         </div>
       </div>
     </div>
