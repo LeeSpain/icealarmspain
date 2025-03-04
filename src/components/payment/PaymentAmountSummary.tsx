@@ -19,13 +19,13 @@ const PaymentAmountSummary: React.FC<PaymentAmountSummaryProps> = ({ amount }) =
       </div>
       <div className="text-sm text-muted-foreground">
         {language === 'en' 
-          ? "This amount includes devices, 21% IVA tax, and shipping fees" 
-          : "Este monto incluye dispositivos, IVA del 21% y gastos de envío"}
+          ? "This amount includes devices, 21% IVA tax on products and shipping" 
+          : "Este monto incluye dispositivos, IVA del 21% en productos y gastos de envío"}
       </div>
       <div className="text-sm text-muted-foreground mt-1">
         {language === 'en'
-          ? "Monthly subscription will be charged separately with 10% IVA"
-          : "La suscripción mensual se cobrará por separado con IVA del 10%"}
+          ? "Monthly subscription (€24.99 per device + 10% IVA) will be charged separately"
+          : "La suscripción mensual (€24.99 por dispositivo + 10% IVA) se cobrará por separado"}
       </div>
     </div>
   );

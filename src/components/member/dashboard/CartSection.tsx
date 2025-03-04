@@ -33,29 +33,33 @@ export const CartSection: React.FC<CartSectionProps> = ({ cart, onRemoveFromCart
       name: item.name,
       price: typeof item.price === 'string' ? parseFloat(item.price.replace(/[^0-9.]/g, '')) : item.price,
       quantity: item.quantity,
-      monthlyPrice: item.monthlyPrice || 0,
+      monthlyPrice: item.monthlyPrice || 24.99, // Default to 24.99 if not specified
       image: item.image || ""
     }));
     
     // Calculate totals
+    const deviceCount = orderItems.reduce((sum, item) => sum + item.quantity, 0);
     const oneTimeTotal = orderItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-    const monthlyTotal = orderItems.reduce((sum, item) => sum + ((item.monthlyPrice || 0) * item.quantity), 0);
-    const shippingTotal = orderItems.reduce((sum, item) => sum + (14.99 * item.quantity), 0);
+    const monthlyTotal = orderItems.reduce((sum, item) => sum + ((item.monthlyPrice || 24.99) * item.quantity), 0);
+    const shippingTotal = deviceCount * 14.99;
     
     // Tax calculations
-    const productTax = oneTimeTotal * 0.21; // 21% IVA
-    const monthlyTax = monthlyTotal * 0.10; // 10% IVA
+    const productTax = oneTimeTotal * 0.21; // 21% IVA for products
+    const shippingTax = shippingTotal * 0.21; // 21% IVA for shipping
+    const monthlyTax = monthlyTotal * 0.10; // 10% IVA for services
+    
+    const total = oneTimeTotal + productTax + shippingTotal + shippingTax;
     
     const orderData = {
       membershipType: "individual", // Default for cart checkout
       items: orderItems,
-      deviceCount: cart.reduce((sum, item) => sum + item.quantity, 0),
+      deviceCount,
       oneTimeTotal,
       productTax,
       shippingTotal,
       monthlyTotal,
       monthlyTax,
-      total: oneTimeTotal + productTax + shippingTotal
+      total
     };
     
     // Navigate to checkout with order data
@@ -121,6 +125,9 @@ export const CartSection: React.FC<CartSectionProps> = ({ cart, onRemoveFromCart
           </span>
           <span className="font-bold">
             €{getTotalPrice().toFixed(2)}
+          </span>
+          <span className="text-xs text-muted-foreground ml-2">
+            {language === 'en' ? '(excl. tax & shipping)' : '(sin impuestos ni envío)'}
           </span>
         </div>
         <Button onClick={handleCheckout} className="bg-ice-600 hover:bg-ice-700">

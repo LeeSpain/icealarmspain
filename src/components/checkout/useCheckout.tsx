@@ -144,29 +144,30 @@ export const useCheckout = () => {
   const orderData = locationOrderData || {
     membershipType: "individual", // Default value
     items: cart.length > 0 ? cart : [
-      // Demo data if cart is empty
+      // Demo data if cart is empty - Updated prices to match product data
       {
-        id: "demo-1",
-        name: "ICE Guardian Pendant",
-        price: 99.99,
+        id: "sos",
+        name: "SOS Pendant",
+        price: 110.00,
         quantity: 1,
-        image: "/lovable-uploads/5e439305-cf63-4080-962e-52657e864050.png"
+        image: "/lovable-uploads/ad65a632-e7ef-4c61-a20e-7b6ff282a87a.png"
       },
       {
-        id: "demo-2",
-        name: "ICE Health Monitor",
-        price: 79.99,
+        id: "dispenser",
+        name: "Medical Dispenser",
+        price: 249.99,
         quantity: 1,
-        image: "/lovable-uploads/6eb6b5d1-34a3-4236-ac3a-351d6c22de7e.png"
+        image: "/lovable-uploads/5e439305-cf63-4080-962e-52657e864050.png"
       }
     ],
     deviceCount: locationOrderData?.deviceCount || (cart.length > 0 ? cart.reduce((total, item) => total + item.quantity, 0) : 2),
-    oneTimeTotal: locationOrderData?.oneTimeTotal || (getTotalPrice() * 0.8 || 179.98),
-    productTax: locationOrderData?.productTax || (getTotalPrice() * 0.21 || 37.80),
-    shippingTotal: locationOrderData?.shippingTotal || 14.99,
-    monthlyTotal: locationOrderData?.monthlyTotal || 24.99,
-    monthlyTax: locationOrderData?.monthlyTax || 2.50,
-    total: locationOrderData?.total || (getTotalPrice() + 14.99 + getTotalPrice() * 0.21 || 217.97),
+    // Updated default values to match our product pricing
+    oneTimeTotal: locationOrderData?.oneTimeTotal || (getTotalPrice() || 359.99), // SOS + Dispenser = 110 + 249.99
+    productTax: locationOrderData?.productTax || (getTotalPrice() * 0.21 || 75.60), // 21% of 359.99
+    shippingTotal: locationOrderData?.shippingTotal || 29.98, // 14.99 × 2 devices
+    monthlyTotal: locationOrderData?.monthlyTotal || 49.98, // 24.99 × 2 devices
+    monthlyTax: locationOrderData?.monthlyTax || 5.00, // 10% of 49.98
+    total: locationOrderData?.total || (359.99 + 75.60 + 29.98), // 465.57
   };
   
   // Create result object for PaymentSuccess component
