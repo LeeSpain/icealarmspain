@@ -1,6 +1,6 @@
 
-import React, { useCallback } from "react";
-import { Link } from "react-router-dom";
+import React from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { ButtonCustom } from "@/components/ui/button-custom";
 
 interface DeviceCTAProps {
@@ -8,21 +8,17 @@ interface DeviceCTAProps {
 }
 
 const DeviceCTA: React.FC<DeviceCTAProps> = ({ language }) => {
-  console.log("DeviceCTA rendering with direct navigation to /checkout");
+  const navigate = useNavigate();
   
-  const handleCheckoutClick = useCallback((e: React.MouseEvent) => {
+  const handleCheckoutClick = (e: React.MouseEvent) => {
     console.log("DeviceCTA: Checkout button clicked");
     e.preventDefault();
     e.stopPropagation();
     
-    // Force direct navigation to checkout
-    console.log("DeviceCTA: Forcing direct navigation to /checkout");
-    
-    // Using a small timeout to ensure the event completes first
-    setTimeout(() => {
-      window.location.href = "/checkout";
-    }, 50);
-  }, []);
+    // Use React Router for navigation
+    console.log("DeviceCTA: Navigating to /checkout");
+    navigate("/checkout");
+  };
 
   return (
     <section className="py-20 bg-gradient-to-b from-ice-50 to-white text-center">

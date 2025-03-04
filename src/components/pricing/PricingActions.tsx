@@ -1,6 +1,6 @@
 
-import React, { useCallback } from "react";
-import { Link } from "react-router-dom";
+import React from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { ButtonCustom } from "@/components/ui/button-custom";
 
 interface PricingActionsProps {
@@ -8,21 +8,17 @@ interface PricingActionsProps {
 }
 
 const PricingActions: React.FC<PricingActionsProps> = ({ language }) => {
-  console.log("PricingActions rendering with direct link to /checkout");
+  const navigate = useNavigate();
   
-  const handleCheckoutClick = useCallback((e: React.MouseEvent) => {
+  const handleCheckoutClick = (e: React.MouseEvent) => {
     console.log("PricingActions: Checkout button clicked");
     e.preventDefault();
     e.stopPropagation();
     
-    // Force direct navigation to checkout
-    console.log("PricingActions: Forcing direct navigation to /checkout");
-    
-    // Using a small timeout to ensure the event completes first
-    setTimeout(() => {
-      window.location.href = "/checkout";
-    }, 50);
-  }, []);
+    // Use React Router for navigation
+    console.log("PricingActions: Navigating to /checkout");
+    navigate("/checkout");
+  };
 
   return (
     <div className="container mx-auto px-4 md:px-6">

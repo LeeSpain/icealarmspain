@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useLanguage } from "@/context/LanguageContext";
 import { useCart } from "@/components/payment/CartContext";
 import { toast } from "react-toastify";
@@ -9,6 +9,7 @@ export const useCheckout = () => {
   const { language } = useLanguage();
   const { cart, clearCart, getTotalPrice } = useCart();
   const navigate = useNavigate();
+  const location = useLocation();
   
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
@@ -20,42 +21,29 @@ export const useCheckout = () => {
     city: "",
     country: "",
     postalCode: "",
-    phone: ""
+    phone: "",
+    nie: "" // Added NIE number field
   });
   const [paymentMethod, setPaymentMethod] = useState("credit_card");
   const [cardDetails, setCardDetails] = useState({});
   const [orderId, setOrderId] = useState("");
   const [orderDate, setOrderDate] = useState(new Date().toISOString());
-  const [amount, setAmount] = useState(0);
   const [last4, setLast4] = useState("1234"); // Default dummy value
+  
+  // Get order data from location state if available
+  const locationOrderData = location.state?.orderData;
   
   useEffect(() => {
     console.log("Checkout useEffect - Cart length:", cart.length);
-    
-    // For demo purposes, if cart is empty, we'll simulate having items
-    // This prevents immediate redirect when testing checkout flow
-    if (cart.length === 0) {
-      console.log("Cart is empty but continuing with checkout for demo purposes");
-      
-      // Instead of redirecting immediately, add a dummy product for demo
-      // In a real app, we would redirect to products
-      /* 
-      navigate("/products");
-      toast.info(
-        language === 'en' 
-          ? "Your cart is empty. Please add items before checkout." 
-          : "Su carrito está vacío. Por favor añada artículos antes de proceder al pago."
-      );
-      */
-    }
+    console.log("Checkout useEffect - Location state:", locationOrderData);
     
     // Generate a random order ID for demo purposes
     const randomOrderId = "ICE-" + Math.floor(100000 + Math.random() * 900000);
     setOrderId(randomOrderId);
     
-    // Calculate the total amount
-    setAmount(getTotalPrice());
-  }, [cart, navigate, language, getTotalPrice]);
+    // Important: Do NOT redirect away from checkout page even if cart is empty
+    // We'll rely on location state data or default demo data
+  }, [cart, navigate, language, getTotalPrice, locationOrderData]);
   
   const handleBillingInfoSubmit = (data: any) => {
     setBillingInfo(data);
@@ -105,9 +93,9 @@ export const useCheckout = () => {
     }
   };
   
-  // Create orderData object for OrderSummary component
-  const orderData = {
-    total: getTotalPrice() || 199.99, // Default value if cart is empty
+  // Create orderData object from location state or default demo data if not available
+  const orderData = locationOrderData || {
+    membershipType: "individual", // Default value
     items: cart.length > 0 ? cart : [
       // Demo data if cart is empty
       {
@@ -125,13 +113,13 @@ export const useCheckout = () => {
         image: "/lovable-uploads/6eb6b5d1-34a3-4236-ac3a-351d6c22de7e.png"
       }
     ],
-    membershipType: "individual", // Default value
-    deviceCount: cart.length > 0 ? cart.reduce((total, item) => total + item.quantity, 0) : 2,
-    oneTimeTotal: (getTotalPrice() || 179.98) * 0.8, // Simplified calculation
-    productTax: (getTotalPrice() || 179.98) * 0.21, // 21% tax
-    shippingTotal: 10, // Fixed shipping cost
-    monthlyTotal: 29.99, // Default monthly subscription
-    monthlyTax: 2.99, // 10% tax on monthly
+    deviceCount: locationOrderData?.deviceCount || (cart.length > 0 ? cart.reduce((total, item) => total + item.quantity, 0) : 2),
+    oneTimeTotal: locationOrderData?.oneTimeTotal || (getTotalPrice() * 0.8 || 179.98),
+    productTax: locationOrderData?.productTax || (getTotalPrice() * 0.21 || 37.80),
+    shippingTotal: locationOrderData?.shippingTotal || 29.98,
+    monthlyTotal: locationOrderData?.monthlyTotal || 29.99,
+    monthlyTax: locationOrderData?.monthlyTax || 3.00,
+    total: locationOrderData?.total || (getTotalPrice() + 29.98 || 229.97),
   };
   
   // Create result object for PaymentSuccess component
@@ -139,7 +127,7 @@ export const useCheckout = () => {
     success: true,
     orderId: orderId,
     orderDate: orderDate,
-    amount: getTotalPrice() || 199.99,
+    amount: orderData.total,
     last4: last4
   };
   
