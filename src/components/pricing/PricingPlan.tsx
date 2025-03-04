@@ -61,7 +61,7 @@ const PricingPlan: React.FC<PricingPlanProps> = ({
         
         <Link to={ctaUrl}>
           <ButtonCustom 
-            variant={isPopular ? "default" : "outline"} 
+            variant={isPopular ? "primary" : "outline"} 
             className={`w-full ${isPopular ? "bg-ice-600 hover:bg-ice-700" : "border-ice-600 text-ice-600 hover:bg-ice-50"}`}
           >
             <span className="flex items-center justify-center">
