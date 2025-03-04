@@ -31,6 +31,9 @@ const contactSchema = z.object({
   receivesUpdates: z.boolean(),
 });
 
+// Ensure schema type exactly matches ContactFormValues
+type ContactFormSchema = z.infer<typeof contactSchema>;
+
 interface AddContactTabProps {
   onAddContact: (contact: Omit<Contact, 'id'>) => Promise<boolean>;
 }
