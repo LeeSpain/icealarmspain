@@ -48,8 +48,8 @@ const AboutUs: React.FC = () => {
                   <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight font-playfair mx-auto max-w-4xl relative">
                     <span className="relative z-10 bg-gradient-to-r from-gray-900 via-ice-900 to-guardian-800 bg-clip-text text-transparent inline-block">
                       {language === 'en' 
-                        ? 'About ICE Alár' 
-                        : 'Acerca de ICE Alár'}
+                        ? 'About ICE Alarm' 
+                        : 'Acerca de ICE Alarm'}
                     </span>
                     
                     {/* Accent decorations */}
@@ -91,8 +91,8 @@ const AboutUs: React.FC = () => {
                   </div>
                   <p className="mb-6">
                     {language === 'en' 
-                      ? 'At ICE Alár, our mission is to empower everyone in Spain with innovative technology that enhances safety, improves health management, and provides peace of mind to both users and their families.'
-                      : 'En ICE Alár, nuestra misión es empoderar a todos en España con tecnología innovadora que mejora la seguridad, facilita la gestión de la salud y proporciona tranquilidad tanto a los usuarios como a sus familias.'}
+                      ? 'At ICE Alarm, our mission is to empower everyone in Spain with innovative technology that enhances safety, improves health management, and provides peace of mind to both users and their families.'
+                      : 'En ICE Alarm, nuestra misión es empoderar a todos en España con tecnología innovadora que mejora la seguridad, facilita la gestión de la salud y proporciona tranquilidad tanto a los usuarios como a sus familias.'}
                   </p>
                   <p>
                     {language === 'en'
@@ -154,8 +154,8 @@ const AboutUs: React.FC = () => {
                     </h4>
                     <p className="text-muted-foreground">
                       {language === 'en'
-                        ? 'ICE Alár was founded to address the healthcare monitoring needs of both Spanish locals and the growing expatriate community.'
-                        : 'ICE Alár fue fundada para atender las necesidades de monitoreo de salud tanto de los españoles locales como de la creciente comunidad expatriada.'}
+                        ? 'ICE Alarm was founded to address the healthcare monitoring needs of both Spanish locals and the growing expatriate community.'
+                        : 'ICE Alarm fue fundada para atender las necesidades de monitoreo de salud tanto de los españoles locales como de la creciente comunidad expatriada.'}
                     </p>
                   </div>
                   <div className="order-1 md:order-2 mb-4 md:mb-0">
@@ -232,8 +232,8 @@ const AboutUs: React.FC = () => {
                 </p>
                 <p>
                   {language === 'en'
-                    ? 'Our multilingual staff represents the communities we serve, ensuring cultural sensitivity and understanding in every interaction. From our developers to our care coordinators, everyone at ICE Alár shares a common goal: creating technology that cares.'
-                    : 'Nuestro personal multilingüe representa a las comunidades a las que servimos, garantizando sensibilidad cultural y comprensión en cada interacción. Desde nuestros desarrolladores hasta nuestros coordinadores de atención, todos en ICE Alár comparten un objetivo común: crear tecnología que cuida.'}
+                    ? 'Our multilingual staff represents the communities we serve, ensuring cultural sensitivity and understanding in every interaction. From our developers to our care coordinators, everyone at ICE Alarm shares a common goal: creating technology that cares.'
+                    : 'Nuestro personal multilingüe representa a las comunidades a las que servimos, garantizando sensibilidad cultural y comprensión en cada interacción. Desde nuestros desarrolladores hasta nuestros coordinadores de atención, todos en ICE Alarm comparten un objetivo común: crear tecnología que cuida.'}
                 </p>
               </div>
               
