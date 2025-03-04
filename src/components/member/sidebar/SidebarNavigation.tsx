@@ -1,175 +1,128 @@
 
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useLanguage } from '@/context/LanguageContext';
+import React from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { 
   Home, 
-  Activity, 
-  BellRing, 
-  PlusSquare, 
   User, 
   Settings, 
   HelpCircle, 
-  LogOut,
-  FileText,
-  MessageCircle
-} from 'lucide-react';
-import SidebarItem from './SidebarItem';
-import SidebarSection from './SidebarSection';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { User as UserType } from '@/context/AuthContext';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+  ShieldAlert, 
+  Activity, 
+  PillIcon,
+  MessageSquare,
+  PlusCircle,
+  Stethoscope,
+  CalendarCheck
+} from "lucide-react";
+import SidebarItem from "./SidebarItem";
 
 interface SidebarNavigationProps {
-  activePage: string;
   collapsed: boolean;
-  onLogout: () => void;
-  user?: UserType | null;
 }
 
-const SidebarNavigation: React.FC<SidebarNavigationProps> = ({ 
-  activePage, 
-  collapsed, 
-  onLogout,
-  user
-}) => {
-  const { language } = useLanguage();
+const SidebarNavigation: React.FC<SidebarNavigationProps> = ({ collapsed }) => {
+  const location = useLocation();
   const navigate = useNavigate();
-
-  // Function to handle navigation
-  const handleNavigation = (path: string) => {
-    console.log("Navigating to:", path);
-    navigate(path);
+  
+  const isActive = (path: string) => {
+    return location.pathname === path;
   };
-
-  // Get user initials for avatar
-  const getUserInitials = () => {
-    if (!user || !user.name) return 'U';
-    return user.name.split(' ')
-      .map(part => part.charAt(0))
-      .join('')
-      .toUpperCase();
-  };
-
+  
   return (
-    <div className="flex flex-col h-full">
-      {/* User profile at the top */}
-      {!collapsed && user && (
-        <div className="px-4 py-4 border-b border-gray-100">
-          <div className="flex items-center space-x-3">
-            <Avatar className="h-10 w-10 bg-ice-100">
-              <AvatarFallback className="bg-ice-500 text-white">
-                {getUserInitials()}
-              </AvatarFallback>
-            </Avatar>
-            <div className="flex flex-col">
-              <span className="font-medium text-sm">{user.name || 'Member'}</span>
-              <span className="text-xs text-muted-foreground">{user.email}</span>
-            </div>
-          </div>
-        </div>
-      )}
-
-      <ScrollArea className="flex-1 px-2 pt-4">
-        <div className="space-y-1 px-2">
-          <SidebarItem 
-            icon={Home} 
-            label={language === 'en' ? "Dashboard" : "Panel"} 
-            active={activePage === "dashboard"} 
-            onClick={() => handleNavigation('/dashboard')}
-            collapsed={collapsed}
-          />
-          
-          <SidebarItem 
-            icon={MessageCircle} 
-            label={language === 'en' ? "Support Chat" : "Chat de Soporte"} 
-            active={activePage === "chat"} 
-            onClick={() => handleNavigation('/chat')}
-            collapsed={collapsed}
-          />
-          
-          <SidebarSection title={language === 'en' ? "Devices" : "Dispositivos"} collapsed={collapsed}>
-            <SidebarItem 
-              icon={BellRing} 
-              label={language === 'en' ? "SOS Pendant" : "Colgante SOS"} 
-              active={activePage === "sos-pendant"} 
-              onClick={() => handleNavigation('/devices/sos-pendant')}
-              collapsed={collapsed}
-            />
-            <SidebarItem 
-              icon={Activity} 
-              label={language === 'en' ? "Glucose Monitor" : "Monitor de Glucosa"} 
-              active={activePage === "glucose-monitor"} 
-              onClick={() => handleNavigation('/devices/glucose-monitor')}
-              collapsed={collapsed}
-            />
-            <SidebarItem 
-              icon={PlusSquare} 
-              label={language === 'en' ? "Medical Dispenser" : "Dispensador Médico"} 
-              active={activePage === "medical-dispenser"} 
-              onClick={() => handleNavigation('/devices/medical-dispenser')}
-              collapsed={collapsed}
-            />
-          </SidebarSection>
-          
-          <SidebarSection title={language === 'en' ? "Health" : "Salud"} collapsed={collapsed}>
-            <SidebarItem 
-              icon={Activity} 
-              label={language === 'en' ? "Health Metrics" : "Métricas de Salud"} 
-              active={activePage === "health-metrics"} 
-              onClick={() => handleNavigation('/health/metrics')}
-              collapsed={collapsed}
-            />
-            <SidebarItem 
-              icon={PlusSquare} 
-              label={language === 'en' ? "Medications" : "Medicamentos"} 
-              active={activePage === "medications"} 
-              onClick={() => handleNavigation('/health/medications')}
-              collapsed={collapsed}
-            />
-          </SidebarSection>
-          
-          <SidebarSection title={language === 'en' ? "Account" : "Cuenta"} collapsed={collapsed}>
-            <SidebarItem 
-              icon={User} 
-              label={language === 'en' ? "Profile" : "Perfil"} 
-              active={activePage === "profile"} 
-              onClick={() => handleNavigation('/profile')}
-              collapsed={collapsed}
-            />
-            <SidebarItem 
-              icon={FileText} 
-              label={language === 'en' ? "Personal Details" : "Datos Personales"} 
-              active={activePage === "onboarding"} 
-              onClick={() => handleNavigation('/personal-details')}
-              collapsed={collapsed}
-            />
-            <SidebarItem 
-              icon={Settings} 
-              label={language === 'en' ? "Settings" : "Configuración"} 
-              active={activePage === "settings"} 
-              onClick={() => handleNavigation('/settings')}
-              collapsed={collapsed}
-            />
-            <SidebarItem 
-              icon={HelpCircle} 
-              label={language === 'en' ? "Help & Support" : "Ayuda y Soporte"} 
-              active={activePage === "help"} 
-              onClick={() => handleNavigation('/help')}
-              collapsed={collapsed}
-            />
-          </SidebarSection>
-        </div>
-      </ScrollArea>
-
-      <div className="mt-auto p-4 border-t border-gray-200">
-        <SidebarItem 
-          icon={LogOut} 
-          label={language === 'en' ? "Logout" : "Cerrar Sesión"} 
-          onClick={onLogout}
-          collapsed={collapsed}
-        />
+    <div className="px-3 py-2">
+      <div className="mb-2 px-4 text-xs font-semibold text-muted-foreground">
+        {!collapsed && "DASHBOARD"}
       </div>
+      <SidebarItem 
+        icon={<Home size={18} />} 
+        label="Dashboard" 
+        active={isActive("/dashboard")} 
+        collapsed={collapsed}
+        onClick={() => navigate("/dashboard")}
+      />
+      <SidebarItem 
+        icon={<MessageSquare size={18} />} 
+        label="Chat Support" 
+        active={isActive("/chat")} 
+        collapsed={collapsed}
+        onClick={() => navigate("/chat")}
+      />
+      
+      <div className="my-2 px-4 text-xs font-semibold text-muted-foreground">
+        {!collapsed && "DEVICES"}
+      </div>
+      <SidebarItem 
+        icon={<ShieldAlert size={18} />} 
+        label="SOS Pendant" 
+        active={isActive("/devices/sos-pendant")} 
+        collapsed={collapsed}
+        onClick={() => navigate("/devices/sos-pendant")}
+      />
+      <SidebarItem 
+        icon={<Activity size={18} />} 
+        label="Health Monitor" 
+        active={isActive("/devices/glucose-monitor")} 
+        collapsed={collapsed}
+        onClick={() => navigate("/devices/glucose-monitor")}
+      />
+      <SidebarItem 
+        icon={<PillIcon size={18} />} 
+        label="Medical Dispenser" 
+        active={isActive("/devices/medical-dispenser")} 
+        collapsed={collapsed}
+        onClick={() => navigate("/devices/medical-dispenser")}
+      />
+      <SidebarItem 
+        icon={<PlusCircle size={18} />} 
+        label="Register Device" 
+        active={isActive("/device-registration")} 
+        collapsed={collapsed}
+        onClick={() => navigate("/device-registration")}
+        highlight={true}
+      />
+      
+      <div className="my-2 px-4 text-xs font-semibold text-muted-foreground">
+        {!collapsed && "HEALTH"}
+      </div>
+      <SidebarItem 
+        icon={<Stethoscope size={18} />} 
+        label="Health Metrics" 
+        active={isActive("/health/metrics")} 
+        collapsed={collapsed}
+        onClick={() => navigate("/health/metrics")}
+      />
+      <SidebarItem 
+        icon={<CalendarCheck size={18} />} 
+        label="Medications" 
+        active={isActive("/health/medications")} 
+        collapsed={collapsed}
+        onClick={() => navigate("/health/medications")}
+      />
+      
+      <div className="my-2 px-4 text-xs font-semibold text-muted-foreground">
+        {!collapsed && "ACCOUNT"}
+      </div>
+      <SidebarItem 
+        icon={<User size={18} />} 
+        label="Profile" 
+        active={isActive("/profile")} 
+        collapsed={collapsed}
+        onClick={() => navigate("/profile")}
+      />
+      <SidebarItem 
+        icon={<Settings size={18} />} 
+        label="Settings" 
+        active={isActive("/settings")} 
+        collapsed={collapsed}
+        onClick={() => navigate("/settings")}
+      />
+      <SidebarItem 
+        icon={<HelpCircle size={18} />} 
+        label="Help & Support" 
+        active={isActive("/help")} 
+        collapsed={collapsed}
+        onClick={() => navigate("/help")}
+      />
     </div>
   );
 };

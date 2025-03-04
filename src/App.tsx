@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Routes, Route } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster";
@@ -29,6 +30,7 @@ import MedicationsPage from "@/pages/MedicationsPage";
 import OnboardingQuestionnaire from "@/pages/OnboardingQuestionnaire";
 import PersonalDetailsPage from "@/pages/PersonalDetailsPage";
 import ChatPage from "@/pages/ChatPage";
+import DeviceRegistrationPage from "@/pages/DeviceRegistrationPage";
 
 // Admin Pages
 import AdminDashboard from "@/pages/AdminDashboard";
@@ -66,6 +68,7 @@ function App() {
         <Route path="/onboarding" element={<OnboardingQuestionnaire />} />
         <Route path="/personal-details" element={<PersonalDetailsPage />} />
         <Route path="/chat" element={<ChatPage />} />
+        <Route path="/device-registration" element={<DeviceRegistrationPage />} />
         
         {/* Device pages */}
         <Route path="/devices/sos-pendant" element={<SOSPendantPage />} />

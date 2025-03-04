@@ -1,36 +1,42 @@
 
-import React from 'react';
-import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
+import React from "react";
 
 interface SidebarItemProps {
-  icon: React.ElementType;
+  icon: React.ReactNode;
   label: string;
-  onClick?: () => void;
-  active?: boolean;
-  collapsed?: boolean;
+  active: boolean;
+  collapsed: boolean;
+  onClick: () => void;
+  highlight?: boolean;
 }
 
 const SidebarItem: React.FC<SidebarItemProps> = ({ 
-  icon: Icon, 
+  icon, 
   label, 
-  onClick, 
-  active = false,
-  collapsed = false
+  active, 
+  collapsed, 
+  onClick,
+  highlight = false
 }) => {
   return (
-    <Button
-      variant="ghost"
-      className={cn(
-        "w-full justify-start mb-1",
-        active ? "bg-ice-100 text-ice-700" : "hover:bg-ice-50 text-gray-600",
-        collapsed ? "px-2" : "px-3"
-      )}
+    <div
+      className={`
+        flex items-center px-3 py-2 rounded-md cursor-pointer transition-colors
+        ${active ? 'bg-ice-100 text-ice-900' : 'hover:bg-ice-100/50 text-ice-800 hover:text-ice-900'}
+        ${highlight ? 'border border-ice-300 bg-ice-50' : ''}
+      `}
       onClick={onClick}
     >
-      <Icon className={cn("h-5 w-5", collapsed ? "mr-0" : "mr-2")} />
-      {!collapsed && <span>{label}</span>}
-    </Button>
+      <div className={`${active ? 'text-ice-700' : 'text-ice-600'}`}>
+        {icon}
+      </div>
+      {!collapsed && (
+        <span className="ml-3 text-sm font-medium">{label}</span>
+      )}
+      {!collapsed && highlight && (
+        <span className="ml-auto text-xs px-1.5 py-0.5 rounded-full bg-ice-100 text-ice-800">New</span>
+      )}
+    </div>
   );
 };
 
