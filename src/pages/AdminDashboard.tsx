@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { ToastContainer, toast } from 'react-toastify';
 import { useNavigate } from "react-router-dom";
@@ -5,34 +6,17 @@ import { useAuth } from "@/context/auth";
 import { useLanguage } from "@/context/LanguageContext";
 import 'react-toastify/dist/ReactToastify.css';
 
-// Admin components imports
+// Admin components
 import Sidebar from "@/components/admin/Sidebar";
-import DashboardMetrics from "@/components/admin/DashboardMetrics";
-import UserManagement from "@/components/admin/UserManagement";
-import PlaceholderSection from "@/components/admin/PlaceholderSection";
-import AlertsManagement from "@/components/admin/AlertsManagement";
-import InventoryManagement from "@/components/admin/InventoryManagement";
-import ClientManagement from "@/components/admin/ClientManagement";
-import DeviceManagement from "@/components/admin/DeviceManagement";
-import AdminUsersManagement from "@/components/admin/AdminUsersManagement";
-import RolesManagement from "@/components/admin/RolesManagement";
-import PermissionsManagement from "@/components/admin/PermissionsManagement";
-
-// Define the types for components that don't explicitly include the onAction prop
-interface AdminComponentProps {
-  onAction: (action: string) => void;
-}
-
-// Define specific props for InventoryManagement
-interface InventoryProps extends AdminComponentProps {
-  section: "orders-list" | "inventory";
-}
+import SectionRenderer from "@/components/admin/dashboard/SectionRenderer";
+import AdminDashboardLoading from "@/components/admin/dashboard/AdminDashboardLoading";
+import { DashboardActivity } from "@/components/admin/dashboard/ActivityManager";
 
 const AdminDashboard: React.FC = () => {
   const [activeSection, setActiveSection] = useState<string>("dashboard");
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const { user, isAuthenticated, isLoading } = useAuth();
-  const { t, language } = useLanguage();
+  const { language } = useLanguage();
   const navigate = useNavigate();
   const [dashboardData, setDashboardData] = useState({
     totalRevenue: "€0",
@@ -108,17 +92,22 @@ const AdminDashboard: React.FC = () => {
     }
   };
 
+  const addActivity = (type: string, description: string) => {
+    const newActivity: DashboardActivity = {
+      id: Date.now(),
+      type,
+      description,
+      time: "Just now"
+    };
+    
+    setDashboardData(prev => ({
+      ...prev,
+      recentActivities: [newActivity, ...prev.recentActivities.slice(0, 4)]
+    }));
+  };
+
   if (isLoading) {
-    return (
-      <div className="flex h-screen items-center justify-center bg-ice-50/30">
-        <div className="flex flex-col items-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-ice-600 mb-4"></div>
-          <p className="text-ice-700">
-            {language === 'en' ? 'Loading admin dashboard...' : 'Cargando panel de administración...'}
-          </p>
-        </div>
-      </div>
-    );
+    return <AdminDashboardLoading />;
   }
 
   if (!isAuthenticated || !user || user.role !== 'admin') {
@@ -134,53 +123,6 @@ const AdminDashboard: React.FC = () => {
     );
   }
 
-  const addActivity = (type: string, description: string) => {
-    const newActivity = {
-      id: Date.now(),
-      type,
-      description,
-      time: "Just now"
-    };
-    
-    setDashboardData(prev => ({
-      ...prev,
-      recentActivities: [newActivity, ...prev.recentActivities.slice(0, 4)]
-    }));
-  };
-
-  const renderActiveSection = () => {
-    switch (activeSection) {
-      case "dashboard":
-        return <DashboardMetrics dashboardMetrics={dashboardData} />;
-      case "users":
-        return <UserManagement onAction={(action) => addActivity("User", action)} />;
-      case "clients":
-        return <ClientManagement onAction={(action) => addActivity("Client", action)} />;
-      case "devices":
-        return <DeviceManagement onAction={(action) => addActivity("Device", action)} />;
-      case "alerts":
-        return <AlertsManagement onAction={(action) => addActivity("Alert", action)} />;
-      case "admin-users":
-        return <AdminUsersManagement onAction={(action) => addActivity("Admin", action)} />;
-      case "roles":
-        return <RolesManagement onAction={(action) => addActivity("Role", action)} />;  
-      case "permissions":
-        return <PermissionsManagement onAction={(action) => addActivity("Permission", action)} />;
-      case "orders-list":
-      case "inventory":
-        return <InventoryManagement 
-          section={activeSection as "orders-list" | "inventory"}
-          onAction={(action) => addActivity("Inventory", action)} 
-        />;
-      default:
-        return <PlaceholderSection 
-          title={activeSection.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')} 
-          description={`Manage ${activeSection.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')} section`} 
-          onAction={(action) => addActivity(activeSection.charAt(0).toUpperCase() + activeSection.slice(1), action)}
-        />;
-    }
-  };
-
   return (
     <div className="flex h-screen bg-ice-50/30">
       <ToastContainer />
@@ -195,7 +137,11 @@ const AdminDashboard: React.FC = () => {
       
       <div className="flex-1 overflow-auto transition-all duration-300">
         <div className="p-6 w-full">
-          {renderActiveSection()}
+          <SectionRenderer 
+            activeSection={activeSection} 
+            dashboardData={dashboardData}
+            onActivityAdded={addActivity}
+          />
         </div>
       </div>
     </div>
