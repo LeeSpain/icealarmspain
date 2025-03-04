@@ -27,7 +27,7 @@ const BillingInformationSection: React.FC<BillingInformationSectionProps> = ({
       {!isNewCustomer && (
         <div className="space-y-2">
           <Label htmlFor="email">
-            {language === 'en' ? "Email" : "Correo Electrónico"}
+            {language === 'en' ? "Email" : "Correo Electrónico"} *
           </Label>
           <Input
             id="email"
@@ -42,9 +42,39 @@ const BillingInformationSection: React.FC<BillingInformationSectionProps> = ({
         </div>
       )}
       
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="space-y-2">
+          <Label htmlFor="phone">
+            {language === 'en' ? "Phone Number" : "Número de Teléfono"} *
+          </Label>
+          <Input
+            id="phone"
+            name="phone"
+            value={formData.phone || ""}
+            onChange={handleChange}
+            placeholder={language === 'en' ? "Phone number" : "Número de teléfono"}
+            required
+            autoComplete="tel"
+          />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="nie">
+            {language === 'en' ? "NIE Number" : "Número NIE"} *
+          </Label>
+          <Input
+            id="nie"
+            name="nie"
+            value={formData.nie || ""}
+            onChange={handleChange}
+            placeholder={language === 'en' ? "X0000000A" : "X0000000A"}
+            required
+          />
+        </div>
+      </div>
+      
       <div className="space-y-2">
         <Label htmlFor="address.line1">
-          {language === 'en' ? "Address Line 1" : "Dirección Línea 1"}
+          {language === 'en' ? "Address Line 1" : "Dirección Línea 1"} *
         </Label>
         <Input
           id="address.line1"
@@ -74,7 +104,7 @@ const BillingInformationSection: React.FC<BillingInformationSectionProps> = ({
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-2">
           <Label htmlFor="address.city">
-            {language === 'en' ? "City" : "Ciudad"}
+            {language === 'en' ? "City" : "Ciudad"} *
           </Label>
           <Input
             id="address.city"
@@ -88,7 +118,7 @@ const BillingInformationSection: React.FC<BillingInformationSectionProps> = ({
         </div>
         <div className="space-y-2">
           <Label htmlFor="address.state">
-            {language === 'en' ? "Province" : "Provincia"}
+            {language === 'en' ? "Province" : "Provincia"} *
           </Label>
           <Input
             id="address.state"
@@ -105,7 +135,7 @@ const BillingInformationSection: React.FC<BillingInformationSectionProps> = ({
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-2">
           <Label htmlFor="address.postalCode">
-            {language === 'en' ? "Postal Code" : "Código Postal"}
+            {language === 'en' ? "Postal Code" : "Código Postal"} *
           </Label>
           <Input
             id="address.postalCode"
@@ -119,7 +149,7 @@ const BillingInformationSection: React.FC<BillingInformationSectionProps> = ({
         </div>
         <div className="space-y-2">
           <Label htmlFor="address.country">
-            {language === 'en' ? "Country" : "País"}
+            {language === 'en' ? "Country" : "País"} *
           </Label>
           <Input
             id="address.country"

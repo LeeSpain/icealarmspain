@@ -102,7 +102,7 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({ orderData }) => {
             <span>
               {language === 'en' ? "Total one-time payment" : "Pago único total"}:
             </span>
-            <span>€{(orderData.oneTimeTotal + orderData.productTax + orderData.shippingTotal).toFixed(2)}</span>
+            <span className="text-lg">€{(orderData.oneTimeTotal + orderData.productTax + orderData.shippingTotal).toFixed(2)}</span>
           </div>
         </div>
         
@@ -129,7 +129,7 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({ orderData }) => {
           </div>
         </div>
         
-        <div className="bg-ice-50 p-3 rounded-md text-xs flex">
+        <div className="bg-ice-50 p-3 rounded-md text-xs flex mt-4">
           <Info className="h-4 w-4 text-ice-500 mr-2 flex-shrink-0 mt-0.5" />
           <p>
             {language === 'en' 

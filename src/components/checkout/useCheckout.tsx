@@ -22,7 +22,7 @@ export const useCheckout = () => {
     country: "",
     postalCode: "",
     phone: "",
-    nie: "" // Added NIE number field
+    nie: "" // NIE number field
   });
   const [paymentMethod, setPaymentMethod] = useState("credit_card");
   const [cardDetails, setCardDetails] = useState({});
@@ -116,10 +116,10 @@ export const useCheckout = () => {
     deviceCount: locationOrderData?.deviceCount || (cart.length > 0 ? cart.reduce((total, item) => total + item.quantity, 0) : 2),
     oneTimeTotal: locationOrderData?.oneTimeTotal || (getTotalPrice() * 0.8 || 179.98),
     productTax: locationOrderData?.productTax || (getTotalPrice() * 0.21 || 37.80),
-    shippingTotal: locationOrderData?.shippingTotal || 29.98,
-    monthlyTotal: locationOrderData?.monthlyTotal || 29.99,
-    monthlyTax: locationOrderData?.monthlyTax || 3.00,
-    total: locationOrderData?.total || (getTotalPrice() + 29.98 || 229.97),
+    shippingTotal: locationOrderData?.shippingTotal || 14.99,
+    monthlyTotal: locationOrderData?.monthlyTotal || 24.99,
+    monthlyTax: locationOrderData?.monthlyTax || 2.50,
+    total: locationOrderData?.total || (getTotalPrice() + 14.99 + getTotalPrice() * 0.21 || 217.97),
   };
   
   // Create result object for PaymentSuccess component
