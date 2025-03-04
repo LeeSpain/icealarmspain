@@ -59,7 +59,17 @@ const AddContactTab: React.FC<AddContactTabProps> = ({ onAddContact }) => {
   const onSubmit = async (data: ContactFormValues) => {
     setIsSubmitting(true);
     try {
-      const success = await onAddContact(data);
+      // The form validation ensures all required fields are present
+      const success = await onAddContact({
+        name: data.name,
+        relationship: data.relationship,
+        phone: data.phone,
+        email: data.email,
+        priority: data.priority,
+        receivesAlerts: data.receivesAlerts,
+        receivesUpdates: data.receivesUpdates,
+      });
+      
       if (success) {
         form.reset(); // Reset form on success
       }

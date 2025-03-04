@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useLanguage } from '@/context/LanguageContext';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -83,7 +82,6 @@ const ManageContactsTab: React.FC<ManageContactsTabProps> = ({
     },
   });
 
-  // Reset form when selected contact changes
   React.useEffect(() => {
     if (selectedContact) {
       form.reset({
@@ -204,7 +202,7 @@ const ManageContactsTab: React.FC<ManageContactsTabProps> = ({
               <div className="flex space-x-2">
                 <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
                   <DialogTrigger asChild>
-                    <ButtonCustom variant="outline" size="sm">
+                    <ButtonCustom variant="outline" size="sm" className="bg-red-50 text-red-600 hover:bg-red-100 border-red-200">
                       <Pencil className="h-4 w-4 mr-2" />
                       {language === 'en' ? 'Edit' : 'Editar'}
                     </ButtonCustom>
@@ -432,7 +430,7 @@ const ManageContactsTab: React.FC<ManageContactsTabProps> = ({
 
                 <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
                   <AlertDialogTrigger asChild>
-                    <ButtonCustom variant="destructive" size="sm">
+                    <ButtonCustom variant="outline" size="sm" className="bg-red-50 text-red-600 hover:bg-red-100 border-red-200">
                       <Trash2 className="h-4 w-4 mr-2" />
                       {language === 'en' ? 'Delete' : 'Eliminar'}
                     </ButtonCustom>
@@ -457,7 +455,7 @@ const ManageContactsTab: React.FC<ManageContactsTabProps> = ({
                           e.preventDefault();
                           handleDeleteContact();
                         }}
-                        className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                        className="bg-red-600 text-white hover:bg-red-700"
                       >
                         {isDeleting ? (
                           <Loader2 className="h-4 w-4 animate-spin" />

@@ -11,7 +11,7 @@ import { Contact, TestResult } from "@/components/emergency-contacts/types";
 import { getContacts, addContact, updateContact, deleteContact, testAlert } from '@/services/contactsService';
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { PageHeader } from '@/components/common/PageHeader';
+import PageHeader from '@/components/common/PageHeader';
 import { Loader2 } from 'lucide-react';
 
 const EmergencyContactsPage: React.FC = () => {
