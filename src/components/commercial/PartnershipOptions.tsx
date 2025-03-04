@@ -1,6 +1,6 @@
 
 import React from "react";
-import { Users, DollarSign, Briefcase, Buildings, HeartPulse, Shield } from "lucide-react";
+import { Users, DollarSign, Briefcase, Building, HeartPulse, Shield } from "lucide-react";
 
 interface PartnershipOptionsProps {
   language: string;
@@ -9,7 +9,7 @@ interface PartnershipOptionsProps {
 const PartnershipOptions: React.FC<PartnershipOptionsProps> = ({ language }) => {
   const partnershipTypes = [
     {
-      icon: <Buildings className="w-10 h-10 text-ice-600" />,
+      icon: <Building className="w-10 h-10 text-ice-600" />,
       title: language === 'en' ? 'Healthcare Providers' : 'Proveedores de Salud',
       description: language === 'en'
         ? 'Integrate our AI Guardian system with your healthcare services to provide enhanced monitoring for patients.'
