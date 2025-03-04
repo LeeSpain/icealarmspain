@@ -24,7 +24,7 @@ const DeviceCTA: React.FC<DeviceCTAProps> = ({ language }) => {
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
           <Link to="/join">
             <ButtonCustom size="lg">
-              {language === 'en' ? "Get Started Today" : "Comience Hoy"}
+              {language === 'en' ? "Start Checkout Process" : "Iniciar Proceso de Compra"}
             </ButtonCustom>
           </Link>
           <Link to="/pricing">

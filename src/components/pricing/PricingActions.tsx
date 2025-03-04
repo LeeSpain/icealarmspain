@@ -19,7 +19,7 @@ const PricingActions: React.FC<PricingActionsProps> = ({ language }) => {
           </Link>
           <Link to="/join">
             <ButtonCustom variant="primary" size="lg">
-              {language === 'en' ? "Get Started Today" : "Comience Hoy"}
+              {language === 'en' ? "Proceed to Checkout" : "Proceder al Pago"}
             </ButtonCustom>
           </Link>
         </div>

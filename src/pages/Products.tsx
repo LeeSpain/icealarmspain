@@ -102,7 +102,7 @@ const Products: React.FC = () => {
                   </Link>
                   <Link to="/join">
                     <ButtonCustom variant="outline" size="lg" className="border-ice-200 hover:border-ice-300 shadow-sm">
-                      {language === 'en' ? 'View Pricing Plans' : 'Ver Planes de Precios'}
+                      {language === 'en' ? 'Start Checkout Process' : 'Iniciar Proceso de Compra'}
                     </ButtonCustom>
                   </Link>
                 </div>
@@ -160,10 +160,10 @@ const Products: React.FC = () => {
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link to="/join">
                 <ButtonCustom variant="secondary" size="lg">
-                  {language === 'en' ? "View Pricing Plans" : "Ver Planes de Precios"}
+                  {language === 'en' ? "Start Checkout Process" : "Iniciar Proceso de Compra"}
                 </ButtonCustom>
               </Link>
-              <Link to="/join">
+              <Link to="/contact">
                 <ButtonCustom variant="outline" size="lg" className="text-white border-white hover:bg-white/10">
                   {language === 'en' ? "Contact Our Team" : "Contactar a Nuestro Equipo"}
                 </ButtonCustom>
