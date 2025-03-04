@@ -1,6 +1,6 @@
 
-import { auth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, updateProfile, setPersistence } from '../../firebase';
-import { firebaseAuth } from '../../firebase';
+import { auth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, updateProfile, setPersistence } from '../../services/firebase';
+import { firebaseAuth } from '../../services/firebase';
 import { User } from './types';
 import { determineUserRole } from './utils';
 
