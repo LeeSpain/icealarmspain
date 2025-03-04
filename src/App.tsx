@@ -62,6 +62,12 @@ function App() {
               </ProtectedRoute>
             } />
             
+            {/* Add additional routes for product details, etc. */}
+            <Route path="/product/:id" element={<Products />} />
+            <Route path="/devices" element={<Products />} />
+            <Route path="/pricing" element={<Join />} />
+            <Route path="/help" element={<Contact />} />
+            
             {/* Fallback route */}
             <Route path="*" element={<NotFound />} />
           </Routes>

@@ -33,9 +33,9 @@ export const LoginFormFooter: React.FC<LoginFormFooterProps> = ({
         </div>
         
         <div className="text-sm">
-          <a href="#" className="font-medium text-ice-600 hover:text-ice-500">
+          <Link to="/forgot-password" className="font-medium text-ice-600 hover:text-ice-500">
             {language === 'en' ? "Forgot your password?" : "¿Olvidaste tu contraseña?"}
-          </a>
+          </Link>
         </div>
       </div>
       

@@ -55,27 +55,16 @@ const Navbar: React.FC = () => {
   ];
   
   const renderNavLink = (link: { name: string; href: string; isAnchor: boolean }, onClick?: () => void) => {
-    if (link.isAnchor) {
-      return (
-        <a
-          href={link.href}
-          className="text-sm font-medium text-gray-700 hover:text-ice-600 transition-colors link-underline"
-          onClick={onClick}
-        >
-          {link.name}
-        </a>
-      );
-    } else {
-      return (
-        <Link
-          to={link.href}
-          className="text-sm font-medium text-gray-700 hover:text-ice-600 transition-colors link-underline"
-          onClick={onClick}
-        >
-          {link.name}
-        </Link>
-      );
-    }
+    // Always use Link component for internal navigation, never use anchor tags
+    return (
+      <Link
+        to={link.href}
+        className="text-sm font-medium text-gray-700 hover:text-ice-600 transition-colors link-underline"
+        onClick={onClick}
+      >
+        {link.name}
+      </Link>
+    );
   };
   
   const loginText = language === 'en' ? "Login" : "Iniciar Sesión";
