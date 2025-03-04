@@ -6,12 +6,14 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
+import { Button } from "@/components/ui/button";
 
 interface DeviceRegistrationFormProps {
   deviceType: string;
+  onComplete?: () => void;
 }
 
-const DeviceRegistrationForm: React.FC<DeviceRegistrationFormProps> = ({ deviceType }) => {
+const DeviceRegistrationForm: React.FC<DeviceRegistrationFormProps> = ({ deviceType, onComplete }) => {
   const { language } = useLanguage();
   const [formData, setFormData] = useState({
     name: "",
@@ -43,6 +45,13 @@ const DeviceRegistrationForm: React.FC<DeviceRegistrationFormProps> = ({ deviceT
     });
   };
   
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (onComplete) {
+      onComplete();
+    }
+  };
+  
   const content = {
     en: {
       nameLabel: "Device Name",
@@ -57,7 +66,8 @@ const DeviceRegistrationForm: React.FC<DeviceRegistrationFormProps> = ({ deviceT
         { value: "primary", label: "Primary Contact Only" },
         { value: "all", label: "All Emergency Contacts" },
         { value: "custom", label: "Custom Selection" }
-      ]
+      ],
+      registerButton: "Register Device"
     },
     es: {
       nameLabel: "Nombre del Dispositivo",
@@ -72,14 +82,15 @@ const DeviceRegistrationForm: React.FC<DeviceRegistrationFormProps> = ({ deviceT
         { value: "primary", label: "Solo Contacto Principal" },
         { value: "all", label: "Todos los Contactos de Emergencia" },
         { value: "custom", label: "Selección Personalizada" }
-      ]
+      ],
+      registerButton: "Registrar Dispositivo"
     }
   };
   
   const ct = language === 'en' ? content.en : content.es;
   
   return (
-    <div className="space-y-4">
+    <form onSubmit={handleSubmit} className="space-y-4">
       <div className="space-y-2">
         <Label htmlFor="device-name">{ct.nameLabel}</Label>
         <Input
@@ -88,6 +99,7 @@ const DeviceRegistrationForm: React.FC<DeviceRegistrationFormProps> = ({ deviceT
           value={formData.name}
           onChange={handleChange}
           placeholder={ct.namePlaceholder}
+          required
         />
       </div>
       
@@ -99,6 +111,7 @@ const DeviceRegistrationForm: React.FC<DeviceRegistrationFormProps> = ({ deviceT
           value={formData.location}
           onChange={handleChange}
           placeholder={ct.locationPlaceholder}
+          required
         />
       </div>
       
@@ -145,7 +158,11 @@ const DeviceRegistrationForm: React.FC<DeviceRegistrationFormProps> = ({ deviceT
           </Select>
         </div>
       )}
-    </div>
+      
+      <Button type="submit" className="w-full mt-6">
+        {ct.registerButton}
+      </Button>
+    </form>
   );
 };
 

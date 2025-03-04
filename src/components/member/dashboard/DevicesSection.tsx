@@ -5,7 +5,7 @@ import { useLanguage } from "@/context/LanguageContext";
 import { PlusCircle, Wifi, Shield, Activity, Pill } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import DevicesTable from "./DevicesTable";
+import { DevicesTable } from "./DevicesTable";
 
 interface DevicesSectionProps {
   userDevices?: any[];
@@ -38,7 +38,7 @@ const DevicesSection: React.FC<DevicesSectionProps> = ({ userDevices = [] }) => 
       </CardHeader>
       <CardContent>
         {hasDevices ? (
-          <DevicesTable devices={userDevices} />
+          <DevicesTable devices={userDevices} onAddDevice={() => {}} />
         ) : (
           <div className="flex flex-col items-center justify-center py-6 text-center">
             <div className="rounded-full bg-muted p-3 mb-3">

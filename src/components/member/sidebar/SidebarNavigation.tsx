@@ -18,9 +18,17 @@ import SidebarItem from "./SidebarItem";
 
 interface SidebarNavigationProps {
   collapsed: boolean;
+  activePage?: string;
+  onLogout?: () => void;
+  user?: any;
 }
 
-const SidebarNavigation: React.FC<SidebarNavigationProps> = ({ collapsed }) => {
+const SidebarNavigation: React.FC<SidebarNavigationProps> = ({ 
+  collapsed, 
+  activePage, 
+  onLogout, 
+  user 
+}) => {
   const location = useLocation();
   const navigate = useNavigate();
   
