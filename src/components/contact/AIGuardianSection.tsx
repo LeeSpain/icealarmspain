@@ -1,18 +1,19 @@
 
 import React, { useState } from "react";
-import { Brain, Send, Sparkles, MessageCircle } from "lucide-react";
+import { Brain, Send, Sparkles, MessageCircle, Bot, HelpCircle } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
+import { toast } from "@/components/ui/use-toast";
 
 const AIGuardianSection: React.FC = () => {
   const { language } = useLanguage();
   const [messages, setMessages] = useState<Array<{text: string, sender: 'user' | 'ai'}>>([
     {
       text: language === 'en' 
-        ? "Hello! I'm ICE AI Guardian. How can I assist you today?"
-        : "¡Hola! Soy ICE AI Guardian. ¿Cómo puedo ayudarte hoy?",
+        ? "Hello! I'm ICE AI Guardian, your primary contact assistant. How can I help you today?"
+        : "¡Hola! Soy ICE AI Guardian, tu asistente de contacto principal. ¿Cómo puedo ayudarte hoy?",
       sender: 'ai'
     }
   ]);
@@ -31,14 +32,18 @@ const AIGuardianSection: React.FC = () => {
     setTimeout(() => {
       const responses = {
         en: [
-          "I'm happy to help with that! Let me provide some information about our services.",
-          "That's a great question. Our ICE Alár services are designed to provide comprehensive health monitoring.",
-          "I understand your concern. Our team is available 24/7 to assist with any emergency situations."
+          "I'm happy to help with that! Let me process your request and provide some information about our services.",
+          "That's a great question. Our ICE Alár services are designed to provide comprehensive health monitoring. Would you like me to connect you with a human representative for more details?",
+          "I understand your concern. I've recorded your message and one of our team members will review it within 24 hours. Is there anything else I can help with?",
+          "Thank you for your inquiry. I've created a support ticket for your request. You'll receive a confirmation email shortly with your ticket number.",
+          "I can assist with that! Our online support system allows me to handle most inquiries. For more complex matters, I can create a support ticket for our specialists."
         ],
         es: [
-          "¡Estoy encantado de ayudarte! Permíteme proporcionarte información sobre nuestros servicios.",
-          "Esa es una gran pregunta. Nuestros servicios de ICE Alár están diseñados para proporcionar un monitoreo integral de la salud.",
-          "Entiendo tu preocupación. Nuestro equipo está disponible 24/7 para ayudar en cualquier situación de emergencia."
+          "¡Estoy encantado de ayudarte! Permíteme procesar tu solicitud y proporcionarte información sobre nuestros servicios.",
+          "Esa es una gran pregunta. Nuestros servicios de ICE Alár están diseñados para proporcionar un monitoreo integral de la salud. ¿Te gustaría que te conecte con un representante humano para más detalles?",
+          "Entiendo tu preocupación. He registrado tu mensaje y uno de nuestros miembros del equipo lo revisará dentro de las próximas 24 horas. ¿Hay algo más en lo que pueda ayudarte?",
+          "Gracias por tu consulta. He creado un ticket de soporte para tu solicitud. Recibirás un correo electrónico de confirmación en breve con tu número de ticket.",
+          "¡Puedo ayudarte con eso! Nuestro sistema de soporte en línea me permite manejar la mayoría de las consultas. Para asuntos más complejos, puedo crear un ticket de soporte para nuestros especialistas."
         ]
       };
       
@@ -62,23 +67,25 @@ const AIGuardianSection: React.FC = () => {
             {language === 'en' ? 'ICE AI Guardian' : 'ICE AI Guardian'}
           </span>
         </div>
-        <h2 className="text-2xl md:text-3xl font-bold mb-3">{language === 'en' ? 'Ask Our AI Assistant' : 'Pregunta a Nuestro Asistente de IA'}</h2>
-        <p className="text-muted-foreground">
+        <h2 className="text-2xl md:text-3xl font-bold mb-3">
+          {language === 'en' ? 'Connect With Us Through AI' : 'Conéctate Con Nosotros a Través de IA'}
+        </h2>
+        <p className="text-muted-foreground max-w-2xl mx-auto">
           {language === 'en' 
-            ? 'Get instant answers about our services, devices, and support options' 
-            : 'Obtén respuestas instantáneas sobre nuestros servicios, dispositivos y opciones de soporte'}
+            ? 'Our AI assistant is your primary point of contact. Get instant answers about our services, create support tickets, or request a follow-up from our team.' 
+            : 'Nuestro asistente de IA es tu punto de contacto principal. Obtén respuestas instantáneas sobre nuestros servicios, crea tickets de soporte o solicita un seguimiento de nuestro equipo.'}
         </p>
       </div>
       
       <Card className="shadow-lg border-guardian-100">
         <CardHeader className="border-b pb-3">
           <CardTitle className="text-lg flex items-center text-guardian-600">
-            <MessageCircle className="mr-2 h-5 w-5" />
-            {language === 'en' ? 'Chat with ICE AI Guardian' : 'Chatear con ICE AI Guardian'}
+            <Bot className="mr-2 h-5 w-5" />
+            {language === 'en' ? 'AI Support Assistant' : 'Asistente de Soporte IA'}
           </CardTitle>
         </CardHeader>
         
-        <CardContent className="p-4 h-64 overflow-y-auto flex flex-col space-y-4">
+        <CardContent className="p-4 h-96 overflow-y-auto flex flex-col space-y-4">
           {messages.map((message, index) => (
             <div 
               key={index}
@@ -120,7 +127,7 @@ const AIGuardianSection: React.FC = () => {
             <Textarea
               value={userInput}
               onChange={(e) => setUserInput(e.target.value)}
-              placeholder={language === 'en' ? "Type your question here..." : "Escribe tu pregunta aquí..."}
+              placeholder={language === 'en' ? "Type your question or request here..." : "Escribe tu pregunta o solicitud aquí..."}
               className="flex-grow resize-none"
               rows={1}
             />
@@ -135,6 +142,17 @@ const AIGuardianSection: React.FC = () => {
           </form>
         </CardFooter>
       </Card>
+
+      <div className="mt-8 flex justify-center gap-4">
+        <Button variant="outline" className="flex items-center gap-2">
+          <HelpCircle size={16} />
+          <span>{language === 'en' ? 'Help Center' : 'Centro de Ayuda'}</span>
+        </Button>
+        <Button variant="outline" className="flex items-center gap-2">
+          <MessageCircle size={16} />
+          <span>{language === 'en' ? 'Create Support Ticket' : 'Crear Ticket de Soporte'}</span>
+        </Button>
+      </div>
     </div>
   );
 };

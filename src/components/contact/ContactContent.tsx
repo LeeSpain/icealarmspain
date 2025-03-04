@@ -1,8 +1,6 @@
 
 import React from "react";
-import ContactCards from "./ContactCards";
 import ContactForm from "./ContactForm";
-import VisitUsSection from "./VisitUsSection";
 import AIGuardianSection from "./AIGuardianSection";
 
 const ContactContent: React.FC = () => {
@@ -15,8 +13,6 @@ const ContactContent: React.FC = () => {
           </div>
           
           <AIGuardianSection />
-          <ContactCards />
-          <VisitUsSection />
           <ContactForm />
         </div>
       </div>
