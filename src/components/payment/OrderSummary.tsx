@@ -23,6 +23,9 @@ interface OrderSummaryProps {
 const OrderSummary: React.FC<OrderSummaryProps> = ({ orderData }) => {
   const { language } = useLanguage();
   
+  // Debug output to identify any issues with pricing
+  console.log("OrderSummary received data:", orderData);
+  
   // Recalculate totals to ensure accuracy
   const calculatedTotals = useMemo(() => {
     // Calculate device total from items
@@ -44,6 +47,17 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({ orderData }) => {
     
     // Calculate one-time total
     const oneTimeTotal = deviceTotal + tax + shipping + shippingTax;
+    
+    console.log("Calculated totals:", {
+      deviceTotal,
+      tax,
+      shipping,
+      shippingTax,
+      monthlyBase,
+      monthlyTax,
+      oneTimeTotal,
+      totalDevices
+    });
     
     return {
       deviceTotal,
@@ -114,28 +128,28 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({ orderData }) => {
             <span className="text-muted-foreground">
               {language === 'en' ? "One-time devices cost" : "Costo único de dispositivos"}:
             </span>
-            <span>€{calculatedTotals.deviceTotal.toFixed(2)}</span>
+            <span>€{orderData.oneTimeTotal.toFixed(2)}</span>
           </div>
           
           <div className="flex justify-between text-sm">
             <span className="text-muted-foreground">
               {language === 'en' ? "IVA (21%)" : "IVA (21%)"}:
             </span>
-            <span>€{calculatedTotals.tax.toFixed(2)}</span>
+            <span>€{orderData.productTax.toFixed(2)}</span>
           </div>
           
           <div className="flex justify-between text-sm">
             <span className="text-muted-foreground">
               {language === 'en' ? "Shipping" : "Envío"}:
             </span>
-            <span>€{calculatedTotals.shipping.toFixed(2)}</span>
+            <span>€{orderData.shippingTotal.toFixed(2)}</span>
           </div>
           
           <div className="flex justify-between text-sm">
             <span className="text-muted-foreground">
               {language === 'en' ? "Shipping IVA (21%)" : "IVA de envío (21%)"}:
             </span>
-            <span>€{calculatedTotals.shippingTax.toFixed(2)}</span>
+            <span>€{(orderData.shippingTax || 0).toFixed(2)}</span>
           </div>
           
           <Separator />
@@ -144,7 +158,7 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({ orderData }) => {
             <span>
               {language === 'en' ? "Total one-time payment" : "Pago único total"}:
             </span>
-            <span className="text-lg">€{calculatedTotals.oneTimeTotal.toFixed(2)}</span>
+            <span className="text-lg">€{orderData.total.toFixed(2)}</span>
           </div>
         </div>
         
@@ -153,21 +167,21 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({ orderData }) => {
             <span className="text-muted-foreground">
               {language === 'en' ? "Monthly subscription" : "Suscripción mensual"}:
             </span>
-            <span>€{calculatedTotals.monthlyBase.toFixed(2)}</span>
+            <span>€{orderData.monthlyTotal.toFixed(2)}</span>
           </div>
           
           <div className="flex justify-between text-sm">
             <span className="text-muted-foreground">
               {language === 'en' ? "IVA (10%)" : "IVA (10%)"}:
             </span>
-            <span>€{calculatedTotals.monthlyTax.toFixed(2)}</span>
+            <span>€{orderData.monthlyTax.toFixed(2)}</span>
           </div>
           
           <div className="flex justify-between font-medium">
             <span>
               {language === 'en' ? "Total monthly charge" : "Cargo mensual total"}:
             </span>
-            <span>€{(calculatedTotals.monthlyBase + calculatedTotals.monthlyTax).toFixed(2)}</span>
+            <span>€{(orderData.monthlyTotal + orderData.monthlyTax).toFixed(2)}</span>
           </div>
         </div>
         

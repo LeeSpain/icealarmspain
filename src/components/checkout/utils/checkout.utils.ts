@@ -1,12 +1,12 @@
 
-import { OrderItem } from "../types/checkout.types";
+import { OrderItem, OrderData } from "../types/checkout.types";
 import { CartItem } from "@/components/payment/CartContext";
 
 export const generateOrderId = (): string => {
   return "ICE-" + Math.floor(100000 + Math.random() * 900000);
 };
 
-export const calculateOrderData = (cart: CartItem[], getTotalPrice: () => number) => {
+export const calculateOrderData = (cart: CartItem[], getTotalPrice: () => number): OrderData => {
   const items = cart.map(item => ({
     id: item.id,
     name: item.name,
@@ -28,6 +28,7 @@ export const calculateOrderData = (cart: CartItem[], getTotalPrice: () => number
   const monthlyTax = monthlyTotal * 0.10;
   const total = oneTimeTotal + productTax + shippingTotal + shippingTax;
 
+  // Make sure we're returning a valid OrderData object with all required fields
   return {
     membershipType: "individual",
     items,

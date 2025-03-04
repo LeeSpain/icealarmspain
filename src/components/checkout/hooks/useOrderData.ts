@@ -1,5 +1,4 @@
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { generateOrderId, calculateOrderData } from "../utils/checkout.utils";
 import { OrderData, PaymentResult } from "../types/checkout.types";
 import { useCart } from "@/components/payment/CartContext";
@@ -13,9 +12,21 @@ export const useOrderData = () => {
   const [orderDate, setOrderDate] = useState(new Date().toISOString());
   const [last4, setLast4] = useState("");
   
-  // Use location state order data if available, otherwise calculate it
+  // Properly capture the incoming orderData from location state
   const locationOrderData = location.state?.orderData;
+  
+  // Use location state order data if available, otherwise calculate it
+  // Important: We're keeping the passed orderData intact without recalculating
   const orderData: OrderData = locationOrderData || calculateOrderData(cart, getTotalPrice);
+  
+  // Debug output to verify values
+  useEffect(() => {
+    if (locationOrderData) {
+      console.log("Using order data from location state:", locationOrderData);
+    } else {
+      console.log("Calculated order data:", orderData);
+    }
+  }, [locationOrderData, orderData]);
   
   // Initialize order ID if not already set
   if (!orderId) {
