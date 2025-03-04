@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
@@ -9,7 +10,7 @@ import SOSTile from "@/components/member/dashboard/SOSTile";
 import GlucoseTile from "@/components/member/dashboard/GlucoseTile";
 import WeatherTile from "@/components/member/dashboard/WeatherTile";
 import NewsTile from "@/components/member/dashboard/NewsTile";
-import AIGuardianTile from "@/components/member/dashboard/AIGuardianTile";
+import AIGuardianTile from "@/components/member/dashboard/ai-guardian/AIGuardianTile";
 import NotificationSection from "@/components/member/dashboard/notifications/NotificationSection";
 import { CartSection } from "@/components/member/dashboard/CartSection";
 import { useCart } from "@/components/payment/CartContext";
