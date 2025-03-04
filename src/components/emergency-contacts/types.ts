@@ -31,3 +31,13 @@ export interface TestLog {
   deliveryMethod: 'sms' | 'email' | 'call';
   message: string;
 }
+
+export type ContactFormValues = {
+  name: string;
+  relationship: string;
+  phone: string;
+  email: string;
+  priority: number;
+  receivesAlerts: boolean;
+  receivesUpdates: boolean;
+};
