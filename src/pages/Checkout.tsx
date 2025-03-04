@@ -10,22 +10,35 @@ import { useCheckout } from "@/components/checkout/useCheckout";
 import { useLanguage } from "@/context/LanguageContext";
 import CardInformationSection from "@/components/payment/CardInformationSection";
 import { useLocation } from "react-router-dom";
+import { useCart } from "@/components/payment/CartContext";
 
 const Checkout: React.FC = () => {
   const { language } = useLanguage();
   const location = useLocation();
+  const { cart } = useCart();
   
-  // Add detailed debugging to check location state
   useEffect(() => {
     console.log("Checkout page - Mounted with location state:", location.state);
+    console.log("Checkout page - Cart has items:", cart.length);
+    
     if (location.state?.orderData) {
-      console.log("Checkout page has orderData in state:", location.state.orderData);
-      console.log("Order items:", location.state.orderData.items);
-      console.log("Order total:", location.state.orderData.total);
+      console.log("Checkout page - orderData in state:", location.state.orderData);
+      console.log("Checkout page - order items:", location.state.orderData.items);
+      console.log("Checkout page - order total:", location.state.orderData.total);
     } else {
       console.log("Checkout page - No orderData in location state");
     }
-  }, [location.state]);
+    
+    const isFromPricingPage = location.state?.fromPricing === true;
+    const isFromJoinPage = location.state?.fromJoin === true;
+    const isFromCheckoutButton = location.state?.fromCheckoutButton === true;
+    
+    console.log("Checkout useEffect - Cart length:", cart.length);
+    console.log("Checkout useEffect - Location state:", location.state);
+    console.log("Checkout useEffect - isFromPricingPage:", isFromPricingPage);
+    console.log("Checkout useEffect - isFromJoinPage:", isFromJoinPage);
+    console.log("Checkout useEffect - isFromCheckoutButton:", isFromCheckoutButton);
+  }, [location.state, cart.length]);
   
   const {
     step,
@@ -41,11 +54,15 @@ const Checkout: React.FC = () => {
     getTotalPrice
   } = useCheckout();
   
-  // Debug orderData from useCheckout
   useEffect(() => {
     console.log("Checkout component received orderData from useCheckout:", orderData);
     console.log("OrderData has items:", orderData.items?.length || 0);
     console.log("OrderData total:", orderData.total);
+    
+    if (orderData.items?.length > 0 && orderData.total === 0) {
+      console.warn("Warning: orderData has items but total is zero - possible calculation issue");
+      console.log("OrderData items detail:", JSON.stringify(orderData.items));
+    }
   }, [orderData]);
 
   return (

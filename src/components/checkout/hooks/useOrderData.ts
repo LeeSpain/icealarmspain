@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { generateOrderId, calculateOrderData } from "../utils/checkout.utils";
 import { OrderData, PaymentResult } from "../types/checkout.types";
@@ -16,28 +15,50 @@ export const useOrderData = () => {
   // Get the order data from location state
   const locationOrderData = location.state?.orderData;
   
-  // Debug output to see what data we're receiving
+  // More detailed debug logging
   useEffect(() => {
     console.log("useOrderData hook - Location state:", location.state);
-    console.log("useOrderData hook - Location order data:", locationOrderData);
+    console.log("useOrderData hook - Cart data:", cart);
+    console.log("useOrderData hook - getTotalPrice:", getTotalPrice());
+    
     if (locationOrderData) {
-      console.log("Using order data from location state:", locationOrderData);
+      console.log("useOrderData - Found order data in location:", locationOrderData);
+      console.log("useOrderData - Order items:", locationOrderData.items);
+      console.log("useOrderData - Order total:", locationOrderData.total);
     } else {
-      console.log("No order data in location state, calculating from cart");
+      console.log("useOrderData - No order data in location, will calculate from cart");
     }
-  }, [location.state, locationOrderData]);
+  }, [location.state, cart, getTotalPrice, locationOrderData]);
   
-  // Use passed order data if available, otherwise calculate from cart
-  // We now ensure the locationOrderData is used when available
-  const orderData: OrderData = 
-    locationOrderData && Object.keys(locationOrderData).length > 0 
-      ? locationOrderData 
-      : calculateOrderData(cart, getTotalPrice);
+  // Calculate order data - ensure we either use location data or calculate from cart
+  const [orderData, setOrderData] = useState<OrderData>(() => {
+    // If we have location order data with items, use it
+    if (locationOrderData && 
+        locationOrderData.items && 
+        (locationOrderData.items.length > 0 || locationOrderData.total > 0)) {
+      console.log("useOrderData - Initializing with location data:", locationOrderData);
+      return locationOrderData;
+    }
+    
+    // Otherwise calculate from cart
+    const calculatedData = calculateOrderData(cart, getTotalPrice);
+    console.log("useOrderData - Initializing with calculated data:", calculatedData);
+    return calculatedData;
+  });
   
-  // Debug output to verify final data
+  // Update order data if location state or cart changes
   useEffect(() => {
-    console.log("Final orderData being used in useOrderData:", orderData);
-  }, [orderData]);
+    if (locationOrderData && 
+        locationOrderData.items && 
+        (locationOrderData.items.length > 0 || locationOrderData.total > 0)) {
+      console.log("useOrderData - Updating with location data:", locationOrderData);
+      setOrderData(locationOrderData);
+    } else if (cart.length > 0) {
+      const calculatedData = calculateOrderData(cart, getTotalPrice);
+      console.log("useOrderData - Updating with calculated data from cart:", calculatedData);
+      setOrderData(calculatedData);
+    }
+  }, [location.state, cart, getTotalPrice, locationOrderData]);
   
   // Initialize order ID if not already set
   useEffect(() => {

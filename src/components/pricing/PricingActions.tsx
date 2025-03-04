@@ -15,9 +15,38 @@ const PricingActions: React.FC<PricingActionsProps> = ({ language }) => {
     e.preventDefault();
     e.stopPropagation();
     
-    // Use React Router for navigation
-    console.log("PricingActions: Navigating to /checkout");
-    navigate("/checkout");
+    // Create sample order data for the pricing page
+    const sampleOrderData = {
+      membershipType: "individual",
+      items: [
+        {
+          id: "sos",
+          name: language === 'en' ? "SOS Pendant" : "Colgante SOS",
+          price: 110.00,
+          quantity: 1,
+          monthlyPrice: 24.99,
+          image: "/lovable-uploads/ad65a632-e7ef-4c61-a20e-7b6ff282a87a.png"
+        }
+      ],
+      deviceCount: 1,
+      oneTimeTotal: 110.00,
+      productTax: 23.10,  // 21% of 110
+      shippingTotal: 14.99,
+      shippingTax: 3.15,  // 21% of 14.99
+      monthlyTotal: 24.99,
+      monthlyTax: 2.50,   // 10% of 24.99
+      total: 151.24       // 110 + 23.10 + 14.99 + 3.15
+    };
+    
+    console.log("PricingActions: Navigating to /checkout with sample data:", sampleOrderData);
+    
+    // Use React Router for navigation with the order data
+    navigate("/checkout", { 
+      state: { 
+        orderData: sampleOrderData,
+        fromPricing: true 
+      }
+    });
   };
 
   return (

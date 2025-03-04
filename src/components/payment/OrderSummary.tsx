@@ -23,17 +23,20 @@ interface OrderSummaryProps {
 const OrderSummary: React.FC<OrderSummaryProps> = ({ orderData }) => {
   const { language } = useLanguage();
   
-  // Add more detailed debugging to identify issues
+  // Add even more detailed debugging
   useEffect(() => {
     console.log("OrderSummary component received data:", orderData);
-    console.log("OrderSummary total:", orderData.total);
+    console.log("OrderSummary items:", orderData.items);
+    console.log("OrderSummary deviceCount:", orderData.deviceCount);
     console.log("OrderSummary oneTimeTotal:", orderData.oneTimeTotal);
     console.log("OrderSummary productTax:", orderData.productTax);
-    console.log("OrderSummary items:", orderData.items);
+    console.log("OrderSummary shippingTotal:", orderData.shippingTotal);
+    console.log("OrderSummary total:", orderData.total);
     
-    // Alert if we detect zeros where we shouldn't have them
+    // Check for problematic values
     if (orderData.items && orderData.items.length > 0 && orderData.total === 0) {
-      console.warn("Warning: OrderSummary has items but total is zero - possible data issue");
+      console.warn("Warning: OrderSummary has items but total is zero - possible calculation issue");
+      console.log("Items details:", JSON.stringify(orderData.items));
     }
   }, [orderData]);
   
@@ -53,8 +56,25 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({ orderData }) => {
     }
   };
 
-  // Check if we have items but zero values - this might indicate a data issue
-  const hasDataIssue = orderData.items && orderData.items.length > 0 && orderData.total === 0;
+  // Ensure we have valid numbers for display
+  const ensureNumber = (value: any): number => {
+    if (typeof value !== 'number' || isNaN(value)) {
+      console.warn(`Invalid number value: ${value}, type: ${typeof value}`);
+      return 0;
+    }
+    return value;
+  };
+  
+  const safeTotal = ensureNumber(orderData.total);
+  const safeOneTimeTotal = ensureNumber(orderData.oneTimeTotal);
+  const safeProductTax = ensureNumber(orderData.productTax);
+  const safeShippingTotal = ensureNumber(orderData.shippingTotal);
+  const safeShippingTax = ensureNumber(orderData.shippingTax || 0);
+  const safeMonthlyTotal = ensureNumber(orderData.monthlyTotal);
+  const safeMonthlyTax = ensureNumber(orderData.monthlyTax);
+  
+  // Check if we have items but zero values
+  const hasDataIssue = orderData.items && orderData.items.length > 0 && safeTotal === 0;
   
   return (
     <Card>
@@ -95,7 +115,7 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({ orderData }) => {
               orderData.items.map((item, index) => (
                 <li key={index} className="flex justify-between text-sm py-1">
                   <span>{item.name} {item.quantity > 1 ? `(${item.quantity}x)` : ''}</span>
-                  <span>€{(item.price * item.quantity).toFixed(2)}</span>
+                  <span>€{(ensureNumber(item.price) * ensureNumber(item.quantity)).toFixed(2)}</span>
                 </li>
               ))
             ) : (
@@ -113,28 +133,28 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({ orderData }) => {
             <span className="text-muted-foreground">
               {language === 'en' ? "One-time devices cost" : "Costo único de dispositivos"}:
             </span>
-            <span>€{orderData.oneTimeTotal.toFixed(2)}</span>
+            <span>€{safeOneTimeTotal.toFixed(2)}</span>
           </div>
           
           <div className="flex justify-between text-sm">
             <span className="text-muted-foreground">
               {language === 'en' ? "IVA (21%)" : "IVA (21%)"}:
             </span>
-            <span>€{orderData.productTax.toFixed(2)}</span>
+            <span>€{safeProductTax.toFixed(2)}</span>
           </div>
           
           <div className="flex justify-between text-sm">
             <span className="text-muted-foreground">
               {language === 'en' ? "Shipping" : "Envío"}:
             </span>
-            <span>€{orderData.shippingTotal.toFixed(2)}</span>
+            <span>€{safeShippingTotal.toFixed(2)}</span>
           </div>
           
           <div className="flex justify-between text-sm">
             <span className="text-muted-foreground">
               {language === 'en' ? "Shipping IVA (21%)" : "IVA de envío (21%)"}:
             </span>
-            <span>€{(orderData.shippingTax || 0).toFixed(2)}</span>
+            <span>€{safeShippingTax.toFixed(2)}</span>
           </div>
           
           <Separator />
@@ -143,7 +163,7 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({ orderData }) => {
             <span>
               {language === 'en' ? "Total one-time payment" : "Pago único total"}:
             </span>
-            <span className="text-lg">€{orderData.total.toFixed(2)}</span>
+            <span className="text-lg">€{safeTotal.toFixed(2)}</span>
           </div>
         </div>
         
@@ -152,21 +172,21 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({ orderData }) => {
             <span className="text-muted-foreground">
               {language === 'en' ? "Monthly subscription" : "Suscripción mensual"}:
             </span>
-            <span>€{orderData.monthlyTotal.toFixed(2)}</span>
+            <span>€{safeMonthlyTotal.toFixed(2)}</span>
           </div>
           
           <div className="flex justify-between text-sm">
             <span className="text-muted-foreground">
               {language === 'en' ? "IVA (10%)" : "IVA (10%)"}:
             </span>
-            <span>€{orderData.monthlyTax.toFixed(2)}</span>
+            <span>€{safeMonthlyTax.toFixed(2)}</span>
           </div>
           
           <div className="flex justify-between font-medium">
             <span>
               {language === 'en' ? "Total monthly charge" : "Cargo mensual total"}:
             </span>
-            <span>€{(orderData.monthlyTotal + orderData.monthlyTax).toFixed(2)}</span>
+            <span>€{(safeMonthlyTotal + safeMonthlyTax).toFixed(2)}</span>
           </div>
         </div>
         
