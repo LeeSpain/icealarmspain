@@ -57,6 +57,7 @@ export const CartSection: React.FC<CartSectionProps> = ({ cart, onRemoveFromCart
       oneTimeTotal,
       productTax,
       shippingTotal,
+      shippingTax,
       monthlyTotal,
       monthlyTax,
       total

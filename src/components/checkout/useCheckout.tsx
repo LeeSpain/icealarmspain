@@ -20,7 +20,7 @@ export const useCheckout = () => {
     email: "",
     address: "",
     city: "",
-    state: "", // Added the missing state property here
+    state: "", // State property added
     country: "",
     postalCode: "",
     phone: "",
@@ -48,9 +48,14 @@ export const useCheckout = () => {
     const randomOrderId = "ICE-" + Math.floor(100000 + Math.random() * 900000);
     setOrderId(randomOrderId);
     
-    // Important: Do NOT redirect away from checkout page even if cart is empty
-    // We'll rely on location state data or default demo data
-  }, [cart, navigate, language, getTotalPrice, locationOrderData]);
+    // Redirect if no items in cart and no location state (can't proceed with empty checkout)
+    if (cart.length === 0 && !locationOrderData) {
+      toast.info(language === 'en' 
+        ? "Please add items to your cart first" 
+        : "Por favor, agregue artículos a su carrito primero");
+      navigate('/products');
+    }
+  }, [cart, navigate, language, locationOrderData]);
   
   const handleBillingInfoSubmit = (data: any) => {
     setBillingInfo(data);
@@ -140,34 +145,33 @@ export const useCheckout = () => {
     }
   };
   
-  // Create orderData object from location state or default demo data if not available
+  // Create orderData object from location state or cart data
   const orderData = locationOrderData || {
     membershipType: "individual", // Default value
-    items: cart.length > 0 ? cart : [
-      // Demo data if cart is empty - Updated prices to match product data
-      {
-        id: "sos",
-        name: "SOS Pendant",
-        price: 110.00,
-        quantity: 1,
-        image: "/lovable-uploads/ad65a632-e7ef-4c61-a20e-7b6ff282a87a.png"
-      },
-      {
-        id: "dispenser",
-        name: "Medical Dispenser",
-        price: 249.99,
-        quantity: 1,
-        image: "/lovable-uploads/5e439305-cf63-4080-962e-52657e864050.png"
-      }
-    ],
-    deviceCount: locationOrderData?.deviceCount || (cart.length > 0 ? cart.reduce((total, item) => total + item.quantity, 0) : 2),
-    // Updated default values to match our product pricing
-    oneTimeTotal: locationOrderData?.oneTimeTotal || (getTotalPrice() || 359.99), // SOS + Dispenser = 110 + 249.99
-    productTax: locationOrderData?.productTax || (getTotalPrice() * 0.21 || 75.60), // 21% of 359.99
-    shippingTotal: locationOrderData?.shippingTotal || 29.98, // 14.99 × 2 devices
-    monthlyTotal: locationOrderData?.monthlyTotal || 49.98, // 24.99 × 2 devices
-    monthlyTax: locationOrderData?.monthlyTax || 5.00, // 10% of 49.98
-    total: locationOrderData?.total || (359.99 + 75.60 + 29.98), // 465.57
+    items: cart.map(item => ({
+      id: item.id,
+      name: item.name,
+      price: typeof item.price === 'string' ? parseFloat(item.price.replace(/[^0-9.]/g, '')) : item.price,
+      quantity: item.quantity,
+      monthlyPrice: item.monthlyPrice || 24.99,
+      image: item.image || ""
+    })),
+    deviceCount: cart.reduce((total, item) => total + item.quantity, 0),
+    oneTimeTotal: getTotalPrice(),
+    productTax: getTotalPrice() * 0.21, // 21% IVA tax
+    shippingTotal: cart.reduce((total, item) => total + (item.quantity * 14.99), 0), // €14.99 per device
+    shippingTax: cart.reduce((total, item) => total + (item.quantity * 14.99), 0) * 0.21, // 21% on shipping
+    monthlyTotal: cart.reduce((total, item) => {
+      const monthlyPrice = item.monthlyPrice || 24.99;
+      return total + (monthlyPrice * item.quantity);
+    }, 0),
+    monthlyTax: cart.reduce((total, item) => {
+      const monthlyPrice = item.monthlyPrice || 24.99;
+      return total + (monthlyPrice * item.quantity);
+    }, 0) * 0.10, // 10% on service
+    get total() {
+      return this.oneTimeTotal + this.productTax + this.shippingTotal + this.shippingTax;
+    }
   };
   
   // Create result object for PaymentSuccess component

@@ -14,6 +14,7 @@ interface OrderSummaryProps {
     oneTimeTotal: number;
     productTax: number;
     shippingTotal: number;
+    shippingTax?: number;
     monthlyTotal: number;
     monthlyTax: number;
   };
