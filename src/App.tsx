@@ -2,12 +2,16 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Index from './pages/Index';
 import Login from './pages/Login';
+import Join from './pages/Join';
 import DashboardPage from './pages/DashboardPage';
 import AdminDashboard from './pages/AdminDashboard';
 import CallCenterDashboard from './pages/CallCenterDashboard';
 import ProfilePage from './pages/ProfilePage';
 import OnboardingQuestionnaire from './pages/OnboardingQuestionnaire';
 import NotFound from './pages/NotFound';
+import Products from './pages/Products';
+import Contact from './pages/Contact';
+import AboutUs from './pages/AboutUs';
 import { AuthProvider } from './context/auth/AuthProvider';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import { ToastContainer } from 'react-toastify';
@@ -24,6 +28,10 @@ function App() {
             {/* Public routes */}
             <Route path="/" element={<Index />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/join" element={<Join />} />
+            <Route path="/products" element={<Products />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/about" element={<AboutUs />} />
             
             {/* Protected routes */}
             <Route path="/dashboard" element={
