@@ -1,9 +1,18 @@
+
 import { useState, useEffect, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useLanguage } from "@/context/LanguageContext";
 import { useCart } from "@/components/payment/CartContext";
 import { toast } from "react-toastify";
-import { payment } from "@/firebase";
+import { 
+  BillingInfo, 
+  CardDetails, 
+  OrderData, 
+  PaymentResult 
+} from "./types/checkout.types";
+import { useCheckoutNavigation } from "./hooks/useCheckoutNavigation";
+import { usePaymentProcessing } from "./hooks/usePaymentProcessing";
+import { calculateOrderData, generateOrderId } from "./utils/checkout.utils";
 
 export const useCheckout = () => {
   const { language } = useLanguage();
@@ -14,27 +23,27 @@ export const useCheckout = () => {
   // Reference to track if this is the initial render
   const initialRender = useRef(true);
   
-  const [step, setStep] = useState(1);
-  const [loading, setLoading] = useState(false);
-  const [billingInfo, setBillingInfo] = useState({
+  const [billingInfo, setBillingInfo] = useState<BillingInfo>({
     firstName: "",
     lastName: "",
     email: "",
     address: "",
     city: "",
-    state: "", // State property added
+    state: "",
     country: "",
     postalCode: "",
     phone: "",
-    nie: "" // NIE number field
+    nie: ""
   });
+  
   const [paymentMethod, setPaymentMethod] = useState("credit_card");
-  const [cardDetails, setCardDetails] = useState({
+  const [cardDetails, setCardDetails] = useState<CardDetails>({
     number: "",
     name: "",
     expiry: "",
     cvc: ""
   });
+  
   const [orderId, setOrderId] = useState("");
   const [orderDate, setOrderDate] = useState(new Date().toISOString());
   const [last4, setLast4] = useState(""); 
@@ -46,12 +55,31 @@ export const useCheckout = () => {
     locationOrderData
   );
   
+  const { 
+    step, 
+    setStep, 
+    handleBillingInfoSubmit, 
+    handleStepBack,
+    handleBackToShopping,
+    handleGoToDashboard 
+  } = useCheckoutNavigation();
+  
+  const { loading, processPayment } = usePaymentProcessing({
+    language,
+    billingInfo,
+    paymentMethod,
+    cardDetails,
+    setLast4,
+    setStep,
+    clearCart
+  });
+  
   useEffect(() => {
     console.log("Checkout useEffect - Cart length:", cart.length);
     console.log("Checkout useEffect - Location state:", location.state);
     console.log("Checkout useEffect - isFromCheckoutButton:", isFromCheckoutButton);
     
-    const randomOrderId = "ICE-" + Math.floor(100000 + Math.random() * 900000);
+    const randomOrderId = generateOrderId();
     setOrderId(randomOrderId);
     
     // Only redirect if this is the initial render, the cart is empty,
@@ -70,17 +98,11 @@ export const useCheckout = () => {
     }
   }, [cart.length, navigate, language, isFromCheckoutButton, location.state]);
   
-  const handleBillingInfoSubmit = (data: any) => {
-    setBillingInfo(data);
-    setStep(2);
-    window.scrollTo(0, 0);
-  };
-  
   const handlePaymentMethodSelect = (method: string) => {
     setPaymentMethod(method);
   };
   
-  const handleCardDetailsChange = (details: any) => {
+  const handleCardDetailsChange = (details: CardDetails) => {
     setCardDetails(details);
     if (details && details.number) {
       const cardNumber = details.number.replace(/\s/g, '');
@@ -88,97 +110,10 @@ export const useCheckout = () => {
     }
   };
   
-  const processPayment = async () => {
-    setLoading(true);
-    
-    try {
-      if (paymentMethod === "credit_card") {
-        if (!cardDetails.number || !cardDetails.name || !cardDetails.expiry || !cardDetails.cvc) {
-          throw new Error(language === 'en' 
-            ? "Please fill in all card details" 
-            : "Por favor, completa todos los detalles de la tarjeta");
-        }
-      }
-      
-      const fullName = `${billingInfo.firstName} ${billingInfo.lastName}`.trim();
-      
-      const address = {
-        line1: billingInfo.address,
-        line2: "",
-        city: billingInfo.city,
-        state: billingInfo.state || "",
-        postalCode: billingInfo.postalCode,
-        country: billingInfo.country
-      };
-      
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      if (cardDetails && cardDetails.number) {
-        const cardNumber = cardDetails.number.replace(/\s/g, '');
-        setLast4(cardNumber.slice(-4));
-      }
-      
-      setStep(3);
-      clearCart();
-      window.scrollTo(0, 0);
-      
-      toast.success(language === 'en' 
-        ? "Payment processed successfully!" 
-        : "¡Pago procesado con éxito!");
-    } catch (error) {
-      console.error("Payment error:", error);
-      toast.error(error instanceof Error ? error.message : String(error));
-    } finally {
-      setLoading(false);
-    }
-  };
+  // Generate order data
+  const orderData: OrderData = locationOrderData || calculateOrderData(cart, getTotalPrice);
   
-  const handleBackToShopping = () => {
-    navigate("/products");
-  };
-  
-  const handleGoToDashboard = () => {
-    navigate("/dashboard");
-  };
-  
-  const handleStepBack = () => {
-    if (step === 1) {
-      navigate(-1);
-    } else {
-      setStep(step - 1);
-      window.scrollTo(0, 0);
-    }
-  };
-  
-  const orderData = locationOrderData || {
-    membershipType: "individual",
-    items: cart.map(item => ({
-      id: item.id,
-      name: item.name,
-      price: typeof item.price === 'string' ? parseFloat(item.price.replace(/[^0-9.]/g, '')) : item.price,
-      quantity: item.quantity,
-      monthlyPrice: item.monthlyPrice || 24.99,
-      image: item.image || ""
-    })),
-    deviceCount: cart.reduce((total, item) => total + item.quantity, 0),
-    oneTimeTotal: getTotalPrice(),
-    productTax: getTotalPrice() * 0.21,
-    shippingTotal: cart.reduce((total, item) => total + (item.quantity * 14.99), 0),
-    shippingTax: cart.reduce((total, item) => total + (item.quantity * 14.99), 0) * 0.21,
-    monthlyTotal: cart.reduce((total, item) => {
-      const monthlyPrice = item.monthlyPrice || 24.99;
-      return total + (monthlyPrice * item.quantity);
-    }, 0),
-    monthlyTax: cart.reduce((total, item) => {
-      const monthlyPrice = item.monthlyPrice || 24.99;
-      return total + (monthlyPrice * item.quantity);
-    }, 0) * 0.10,
-    get total() {
-      return this.oneTimeTotal + this.productTax + this.shippingTotal + this.shippingTax;
-    }
-  };
-  
-  const paymentResult = {
+  const paymentResult: PaymentResult = {
     success: true,
     orderId: orderId,
     orderDate: orderDate,
