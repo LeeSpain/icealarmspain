@@ -1,6 +1,6 @@
 
 import React, { createContext, useState, useContext, useEffect } from 'react';
-import { auth } from '../firebase';
+import { auth, firebaseAuth } from '../firebase';
 
 // Define the User type
 export interface User {
@@ -51,6 +51,17 @@ const AuthContext = createContext<AuthContextType>({
   },
 });
 
+// Helper function to determine user role based on email
+const determineUserRole = (email: string): string => {
+  if (email.includes('admin')) {
+    return 'admin';
+  } else if (email.includes('agent')) {
+    return 'callcenter';
+  } else {
+    return 'member';
+  }
+};
+
 // Create the AuthProvider component
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
@@ -58,6 +69,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   // Listen for auth state changes
   useEffect(() => {
+    console.log('Setting up auth state listener');
     const unsubscribe = auth.onAuthStateChanged((authUser) => {
       if (authUser) {
         // User is signed in
@@ -72,9 +84,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           language: 'en', // Default language
         };
         setUser(user);
+        console.log('User authenticated:', user.email, 'Role:', user.role);
       } else {
         // User is signed out
         setUser(null);
+        console.log('User signed out');
       }
       setIsLoading(false);
     });
@@ -83,20 +97,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return () => unsubscribe();
   }, []);
 
-  // Helper function to determine user role based on email
-  const determineUserRole = (email: string): string => {
-    if (email.includes('admin')) {
-      return 'admin';
-    } else if (email.includes('agent')) {
-      return 'callcenter';
-    } else {
-      return 'member';
-    }
-  };
-
   // Login function
   const login = async (email: string, password: string): Promise<User> => {
     try {
+      console.log('Attempting login for:', email);
       const { user: authUser } = await auth.signInWithEmailAndPassword(email, password);
       if (!authUser) {
         throw new Error('Failed to get user after login');
@@ -132,6 +136,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // Sign up function
   const signUp = async (email: string, password: string): Promise<User> => {
     try {
+      console.log('Attempting signup for:', email);
       const { user: authUser } = await auth.createUserWithEmailAndPassword(email, password);
       if (!authUser) {
         throw new Error('Failed to get user after signup');
@@ -156,6 +161,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // Logout function
   const logout = async (): Promise<void> => {
     try {
+      console.log('Logging out user:', user?.email);
       await auth.signOut();
     } catch (error) {
       console.error('Logout error:', error);
@@ -169,6 +175,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (auth.currentUser) {
         await auth.updateProfile(auth.currentUser, { displayName });
         setUser(prev => prev ? { ...prev, name: displayName, displayName } : null);
+        console.log('User profile updated:', displayName);
       } else {
         throw new Error('No user is signed in');
       }

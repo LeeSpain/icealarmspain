@@ -1,8 +1,15 @@
-
 // Firebase configuration
-// This is a mock implementation for development - replace with actual Firebase config in production
+// This file supports both mock implementation for development and real Firebase for production
 
-// Mock auth implementation to avoid requiring actual Firebase credentials during development
+import { initializeApp } from '@firebase/app';
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, updateProfile } from '@firebase/auth';
+
+// Check if we have Firebase config in environment variables
+const hasRealFirebaseConfig = 
+  import.meta.env.VITE_FIREBASE_API_KEY && 
+  import.meta.env.VITE_FIREBASE_AUTH_DOMAIN;
+
+// Mock Auth class for development (when no Firebase config is available)
 class MockAuth {
   currentUser: any = null;
   authStateListeners: Array<(user: any | null) => void> = [];
@@ -129,7 +136,7 @@ class MockAuth {
   }
 }
 
-// Mock payment processing class for simulating payment operations
+// Mock Payment class for development
 class MockPayment {
   orders: any[] = [];
   
@@ -225,26 +232,39 @@ class MockPayment {
   }
 }
 
-// Export the mock Auth instance
-export const auth = new MockAuth();
+// Export auth and payment instances based on configuration
+let auth;
+let payment;
 
-// Export the mock Payment instance
-export const payment = new MockPayment();
+if (hasRealFirebaseConfig) {
+  // Initialize real Firebase if config is available
+  const firebaseConfig = {
+    apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+    authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+    projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+    storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+    messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+    appId: import.meta.env.VITE_FIREBASE_APP_ID
+  };
 
-// If you want to switch to real Firebase in the future, uncomment this code and add your Firebase config
-/*
-import { initializeApp } from 'firebase/app';
-import { getAuth } from 'firebase/auth';
+  console.log('Using real Firebase authentication');
+  const app = initializeApp(firebaseConfig);
+  auth = getAuth(app);
+  
+  // We still use mock payment since we don't have real payment integration yet
+  payment = new MockPayment();
+} else {
+  console.log('Using mock authentication - for production, set Firebase environment variables');
+  auth = new MockAuth();
+  payment = new MockPayment();
+}
 
-const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-  appId: import.meta.env.VITE_FIREBASE_APP_ID
+export { auth, payment };
+
+// Export real Firebase auth methods to be used with real Firebase
+export const firebaseAuth = {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut,
+  updateProfile
 };
-
-const app = initializeApp(firebaseConfig);
-export const auth = getAuth(app);
-*/

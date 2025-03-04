@@ -9,9 +9,10 @@ import { useAuth } from "@/context/AuthContext";
 import { toast } from "@/components/ui/use-toast";
 import { Card, CardContent } from "@/components/ui/card";
 import { Loader2 } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 const Login: React.FC = () => {
-  const { language, t } = useLanguage();
+  const { language } = useLanguage();
   const navigate = useNavigate();
   const location = useLocation();
   const { signIn, user, isAuthenticated, isLoading } = useAuth();
@@ -104,6 +105,9 @@ const Login: React.FC = () => {
     }
   };
   
+  // Detect if we're using mock auth
+  const isMockAuth = !import.meta.env.VITE_FIREBASE_API_KEY;
+  
   // Render loading state if authentication is being checked or user is already authenticated
   if (isLoading || (isAuthenticated && user)) {
     return (
@@ -136,6 +140,16 @@ const Login: React.FC = () => {
             </p>
             
             <CardContent className="p-0">
+              {isMockAuth && (
+                <Alert variant="info" className="mb-6">
+                  <AlertDescription>
+                    {language === 'en' 
+                      ? "Using development authentication mode. For production, configure Firebase authentication." 
+                      : "Usando modo de autenticación de desarrollo. Para producción, configure la autenticación de Firebase."}
+                  </AlertDescription>
+                </Alert>
+              )}
+              
               <AuthForm 
                 mode="login" 
                 onSuccess={handleLoginSuccess} 
@@ -144,16 +158,18 @@ const Login: React.FC = () => {
                 redirectTo={redirectParam || undefined}
               />
               
-              <div className="mt-6 text-center">
-                <p className="text-sm text-gray-500">
-                  {language === 'en' ? "Demo credentials:" : "Credenciales de demostración:"}
-                </p>
-                <div className="mt-2 space-y-1 text-xs text-muted-foreground">
-                  <p><strong>{language === 'en' ? "Admin:" : "Administrador:"}</strong> admin@icealarm.es / admin123</p>
-                  <p><strong>{language === 'en' ? "Member:" : "Miembro:"}</strong> member@icealarm.es / member123</p>
-                  <p><strong>{language === 'en' ? "Call Center:" : "Centro de Llamadas:"}</strong> agent@icealarm.es / agent123</p>
+              {isMockAuth && (
+                <div className="mt-6 text-center">
+                  <p className="text-sm text-gray-500">
+                    {language === 'en' ? "Demo credentials:" : "Credenciales de demostración:"}
+                  </p>
+                  <div className="mt-2 space-y-1 text-xs text-muted-foreground">
+                    <p><strong>{language === 'en' ? "Admin:" : "Administrador:"}</strong> admin@icealarm.es / admin123</p>
+                    <p><strong>{language === 'en' ? "Member:" : "Miembro:"}</strong> member@icealarm.es / member123</p>
+                    <p><strong>{language === 'en' ? "Call Center:" : "Centro de Llamadas:"}</strong> agent@icealarm.es / agent123</p>
+                  </div>
                 </div>
-              </div>
+              )}
             </CardContent>
           </Card>
         </div>

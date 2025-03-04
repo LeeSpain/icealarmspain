@@ -1,69 +1,51 @@
-# Welcome to your Lovable project
 
-## Project info
+# ICE Alarm España
 
-**URL**: https://lovable.dev/projects/541e13b2-5fb8-45a7-be61-a608fe1f3847
+Emergency alert system for Spain.
 
-## How can I edit this code?
+## Authentication Setup
 
-There are several ways of editing your application.
+The application uses Firebase Authentication. You can set up your project with either:
 
-**Use Lovable**
+1. **Development Mode (Default)**: Uses a mock authentication system
+2. **Production Mode**: Uses real Firebase Authentication
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/541e13b2-5fb8-45a7-be61-a608fe1f3847) and start prompting.
+### Setting Up Production Authentication
 
-Changes made via Lovable will be committed automatically to this repo.
+1. Create a Firebase project at [Firebase Console](https://console.firebase.google.com/)
+2. Enable Email/Password authentication in the Firebase console
+3. Add the following environment variables to your `.env` file:
 
-**Use your preferred IDE**
+```
+VITE_FIREBASE_API_KEY=your_api_key
+VITE_FIREBASE_AUTH_DOMAIN=your_project.firebaseapp.com
+VITE_FIREBASE_PROJECT_ID=your_project_id
+VITE_FIREBASE_STORAGE_BUCKET=your_project.appspot.com
+VITE_FIREBASE_MESSAGING_SENDER_ID=your_messaging_sender_id
+VITE_FIREBASE_APP_ID=your_app_id
+```
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+4. If the environment variables are present, the app will automatically use real Firebase Authentication.
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+### Default Test Users (Development Mode Only)
 
-Follow these steps:
+- Admin: admin@icealarm.es / admin123
+- Member: member@icealarm.es / member123
+- Call Center: agent@icealarm.es / agent123
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+## Running the Application
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+```
+npm install
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+## Building for Production
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+```
+npm run build
+```
 
-**Use GitHub Codespaces**
+## Deployment
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with .
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/541e13b2-5fb8-45a7-be61-a608fe1f3847) and click on Share -> Publish.
-
-## I want to use a custom domain - is that possible?
-
-We don't support custom domains (yet). If you want to deploy your project under your own domain then we recommend using Netlify. Visit our docs for more details: [Custom domains](https://docs.lovable.dev/tips-tricks/custom-domain/)
+After building, you can deploy the contents of the `dist` folder to your hosting provider.
