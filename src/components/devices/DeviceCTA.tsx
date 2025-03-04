@@ -1,6 +1,6 @@
 
 import React, { useCallback } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { ButtonCustom } from "@/components/ui/button-custom";
 
 interface DeviceCTAProps {
@@ -9,14 +9,15 @@ interface DeviceCTAProps {
 
 const DeviceCTA: React.FC<DeviceCTAProps> = ({ language }) => {
   console.log("DeviceCTA rendering with direct navigation to /checkout");
-  const navigate = useNavigate();
   
   const handleCheckoutClick = useCallback((e: React.MouseEvent) => {
     console.log("DeviceCTA: Checkout button clicked");
     e.preventDefault();
     e.stopPropagation();
-    console.log("DeviceCTA: Navigating to /checkout");
-    window.location.href = "/checkout"; // Use direct browser navigation as fallback
+    
+    // Direct navigation to checkout
+    console.log("DeviceCTA: Directly navigating to /checkout via window.location");
+    window.location.href = "/checkout";
   }, []);
 
   return (

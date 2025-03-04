@@ -6,11 +6,10 @@ import DeviceShowcase from "@/components/DeviceShowcase";
 import { ButtonCustom } from "@/components/ui/button-custom";
 import { useLanguage } from "@/context/LanguageContext";
 import { ArrowRight, CheckCircle, Shield, Sparkles } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 const Products: React.FC = () => {
   const { t, language } = useLanguage();
-  const navigate = useNavigate();
 
   // Add effect for scrolling to top on mount
   useEffect(() => {
@@ -21,8 +20,10 @@ const Products: React.FC = () => {
     console.log("Products page: Checkout button clicked");
     e.preventDefault();
     e.stopPropagation();
+    
+    // Direct navigation to checkout
     console.log("Products page: Directly navigating to /checkout via window.location");
-    window.location.href = "/checkout"; // Use direct browser navigation as fallback
+    window.location.href = "/checkout";
   }, []);
 
   const featuresList = language === 'en' ? [

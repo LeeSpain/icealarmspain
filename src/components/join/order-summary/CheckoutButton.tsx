@@ -1,6 +1,7 @@
 
 import React from "react";
 import { ButtonCustom } from "@/components/ui/button-custom";
+import { useNavigate } from "react-router-dom";
 
 interface CheckoutButtonProps {
   onCheckout: () => void;
@@ -8,13 +9,17 @@ interface CheckoutButtonProps {
 }
 
 const CheckoutButton: React.FC<CheckoutButtonProps> = ({ onCheckout, language }) => {
-  // This function ensures the onCheckout callback is triggered correctly
+  const navigate = useNavigate();
+
+  // This function ensures direct navigation to checkout page
   const handleCheckout = (e: React.MouseEvent) => {
     console.log("CheckoutButton clicked, preventing default behavior");
     e.preventDefault(); // Prevent any default navigation
     e.stopPropagation(); // Stop event propagation
-    console.log("Triggering onCheckout callback directly");
-    onCheckout(); // Call the provided onCheckout function from parent
+    
+    // Use direct navigation to checkout page
+    console.log("CheckoutButton: Directly navigating to /checkout");
+    window.location.href = "/checkout";
   };
 
   return (
@@ -22,7 +27,7 @@ const CheckoutButton: React.FC<CheckoutButtonProps> = ({ onCheckout, language })
       className="w-full mt-4 text-lg py-6" 
       onClick={handleCheckout}
       type="button"
-      data-testid="checkout-button" // Add test ID for easier debugging
+      data-testid="checkout-button"
     >
       {language === 'en' ? "Proceed to Checkout" : "Proceder al Pago"}
     </ButtonCustom>

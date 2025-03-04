@@ -1,7 +1,7 @@
 
 import React, { useCallback } from "react";
 import { Check } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { ButtonCustom } from "@/components/ui/button-custom";
 
 interface PricingPlanProps {
@@ -17,14 +17,14 @@ interface PricingPlanProps {
 }
 
 const PricingPlan: React.FC<PricingPlanProps> = ({ plan, language, index }) => {
-  const navigate = useNavigate();
-  
   const handleCheckoutClick = useCallback((e: React.MouseEvent) => {
     console.log("PricingPlan: Select Plan button clicked");
     e.preventDefault();
     e.stopPropagation();
-    console.log("PricingPlan: Navigating to /checkout");
-    window.location.href = "/checkout"; // Use direct browser navigation as fallback
+    
+    // Direct navigation to checkout
+    console.log("PricingPlan: Directly navigating to /checkout via window.location");
+    window.location.href = "/checkout";
   }, []);
 
   return (
