@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { useLanguage } from "@/context/LanguageContext";
-import { useAuth } from "@/context/AuthContext";
+import { useAuth } from "@/context/auth";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import PageHeader from '@/components/common/PageHeader';

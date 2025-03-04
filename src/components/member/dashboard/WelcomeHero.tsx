@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { useLanguage } from '@/context/LanguageContext';
 import { Button } from '@/components/ui/button';
 import { PlusCircle, ShoppingCart, Trash2, LogOut, FileText } from 'lucide-react';
-import { User } from '@/context/AuthContext';
+import { User } from '@/context/auth';
 import { useNavigate } from 'react-router-dom';
 
 interface WelcomeHeroProps {

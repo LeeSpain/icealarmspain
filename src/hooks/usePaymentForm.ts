@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { useLanguage } from "@/context/LanguageContext";
 import { useToast } from "@/components/ui/use-toast";
-import { useAuth } from "@/context/AuthContext";
+import { useAuth } from "@/context/auth";
 import { payment } from "@/firebase";
 import { PaymentDetails } from "@/types/payment";
 

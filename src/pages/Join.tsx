@@ -14,7 +14,7 @@ import JoinSignup from "@/components/join/JoinSignup";
 import { getDevices } from "@/components/join/deviceData";
 import { getMembershipTypes, MembershipType } from "@/components/join/membershipTypes";
 import { calculateTotals } from "@/utils/joinUtils";
-import { useAuth } from "@/context/AuthContext";
+import { useAuth } from "@/context/auth";
 import { toast, ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 

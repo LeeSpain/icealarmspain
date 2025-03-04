@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { useLanguage } from '@/context/LanguageContext';
-import { useAuth } from '@/context/AuthContext';
+import { useAuth } from '@/context/auth';
 import { Shield, Calendar, Bell } from 'lucide-react';
 
 const WelcomeSection: React.FC = () => {
