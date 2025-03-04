@@ -1,5 +1,5 @@
+
 import React from "react";
-import { Link } from "react-router-dom";
 import { Mail } from "lucide-react";
 import AuthInput from "./AuthInput";
 import PasswordInput from "./PasswordInput";
@@ -13,7 +13,7 @@ import { LoginFormActions } from "./form-elements/LoginFormActions";
 import { LoginError } from "./form-elements/LoginError";
 
 interface LoginFormProps {
-  onSuccess?: (email: string, password: string, rememberMe: boolean) => void;
+  onSuccess?: (email: string, password: string, rememberMe: boolean) => void | Promise<void>;
   isLoading?: boolean;
   error?: string | null;
   redirectTo?: string;
