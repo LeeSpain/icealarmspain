@@ -1,11 +1,12 @@
 import React from "react";
 import { Check, Truck, Shield, Info, AlertCircle, Sparkles } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { ButtonCustom } from "./ui/button-custom";
 
 const Pricing: React.FC = () => {
   const { language } = useLanguage();
+  const navigate = useNavigate();
   
   const plans = [
     {
@@ -80,6 +81,10 @@ const Pricing: React.FC = () => {
           ],
     }
   ];
+  
+  const handleCheckout = () => {
+    navigate("/checkout");
+  };
   
   return (
     <section id="pricing" className="py-20 bg-gradient-to-b from-white to-ice-50">
@@ -275,7 +280,7 @@ const Pricing: React.FC = () => {
                 {language === 'en' ? "View Device Information" : "Ver Información de Dispositivos"}
               </ButtonCustom>
             </Link>
-            <Link to="/join">
+            <Link to="/checkout">
               <ButtonCustom variant="primary" size="lg">
                 {language === 'en' ? "Get Started Today" : "Comience Hoy"}
               </ButtonCustom>

@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Info, ShoppingBag, Truck, Check, Users } from "lucide-react";
 import { ButtonCustom } from "@/components/ui/button-custom";
@@ -57,7 +56,6 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
 }) => {
   if (!totals.hasDevices) return null;
 
-  // Get number of additional users based on membership type
   const getAdditionalUsers = () => {
     switch (membershipType) {
       case 'couple':
@@ -72,7 +70,6 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
 
   const additionalUsers = getAdditionalUsers();
   
-  // Get discount text based on membership type or device count
   const getDiscountText = () => {
     if (membershipType === 'individual') {
       if (totals.totalDeviceCount === 2) {
