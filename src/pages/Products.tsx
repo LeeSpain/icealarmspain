@@ -1,4 +1,3 @@
-
 import React, { useEffect, useCallback } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -6,10 +5,11 @@ import DeviceShowcase from "@/components/DeviceShowcase";
 import { ButtonCustom } from "@/components/ui/button-custom";
 import { useLanguage } from "@/context/LanguageContext";
 import { ArrowRight, CheckCircle, Shield, Sparkles } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Products: React.FC = () => {
   const { t, language } = useLanguage();
+  const navigate = useNavigate();
 
   // Add effect for scrolling to top on mount
   useEffect(() => {
@@ -21,14 +21,10 @@ const Products: React.FC = () => {
     e.preventDefault();
     e.stopPropagation();
     
-    // Force direct navigation to checkout using window.location
-    console.log("Products page: Forcing direct navigation to /checkout");
-    
-    // Using a small timeout to ensure the event completes first
-    setTimeout(() => {
-      window.location.href = "/checkout";
-    }, 50);
-  }, []);
+    // Use React Router for navigation
+    console.log("Products page: Navigating to /checkout");
+    navigate("/checkout");
+  }, [navigate]);
 
   const featuresList = language === 'en' ? [
     "Real-time health monitoring",

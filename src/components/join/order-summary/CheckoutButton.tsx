@@ -11,7 +11,6 @@ interface CheckoutButtonProps {
 const CheckoutButton: React.FC<CheckoutButtonProps> = ({ onCheckout, language }) => {
   const navigate = useNavigate();
   
-  // This function ensures we use React Router navigation
   const handleCheckout = (e: React.MouseEvent) => {
     console.log("CheckoutButton clicked");
     e.preventDefault(); // Prevent any default navigation

@@ -1,6 +1,7 @@
+
 import React, { useCallback } from "react";
 import { Check } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { ButtonCustom } from "@/components/ui/button-custom";
 
 interface PricingPlanProps {
@@ -16,19 +17,17 @@ interface PricingPlanProps {
 }
 
 const PricingPlan: React.FC<PricingPlanProps> = ({ plan, language, index }) => {
+  const navigate = useNavigate();
+  
   const handleCheckoutClick = useCallback((e: React.MouseEvent) => {
     console.log("PricingPlan: Select Plan button clicked");
     e.preventDefault();
     e.stopPropagation();
     
-    // Force direct navigation to checkout
-    console.log("PricingPlan: Forcing direct navigation to /checkout");
-    
-    // Using a small timeout to ensure the event completes first
-    setTimeout(() => {
-      window.location.href = "/checkout";
-    }, 50);
-  }, []);
+    // Use React Router to navigate
+    console.log("PricingPlan: Navigating to /checkout");
+    navigate("/checkout");
+  }, [navigate]);
 
   return (
     <div 
