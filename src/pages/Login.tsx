@@ -6,7 +6,7 @@ import Footer from "@/components/Footer";
 import AuthForm from "@/components/AuthForm";
 import { useLanguage } from "@/context/LanguageContext";
 import { useAuth } from "@/context/AuthContext";
-import { toast } from "@/components/ui/use-toast";
+import { useToast } from "@/components/ui/use-toast";
 import { Card, CardContent } from "@/components/ui/card";
 import { Loader2 } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -15,6 +15,7 @@ const Login: React.FC = () => {
   const { language } = useLanguage();
   const navigate = useNavigate();
   const location = useLocation();
+  const { toast } = useToast();
   const { signIn, user, isAuthenticated, isLoading } = useAuth();
   const [loginInProgress, setLoginInProgress] = useState(false);
   const [loginError, setLoginError] = useState<string | null>(null);
@@ -49,9 +50,9 @@ const Login: React.FC = () => {
       setTimeout(() => {
         console.log("Executing redirect now");
         navigate(redirectTo, { replace: true });
-      }, 500); // Slightly longer delay for better user experience
+      }, 500);
     }
-  }, [isAuthenticated, isLoading, user, navigate, redirectParam, redirectTriggered, language]);
+  }, [isAuthenticated, isLoading, user, navigate, redirectParam, redirectTriggered, language, toast]);
   
   // Helper function to determine default redirect based on role
   const getDefaultRedirect = (role: string) => {
@@ -130,7 +131,7 @@ const Login: React.FC = () => {
       <main className="flex-grow pt-28 pb-16">
         <div className="container mx-auto px-4 py-12">
           <Card className="max-w-md mx-auto p-8 shadow-xl bg-white dark:bg-gray-900">
-            <h1 className="text-2xl font-bold mb-6 text-center">
+            <h1 className="text-2xl font-bold mb-4 text-center">
               {language === 'en' ? "Welcome Back" : "Bienvenido de Nuevo"}
             </h1>
             <p className="text-muted-foreground mb-8 text-center">
@@ -141,13 +142,16 @@ const Login: React.FC = () => {
             
             <CardContent className="p-0">
               {isMockAuth && (
-                <Alert className="mb-6">
-                  <AlertDescription>
+                <div className="mb-6 bg-amber-50 border border-amber-200 rounded-md p-3 text-amber-800 dark:bg-amber-900/30 dark:border-amber-700 dark:text-amber-300">
+                  <p className="text-sm font-medium mb-2">
+                    {language === 'en' ? "Demo Mode Active" : "Modo de demostración activo"}
+                  </p>
+                  <p className="text-xs">
                     {language === 'en' 
-                      ? "Using development authentication mode. For production, configure Firebase authentication." 
-                      : "Usando modo de autenticación de desarrollo. Para producción, configure la autenticación de Firebase."}
-                  </AlertDescription>
-                </Alert>
+                      ? "Using mock authentication. Configure the .env file with Firebase credentials for production." 
+                      : "Usando autenticación simulada. Configure el archivo .env con credenciales de Firebase para producción."}
+                  </p>
+                </div>
               )}
               
               <AuthForm 

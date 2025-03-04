@@ -2,13 +2,13 @@
 import React, { useState, useEffect } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { ButtonCustom } from "@/components/ui/button-custom";
-import { Mail, ArrowRight, AlertCircle } from "lucide-react";
+import { Mail, ArrowRight, AlertCircle, Info } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
 import { Link } from "react-router-dom";
 import AuthInput from "./AuthInput";
 import PasswordInput from "./PasswordInput";
 import { validateForm, SocialSignIn, AuthFormFooter } from "./AuthFormUtils";
-import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 interface LoginFormProps {
   onSuccess?: (email: string, password: string) => void;
@@ -114,8 +114,25 @@ const LoginForm: React.FC<LoginFormProps> = ({
   const loadingText = t("loading") || (language === 'en' ? "Loading..." : "Cargando...");
   const forgotPasswordText = language === 'en' ? "Forgot your password?" : "¿Olvidaste tu contraseña?";
 
+  // Check if using development mode
+  const isDevelopmentMode = !import.meta.env.VITE_FIREBASE_API_KEY;
+
   return (
     <div className="w-full max-w-md mx-auto">
+      {isDevelopmentMode && (
+        <Alert variant="info" className="mb-6 bg-blue-50 border-blue-200 dark:bg-blue-950 dark:border-blue-900">
+          <Info className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+          <AlertTitle className="text-blue-800 dark:text-blue-300">
+            {language === 'en' ? "Development Mode Active" : "Modo de Desarrollo Activo"}
+          </AlertTitle>
+          <AlertDescription className="text-blue-700 dark:text-blue-400 text-sm">
+            {language === 'en' 
+              ? "Using mock authentication. To enable real Firebase auth, add Firebase config to your .env file." 
+              : "Usando autenticación simulada. Para habilitar la autenticación real de Firebase, agregue la configuración de Firebase a su archivo .env."}
+          </AlertDescription>
+        </Alert>
+      )}
+
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Display general error message if present */}
         {internalError && (
