@@ -15,9 +15,13 @@ const PricingActions: React.FC<PricingActionsProps> = ({ language }) => {
     e.preventDefault();
     e.stopPropagation();
     
-    // Direct navigation to checkout
-    console.log("PricingActions: Directly navigating to /checkout via window.location");
-    window.location.href = "/checkout";
+    // Force direct navigation to checkout
+    console.log("PricingActions: Forcing direct navigation to /checkout");
+    
+    // Using a small timeout to ensure the event completes first
+    setTimeout(() => {
+      window.location.href = "/checkout";
+    }, 50);
   }, []);
 
   return (

@@ -21,9 +21,13 @@ const Products: React.FC = () => {
     e.preventDefault();
     e.stopPropagation();
     
-    // Direct navigation to checkout
-    console.log("Products page: Directly navigating to /checkout via window.location");
-    window.location.href = "/checkout";
+    // Force direct navigation to checkout using window.location
+    console.log("Products page: Forcing direct navigation to /checkout");
+    
+    // Using a small timeout to ensure the event completes first
+    setTimeout(() => {
+      window.location.href = "/checkout";
+    }, 50);
   }, []);
 
   const featuresList = language === 'en' ? [

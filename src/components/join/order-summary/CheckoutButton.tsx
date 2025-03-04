@@ -1,7 +1,6 @@
 
 import React from "react";
 import { ButtonCustom } from "@/components/ui/button-custom";
-import { useNavigate } from "react-router-dom";
 
 interface CheckoutButtonProps {
   onCheckout: () => void;
@@ -9,17 +8,22 @@ interface CheckoutButtonProps {
 }
 
 const CheckoutButton: React.FC<CheckoutButtonProps> = ({ onCheckout, language }) => {
-  const navigate = useNavigate();
-
   // This function ensures direct navigation to checkout page
   const handleCheckout = (e: React.MouseEvent) => {
     console.log("CheckoutButton clicked, preventing default behavior");
     e.preventDefault(); // Prevent any default navigation
     e.stopPropagation(); // Stop event propagation
     
-    // Use direct navigation to checkout page
-    console.log("CheckoutButton: Directly navigating to /checkout");
-    window.location.href = "/checkout";
+    // Call the parent handler first if it exists
+    onCheckout();
+    
+    // Force direct navigation to checkout page without React Router
+    console.log("CheckoutButton: Forcing direct navigation to /checkout");
+    
+    // Using a small timeout to ensure the onCheckout function completes first
+    setTimeout(() => {
+      window.location.href = "/checkout";
+    }, 50);
   };
 
   return (

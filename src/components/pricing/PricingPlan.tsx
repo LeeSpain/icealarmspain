@@ -1,4 +1,3 @@
-
 import React, { useCallback } from "react";
 import { Check } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -22,9 +21,13 @@ const PricingPlan: React.FC<PricingPlanProps> = ({ plan, language, index }) => {
     e.preventDefault();
     e.stopPropagation();
     
-    // Direct navigation to checkout
-    console.log("PricingPlan: Directly navigating to /checkout via window.location");
-    window.location.href = "/checkout";
+    // Force direct navigation to checkout
+    console.log("PricingPlan: Forcing direct navigation to /checkout");
+    
+    // Using a small timeout to ensure the event completes first
+    setTimeout(() => {
+      window.location.href = "/checkout";
+    }, 50);
   }, []);
 
   return (

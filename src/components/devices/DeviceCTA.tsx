@@ -15,9 +15,13 @@ const DeviceCTA: React.FC<DeviceCTAProps> = ({ language }) => {
     e.preventDefault();
     e.stopPropagation();
     
-    // Direct navigation to checkout
-    console.log("DeviceCTA: Directly navigating to /checkout via window.location");
-    window.location.href = "/checkout";
+    // Force direct navigation to checkout
+    console.log("DeviceCTA: Forcing direct navigation to /checkout");
+    
+    // Using a small timeout to ensure the event completes first
+    setTimeout(() => {
+      window.location.href = "/checkout";
+    }, 50);
   }, []);
 
   return (
