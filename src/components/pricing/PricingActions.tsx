@@ -8,14 +8,16 @@ interface PricingActionsProps {
 }
 
 const PricingActions: React.FC<PricingActionsProps> = ({ language }) => {
-  console.log("PricingActions rendering with direct link to /checkout");
+  console.log("PricingActions rendering with direct navigation to /checkout");
   const navigate = useNavigate();
   
   const handleCheckoutClick = useCallback((e: React.MouseEvent) => {
+    console.log("PricingActions: Checkout button clicked");
     e.preventDefault();
-    console.log("PricingActions: Checkout button clicked - navigating to /checkout");
-    navigate("/checkout");
-  }, [navigate]);
+    e.stopPropagation();
+    console.log("PricingActions: Navigating to /checkout");
+    window.location.href = "/checkout"; // Use direct browser navigation as fallback
+  }, []);
 
   return (
     <div className="container mx-auto px-4 md:px-6">
@@ -26,7 +28,12 @@ const PricingActions: React.FC<PricingActionsProps> = ({ language }) => {
               {language === 'en' ? "View Device Information" : "Ver Información de Dispositivos"}
             </ButtonCustom>
           </Link>
-          <ButtonCustom variant="primary" size="lg" onClick={handleCheckoutClick}>
+          <ButtonCustom 
+            variant="primary" 
+            size="lg" 
+            onClick={handleCheckoutClick}
+            data-testid="pricing-checkout-button"
+          >
             {language === 'en' ? "Proceed to Checkout" : "Proceder al Pago"}
           </ButtonCustom>
         </div>

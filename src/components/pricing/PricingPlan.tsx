@@ -20,10 +20,12 @@ const PricingPlan: React.FC<PricingPlanProps> = ({ plan, language, index }) => {
   const navigate = useNavigate();
   
   const handleCheckoutClick = useCallback((e: React.MouseEvent) => {
+    console.log("PricingPlan: Select Plan button clicked");
     e.preventDefault();
-    console.log("PricingPlan: Select Plan button clicked - navigating to /checkout");
-    navigate("/checkout");
-  }, [navigate]);
+    e.stopPropagation();
+    console.log("PricingPlan: Navigating to /checkout");
+    window.location.href = "/checkout"; // Use direct browser navigation as fallback
+  }, []);
 
   return (
     <div 
@@ -67,7 +69,11 @@ const PricingPlan: React.FC<PricingPlanProps> = ({ plan, language, index }) => {
               {language === 'en' ? "View Devices" : "Ver Dispositivos"}
             </ButtonCustom>
           </Link>
-          <ButtonCustom className="w-full" onClick={handleCheckoutClick}>
+          <ButtonCustom 
+            className="w-full" 
+            onClick={handleCheckoutClick}
+            data-testid="pricing-plan-checkout-button"
+          >
             {language === 'en' ? "Select Plan" : "Seleccionar Plan"}
           </ButtonCustom>
         </div>

@@ -18,10 +18,12 @@ const Products: React.FC = () => {
   }, []);
   
   const handleCheckoutClick = useCallback((e: React.MouseEvent) => {
+    console.log("Products page: Checkout button clicked");
     e.preventDefault();
-    console.log("Products page: Checkout button clicked - navigating to /checkout");
-    navigate("/checkout");
-  }, [navigate]);
+    e.stopPropagation();
+    console.log("Products page: Directly navigating to /checkout via window.location");
+    window.location.href = "/checkout"; // Use direct browser navigation as fallback
+  }, []);
 
   const featuresList = language === 'en' ? [
     "Real-time health monitoring",
@@ -112,6 +114,7 @@ const Products: React.FC = () => {
                     size="lg" 
                     className="border-ice-200 hover:border-ice-300 shadow-sm"
                     onClick={handleCheckoutClick}
+                    data-testid="products-checkout-button"
                   >
                     {language === 'en' ? 'Start Checkout Process' : 'Iniciar Proceso de Compra'}
                   </ButtonCustom>
@@ -172,6 +175,7 @@ const Products: React.FC = () => {
                 variant="secondary" 
                 size="lg"
                 onClick={handleCheckoutClick}
+                data-testid="products-cta-checkout-button"
               >
                 {language === 'en' ? "Start Checkout Process" : "Iniciar Proceso de Compra"}
               </ButtonCustom>

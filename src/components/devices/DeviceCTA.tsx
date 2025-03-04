@@ -12,10 +12,12 @@ const DeviceCTA: React.FC<DeviceCTAProps> = ({ language }) => {
   const navigate = useNavigate();
   
   const handleCheckoutClick = useCallback((e: React.MouseEvent) => {
+    console.log("DeviceCTA: Checkout button clicked");
     e.preventDefault();
-    console.log("DeviceCTA: Checkout button clicked - navigating to /checkout");
-    navigate("/checkout");
-  }, [navigate]);
+    e.stopPropagation();
+    console.log("DeviceCTA: Navigating to /checkout");
+    window.location.href = "/checkout"; // Use direct browser navigation as fallback
+  }, []);
 
   return (
     <section className="py-20 bg-gradient-to-b from-ice-50 to-white text-center">
@@ -31,7 +33,11 @@ const DeviceCTA: React.FC<DeviceCTAProps> = ({ language }) => {
             : "Elija los dispositivos que mejor se adapten a sus necesidades y comience su camino hacia un mejor monitoreo de la salud hoy."}
         </p>
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-          <ButtonCustom size="lg" onClick={handleCheckoutClick}>
+          <ButtonCustom 
+            size="lg" 
+            onClick={handleCheckoutClick}
+            data-testid="device-cta-checkout-button"
+          >
             {language === 'en' ? "Start Checkout Process" : "Iniciar Proceso de Compra"}
           </ButtonCustom>
           <Link to="/pricing">

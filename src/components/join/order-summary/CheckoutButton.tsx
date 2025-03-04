@@ -22,6 +22,7 @@ const CheckoutButton: React.FC<CheckoutButtonProps> = ({ onCheckout, language })
       className="w-full mt-4 text-lg py-6" 
       onClick={handleCheckout}
       type="button"
+      data-testid="checkout-button" // Add test ID for easier debugging
     >
       {language === 'en' ? "Proceed to Checkout" : "Proceder al Pago"}
     </ButtonCustom>
