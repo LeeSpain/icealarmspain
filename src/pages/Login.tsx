@@ -5,7 +5,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import AuthForm from "@/components/AuthForm";
 import { useLanguage } from "@/context/LanguageContext";
-import { useAuth } from "@/providers/AuthProvider";
+import { useAuth } from "@/context/auth";  // Fix: Use the correct auth context
 import { useToast } from "@/components/ui/use-toast";
 import { Card, CardContent } from "@/components/ui/card";
 import { Loader2 } from "lucide-react";
@@ -16,10 +16,13 @@ const Login: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { toast } = useToast();
-  const { signIn, user, isAuthenticated, isLoading } = useAuth();
+  const { signIn, user, isAuthenticated, isLoading } = useAuth();  // Fix: Use auth context from context/auth
   const [loginInProgress, setLoginInProgress] = useState(false);
   const [loginError, setLoginError] = useState<string | null>(null);
   const [redirectTriggered, setRedirectTriggered] = useState(false);
+  
+  // Debug logs for authentication state
+  console.log("Login page auth status:", { user, isAuthenticated, isLoading, provider: "using context/auth" });
   
   // Check if there's a redirect parameter
   const searchParams = new URLSearchParams(location.search);
@@ -108,6 +111,18 @@ const Login: React.FC = () => {
   
   // Detect if we're using mock auth
   const isMockAuth = !import.meta.env.VITE_FIREBASE_API_KEY;
+  
+  // Set a timeout to prevent infinite loading state
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      if (isLoading) {
+        console.log("Authentication check is taking too long, forcing reset");
+        window.location.reload(); // Force reload if checking takes too long
+      }
+    }, 5000); // 5 seconds timeout
+    
+    return () => clearTimeout(timeoutId);
+  }, [isLoading]);
   
   // Render loading state if authentication is being checked or user is already authenticated
   if (isLoading || (isAuthenticated && user)) {

@@ -6,7 +6,7 @@ import AuthInput from "./AuthInput";
 import PasswordInput from "./PasswordInput";
 import { useLanguage } from "@/context/LanguageContext";
 import { SocialSignIn, AuthFormFooter } from "./AuthFormUtils";
-import { useAuth } from "@/providers/AuthProvider";
+import { useAuth } from "@/context/auth"; // Fix: Use correct auth context
 import { RememberMe } from "./form-elements/RememberMe";
 import { ForgotPassword } from "./form-elements/ForgotPassword";
 import { DevelopmentModeAlert } from "./form-elements/DevelopmentModeAlert";
@@ -27,7 +27,7 @@ const LoginForm: React.FC<LoginFormProps> = ({
   redirectTo 
 }) => {
   const { t, language } = useLanguage();
-  const { login } = useAuth();
+  const { login } = useAuth(); // Fix: Use the correct auth context
   const navigate = useNavigate();
   
   console.log("LoginForm rendering, redirectTo:", redirectTo, "error:", externalError);
