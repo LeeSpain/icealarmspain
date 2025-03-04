@@ -120,7 +120,7 @@ const LoginForm: React.FC<LoginFormProps> = ({
   return (
     <div className="w-full max-w-md mx-auto">
       {isDevelopmentMode && (
-        <Alert variant="info" className="mb-6 bg-blue-50 border-blue-200 dark:bg-blue-950 dark:border-blue-900">
+        <Alert variant="default" className="mb-6 bg-blue-50 border-blue-200 dark:bg-blue-950 dark:border-blue-900">
           <Info className="h-4 w-4 text-blue-600 dark:text-blue-400" />
           <AlertTitle className="text-blue-800 dark:text-blue-300">
             {language === 'en' ? "Development Mode Active" : "Modo de Desarrollo Activo"}
