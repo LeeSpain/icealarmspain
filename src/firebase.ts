@@ -1,8 +1,9 @@
+
 // Firebase configuration
 // This file supports both mock implementation for development and real Firebase for production
 
-import { initializeApp } from '@firebase/app';
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, updateProfile } from '@firebase/auth';
+import { initializeApp } from 'firebase/app';
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, updateProfile } from 'firebase/auth';
 
 // Check if we have Firebase config in environment variables
 const hasRealFirebaseConfig = 

@@ -141,7 +141,7 @@ const Login: React.FC = () => {
             
             <CardContent className="p-0">
               {isMockAuth && (
-                <Alert variant="info" className="mb-6">
+                <Alert className="mb-6">
                   <AlertDescription>
                     {language === 'en' 
                       ? "Using development authentication mode. For production, configure Firebase authentication." 
