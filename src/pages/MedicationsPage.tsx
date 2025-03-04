@@ -1,64 +1,75 @@
 
 import React, { useState } from "react";
-import { ToastContainer } from 'react-toastify';
+import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import MemberSidebar from "@/components/member/MemberSidebar";
 import { useLanguage } from "@/context/LanguageContext";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { PlusSquare, Clock, Pill, Calendar, AlarmClock, Plus } from "lucide-react";
+import { PlusSquare, Clock, Pill, Calendar, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import MedicationReminderCard from "@/components/medications/MedicationReminderCard";
+import MedicationStatusCard from "@/components/medications/MedicationStatusCard";
+import MedicationScheduleCard from "@/components/medications/MedicationScheduleCard";
 
 // Mock medication data
-const medications = [
+const medicationInventory = [
+  { id: 1, name: "Lisinopril", remaining: 12, total: 28 },
+  { id: 2, name: "Metformin", remaining: 15, total: 30 },
+  { id: 3, name: "Atorvastatin", remaining: 10, total: 30 },
+  { id: 4, name: "Aspirin", remaining: 5, total: 30 },
+];
+
+const medicationSchedule = [
   { 
     id: 1, 
     name: "Lisinopril", 
     dosage: "10mg", 
-    frequency: "Once daily", 
-    time: "Morning", 
-    nextDose: "Today, 8:00 AM",
-    status: "active" 
+    schedule: { morning: "8:00 AM" },
+    days: ["0", "1", "2", "3", "4", "5", "6"]
   },
   { 
     id: 2, 
     name: "Metformin", 
     dosage: "500mg", 
-    frequency: "Twice daily", 
-    time: "Morning and Evening", 
-    nextDose: "Today, 7:00 PM",
-    status: "active" 
+    schedule: { morning: "8:00 AM", evening: "7:00 PM" },
+    days: ["0", "1", "2", "3", "4", "5", "6"]
   },
   { 
     id: 3, 
     name: "Atorvastatin", 
     dosage: "20mg", 
-    frequency: "Once daily", 
-    time: "Evening", 
-    nextDose: "Today, 9:00 PM",
-    status: "active" 
+    schedule: { evening: "9:00 PM" },
+    days: ["0", "1", "2", "3", "4", "5", "6"]
   },
   { 
     id: 4, 
     name: "Aspirin", 
     dosage: "81mg", 
-    frequency: "Once daily", 
-    time: "Morning", 
-    nextDose: "Tomorrow, 8:00 AM",
-    status: "active" 
+    schedule: { morning: "8:00 AM" },
+    days: ["0", "1", "2", "3", "4", "5", "6"]
   }
 ];
 
 const upcomingReminders = [
-  { id: 1, medication: "Metformin", time: "Today, 7:00 PM" },
-  { id: 2, medication: "Atorvastatin", time: "Today, 9:00 PM" },
-  { id: 3, medication: "Lisinopril", time: "Tomorrow, 8:00 AM" },
-  { id: 4, medication: "Aspirin", time: "Tomorrow, 8:00 AM" }
+  { id: 1, name: "Metformin", dosage: "500mg", time: "Today, 7:00 PM" },
+  { id: 2, name: "Atorvastatin", dosage: "20mg", time: "Today, 9:00 PM" },
+  { id: 3, name: "Lisinopril", dosage: "10mg", time: "Tomorrow, 8:00 AM" },
+  { id: 4, name: "Aspirin", dosage: "81mg", time: "Tomorrow, 8:00 AM" }
 ];
 
 const MedicationsPage: React.FC = () => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const { language } = useLanguage();
+  const [takenMedications, setTakenMedications] = useState<number[]>([]);
+  
+  const handleMarkTaken = (id: number) => {
+    setTakenMedications(prev => [...prev, id]);
+    toast.success(
+      language === 'en' 
+        ? "Medication marked as taken" 
+        : "Medicamento marcado como tomado"
+    );
+  };
   
   return (
     <div className="flex h-screen bg-ice-50/30">
@@ -94,7 +105,7 @@ const MedicationsPage: React.FC = () => {
                     <Pill size={18} />
                   </div>
                 </div>
-                <div className="text-2xl font-bold">{medications.length}</div>
+                <div className="text-2xl font-bold">{medicationInventory.length}</div>
               </CardContent>
             </Card>
             
@@ -156,26 +167,7 @@ const MedicationsPage: React.FC = () => {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>{language === 'en' ? 'Medication' : 'Medicamento'}</TableHead>
-                        <TableHead>{language === 'en' ? 'Dosage' : 'Dosis'}</TableHead>
-                        <TableHead>{language === 'en' ? 'Frequency' : 'Frecuencia'}</TableHead>
-                        <TableHead>{language === 'en' ? 'Next Dose' : 'Próxima Dosis'}</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {medications.map(med => (
-                        <TableRow key={med.id}>
-                          <TableCell className="font-medium">{med.name}</TableCell>
-                          <TableCell>{med.dosage}</TableCell>
-                          <TableCell>{med.frequency}</TableCell>
-                          <TableCell>{med.nextDose}</TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
+                  <MedicationStatusCard medications={medicationInventory} />
                 </CardContent>
               </Card>
             </div>
@@ -184,24 +176,26 @@ const MedicationsPage: React.FC = () => {
               <Card>
                 <CardHeader>
                   <div className="flex items-center gap-2">
-                    <AlarmClock className="h-5 w-5 text-ice-500" />
+                    <Clock className="h-5 w-5 text-ice-500" />
                     <CardTitle>
                       {language === 'en' ? 'Upcoming Reminders' : 'Próximos Recordatorios'}
                     </CardTitle>
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <div className="space-y-4">
+                  <div className="space-y-2">
                     {upcomingReminders.map(reminder => (
-                      <div key={reminder.id} className="flex justify-between items-center pb-3 border-b last:border-0">
-                        <div>
-                          <h3 className="font-medium">{reminder.medication}</h3>
-                          <p className="text-sm text-muted-foreground">{reminder.time}</p>
-                        </div>
-                        <Button variant="outline" size="sm">
-                          {language === 'en' ? 'Mark Taken' : 'Marcar Tomado'}
-                        </Button>
-                      </div>
+                      <MedicationReminderCard
+                        key={reminder.id}
+                        medication={{
+                          id: reminder.id,
+                          name: reminder.name,
+                          dosage: reminder.dosage,
+                          time: reminder.time,
+                          taken: takenMedications.includes(reminder.id)
+                        }}
+                        onMarkTaken={handleMarkTaken}
+                      />
                     ))}
                   </div>
                 </CardContent>
@@ -209,82 +203,7 @@ const MedicationsPage: React.FC = () => {
             </div>
           </div>
           
-          <Card>
-            <CardHeader>
-              <div className="flex items-center gap-2">
-                <Calendar className="h-5 w-5 text-ice-500" />
-                <CardTitle>
-                  {language === 'en' ? 'Medication Schedule' : 'Horario de Medicamentos'}
-                </CardTitle>
-              </div>
-              <CardDescription>
-                {language === 'en' 
-                  ? 'Your weekly medication schedule' 
-                  : 'Tu horario semanal de medicamentos'}
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="overflow-x-auto">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>{language === 'en' ? 'Medication' : 'Medicamento'}</TableHead>
-                      <TableHead>{language === 'en' ? 'Monday' : 'Lunes'}</TableHead>
-                      <TableHead>{language === 'en' ? 'Tuesday' : 'Martes'}</TableHead>
-                      <TableHead>{language === 'en' ? 'Wednesday' : 'Miércoles'}</TableHead>
-                      <TableHead>{language === 'en' ? 'Thursday' : 'Jueves'}</TableHead>
-                      <TableHead>{language === 'en' ? 'Friday' : 'Viernes'}</TableHead>
-                      <TableHead>{language === 'en' ? 'Saturday' : 'Sábado'}</TableHead>
-                      <TableHead>{language === 'en' ? 'Sunday' : 'Domingo'}</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    <TableRow>
-                      <TableCell className="font-medium">Lisinopril (10mg)</TableCell>
-                      <TableCell>8:00 AM</TableCell>
-                      <TableCell>8:00 AM</TableCell>
-                      <TableCell>8:00 AM</TableCell>
-                      <TableCell>8:00 AM</TableCell>
-                      <TableCell>8:00 AM</TableCell>
-                      <TableCell>8:00 AM</TableCell>
-                      <TableCell>8:00 AM</TableCell>
-                    </TableRow>
-                    <TableRow>
-                      <TableCell className="font-medium">Metformin (500mg)</TableCell>
-                      <TableCell>8:00 AM, 7:00 PM</TableCell>
-                      <TableCell>8:00 AM, 7:00 PM</TableCell>
-                      <TableCell>8:00 AM, 7:00 PM</TableCell>
-                      <TableCell>8:00 AM, 7:00 PM</TableCell>
-                      <TableCell>8:00 AM, 7:00 PM</TableCell>
-                      <TableCell>8:00 AM, 7:00 PM</TableCell>
-                      <TableCell>8:00 AM, 7:00 PM</TableCell>
-                    </TableRow>
-                    <TableRow>
-                      <TableCell className="font-medium">Atorvastatin (20mg)</TableCell>
-                      <TableCell>9:00 PM</TableCell>
-                      <TableCell>9:00 PM</TableCell>
-                      <TableCell>9:00 PM</TableCell>
-                      <TableCell>9:00 PM</TableCell>
-                      <TableCell>9:00 PM</TableCell>
-                      <TableCell>9:00 PM</TableCell>
-                      <TableCell>9:00 PM</TableCell>
-                    </TableRow>
-                    <TableRow>
-                      <TableCell className="font-medium">Aspirin (81mg)</TableCell>
-                      <TableCell>8:00 AM</TableCell>
-                      <TableCell>8:00 AM</TableCell>
-                      <TableCell>8:00 AM</TableCell>
-                      <TableCell>8:00 AM</TableCell>
-                      <TableCell>8:00 AM</TableCell>
-                      <TableCell>8:00 AM</TableCell>
-                      <TableCell>8:00 AM</TableCell>
-                    </TableRow>
-                  </TableBody>
-                </Table>
-              </div>
-            </CardContent>
-          </Card>
-          
+          <MedicationScheduleCard medications={medicationSchedule} />
         </div>
       </div>
     </div>
