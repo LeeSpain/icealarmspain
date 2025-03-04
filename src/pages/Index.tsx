@@ -10,6 +10,7 @@ import { useLanguage } from "@/context/LanguageContext";
 import DashboardPreview from "@/components/dashboard/DashboardPreview";
 import DecorativeElements from "@/components/layout/DecorativeElements";
 import SectionDivider from "@/components/layout/SectionDivider";
+import SEO from "@/components/layout/SEO";
 
 const Index: React.FC = () => {
   console.log("Index component rendering - SHOULD BE VISIBLE");
@@ -42,12 +43,20 @@ const Index: React.FC = () => {
     };
   }, []);
   
-  // Remove the duplicate ScrollToTop effect since we now have it at the App level
-  
   console.log("Index about to render JSX");
+  
+  // Prepare SEO data based on language
+  const seoDescription = language === 'en' 
+    ? "ICE Alarm España provides reliable emergency alert systems for seniors and individuals with medical conditions in Spain."
+    : "ICE Alarm España ofrece sistemas de alerta de emergencia confiables para personas mayores e individuos con condiciones médicas en España.";
   
   return (
     <div className="flex flex-col min-h-screen bg-gradient-to-b from-white via-ice-50/30 to-white">
+      <SEO 
+        description={seoDescription}
+        ogType="website"
+      />
+      
       {/* Enhanced Decorative Elements */}
       <DecorativeElements />
       

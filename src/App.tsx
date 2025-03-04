@@ -1,8 +1,8 @@
-
 import React from "react";
 import { Routes, Route } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster";
 import ScrollToTop from "@/components/layout/ScrollToTop";
+import ErrorBoundary from "@/components/layout/ErrorBoundary";
 
 // Page Imports
 import Index from "@/pages/Index";
@@ -48,55 +48,57 @@ import Checkout from "@/pages/Checkout";
 
 function App() {
   return (
-    <CartProvider>
-      {/* Add ScrollToTop here to ensure it works for all routes */}
-      <ScrollToTop />
-      <Routes>
-        <Route path="/" element={<Index />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/about" element={<AboutUs />} />
-        <Route path="/contact" element={<Contact />} />
-        <Route path="/devices" element={<DevicesPage />} />
-        <Route path="/products" element={<Products />} />
-        <Route path="/products/:id" element={<ProductDetail />} />
-        <Route path="/terms" element={<Terms />} />
-        <Route path="/privacy" element={<Privacy />} />
-        <Route path="/demo" element={<Demo />} />
-        <Route path="/join" element={<Join />} />
-        
-        {/* Member Dashboard and related pages */}
-        <Route path="/dashboard" element={<DashboardPage />} />
-        <Route path="/profile" element={<ProfilePage />} />
-        <Route path="/settings" element={<SettingsPage />} />
-        <Route path="/help" element={<HelpSupportPage />} />
-        <Route path="/onboarding" element={<OnboardingQuestionnaire />} />
-        <Route path="/personal-details" element={<PersonalDetailsPage />} />
-        <Route path="/chat" element={<ChatPage />} />
-        <Route path="/device-registration" element={<DeviceRegistrationPage />} />
-        <Route path="/emergency-contacts" element={<EmergencyContactsPage />} />
-        
-        {/* Device pages */}
-        <Route path="/devices/sos-pendant" element={<SOSPendantPage />} />
-        <Route path="/devices/glucose-monitor" element={<GlucoseMonitorPage />} />
-        <Route path="/devices/medical-dispenser" element={<MedicalDispenserPage />} />
-        
-        {/* Health pages */}
-        <Route path="/health/metrics" element={<HealthMetricsPage />} />
-        <Route path="/health/medications" element={<MedicationsPage />} />
-        
-        {/* Admin routes */}
-        <Route path="/admin" element={<AdminDashboard />} />
-        
-        {/* Call center routes */}
-        <Route path="/call-center" element={<CallCenterDashboard />} />
-        
-        {/* Add the checkout route */}
-        <Route path="/checkout" element={<Checkout />} />
-        
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-      <Toaster />
-    </CartProvider>
+    <ErrorBoundary>
+      <CartProvider>
+        {/* Add ScrollToTop here to ensure it works for all routes */}
+        <ScrollToTop />
+        <Routes>
+          <Route path="/" element={<Index />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/about" element={<AboutUs />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/devices" element={<DevicesPage />} />
+          <Route path="/products" element={<Products />} />
+          <Route path="/products/:id" element={<ProductDetail />} />
+          <Route path="/terms" element={<Terms />} />
+          <Route path="/privacy" element={<Privacy />} />
+          <Route path="/demo" element={<Demo />} />
+          <Route path="/join" element={<Join />} />
+          
+          {/* Member Dashboard and related pages */}
+          <Route path="/dashboard" element={<DashboardPage />} />
+          <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/settings" element={<SettingsPage />} />
+          <Route path="/help" element={<HelpSupportPage />} />
+          <Route path="/onboarding" element={<OnboardingQuestionnaire />} />
+          <Route path="/personal-details" element={<PersonalDetailsPage />} />
+          <Route path="/chat" element={<ChatPage />} />
+          <Route path="/device-registration" element={<DeviceRegistrationPage />} />
+          <Route path="/emergency-contacts" element={<EmergencyContactsPage />} />
+          
+          {/* Device pages */}
+          <Route path="/devices/sos-pendant" element={<SOSPendantPage />} />
+          <Route path="/devices/glucose-monitor" element={<GlucoseMonitorPage />} />
+          <Route path="/devices/medical-dispenser" element={<MedicalDispenserPage />} />
+          
+          {/* Health pages */}
+          <Route path="/health/metrics" element={<HealthMetricsPage />} />
+          <Route path="/health/medications" element={<MedicationsPage />} />
+          
+          {/* Admin routes */}
+          <Route path="/admin" element={<AdminDashboard />} />
+          
+          {/* Call center routes */}
+          <Route path="/call-center" element={<CallCenterDashboard />} />
+          
+          {/* Add the checkout route */}
+          <Route path="/checkout" element={<Checkout />} />
+          
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+        <Toaster />
+      </CartProvider>
+    </ErrorBoundary>
   );
 }
 
