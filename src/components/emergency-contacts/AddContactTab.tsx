@@ -29,10 +29,7 @@ const contactSchema = z.object({
   priority: z.number().min(1).max(10),
   receivesAlerts: z.boolean(),
   receivesUpdates: z.boolean(),
-}).required(); // Mark the entire object as required
-
-// Create a type from the schema to ensure they match
-type FormSchemaType = z.infer<typeof contactSchema>;
+});
 
 interface AddContactTabProps {
   onAddContact: (contact: Omit<Contact, 'id'>) => Promise<boolean>;
@@ -42,8 +39,8 @@ const AddContactTab: React.FC<AddContactTabProps> = ({ onAddContact }) => {
   const { language } = useLanguage();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Use the schema-derived type for the form
-  const form = useForm<FormSchemaType>({
+  // Use ContactFormValues type directly for the form
+  const form = useForm<ContactFormValues>({
     resolver: zodResolver(contactSchema),
     defaultValues: {
       name: '',
@@ -56,7 +53,7 @@ const AddContactTab: React.FC<AddContactTabProps> = ({ onAddContact }) => {
     },
   });
 
-  const onSubmit = async (data: FormSchemaType) => {
+  const onSubmit = async (data: ContactFormValues) => {
     setIsSubmitting(true);
     try {
       // The form validation ensures all required fields are present

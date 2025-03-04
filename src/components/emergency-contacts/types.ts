@@ -32,7 +32,7 @@ export interface TestLog {
   message: string;
 }
 
-// Make sure all properties are required, matching the Zod schema
+// Make all properties required to match the Zod schema
 export type ContactFormValues = {
   name: string;
   relationship: string;
