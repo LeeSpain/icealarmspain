@@ -48,24 +48,25 @@ const SectionRenderer: React.FC<SectionRendererProps> = ({
       case "dashboard":
         return <DashboardMetrics dashboardMetrics={dashboardData} />;
       case "users":
-        return <UserManagement onAction={(action: string) => addActivity("User", action)} />;
+        return <UserManagement onAction={(action: string) => addActivity("User", action)} as unknown as UserManagementProps />;
       case "clients":
-        return <ClientManagement onAction={(action: string) => addActivity("Client", action)} />;
+        return <ClientManagement onAction={(action: string) => addActivity("Client", action)} as unknown as ClientManagementProps />;
       case "devices":
-        return <DeviceManagement onAction={(action: string) => addActivity("Device", action)} />;
+        return <DeviceManagement onAction={(action: string) => addActivity("Device", action)} as unknown as DeviceManagementProps />;
       case "alerts":
-        return <AlertsManagement onAction={(action: string) => addActivity("Alert", action)} />;
+        return <AlertsManagement onAction={(action: string) => addActivity("Alert", action)} as unknown as AlertsManagementProps />;
       case "admin-users":
-        return <AdminUsersManagement onAction={(action: string) => addActivity("Admin", action)} />;
+        return <AdminUsersManagement onAction={(action: string) => addActivity("Admin", action)} as unknown as AdminUsersManagementProps />;
       case "roles":
-        return <RolesManagement onAction={(action: string) => addActivity("Role", action)} />;
+        return <RolesManagement onAction={(action: string) => addActivity("Role", action)} as unknown as RolesManagementProps />;
       case "permissions":
-        return <PermissionsManagement onAction={(action: string) => addActivity("Permission", action)} />;
+        return <PermissionsManagement onAction={(action: string) => addActivity("Permission", action)} as unknown as PermissionsManagementProps />;
       case "orders-list":
       case "inventory":
         return <InventoryManagement 
           section={activeSection as "orders-list" | "inventory"}
           onAction={(action: string) => addActivity("Inventory", action)}
+          as unknown as InventoryManagementProps
         />;
       default:
         return <PlaceholderSection 
