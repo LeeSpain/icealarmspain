@@ -1,5 +1,5 @@
 
-import React, { useMemo } from "react";
+import React, { useEffect } from "react";
 import { useLanguage } from "@/context/LanguageContext";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ShoppingBag, Users, Info } from "lucide-react";
@@ -23,53 +23,14 @@ interface OrderSummaryProps {
 const OrderSummary: React.FC<OrderSummaryProps> = ({ orderData }) => {
   const { language } = useLanguage();
   
-  // Debug output to identify any issues with pricing
-  console.log("OrderSummary received data:", orderData);
-  
-  // Recalculate totals to ensure accuracy
-  const calculatedTotals = useMemo(() => {
-    // Calculate device total from items
-    const deviceTotal = orderData.items.reduce((sum, item) => {
-      return sum + (item.price * item.quantity);
-    }, 0);
-    
-    // Calculate tax - 21% for products
-    const tax = deviceTotal * 0.21;
-    
-    // Calculate shipping - €14.99 per device
-    const totalDevices = orderData.items.reduce((sum, item) => sum + item.quantity, 0);
-    const shipping = totalDevices * 14.99;
-    const shippingTax = shipping * 0.21;
-    
-    // Calculate monthly total - €24.99 per device
-    const monthlyBase = totalDevices * 24.99;
-    const monthlyTax = monthlyBase * 0.10; // 10% for services
-    
-    // Calculate one-time total
-    const oneTimeTotal = deviceTotal + tax + shipping + shippingTax;
-    
-    console.log("Calculated totals:", {
-      deviceTotal,
-      tax,
-      shipping,
-      shippingTax,
-      monthlyBase,
-      monthlyTax,
-      oneTimeTotal,
-      totalDevices
-    });
-    
-    return {
-      deviceTotal,
-      tax,
-      shipping,
-      shippingTax,
-      monthlyBase,
-      monthlyTax,
-      oneTimeTotal,
-      totalDevices
-    };
-  }, [orderData.items]);
+  // Add more detailed debugging to identify issues
+  useEffect(() => {
+    console.log("OrderSummary received data:", orderData);
+    console.log("OrderSummary total:", orderData.total);
+    console.log("OrderSummary oneTimeTotal:", orderData.oneTimeTotal);
+    console.log("OrderSummary productTax:", orderData.productTax);
+    console.log("OrderSummary items:", orderData.items);
+  }, [orderData]);
   
   // Get membership type display name
   const getMembershipTypeName = (type: string) => {
@@ -109,10 +70,10 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({ orderData }) => {
         
         <div>
           <h3 className="font-medium mb-2">
-            {language === 'en' ? "Items" : "Artículos"} ({calculatedTotals.totalDevices})
+            {language === 'en' ? "Items" : "Artículos"} ({orderData.deviceCount || 0})
           </h3>
           <ul className="space-y-2">
-            {orderData.items.map((item, index) => (
+            {orderData.items && orderData.items.map((item, index) => (
               <li key={index} className="flex justify-between text-sm py-1">
                 <span>{item.name} {item.quantity > 1 ? `(${item.quantity}x)` : ''}</span>
                 <span>€{(item.price * item.quantity).toFixed(2)}</span>

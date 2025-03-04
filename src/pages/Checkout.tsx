@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import OrderSummary from "@/components/payment/OrderSummary";
@@ -10,9 +10,20 @@ import CheckoutSteps from "@/components/checkout/CheckoutSteps";
 import { useCheckout } from "@/components/checkout/useCheckout";
 import { useLanguage } from "@/context/LanguageContext";
 import CardInformationSection from "@/components/payment/CardInformationSection";
+import { useLocation } from "react-router-dom";
 
 const Checkout: React.FC = () => {
   const { language } = useLanguage();
+  const location = useLocation();
+  
+  // Add debugging to check location state
+  useEffect(() => {
+    console.log("Checkout location state:", location.state);
+    if (location.state?.orderData) {
+      console.log("Checkout has orderData in state:", location.state.orderData);
+    }
+  }, [location.state]);
+  
   const {
     step,
     loading,
@@ -26,6 +37,11 @@ const Checkout: React.FC = () => {
     handleStepBack,
     getTotalPrice
   } = useCheckout();
+  
+  // Debug orderData
+  useEffect(() => {
+    console.log("Checkout component received orderData:", orderData);
+  }, [orderData]);
   
   return (
     <div className="min-h-screen bg-ice-50/30 py-12">
