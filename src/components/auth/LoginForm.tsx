@@ -1,16 +1,16 @@
-
-import React, { useState, useEffect } from "react";
-import { useToast } from "@/components/ui/use-toast";
-import { ButtonCustom } from "@/components/ui/button-custom";
-import { Mail, ArrowRight, AlertCircle, Info } from "lucide-react";
-import { useLanguage } from "@/context/LanguageContext";
+import React from "react";
 import { Link } from "react-router-dom";
+import { Mail } from "lucide-react";
 import AuthInput from "./AuthInput";
 import PasswordInput from "./PasswordInput";
-import { validateForm, SocialSignIn, AuthFormFooter } from "./AuthFormUtils";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Label } from "@/components/ui/label";
+import { useLanguage } from "@/context/LanguageContext";
+import { SocialSignIn, AuthFormFooter } from "./AuthFormUtils";
+import { useLoginForm } from "./hooks/useLoginForm";
+import { RememberMe } from "./form-elements/RememberMe";
+import { ForgotPassword } from "./form-elements/ForgotPassword";
+import { DevelopmentModeAlert } from "./form-elements/DevelopmentModeAlert";
+import { LoginFormActions } from "./form-elements/LoginFormActions";
+import { LoginError } from "./form-elements/LoginError";
 
 interface LoginFormProps {
   onSuccess?: (email: string, password: string, rememberMe: boolean) => void;
@@ -26,145 +26,40 @@ const LoginForm: React.FC<LoginFormProps> = ({
   redirectTo 
 }) => {
   const { t, language } = useLanguage();
-  const { toast } = useToast();
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
+  console.log("LoginForm rendering, redirectTo:", redirectTo, "error:", externalError);
+  
+  const {
+    formData,
+    rememberMe,
+    isLoading,
+    internalError,
+    errors,
+    handleChange,
+    handleRememberMeChange,
+    handleSubmit
+  } = useLoginForm({
+    externalLoading,
+    externalError,
+    language,
+    onSubmit: onSuccess
   });
-  const [rememberMe, setRememberMe] = useState(false);
-  const [internalLoading, setInternalLoading] = useState(false);
-  const [internalError, setInternalError] = useState<string | null>(null);
-  const [errors, setErrors] = useState<{[key: string]: string}>({});
-  
-  const isLoading = externalLoading !== undefined ? externalLoading : internalLoading;
-  
-  // When external error changes, update internal error state
-  useEffect(() => {
-    if (externalError) {
-      setInternalError(externalError);
-    }
-  }, [externalError]);
-
-  // Check for saved email in localStorage
-  useEffect(() => {
-    const savedEmail = localStorage.getItem('rememberedEmail');
-    if (savedEmail) {
-      setFormData(prev => ({ ...prev, email: savedEmail }));
-      setRememberMe(true);
-    }
-  }, []);
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-    
-    // Clear field-specific errors when user types
-    if (errors[name]) {
-      setErrors(prev => ({ ...prev, [name]: "" }));
-    }
-    
-    // Clear general error when user starts typing
-    if (internalError) {
-      setInternalError(null);
-    }
-  };
-
-  const handleRememberMeChange = () => {
-    setRememberMe(!rememberMe);
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    // Prevent multiple submissions
-    if (isLoading) return;
-    
-    // Validate form
-    const newErrors = validateForm(formData, "login", language);
-    setErrors(newErrors);
-    if (Object.keys(newErrors).length > 0) return;
-    
-    // Clear any previous errors
-    setInternalError(null);
-    
-    // Set loading state if we're managing it internally
-    if (externalLoading === undefined) {
-      setInternalLoading(true);
-    }
-    
-    // Handle remember me
-    if (rememberMe) {
-      localStorage.setItem('rememberedEmail', formData.email);
-    } else {
-      localStorage.removeItem('rememberedEmail');
-    }
-    
-    // Call onSuccess handler if provided
-    if (onSuccess) {
-      try {
-        await onSuccess(formData.email, formData.password, rememberMe);
-      } catch (error) {
-        console.error("Login error in form:", error);
-        const errorMessage = error instanceof Error ? error.message : String(error);
-        setInternalError(errorMessage);
-        
-        if (externalLoading === undefined) {
-          setInternalLoading(false);
-        }
-      }
-    } else {
-      // Handle demo mode (without actual authentication)
-      setTimeout(() => {
-        if (externalLoading === undefined) {
-          setInternalLoading(false);
-        }
-        
-        toast({
-          title: language === 'en' ? "Login successful!" : "¡Inicio de sesión exitoso!",
-          description: language === 'en' 
-            ? "Welcome back to ICE Alarm España." 
-            : "Bienvenido de nuevo a ICE Alarm España.",
-          variant: "default",
-        });
-      }, 2000);
-    }
-  };
 
   // Get text strings with fallbacks for consistent UI
   const emailLabel = t("email") || (language === 'en' ? "Email" : "Correo electrónico");
   const passwordLabel = t("password") || (language === 'en' ? "Password" : "Contraseña");
   const loginText = t("login") || (language === 'en' ? "Login" : "Iniciar sesión");
   const loadingText = t("loading") || (language === 'en' ? "Loading..." : "Cargando...");
-  const forgotPasswordText = language === 'en' ? "Forgot your password?" : "¿Olvidaste tu contraseña?";
-  const rememberMeText = language === 'en' ? "Remember me" : "Recordarme";
 
   // Check if using development mode
   const isDevelopmentMode = !import.meta.env.VITE_FIREBASE_API_KEY;
 
   return (
     <div className="w-full max-w-md mx-auto">
-      {isDevelopmentMode && (
-        <Alert variant="default" className="mb-6 bg-blue-50 border-blue-200 dark:bg-blue-950 dark:border-blue-900">
-          <Info className="h-4 w-4 text-blue-600 dark:text-blue-400" />
-          <AlertTitle className="text-blue-800 dark:text-blue-300">
-            {language === 'en' ? "Development Mode Active" : "Modo de Desarrollo Activo"}
-          </AlertTitle>
-          <AlertDescription className="text-blue-700 dark:text-blue-400 text-sm">
-            {language === 'en' 
-              ? "Using mock authentication. To enable real Firebase auth, add Firebase config to your .env file." 
-              : "Usando autenticación simulada. Para habilitar la autenticación real de Firebase, agregue la configuración de Firebase a su archivo .env."}
-          </AlertDescription>
-        </Alert>
-      )}
+      {isDevelopmentMode && <DevelopmentModeAlert language={language} />}
 
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Display general error message if present */}
-        {internalError && (
-          <Alert variant="destructive" className="mb-4">
-            <AlertCircle className="h-4 w-4 mr-2" />
-            <AlertDescription>{internalError}</AlertDescription>
-          </Alert>
-        )}
+        <LoginError error={internalError} />
         
         <AuthInput
           id="email"
@@ -193,43 +88,19 @@ const LoginForm: React.FC<LoginFormProps> = ({
         />
         
         <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-2">
-            <Checkbox 
-              id="rememberMe" 
-              checked={rememberMe} 
-              onCheckedChange={handleRememberMeChange}
-              className="data-[state=checked]:bg-ice-600 data-[state=checked]:border-ice-600"
-            />
-            <Label 
-              htmlFor="rememberMe" 
-              className="text-sm font-medium text-gray-700 dark:text-gray-300 cursor-pointer"
-            >
-              {rememberMeText}
-            </Label>
-          </div>
-          <div className="text-sm">
-            <Link to="/reset-password" className="font-medium text-ice-600 hover:text-ice-500">
-              {forgotPasswordText}
-            </Link>
-          </div>
+          <RememberMe 
+            checked={rememberMe} 
+            onChange={handleRememberMeChange} 
+            language={language} 
+          />
+          <ForgotPassword language={language} />
         </div>
         
-        <div>
-          <ButtonCustom
-            type="submit"
-            className="w-full flex justify-center"
-            isLoading={isLoading}
-            disabled={isLoading}
-          >
-            {!isLoading && (
-              <>
-                {loginText}
-                <ArrowRight className="ml-2 h-5 w-5" />
-              </>
-            )}
-            {isLoading && (loadingText)}
-          </ButtonCustom>
-        </div>
+        <LoginFormActions 
+          isLoading={isLoading} 
+          loginText={loginText} 
+          loadingText={loadingText} 
+        />
       </form>
       
       <SocialSignIn language={language} />
