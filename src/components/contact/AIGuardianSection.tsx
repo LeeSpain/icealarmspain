@@ -1,14 +1,16 @@
 
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Brain, Send, Sparkles, MessageCircle, Bot, HelpCircle } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/components/ui/use-toast";
+import { findRelevantKnowledge } from "@/data/ai-knowledge-base";
 
 const AIGuardianSection: React.FC = () => {
   const { language } = useLanguage();
+  const messageContainerRef = useRef<HTMLDivElement>(null);
   const [messages, setMessages] = useState<Array<{text: string, sender: 'user' | 'ai'}>>([
     {
       text: language === 'en' 
@@ -20,6 +22,13 @@ const AIGuardianSection: React.FC = () => {
   const [userInput, setUserInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
+  // Auto-scroll to bottom of messages container when messages change
+  useEffect(() => {
+    if (messageContainerRef.current) {
+      messageContainerRef.current.scrollTop = messageContainerRef.current.scrollHeight;
+    }
+  }, [messages]);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!userInput.trim()) return;
@@ -27,35 +36,37 @@ const AIGuardianSection: React.FC = () => {
     // Add user message
     setMessages(prev => [...prev, { text: userInput, sender: 'user' }]);
     
-    // Simulate AI response
+    // Generate AI response using the knowledge base
     setIsLoading(true);
     setTimeout(() => {
-      const responses = {
-        en: [
-          "I'm happy to help with that! Let me process your request and provide some information about our services.",
-          "That's a great question. Our ICE Alár services are designed to provide comprehensive health monitoring. Would you like me to connect you with a human representative for more details?",
-          "I understand your concern. I've recorded your message and one of our team members will review it within 24 hours. Is there anything else I can help with?",
-          "Thank you for your inquiry. I've created a support ticket for your request. You'll receive a confirmation email shortly with your ticket number.",
-          "I can assist with that! Our online support system allows me to handle most inquiries. For more complex matters, I can create a support ticket for our specialists."
-        ],
-        es: [
-          "¡Estoy encantado de ayudarte! Permíteme procesar tu solicitud y proporcionarte información sobre nuestros servicios.",
-          "Esa es una gran pregunta. Nuestros servicios de ICE Alár están diseñados para proporcionar un monitoreo integral de la salud. ¿Te gustaría que te conecte con un representante humano para más detalles?",
-          "Entiendo tu preocupación. He registrado tu mensaje y uno de nuestros miembros del equipo lo revisará dentro de las próximas 24 horas. ¿Hay algo más en lo que pueda ayudarte?",
-          "Gracias por tu consulta. He creado un ticket de soporte para tu solicitud. Recibirás un correo electrónico de confirmación en breve con tu número de ticket.",
-          "¡Puedo ayudarte con eso! Nuestro sistema de soporte en línea me permite manejar la mayoría de las consultas. Para asuntos más complejos, puedo crear un ticket de soporte para nuestros especialistas."
-        ]
-      };
+      const aiResponse = findRelevantKnowledge(userInput, language === 'en' ? 'en' : 'es');
       
-      const randomIndex = Math.floor(Math.random() * responses[language === 'en' ? 'en' : 'es'].length);
       setMessages(prev => [...prev, { 
-        text: responses[language === 'en' ? 'en' : 'es'][randomIndex], 
+        text: aiResponse, 
         sender: 'ai' 
       }]);
       setIsLoading(false);
-    }, 1500);
+    }, 1000);
     
     setUserInput('');
+  };
+
+  const createSupportTicket = () => {
+    toast({
+      title: language === 'en' ? "Support Ticket Created" : "Ticket de Soporte Creado",
+      description: language === 'en' 
+        ? "Your support ticket has been created. A representative will contact you within 24 hours." 
+        : "Su ticket de soporte ha sido creado. Un representante se pondrá en contacto con usted dentro de las próximas 24 horas.",
+    });
+  };
+
+  const openHelpCenter = () => {
+    toast({
+      title: language === 'en' ? "Help Center" : "Centro de Ayuda",
+      description: language === 'en' 
+        ? "Our online help center is being loaded with the most common questions and solutions." 
+        : "Nuestro centro de ayuda en línea se está cargando con las preguntas y soluciones más comunes.",
+    });
   };
 
   return (
@@ -85,7 +96,7 @@ const AIGuardianSection: React.FC = () => {
           </CardTitle>
         </CardHeader>
         
-        <CardContent className="p-4 h-96 overflow-y-auto flex flex-col space-y-4">
+        <CardContent className="p-4 h-96 overflow-y-auto flex flex-col space-y-4" ref={messageContainerRef}>
           {messages.map((message, index) => (
             <div 
               key={index}
@@ -144,11 +155,19 @@ const AIGuardianSection: React.FC = () => {
       </Card>
 
       <div className="mt-8 flex justify-center gap-4">
-        <Button variant="outline" className="flex items-center gap-2">
+        <Button 
+          variant="outline" 
+          className="flex items-center gap-2"
+          onClick={openHelpCenter}
+        >
           <HelpCircle size={16} />
           <span>{language === 'en' ? 'Help Center' : 'Centro de Ayuda'}</span>
         </Button>
-        <Button variant="outline" className="flex items-center gap-2">
+        <Button 
+          variant="outline" 
+          className="flex items-center gap-2"
+          onClick={createSupportTicket}
+        >
           <MessageCircle size={16} />
           <span>{language === 'en' ? 'Create Support Ticket' : 'Crear Ticket de Soporte'}</span>
         </Button>
