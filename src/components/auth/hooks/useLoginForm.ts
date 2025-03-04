@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { validateForm } from "../AuthFormUtils";
@@ -15,6 +14,7 @@ interface UseLoginFormProps {
   externalError?: string | null;
   language: string;
   onSubmit?: (email: string, password: string, rememberMe: boolean) => void | Promise<void>;
+  onSuccess?: (email: string, password: string, rememberMe: boolean) => void | Promise<void>;
   redirectTo?: string;
 }
 
@@ -23,6 +23,7 @@ export const useLoginForm = ({
   externalError, 
   language, 
   onSubmit,
+  onSuccess,
   redirectTo
 }: UseLoginFormProps) => {
   const { toast } = useToast();
@@ -93,19 +94,21 @@ export const useLoginForm = ({
     }
     
     try {
-      if (onSubmit) {
+      if (onSuccess) {
+        const result = onSuccess(formData.email, formData.password, rememberMe);
+        
+        if (result instanceof Promise) {
+          await result;
+        }
+      } else if (onSubmit) {
         const result = onSubmit(formData.email, formData.password, rememberMe);
         
         if (result instanceof Promise) {
           await result;
         }
       } else {
-        // Use AuthProvider login if no onSubmit is provided
         await login(formData.email, formData.password, rememberMe);
         
-        // Success toast is handled by the AuthProvider
-        
-        // Navigate if redirectTo is provided
         if (redirectTo) {
           navigate(redirectTo);
         }

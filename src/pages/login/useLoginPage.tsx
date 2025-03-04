@@ -3,9 +3,10 @@ import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
 import { useAuth } from "@/context/auth";
+import { useLanguage } from "@/context/LanguageContext";
 
 export const useLoginPage = () => {
-  const { language } = useLocation(); // We'll extract language from context in the component
+  const { language } = useLanguage(); // Fix: get language from LanguageContext instead of location
   const navigate = useNavigate();
   const location = useLocation();
   const { toast } = useToast();
@@ -125,6 +126,7 @@ export const useLoginPage = () => {
     loginError,
     redirectParam,
     isMockAuth,
-    handleLoginSuccess
+    handleLoginSuccess,
+    language // Make sure to return the language property
   };
 };

@@ -35,11 +35,11 @@ const LoginForm: React.FC<LoginFormProps> = ({
     handleRememberMeChange,
     handleSubmit
   } = useLoginForm({
-    onSuccess,
-    isLoading: externalLoading,
-    error: externalError,
-    redirectTo,
-    language
+    externalLoading, 
+    externalError, 
+    language,
+    onSuccess, // Now this property exists in the interface
+    redirectTo
   });
 
   // Check if using development mode

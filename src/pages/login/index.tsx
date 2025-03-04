@@ -2,13 +2,11 @@
 import React from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { useLanguage } from "@/context/LanguageContext";
 import { LoginLoading } from "./LoginLoading";
 import { LoginContent } from "./LoginContent";
 import { useLoginPage } from "./useLoginPage";
 
 const Login: React.FC = () => {
-  const { language } = useLanguage();
   const { 
     user,
     isAuthenticated,
@@ -17,7 +15,8 @@ const Login: React.FC = () => {
     loginError,
     redirectParam,
     isMockAuth,
-    handleLoginSuccess
+    handleLoginSuccess,
+    language // Now this is correctly obtained from the hook
   } = useLoginPage();
   
   // Render loading state if authentication is being checked or user is already authenticated
