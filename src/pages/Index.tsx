@@ -10,7 +10,6 @@ import { useLanguage } from "@/context/LanguageContext";
 import DashboardPreview from "@/components/dashboard/DashboardPreview";
 import DecorativeElements from "@/components/layout/DecorativeElements";
 import SectionDivider from "@/components/layout/SectionDivider";
-import ScrollToTop from "@/components/layout/ScrollToTop";
 
 const Index: React.FC = () => {
   console.log("Index component rendering - SHOULD BE VISIBLE");
@@ -43,10 +42,7 @@ const Index: React.FC = () => {
     };
   }, []);
   
-  // Add effect for scrolling to top on mount
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
+  // Remove the duplicate ScrollToTop effect since we now have it at the App level
   
   console.log("Index about to render JSX");
   
@@ -77,9 +73,6 @@ const Index: React.FC = () => {
         <SectionDivider variant="white-to-ice" />
         
         <ExpatInfo />
-        
-        {/* Scroll to Top Button with enhanced styling */}
-        <ScrollToTop />
       </main>
       
       <Footer />

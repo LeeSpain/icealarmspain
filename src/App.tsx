@@ -2,6 +2,7 @@
 import React from "react";
 import { Routes, Route } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster";
+import ScrollToTop from "@/components/layout/ScrollToTop";
 
 // Page Imports
 import Index from "@/pages/Index";
@@ -48,6 +49,8 @@ import Checkout from "@/pages/Checkout";
 function App() {
   return (
     <CartProvider>
+      {/* Add ScrollToTop here to ensure it works for all routes */}
+      <ScrollToTop />
       <Routes>
         <Route path="/" element={<Index />} />
         <Route path="/login" element={<Login />} />
