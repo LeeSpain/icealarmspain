@@ -26,7 +26,12 @@ export const useLoginPage = () => {
   }, []);
   
   // Debug logs for authentication state
-  console.log("Login page auth status:", { user, isAuthenticated, isLoading, provider: "using context/auth" });
+  console.log("Login page auth status:", { 
+    user, 
+    isAuthenticated, 
+    isLoading, 
+    provider: import.meta.env.VITE_FIREBASE_API_KEY ? "Using real Firebase auth" : "Using mock auth" 
+  });
   
   // Check if there's a redirect parameter
   const searchParams = new URLSearchParams(location.search);
@@ -77,12 +82,15 @@ export const useLoginPage = () => {
     const timeoutId = setTimeout(() => {
       if (isLoading && isMounted.current) {
         console.log("Authentication check is taking too long, forcing reset");
-        window.location.reload(); // Force reload if checking takes too long
+        setLoginError(language === 'en' 
+          ? "Authentication service is not responding. Please try again later." 
+          : "El servicio de autenticación no responde. Por favor, inténtelo más tarde."
+        );
       }
     }, 5000); // 5 seconds timeout
     
     return () => clearTimeout(timeoutId);
-  }, [isLoading]);
+  }, [isLoading, language]);
 
   // Helper function to determine default redirect based on role
   const getDefaultRedirect = (role?: string) => {
@@ -109,10 +117,14 @@ export const useLoginPage = () => {
       const success = await signIn(email, password, rememberMe);
       
       if (!success && isMounted.current) {
-        setLoginError(language === 'en' ? "Invalid email or password" : "Correo o contraseña inválidos");
+        const errorMessage = language === 'en' 
+          ? "Invalid email or password. Please try again." 
+          : "Correo o contraseña inválidos. Por favor, inténtelo de nuevo.";
+        
+        setLoginError(errorMessage);
         toast({
           title: language === 'en' ? "Login failed" : "Error de inicio de sesión",
-          description: language === 'en' ? "Invalid email or password" : "Correo o contraseña inválidos",
+          description: errorMessage,
           variant: "destructive",
         });
         setLoginInProgress(false);
@@ -121,11 +133,16 @@ export const useLoginPage = () => {
     } catch (error) {
       console.error("Login error:", error);
       if (isMounted.current) {
-        const errorMessage = error instanceof Error ? error.message : String(error);
+        const errorMessage = error instanceof Error 
+          ? error.message 
+          : language === 'en' 
+            ? "An unknown error occurred. Please try again later." 
+            : "Ha ocurrido un error desconocido. Por favor, inténtelo más tarde.";
+        
         setLoginError(errorMessage);
         toast({
           title: language === 'en' ? "Login error" : "Error de inicio de sesión",
-          description: language === 'en' ? errorMessage : "Algo salió mal",
+          description: errorMessage,
           variant: "destructive",
         });
         setLoginInProgress(false);

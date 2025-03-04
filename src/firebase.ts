@@ -50,8 +50,7 @@ class MockAuth {
       throw new Error("The email address is badly formatted.");
     }
     
-    // Simulate successful sign-in for test credentials - simplified and fixed logic
-    // Make sure admin@icealarm.es with admin123 always works
+    // Fixed admin credentials - always allow admin@icealarm.es with password admin123
     if (email === "admin@icealarm.es" && password === "admin123") {
       this.currentUser = {
         uid: 'mock-uid-admin-' + Date.now(),
@@ -64,11 +63,12 @@ class MockAuth {
       
       return { user: this.currentUser };
     }
+    
     // Other test accounts
     else if (
       (email === "member@icealarm.es" && password === "member123") ||
       (email === "agent@icealarm.es" && password === "agent123") || 
-      (email.includes('admin') && password === 'admin123' && email !== "admin@icealarm.es") ||
+      (email.includes('admin') && password === 'admin123') ||
       (email.includes('member') && password === 'member123') ||
       (email.includes('agent') && password === 'agent123') ||
       (email.includes('demo') && password.length >= 6)

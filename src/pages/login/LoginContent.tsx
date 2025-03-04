@@ -3,6 +3,7 @@ import React from "react";
 import AuthForm from "@/components/AuthForm";
 import { Card, CardContent } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { InfoCircledIcon } from "@radix-ui/react-icons";
 
 interface LoginContentProps {
   isMockAuth: boolean;
@@ -35,16 +36,24 @@ export const LoginContent: React.FC<LoginContentProps> = ({
         
         <CardContent className="p-0">
           {isMockAuth && (
-            <div className="mb-6 bg-amber-50 border border-amber-200 rounded-md p-3 text-amber-800 dark:bg-amber-900/30 dark:border-amber-700 dark:text-amber-300">
-              <p className="text-sm font-medium mb-2">
-                {language === 'en' ? "Demo Mode Active" : "Modo de demostración activo"}
-              </p>
-              <p className="text-xs">
-                {language === 'en' 
-                  ? "Using mock authentication. Configure the .env file with Firebase credentials for production." 
-                  : "Usando autenticación simulada. Configure el archivo .env con credenciales de Firebase para producción."}
-              </p>
-            </div>
+            <Alert className="mb-6 bg-amber-50 border border-amber-200 text-amber-800 dark:bg-amber-900/30 dark:border-amber-700 dark:text-amber-300">
+              <InfoCircledIcon className="h-4 w-4 mr-2" />
+              <AlertDescription>
+                <p className="text-sm font-medium mb-2">
+                  {language === 'en' ? "Demo Mode Active" : "Modo de demostración activo"}
+                </p>
+                <p className="text-xs">
+                  {language === 'en' 
+                    ? "Using mock authentication. To enable real Firebase auth, add Firebase config values to your .env file." 
+                    : "Usando autenticación simulada. Para habilitar la autenticación real de Firebase, agregue los valores de configuración de Firebase a su archivo .env."}
+                </p>
+                <div className="mt-2 p-2 bg-black/10 dark:bg-white/10 rounded text-xs font-mono">
+                  VITE_FIREBASE_API_KEY=your_api_key<br />
+                  VITE_FIREBASE_AUTH_DOMAIN=your_project.firebaseapp.com<br />
+                  ...
+                </div>
+              </AlertDescription>
+            </Alert>
           )}
           
           <AuthForm 
