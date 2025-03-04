@@ -1,8 +1,11 @@
+
 import React from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { useLanguage } from "@/context/LanguageContext";
-import { Shield, Sparkles } from "lucide-react";
+import { Shield, Sparkles, Users, Globe, Award, HeartHandshake, Clock, FileBadge } from "lucide-react";
+import SectionDivider from "@/components/layout/SectionDivider";
+import { ButtonCustom } from "@/components/ui/button-custom";
 
 const AboutUs: React.FC = () => {
   const { t, language } = useLanguage();
@@ -45,8 +48,8 @@ const AboutUs: React.FC = () => {
                   <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight font-playfair mx-auto max-w-4xl relative">
                     <span className="relative z-10 bg-gradient-to-r from-gray-900 via-ice-900 to-guardian-800 bg-clip-text text-transparent inline-block">
                       {language === 'en' 
-                        ? 'About Us' 
-                        : 'Sobre Nosotros'}
+                        ? 'About ICE Alár' 
+                        : 'Acerca de ICE Alár'}
                     </span>
                     
                     {/* Accent decorations */}
@@ -59,8 +62,8 @@ const AboutUs: React.FC = () => {
                 
                 <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto backdrop-blur-sm bg-white/5 py-2 rounded-lg mt-6">
                   {language === 'en' 
-                    ? 'Learn about our journey, mission, and the dedicated team behind ICE Alarm España.' 
-                    : 'Conozca nuestra trayectoria, misión y el dedicado equipo detrás de ICE Alarm España.'}
+                    ? 'Serving all communities across Spain with innovative health monitoring solutions since 2018.' 
+                    : 'Sirviendo a todas las comunidades en España con soluciones innovadoras de monitoreo de salud desde 2018.'}
                 </p>
               </div>
             </div>
@@ -74,63 +77,163 @@ const AboutUs: React.FC = () => {
           </div>
         </section>
 
-        {/* About Content - Keep the existing content */}
-        <div className="container mx-auto px-4 md:px-6 py-16">
-          <div className="max-w-4xl mx-auto">
-            <div className="prose prose-lg max-w-none">
-              <div className="glass-panel mb-10 transform transition-all duration-300 hover:translate-y-[-5px]">
-                <h2 className="text-2xl md:text-3xl font-semibold mb-4 text-ice-700 font-playfair">
-                  {language === 'en' ? 'Our Mission' : 'Nuestra Misión'}
-                </h2>
-                <p className="mb-6">
-                  {language === 'en' 
-                    ? 'At ICE Alarm España, our mission is to empower older adults and expatriates in Spain with innovative technology that enhances safety, improves health management, and provides peace of mind to both users and their families.'
-                    : 'En ICE Alarm España, nuestra misión es empoderar a adultos mayores y expatriados en España con tecnología innovadora que mejora la seguridad, facilita la gestión de la salud y proporciona tranquilidad tanto a los usuarios como a sus familias.'}
-                </p>
-                <p>
-                  {language === 'en'
-                    ? 'We believe that advanced health monitoring should be accessible, user-friendly, and tailored to meet the unique needs of our diverse community. Through AI-powered solutions and human-centered design, we aim to bridge the gap between technology and compassionate care.'
-                    : 'Creemos que el monitoreo avanzado de salud debe ser accesible, fácil de usar y adaptado para satisfacer las necesidades únicas de nuestra diversa comunidad. A través de soluciones impulsadas por IA y diseño centrado en el humano, buscamos cerrar la brecha entre la tecnología y el cuidado compasivo.'}
-                </p>
-              </div>
-              
-              <div className="flex flex-col md:flex-row gap-8 mb-10">
-                <div className="glass-panel flex-1 transform transition-all duration-300 hover:translate-y-[-5px]">
-                  <h2 className="text-2xl md:text-3xl font-semibold mb-4 text-guardian-700 font-playfair">
-                    {language === 'en' ? 'Our Story' : 'Nuestra Historia'}
-                  </h2>
+        {/* Mission & Vision Section */}
+        <section className="py-16 bg-white">
+          <div className="container mx-auto px-4 md:px-6">
+            <div className="max-w-4xl mx-auto">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                <div className="glass-panel transform transition-all duration-300 hover:translate-y-[-5px]">
+                  <div className="mb-4 text-ice-500 flex items-center">
+                    <Award size={24} className="mr-2" />
+                    <h2 className="text-2xl md:text-3xl font-semibold text-ice-700 font-playfair">
+                      {language === 'en' ? 'Our Mission' : 'Nuestra Misión'}
+                    </h2>
+                  </div>
                   <p className="mb-6">
+                    {language === 'en' 
+                      ? 'At ICE Alár, our mission is to empower everyone in Spain with innovative technology that enhances safety, improves health management, and provides peace of mind to both users and their families.'
+                      : 'En ICE Alár, nuestra misión es empoderar a todos en España con tecnología innovadora que mejora la seguridad, facilita la gestión de la salud y proporciona tranquilidad tanto a los usuarios como a sus familias.'}
+                  </p>
+                  <p>
                     {language === 'en'
-                      ? 'Founded in 2018, ICE Alarm España emerged from a personal experience when our founder struggled to find reliable health monitoring services for their elderly parent who had relocated to southern Spain. Recognizing the challenges faced by expatriates and older adults in accessing appropriate healthcare support, we set out to create a solution that combines cutting-edge technology with compassionate human service.'
-                      : 'Fundada en 2018, ICE Alarm España surgió de una experiencia personal cuando nuestro fundador tuvo dificultades para encontrar servicios confiables de monitoreo de salud para su padre mayor que se había mudado al sur de España. Reconociendo los desafíos que enfrentan los expatriados y adultos mayores para acceder a un apoyo sanitario adecuado, nos propusimos crear una solución que combine tecnología de vanguardia con servicio humano compasivo.'}
+                      ? 'We believe that advanced health monitoring should be accessible, user-friendly, and tailored to meet the unique needs of our diverse community.'
+                      : 'Creemos que el monitoreo avanzado de salud debe ser accesible, fácil de usar y adaptado para satisfacer las necesidades únicas de nuestra diversa comunidad.'}
                   </p>
                 </div>
                 
-                <div className="glass-panel flex-1 transform transition-all duration-300 hover:translate-y-[-5px]">
-                  <h2 className="text-2xl md:text-3xl font-semibold mb-4 text-guardian-700 font-playfair">
-                    {language === 'en' ? 'Our Growth' : 'Nuestro Crecimiento'}
-                  </h2>
+                <div className="glass-panel transform transition-all duration-300 hover:translate-y-[-5px]">
+                  <div className="mb-4 text-guardian-500 flex items-center">
+                    <HeartHandshake size={24} className="mr-2" />
+                    <h2 className="text-2xl md:text-3xl font-semibold text-guardian-700 font-playfair">
+                      {language === 'en' ? 'Our Vision' : 'Nuestra Visión'}
+                    </h2>
+                  </div>
+                  <p className="mb-6">
+                    {language === 'en'
+                      ? 'We envision a future where technology bridges the gap between traditional healthcare and daily life, creating safer environments for all people regardless of age, language, or background.'
+                      : 'Visualizamos un futuro donde la tecnología reduce la brecha entre la atención médica tradicional y la vida diaria, creando entornos más seguros para todas las personas sin importar su edad, idioma o procedencia.'}
+                  </p>
                   <p>
                     {language === 'en'
-                      ? 'Since then, we have grown to serve thousands of clients across Spain, continuously innovating our offerings based on user feedback and technological advancements. Today, ICE Alarm España is recognized as a leader in AI-powered health monitoring and emergency response services.'
-                      : 'Desde entonces, hemos crecido para servir a miles de clientes en toda España, innovando continuamente nuestras ofertas basadas en los comentarios de los usuarios y los avances tecnológicos. Hoy, ICE Alarm España es reconocida como líder en servicios de monitoreo de salud y respuesta de emergencia impulsados por IA.'}
+                      ? 'Our goal is to become the leading provider of intelligent health monitoring solutions across Spain, known for reliability, innovation, and compassionate service.'
+                      : 'Nuestro objetivo es convertirnos en el principal proveedor de soluciones inteligentes de monitoreo de salud en toda España, conocidos por nuestra fiabilidad, innovación y servicio compasivo.'}
                   </p>
                 </div>
               </div>
-              
-              <div className="glass-panel mb-10 transform transition-all duration-300 hover:translate-y-[-5px]">
-                <h2 className="text-2xl md:text-3xl font-semibold mb-4 text-ice-700 font-playfair">
-                  {language === 'en' ? 'Our Team' : 'Nuestro Equipo'}
+            </div>
+          </div>
+        </section>
+
+        <SectionDivider />
+
+        {/* Our Story & Growth Section */}
+        <section className="py-16 bg-gradient-to-b from-white to-ice-50">
+          <div className="container mx-auto px-4 md:px-6">
+            <div className="max-w-4xl mx-auto">
+              <div className="text-center mb-12">
+                <h2 className="text-3xl md:text-4xl font-semibold text-guardian-700 font-playfair mb-4">
+                  {language === 'en' ? 'Our Journey' : 'Nuestro Camino'}
                 </h2>
+                <p className="text-muted-foreground max-w-2xl mx-auto">
+                  {language === 'en'
+                    ? 'From humble beginnings to becoming a trusted leader in health monitoring technology.'
+                    : 'Desde humildes comienzos hasta convertirnos en un líder confiable en tecnología de monitoreo de salud.'}
+                </p>
+              </div>
+
+              <div className="relative">
+                {/* Timeline line */}
+                <div className="absolute left-1/2 transform -translate-x-1/2 h-full w-0.5 bg-gradient-to-b from-ice-300 to-guardian-300"></div>
+
+                {/* 2018 - Foundation */}
+                <div className="relative z-10 flex flex-col md:flex-row items-center mb-16">
+                  <div className="order-2 md:order-1 md:w-1/2 p-6 md:pr-12 text-right">
+                    <h3 className="text-xl font-semibold text-ice-700 mb-2">2018</h3>
+                    <h4 className="text-lg font-medium mb-3">
+                      {language === 'en' ? 'Foundation' : 'Fundación'}
+                    </h4>
+                    <p className="text-muted-foreground">
+                      {language === 'en'
+                        ? 'ICE Alár was founded to address the healthcare monitoring needs of both Spanish locals and the growing expatriate community.'
+                        : 'ICE Alár fue fundada para atender las necesidades de monitoreo de salud tanto de los españoles locales como de la creciente comunidad expatriada.'}
+                    </p>
+                  </div>
+                  <div className="order-1 md:order-2 mb-4 md:mb-0">
+                    <div className="h-12 w-12 rounded-full bg-ice-100 border-4 border-ice-500 flex items-center justify-center shadow-lg">
+                      <FileBadge size={20} className="text-ice-600" />
+                    </div>
+                  </div>
+                  <div className="order-3 md:w-1/2"></div>
+                </div>
+
+                {/* 2020 - Expansion */}
+                <div className="relative z-10 flex flex-col md:flex-row items-center mb-16">
+                  <div className="order-3 md:w-1/2 p-6 md:pl-12">
+                    <h3 className="text-xl font-semibold text-guardian-700 mb-2">2020</h3>
+                    <h4 className="text-lg font-medium mb-3">
+                      {language === 'en' ? 'Technology Expansion' : 'Expansión Tecnológica'}
+                    </h4>
+                    <p className="text-muted-foreground">
+                      {language === 'en'
+                        ? 'We introduced our integrated monitoring devices and expanded services to 5 major Spanish cities, serving both local and international residents.'
+                        : 'Introdujimos nuestros dispositivos de monitoreo integrados y expandimos los servicios a 5 ciudades importantes de España, atendiendo tanto a residentes locales como internacionales.'}
+                    </p>
+                  </div>
+                  <div className="order-1 mb-4 md:mb-0">
+                    <div className="h-12 w-12 rounded-full bg-guardian-100 border-4 border-guardian-500 flex items-center justify-center shadow-lg">
+                      <Globe size={20} className="text-guardian-600" />
+                    </div>
+                  </div>
+                  <div className="order-2 md:w-1/2"></div>
+                </div>
+
+                {/* 2022 - Innovation */}
+                <div className="relative z-10 flex flex-col md:flex-row items-center">
+                  <div className="order-2 md:order-1 md:w-1/2 p-6 md:pr-12 text-right">
+                    <h3 className="text-xl font-semibold text-ice-700 mb-2">2022</h3>
+                    <h4 className="text-lg font-medium mb-3">
+                      {language === 'en' ? 'AI Integration' : 'Integración de IA'}
+                    </h4>
+                    <p className="text-muted-foreground">
+                      {language === 'en'
+                        ? 'Launched our AI Guardian system, offering multilingual support to all our users and establishing partnerships with local healthcare providers across Spain.'
+                        : 'Lanzamos nuestro sistema AI Guardian, ofreciendo soporte multilingüe a todos nuestros usuarios y estableciendo asociaciones con proveedores de atención médica locales en toda España.'}
+                    </p>
+                  </div>
+                  <div className="order-1 md:order-2 mb-4 md:mb-0">
+                    <div className="h-12 w-12 rounded-full bg-ice-100 border-4 border-ice-500 flex items-center justify-center shadow-lg">
+                      <Sparkles size={20} className="text-ice-600" />
+                    </div>
+                  </div>
+                  <div className="order-3 md:w-1/2"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <SectionDivider />
+
+        {/* Team & Communities Section */}
+        <section className="py-16 bg-white">
+          <div className="container mx-auto px-4 md:px-6">
+            <div className="max-w-4xl mx-auto">
+              <div className="glass-panel mb-16 transform transition-all duration-300 hover:translate-y-[-5px]">
+                <div className="mb-4 text-ice-500 flex items-center">
+                  <Users size={24} className="mr-2" />
+                  <h2 className="text-2xl md:text-3xl font-semibold text-ice-700 font-playfair">
+                    {language === 'en' ? 'Our Team' : 'Nuestro Equipo'}
+                  </h2>
+                </div>
                 <p className="mb-6">
                   {language === 'en'
-                    ? 'Our diverse team brings together expertise in healthcare, technology, customer service, and expatriate support. We employ professionals who are not only skilled in their respective fields but also deeply committed to our mission of enhancing lives through thoughtful innovation.'
-                    : 'Nuestro diverso equipo reúne experiencia en atención médica, tecnología, servicio al cliente y apoyo a expatriados. Empleamos a profesionales que no solo son expertos en sus respectivos campos, sino que también están profundamente comprometidos con nuestra misión de mejorar vidas a través de la innovación reflexiva.'}
+                    ? 'Our diverse team brings together Spanish professionals and international experts in healthcare, technology, and customer service. We employ people who are not only skilled in their respective fields but also deeply committed to our mission of enhancing lives through thoughtful innovation.'
+                    : 'Nuestro diverso equipo reúne a profesionales españoles y expertos internacionales en atención médica, tecnología y servicio al cliente. Empleamos a personas que no solo son expertas en sus respectivos campos, sino que también están profundamente comprometidas con nuestra misión de mejorar vidas a través de la innovación reflexiva.'}
                 </p>
                 <p>
                   {language === 'en'
-                    ? 'Our call center agents are multilingual and trained to handle emergencies with empathy and efficiency. Our technical team continuously works to improve our devices and AI systems, ensuring they remain at the cutting edge of health monitoring technology.'
-                    : 'Nuestros agentes de centro de llamadas son multilingües y están capacitados para manejar emergencias con empatía y eficiencia. Nuestro equipo técnico trabaja continuamente para mejorar nuestros dispositivos y sistemas de IA, asegurando que permanezcan a la vanguardia de la tecnología de monitoreo de salud.'}
+                    ? 'Our multilingual staff represents the communities we serve, ensuring cultural sensitivity and understanding in every interaction. From our developers to our care coordinators, everyone at ICE Alár shares a common goal: creating technology that cares.'
+                    : 'Nuestro personal multilingüe representa a las comunidades a las que servimos, garantizando sensibilidad cultural y comprensión en cada interacción. Desde nuestros desarrolladores hasta nuestros coordinadores de atención, todos en ICE Alár comparten un objetivo común: crear tecnología que cuida.'}
                 </p>
               </div>
               
@@ -138,23 +241,33 @@ const AboutUs: React.FC = () => {
                 <div className="absolute top-0 right-0 w-32 h-32 bg-guardian-100 rounded-full -mr-16 -mt-16 opacity-60"></div>
                 <div className="absolute bottom-0 left-0 w-24 h-24 bg-ice-100 rounded-full -ml-12 -mb-12 opacity-60"></div>
                 
-                <h2 className="text-2xl md:text-3xl font-semibold mb-4 text-guardian-700 font-playfair relative z-10">
-                  {language === 'en' ? 'Our Community' : 'Nuestra Comunidad'}
-                </h2>
+                <div className="mb-4 text-guardian-500 flex items-center relative z-10">
+                  <Globe size={24} className="mr-2" />
+                  <h2 className="text-2xl md:text-3xl font-semibold text-guardian-700 font-playfair">
+                    {language === 'en' ? 'Our Community' : 'Nuestra Comunidad'}
+                  </h2>
+                </div>
                 <p className="mb-6 relative z-10">
                   {language === 'en'
-                    ? 'We are proud to serve both the local Spanish community and the expatriate population throughout Spain. Our services are fully bilingual, with all interfaces, support, and emergency response available in both Spanish and English.'
-                    : 'Estamos orgullosos de servir tanto a la comunidad española local como a la población expatriada en toda España. Nuestros servicios son completamente bilingües, con todas las interfaces, soporte y respuesta de emergencia disponibles tanto en español como en inglés.'}
+                    ? 'For over five years, we have been honored to serve Spanish local communities alongside the diverse expatriate population throughout Spain. Our deep roots in the Spanish healthcare landscape combined with international expertise allow us to offer uniquely comprehensive services.'
+                    : 'Durante más de cinco años, hemos tenido el honor de servir a las comunidades locales españolas junto con la diversa población expatriada en toda España. Nuestras profundas raíces en el panorama sanitario español combinadas con experiencia internacional nos permiten ofrecer servicios excepcionalmente completos.'}
                 </p>
-                <p className="relative z-10">
+                <p className="relative z-10 mb-8">
                   {language === 'en'
-                    ? 'Our marketing and outreach efforts are tailored to meet the needs of both demographics, with Spanish-language advertising campaigns running alongside our English language initiatives. We believe in creating an inclusive environment where everyone can access life-saving technology, regardless of their primary language.'
-                    : 'Nuestros esfuerzos de marketing y divulgación están adaptados para satisfacer las necesidades de ambos grupos demográficos, con campañas publicitarias en español que se ejecutan junto con nuestras iniciativas en inglés. Creemos en crear un entorno inclusivo donde todos puedan acceder a tecnología que salva vidas, independientemente de su idioma principal.'}
+                    ? 'We embrace the rich cultural diversity of Spain by ensuring all our services, support, and resources are fully accessible in both Spanish and English, with additional language options available when needed.'
+                    : 'Abrazamos la rica diversidad cultural de España asegurando que todos nuestros servicios, soporte y recursos sean completamente accesibles tanto en español como en inglés, con opciones de idiomas adicionales disponibles cuando sea necesario.'}
                 </p>
+
+                <div className="flex justify-center mt-4 relative z-10">
+                  <ButtonCustom>
+                    <Clock size={16} className="mr-2" />
+                    {language === 'en' ? 'Contact Us Today' : 'Contáctenos Hoy'}
+                  </ButtonCustom>
+                </div>
               </div>
             </div>
           </div>
-        </div>
+        </section>
       </main>
       <Footer />
     </div>
