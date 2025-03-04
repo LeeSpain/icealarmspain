@@ -31,6 +31,7 @@ import OnboardingQuestionnaire from "@/pages/OnboardingQuestionnaire";
 import PersonalDetailsPage from "@/pages/PersonalDetailsPage";
 import ChatPage from "@/pages/ChatPage";
 import DeviceRegistrationPage from "@/pages/DeviceRegistrationPage";
+import EmergencyContactsPage from "@/pages/EmergencyContactsPage";
 
 // Admin Pages
 import AdminDashboard from "@/pages/AdminDashboard";
@@ -69,6 +70,7 @@ function App() {
         <Route path="/personal-details" element={<PersonalDetailsPage />} />
         <Route path="/chat" element={<ChatPage />} />
         <Route path="/device-registration" element={<DeviceRegistrationPage />} />
+        <Route path="/emergency-contacts" element={<EmergencyContactsPage />} />
         
         {/* Device pages */}
         <Route path="/devices/sos-pendant" element={<SOSPendantPage />} />

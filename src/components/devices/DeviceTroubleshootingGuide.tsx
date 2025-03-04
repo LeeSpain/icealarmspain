@@ -1,237 +1,250 @@
 
 import React, { useState } from "react";
-import { 
-  Card, 
-  CardContent, 
-  CardDescription, 
-  CardHeader, 
-  CardTitle 
-} from "@/components/ui/card";
-import { 
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger
-} from "@/components/ui/accordion";
-import { Search, AlertCircle, Wifi, Battery, Bluetooth, RefreshCw, Settings } from "lucide-react";
-import { Input } from "@/components/ui/input";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { AlertCircle, CheckCircle, HelpCircle } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Language } from "@/context/LanguageContext";
 
 interface DeviceTroubleshootingGuideProps {
   deviceType: 'pendant' | 'monitor' | 'dispenser';
-  language: string;
+  language: Language;
 }
 
 const DeviceTroubleshootingGuide: React.FC<DeviceTroubleshootingGuideProps> = ({ 
   deviceType, 
   language 
 }) => {
-  const [searchQuery, setSearchQuery] = useState("");
+  const [showAdditionalHelp, setShowAdditionalHelp] = useState(false);
   
-  const deviceNames = {
-    pendant: language === 'en' ? 'SOS Pendant' : 'Colgante SOS',
-    monitor: language === 'en' ? 'Health Monitor' : 'Monitor de Salud',
-    dispenser: language === 'en' ? 'Medical Dispenser' : 'Dispensador de Medicamentos'
-  };
-  
-  const commonIssues = [
-    {
-      id: 'connection',
-      title: language === 'en' ? 'Connection Problems' : 'Problemas de Conexión',
-      icon: <Wifi className="h-5 w-5 text-red-500" />,
-      content: language === 'en' 
-        ? `If your ${deviceNames[deviceType]} is not connecting to the app, try these steps:
-           1. Make sure Bluetooth is enabled on your smartphone
-           2. Ensure the device is within range (10 meters/30 feet)
-           3. Restart both your phone and the device
-           4. Check if the device has sufficient battery
-           5. Uninstall and reinstall the app if the issue persists`
-        : `Si su ${deviceNames[deviceType]} no se conecta a la aplicación, pruebe estos pasos:
-           1. Asegúrese de que el Bluetooth esté habilitado en su smartphone
-           2. Asegúrese de que el dispositivo esté dentro del alcance (10 metros/30 pies)
-           3. Reinicie tanto su teléfono como el dispositivo
-           4. Verifique si el dispositivo tiene batería suficiente
-           5. Desinstale y reinstale la aplicación si el problema persiste`
+  const troubleshootingData = {
+    pendant: {
+      en: [
+        {
+          issue: "Device won't power on",
+          solution: "Ensure the battery is properly installed and has charge. The SOS Pendant uses a CR2032 battery that should last up to 12 months. If the battery is new and correctly installed but the device still won't power on, press and hold the power button for 10 seconds to perform a reset."
+        },
+        {
+          issue: "SOS button not triggering alerts",
+          solution: "Verify that the pendant is connected to your account in the app. Test the connection by navigating to Device Settings and selecting 'Test Connection'. If the connection test fails, ensure your smartphone has Bluetooth enabled and is within range (30 feet/10 meters)."
+        },
+        {
+          issue: "False alarms triggering",
+          solution: "Adjust the sensitivity settings in the app under Device Settings > Alert Sensitivity. If false alarms continue, make sure the pendant is worn securely and not subject to excessive movement during normal activities."
+        },
+        {
+          issue: "Pendant not connecting to smartphone",
+          solution: "Ensure Bluetooth is enabled on your smartphone and the pendant is within range. If still having issues, go to your smartphone's Bluetooth settings, forget the device, and then pair it again through the ICE Alarm app."
+        },
+        {
+          issue: "App not receiving alerts from pendant",
+          solution: "Check that notifications are enabled for the ICE Alarm app in your phone settings. Also verify that the app has necessary permissions for background operation and location access."
+        }
+      ],
+      es: [
+        {
+          issue: "El dispositivo no enciende",
+          solution: "Asegúrese de que la batería esté instalada correctamente y tenga carga. El Colgante SOS utiliza una batería CR2032 que debería durar hasta 12 meses. Si la batería es nueva y está correctamente instalada pero el dispositivo aún no enciende, mantenga presionado el botón de encendido durante 10 segundos para realizar un reinicio."
+        },
+        {
+          issue: "El botón SOS no activa alertas",
+          solution: "Verifique que el colgante esté conectado a su cuenta en la aplicación. Pruebe la conexión navegando a Configuración del dispositivo y seleccionando 'Probar conexión'. Si la prueba de conexión falla, asegúrese de que su smartphone tenga Bluetooth habilitado y esté dentro del alcance (30 pies/10 metros)."
+        },
+        {
+          issue: "Falsas alarmas activándose",
+          solution: "Ajuste la configuración de sensibilidad en la aplicación en Configuración del dispositivo > Sensibilidad de alerta. Si las falsas alarmas continúan, asegúrese de que el colgante se use de forma segura y no esté sujeto a movimientos excesivos durante las actividades normales."
+        },
+        {
+          issue: "El colgante no se conecta al smartphone",
+          solution: "Asegúrese de que el Bluetooth esté habilitado en su smartphone y que el colgante esté dentro del alcance. Si sigue teniendo problemas, vaya a la configuración de Bluetooth de su smartphone, olvide el dispositivo y luego emparéjelo nuevamente a través de la aplicación ICE Alarm."
+        },
+        {
+          issue: "La aplicación no recibe alertas del colgante",
+          solution: "Verifique que las notificaciones estén habilitadas para la aplicación ICE Alarm en la configuración de su teléfono. También verifique que la aplicación tenga los permisos necesarios para la operación en segundo plano y el acceso a la ubicación."
+        }
+      ]
     },
-    {
-      id: 'battery',
-      title: language === 'en' ? 'Battery Issues' : 'Problemas de Batería',
-      icon: <Battery className="h-5 w-5 text-amber-500" />,
-      content: language === 'en'
-        ? `If your ${deviceNames[deviceType]} is experiencing battery problems:
-           1. Ensure you're using the provided charging cable
-           2. Clean the charging port gently with a dry cloth
-           3. Charge for at least 2 hours for a full battery
-           4. If battery drains quickly, check for firmware updates
-           5. Contact support if problems persist after a full reset`
-        : `Si su ${deviceNames[deviceType]} tiene problemas de batería:
-           1. Asegúrese de usar el cable de carga proporcionado
-           2. Limpie el puerto de carga suavemente con un paño seco
-           3. Cargue durante al menos 2 horas para una batería completa
-           4. Si la batería se agota rápidamente, verifique las actualizaciones de firmware
-           5. Contacte con soporte si los problemas persisten después de un reinicio completo`
+    monitor: {
+      en: [
+        {
+          issue: "Health Monitor showing incorrect readings",
+          solution: "Calibrate the device by going to Settings > Calibration. Follow the on-screen instructions to ensure accurate readings. Make sure the sensor is properly placed according to the user manual."
+        },
+        {
+          issue: "Device not syncing data to app",
+          solution: "Ensure Bluetooth is enabled and the device is within range of your smartphone. Check that the monitor has sufficient battery power. If problems persist, force close the app, restart your phone, and try again."
+        },
+        {
+          issue: "Continuous reading mode not working",
+          solution: "Verify that continuous monitoring is enabled in the app settings. The Health Monitor may automatically disable continuous mode when battery is below 20%. Charge the device and try again."
+        },
+        {
+          issue: "Alerts not triggering for abnormal readings",
+          solution: "Check that alert thresholds are correctly set in the app under Health Settings > Alert Thresholds. Ensure your account has emergency contacts configured to receive these alerts."
+        },
+        {
+          issue: "Device charging issues",
+          solution: "Use only the provided charging cable and adapter. Ensure the charging contacts on the device are clean. If the device still won't charge, try a different USB port or adapter. Contact support if issues persist."
+        }
+      ],
+      es: [
+        {
+          issue: "El Monitor de Salud muestra lecturas incorrectas",
+          solution: "Calibre el dispositivo yendo a Configuración > Calibración. Siga las instrucciones en pantalla para asegurar lecturas precisas. Asegúrese de que el sensor esté colocado correctamente según el manual del usuario."
+        },
+        {
+          issue: "El dispositivo no sincroniza datos con la aplicación",
+          solution: "Asegúrese de que el Bluetooth esté habilitado y el dispositivo esté dentro del alcance de su smartphone. Verifique que el monitor tenga suficiente batería. Si los problemas persisten, cierre forzosamente la aplicación, reinicie su teléfono e intente nuevamente."
+        },
+        {
+          issue: "El modo de lectura continua no funciona",
+          solution: "Verifique que el monitoreo continuo esté habilitado en la configuración de la aplicación. El Monitor de Salud puede desactivar automáticamente el modo continuo cuando la batería está por debajo del 20%. Cargue el dispositivo e intente nuevamente."
+        },
+        {
+          issue: "Las alertas no se activan para lecturas anormales",
+          solution: "Verifique que los umbrales de alerta estén correctamente establecidos en la aplicación en Configuración de Salud > Umbrales de Alerta. Asegúrese de que su cuenta tenga contactos de emergencia configurados para recibir estas alertas."
+        },
+        {
+          issue: "Problemas de carga del dispositivo",
+          solution: "Utilice solo el cable y adaptador de carga proporcionados. Asegúrese de que los contactos de carga en el dispositivo estén limpios. Si el dispositivo aún no se carga, pruebe con un puerto o adaptador USB diferente. Contacte a soporte si los problemas persisten."
+        }
+      ]
     },
-    {
-      id: 'bluetooth',
-      title: language === 'en' ? 'Bluetooth Pairing' : 'Emparejamiento Bluetooth',
-      icon: <Bluetooth className="h-5 w-5 text-blue-500" />,
-      content: language === 'en'
-        ? `Having trouble pairing your ${deviceNames[deviceType]} via Bluetooth?
-           1. Make sure the device is in pairing mode (usually press and hold the main button)
-           2. On your smartphone, go to Bluetooth settings and scan for devices
-           3. If the device was previously paired with another phone, reset it first
-           4. Ensure no other devices are currently connected to your ${deviceNames[deviceType]}
-           5. Try moving away from other electronic devices that might cause interference`
-        : `¿Tiene problemas para emparejar su ${deviceNames[deviceType]} a través de Bluetooth?
-           1. Asegúrese de que el dispositivo esté en modo de emparejamiento (generalmente mantenga presionado el botón principal)
-           2. En su smartphone, vaya a la configuración de Bluetooth y busque dispositivos
-           3. Si el dispositivo se emparejó previamente con otro teléfono, reinícielo primero
-           4. Asegúrese de que no haya otros dispositivos conectados actualmente a su ${deviceNames[deviceType]}
-           5. Intente alejarse de otros dispositivos electrónicos que puedan causar interferencia`
+    dispenser: {
+      en: [
+        {
+          issue: "Medication dispenser not releasing pills at scheduled times",
+          solution: "Verify that the medication schedule is correctly programmed in the app. Check that the dispenser has power and is connected to WiFi. Ensure the medication tray is properly loaded and not jammed."
+        },
+        {
+          issue: "Dispenser showing 'Tray Error'",
+          solution: "Remove the medication tray completely, check for any obstructions or stuck pills, then reinsert the tray firmly until you hear a click. If the error persists, clean the tray sensors with a dry cloth."
+        },
+        {
+          issue: "Missed dose notifications not working",
+          solution: "Check app notification permissions on your phone. Verify that your dispenser is connected to WiFi. If using a caregiver account, ensure that dose notifications are enabled in Settings > Care Preferences."
+        },
+        {
+          issue: "WiFi connection issues",
+          solution: "Place the dispenser closer to your WiFi router. Check that your home WiFi is working properly. Reset the dispenser's WiFi connection by holding the reset button for 10 seconds, then set up the connection again in the app."
+        },
+        {
+          issue: "Battery draining too quickly",
+          solution: "The backup battery is designed for emergency use only. Make sure the dispenser is plugged into a power outlet for normal operation. If the battery still drains when plugged in, contact customer support as this may indicate a hardware issue."
+        }
+      ],
+      es: [
+        {
+          issue: "El dispensador de medicamentos no libera píldoras en los horarios programados",
+          solution: "Verifique que el horario de medicación esté correctamente programado en la aplicación. Compruebe que el dispensador tenga energía y esté conectado a WiFi. Asegúrese de que la bandeja de medicamentos esté cargada adecuadamente y no esté atascada."
+        },
+        {
+          issue: "El dispensador muestra 'Error de Bandeja'",
+          solution: "Retire completamente la bandeja de medicamentos, verifique si hay obstrucciones o píldoras atascadas, luego vuelva a insertar la bandeja firmemente hasta que escuche un clic. Si el error persiste, limpie los sensores de la bandeja con un paño seco."
+        },
+        {
+          issue: "Las notificaciones de dosis perdidas no funcionan",
+          solution: "Verifique los permisos de notificación de la aplicación en su teléfono. Compruebe que su dispensador esté conectado a WiFi. Si usa una cuenta de cuidador, asegúrese de que las notificaciones de dosis estén habilitadas en Configuración > Preferencias de Cuidado."
+        },
+        {
+          issue: "Problemas de conexión WiFi",
+          solution: "Coloque el dispensador más cerca de su router WiFi. Verifique que su WiFi doméstica funcione correctamente. Restablezca la conexión WiFi del dispensador manteniendo presionado el botón de reinicio durante 10 segundos, luego configure la conexión nuevamente en la aplicación."
+        },
+        {
+          issue: "La batería se agota demasiado rápido",
+          solution: "La batería de respaldo está diseñada solo para uso de emergencia. Asegúrese de que el dispensador esté conectado a una toma de corriente para el funcionamiento normal. Si la batería aún se agota cuando está enchufada, contacte al servicio de atención al cliente, ya que esto puede indicar un problema de hardware."
+        }
+      ]
     }
-  ];
-  
-  const deviceSpecificIssues = {
-    pendant: [
-      {
-        id: 'sos-button',
-        title: language === 'en' ? 'SOS Button Not Responding' : 'Botón SOS No Responde',
-        icon: <AlertCircle className="h-5 w-5 text-red-500" />,
-        content: language === 'en'
-          ? `If the SOS button on your pendant is not responding:
-             1. Press and hold the button for at least 3 seconds
-             2. Check if the LED indicator flashes when pressed
-             3. Ensure the device is charged and powered on
-             4. Verify the device is properly connected to the app
-             5. Perform a device reset by holding power and SOS buttons for 10 seconds`
-          : `Si el botón SOS de su colgante no responde:
-             1. Mantenga presionado el botón durante al menos 3 segundos
-             2. Verifique si el indicador LED parpadea cuando se presiona
-             3. Asegúrese de que el dispositivo esté cargado y encendido
-             4. Verifique que el dispositivo esté correctamente conectado a la aplicación
-             5. Realice un reinicio del dispositivo manteniendo presionados los botones de encendido y SOS durante 10 segundos`
-      }
-    ],
-    monitor: [
-      {
-        id: 'sensor-readings',
-        title: language === 'en' ? 'Inaccurate Sensor Readings' : 'Lecturas Inexactas del Sensor',
-        icon: <RefreshCw className="h-5 w-5 text-amber-500" />,
-        content: language === 'en'
-          ? `If your Health Monitor is showing inaccurate readings:
-             1. Make sure the device is worn correctly and snugly against the skin
-             2. Clean the sensors with a soft, slightly damp cloth
-             3. Recalibrate the device in the app settings
-             4. Update to the latest firmware version
-             5. Try wearing the device on the other wrist if applicable`
-          : `Si su Monitor de Salud muestra lecturas inexactas:
-             1. Asegúrese de que el dispositivo se use correctamente y ajustado contra la piel
-             2. Limpie los sensores con un paño suave y ligeramente húmedo
-             3. Recalibre el dispositivo en la configuración de la aplicación
-             4. Actualice a la última versión de firmware
-             5. Intente usar el dispositivo en la otra muñeca si es aplicable`
-      }
-    ],
-    dispenser: [
-      {
-        id: 'dispenser-mechanism',
-        title: language === 'en' ? 'Dispensing Mechanism Issues' : 'Problemas del Mecanismo de Dispensación',
-        icon: <Settings className="h-5 w-5 text-blue-500" />,
-        content: language === 'en'
-          ? `If your Medical Dispenser is not dispensing medication properly:
-             1. Check if the medication compartments are properly loaded and closed
-             2. Ensure the dispenser is on a flat, stable surface
-             3. Verify that the correct medication schedule is set in the app
-             4. Clean the dispensing mechanism carefully with compressed air
-             5. Perform a system reset if problems persist`
-          : `Si su Dispensador de Medicamentos no dispensa medicamentos correctamente:
-             1. Verifique si los compartimentos de medicamentos están cargados y cerrados correctamente
-             2. Asegúrese de que el dispensador esté en una superficie plana y estable
-             3. Verifique que el programa correcto de medicamentos esté establecido en la aplicación
-             4. Limpie el mecanismo de dispensación cuidadosamente con aire comprimido
-             5. Realice un reinicio del sistema si los problemas persisten`
-      }
-    ]
   };
   
-  // Combine common issues with device-specific issues
-  const allIssues = [...commonIssues, ...(deviceSpecificIssues[deviceType] || [])];
+  const contentData = troubleshootingData[deviceType][language as 'en' | 'es'];
   
-  // Filter issues based on search query
-  const filteredIssues = searchQuery 
-    ? allIssues.filter(issue => 
-        issue.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        issue.content.toLowerCase().includes(searchQuery.toLowerCase())
-      )
-    : allIssues;
+  const handleContactSupport = () => {
+    // In a real implementation, this would open a support chat or form
+    setShowAdditionalHelp(true);
+  };
+  
+  const supportText = {
+    en: {
+      title: "Need additional help?",
+      contactSupport: "Contact Support",
+      additionalHelp: "If you're still experiencing issues with your device, our support team is available 24/7 to assist you.",
+      callUs: "Call us at 1-800-ICE-HELP",
+      emailUs: "Email: support@icealarm.com",
+      supportHours: "Support hours: 24/7"
+    },
+    es: {
+      title: "¿Necesitas ayuda adicional?",
+      contactSupport: "Contactar Soporte",
+      additionalHelp: "Si aún experimenta problemas con su dispositivo, nuestro equipo de soporte está disponible 24/7 para ayudarlo.",
+      callUs: "Llámenos al 1-800-ICE-HELP",
+      emailUs: "Email: soporte@icealarm.com",
+      supportHours: "Horario de soporte: 24/7"
+    }
+  };
+  
+  const support = language === 'en' ? supportText.en : supportText.es;
   
   return (
-    <Card className="shadow-sm">
-      <CardHeader className="pb-3">
-        <CardTitle className="text-xl flex items-center gap-2">
-          <AlertCircle className="h-5 w-5 text-red-500" />
-          {language === 'en' ? 'Troubleshooting Guide' : 'Guía de Solución de Problemas'}
-        </CardTitle>
-        <CardDescription>
+    <div className="space-y-6">
+      <Alert className="bg-blue-50 border-blue-200">
+        <HelpCircle className="h-4 w-4 text-blue-500" />
+        <AlertDescription className="text-blue-700">
           {language === 'en' 
-            ? `Find solutions for common ${deviceNames[deviceType]} issues` 
-            : `Encuentre soluciones para problemas comunes de ${deviceNames[deviceType]}`}
-        </CardDescription>
-        <div className="mt-2">
-          <div className="relative">
-            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input
-              type="search"
-              placeholder={language === 'en' ? "Search troubleshooting topics..." : "Buscar temas de solución de problemas..."}
-              className="pl-8"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-          </div>
-        </div>
-      </CardHeader>
-      <CardContent>
-        {filteredIssues.length > 0 ? (
-          <Accordion type="single" collapsible className="w-full">
-            {filteredIssues.map(issue => (
-              <AccordionItem key={issue.id} value={issue.id}>
-                <AccordionTrigger className="hover:no-underline">
-                  <div className="flex items-center gap-2 text-left">
-                    {issue.icon}
-                    <span>{issue.title}</span>
-                  </div>
-                </AccordionTrigger>
-                <AccordionContent>
-                  <div className="pl-7 whitespace-pre-line text-muted-foreground">
-                    {issue.content}
-                  </div>
-                </AccordionContent>
-              </AccordionItem>
-            ))}
-          </Accordion>
+            ? 'Common troubleshooting steps for your device.' 
+            : 'Pasos comunes de solución de problemas para su dispositivo.'}
+        </AlertDescription>
+      </Alert>
+      
+      <Accordion type="single" collapsible className="w-full">
+        {contentData.map((item, index) => (
+          <AccordionItem key={index} value={`item-${index}`} className="border-b border-gray-200">
+            <AccordionTrigger className="py-4 flex hover:bg-ice-50 px-3 rounded-md">
+              <div className="flex items-center">
+                <AlertCircle className="h-5 w-5 text-orange-500 mr-2" />
+                <span>{item.issue}</span>
+              </div>
+            </AccordionTrigger>
+            <AccordionContent className="pl-10 pr-4 pb-4 text-gray-600">
+              {item.solution}
+            </AccordionContent>
+          </AccordionItem>
+        ))}
+      </Accordion>
+      
+      <div className="border-t border-gray-200 pt-6">
+        <h3 className="text-lg font-medium mb-4">{support.title}</h3>
+        
+        {!showAdditionalHelp ? (
+          <Button 
+            onClick={handleContactSupport}
+            variant="outline" 
+            className="w-full"
+          >
+            {support.contactSupport}
+          </Button>
         ) : (
-          <div className="text-center py-10">
-            <AlertCircle className="h-12 w-12 text-muted-foreground mx-auto mb-3 opacity-50" />
-            <p className="text-muted-foreground">
-              {language === 'en' 
-                ? "No troubleshooting topics match your search" 
-                : "No hay temas de solución de problemas que coincidan con su búsqueda"}
-            </p>
+          <div className="space-y-4 p-4 border rounded-md bg-ice-50">
+            <p>{support.additionalHelp}</p>
+            <div className="space-y-2">
+              <div className="flex items-center">
+                <CheckCircle className="h-4 w-4 text-green-500 mr-2" />
+                <span>{support.callUs}</span>
+              </div>
+              <div className="flex items-center">
+                <CheckCircle className="h-4 w-4 text-green-500 mr-2" />
+                <span>{support.emailUs}</span>
+              </div>
+              <div className="flex items-center">
+                <CheckCircle className="h-4 w-4 text-green-500 mr-2" />
+                <span>{support.supportHours}</span>
+              </div>
+            </div>
           </div>
         )}
-        
-        <div className="mt-8 p-4 bg-ice-50 rounded-md border border-ice-100">
-          <h3 className="font-medium mb-2 flex items-center gap-2">
-            <AlertCircle className="h-4 w-4 text-ice-600" />
-            {language === 'en' ? 'Need more help?' : '¿Necesita más ayuda?'}
-          </h3>
-          <p className="text-sm text-muted-foreground">
-            {language === 'en' 
-              ? `If you're still experiencing issues with your ${deviceNames[deviceType]}, please contact our customer support at support@icealarm.es or call us at +34 900 123 456.` 
-              : `Si aún experimenta problemas con su ${deviceNames[deviceType]}, comuníquese con nuestro servicio de atención al cliente en support@icealarm.es o llámenos al +34 900 123 456.`}
-          </p>
-        </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 };
 

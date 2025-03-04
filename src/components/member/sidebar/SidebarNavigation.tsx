@@ -12,7 +12,8 @@ import {
   MessageSquare,
   PlusCircle,
   Stethoscope,
-  CalendarCheck
+  CalendarCheck,
+  PhoneCall
 } from "lucide-react";
 import SidebarItem from "./SidebarItem";
 
@@ -105,6 +106,13 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({
         active={isActive("/health/medications")} 
         collapsed={collapsed}
         onClick={() => navigate("/health/medications")}
+      />
+      <SidebarItem 
+        icon={<PhoneCall size={18} />} 
+        label="Emergency Contacts" 
+        active={isActive("/emergency-contacts")} 
+        collapsed={collapsed}
+        onClick={() => navigate("/emergency-contacts")}
       />
       
       <div className="my-2 px-4 text-xs font-semibold text-muted-foreground">
