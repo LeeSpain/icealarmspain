@@ -31,8 +31,8 @@ const contactSchema = z.object({
   receivesUpdates: z.boolean(),
 });
 
-// Ensure schema type exactly matches ContactFormValues
-type ContactFormSchema = z.infer<typeof contactSchema>;
+// We'll use the Zod schema to also define our form type
+type FormData = z.infer<typeof contactSchema>;
 
 interface AddContactTabProps {
   onAddContact: (contact: Omit<Contact, 'id'>) => Promise<boolean>;
@@ -43,7 +43,7 @@ const AddContactTab: React.FC<AddContactTabProps> = ({ onAddContact }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Initialize form with default values
-  const form = useForm<ContactFormValues>({
+  const form = useForm<FormData>({
     resolver: zodResolver(contactSchema),
     defaultValues: {
       name: '',
@@ -56,7 +56,7 @@ const AddContactTab: React.FC<AddContactTabProps> = ({ onAddContact }) => {
     },
   });
 
-  const onSubmit = async (data: ContactFormValues) => {
+  const onSubmit = async (data: FormData) => {
     setIsSubmitting(true);
     try {
       // The form validation ensures all required fields are present

@@ -1,4 +1,3 @@
-
 export interface Contact {
   id: string;
   name: string;
@@ -32,6 +31,7 @@ export interface TestLog {
   message: string;
 }
 
+// Make sure all properties are required, matching the Zod schema
 export type ContactFormValues = {
   name: string;
   relationship: string;
