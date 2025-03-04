@@ -1,32 +1,10 @@
 
 import React, { createContext, useState, useContext, useEffect } from 'react';
-import { auth, firebaseAuth } from '../firebase';
+import { auth, firebaseAuth } from '../../firebase';
+import { User, AuthContextType } from './types';
+import { determineUserRole } from './utils';
 
-// Define the User type
-export interface User {
-  uid: string;
-  id?: string;
-  email: string | null;
-  name?: string | null;
-  displayName?: string | null;
-  role?: string;
-  profileCompleted?: boolean;
-  language?: string;
-}
-
-// Define the AuthContext type
-interface AuthContextType {
-  user: User | null;
-  isAuthenticated: boolean;
-  isLoading: boolean;
-  login: (email: string, password: string, rememberMe?: boolean) => Promise<User>;
-  signIn: (email: string, password: string, rememberMe?: boolean) => Promise<boolean>;
-  signUp: (email: string, password: string) => Promise<User>;
-  logout: () => Promise<void>;
-  updateUserProfile: (displayName: string) => Promise<void>;
-}
-
-// Create the AuthContext
+// Create the AuthContext with default values
 const AuthContext = createContext<AuthContextType>({
   user: null,
   isAuthenticated: false,
@@ -50,17 +28,6 @@ const AuthContext = createContext<AuthContextType>({
     throw new Error('updateUserProfile not implemented');
   },
 });
-
-// Helper function to determine user role based on email
-const determineUserRole = (email: string): string => {
-  if (email.includes('admin')) {
-    return 'admin';
-  } else if (email.includes('agent')) {
-    return 'callcenter';
-  } else {
-    return 'member';
-  }
-};
 
 // Create the AuthProvider component
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
