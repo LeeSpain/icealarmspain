@@ -44,13 +44,16 @@ export const LoginContent: React.FC<LoginContentProps> = ({
                 </p>
                 <p className="text-xs">
                   {language === 'en' 
-                    ? "Using mock authentication. To enable real Firebase auth, add Firebase config values to your .env file." 
-                    : "Usando autenticación simulada. Para habilitar la autenticación real de Firebase, agregue los valores de configuración de Firebase a su archivo .env."}
+                    ? "Using mock authentication. To enable real Firebase auth, add Firebase config values to your .env file:" 
+                    : "Usando autenticación simulada. Para habilitar la autenticación real de Firebase, agregue los valores de configuración de Firebase a su archivo .env:"}
                 </p>
                 <div className="mt-2 p-2 bg-black/10 dark:bg-white/10 rounded text-xs font-mono">
                   VITE_FIREBASE_API_KEY=your_api_key<br />
                   VITE_FIREBASE_AUTH_DOMAIN=your_project.firebaseapp.com<br />
-                  ...
+                  VITE_FIREBASE_PROJECT_ID=your_project_id<br />
+                  VITE_FIREBASE_STORAGE_BUCKET=your_storage_bucket<br />
+                  VITE_FIREBASE_MESSAGING_SENDER_ID=your_messaging_id<br />
+                  VITE_FIREBASE_APP_ID=your_app_id
                 </div>
               </AlertDescription>
             </Alert>

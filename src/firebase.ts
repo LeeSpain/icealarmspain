@@ -1,22 +1,29 @@
+
 // Firebase configuration
 // This file supports both mock implementation for development and real Firebase for production
 
 import { initializeApp } from 'firebase/app';
 import { 
   getAuth, 
-  createUserWithEmailAndPassword, 
-  signInWithEmailAndPassword, 
-  signOut, 
-  updateProfile,
+  createUserWithEmailAndPassword as firebaseCreateUser, 
+  signInWithEmailAndPassword as firebaseSignIn, 
+  signOut as firebaseSignOut, 
+  updateProfile as firebaseUpdateProfile,
   browserLocalPersistence,
   browserSessionPersistence,
-  setPersistence
+  setPersistence as firebaseSetPersistence
 } from 'firebase/auth';
 
 // Check if we have Firebase config in environment variables
 const hasRealFirebaseConfig = 
   import.meta.env.VITE_FIREBASE_API_KEY && 
   import.meta.env.VITE_FIREBASE_AUTH_DOMAIN;
+
+console.log('Firebase config check:', {
+  hasConfig: hasRealFirebaseConfig,
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY ? 'Defined' : 'Undefined',
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN ? 'Defined' : 'Undefined'
+});
 
 // Mock Auth class for development (when no Firebase config is available)
 class MockAuth {
@@ -265,6 +272,7 @@ class MockPayment {
 // Export auth and payment instances based on configuration
 let auth;
 let payment;
+let firebaseApp;
 
 if (hasRealFirebaseConfig) {
   // Initialize real Firebase if config is available
@@ -278,26 +286,75 @@ if (hasRealFirebaseConfig) {
   };
 
   console.log('Using real Firebase authentication');
-  const app = initializeApp(firebaseConfig);
-  auth = getAuth(app);
   
-  // We still use mock payment since we don't have real payment integration yet
-  payment = new MockPayment();
+  try {
+    firebaseApp = initializeApp(firebaseConfig);
+    auth = getAuth(firebaseApp);
+    
+    // We still use mock payment since we don't have real payment integration yet
+    payment = new MockPayment();
+  } catch (error) {
+    console.error('Error initializing Firebase:', error);
+    console.warn('Falling back to mock authentication');
+    auth = new MockAuth();
+    payment = new MockPayment();
+  }
 } else {
   console.log('Using mock authentication - for production, set Firebase environment variables');
   auth = new MockAuth();
   payment = new MockPayment();
 }
 
+// Export wrapped methods to ensure consistent interface between real and mock
+export const signInWithEmailAndPassword = async (email: string, password: string) => {
+  if (hasRealFirebaseConfig) {
+    return firebaseSignIn(auth, email, password);
+  } else {
+    return (auth as MockAuth).signInWithEmailAndPassword(email, password);
+  }
+};
+
+export const createUserWithEmailAndPassword = async (email: string, password: string) => {
+  if (hasRealFirebaseConfig) {
+    return firebaseCreateUser(auth, email, password);
+  } else {
+    return (auth as MockAuth).createUserWithEmailAndPassword(email, password);
+  }
+};
+
+export const signOut = async () => {
+  if (hasRealFirebaseConfig) {
+    return firebaseSignOut(auth);
+  } else {
+    return (auth as MockAuth).signOut();
+  }
+};
+
+export const updateProfile = async (user: any, profile: { displayName?: string, photoURL?: string }) => {
+  if (hasRealFirebaseConfig) {
+    return firebaseUpdateProfile(user, profile);
+  } else {
+    return (auth as MockAuth).updateProfile(user, profile);
+  }
+};
+
+export const setPersistence = async (persistenceType: string) => {
+  if (hasRealFirebaseConfig) {
+    return firebaseSetPersistence(auth, persistenceType === 'local' ? browserLocalPersistence : browserSessionPersistence);
+  } else {
+    return (auth as MockAuth).setPersistence(persistenceType);
+  }
+};
+
 export { auth, payment };
 
-// Export real Firebase auth methods to be used with real Firebase
+// Export Firebase auth methods compatibility object
 export const firebaseAuth = {
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  signOut,
-  updateProfile,
-  setPersistence,
+  createUserWithEmailAndPassword: (email: string, password: string) => createUserWithEmailAndPassword(email, password),
+  signInWithEmailAndPassword: (email: string, password: string) => signInWithEmailAndPassword(email, password),
+  signOut: () => signOut(),
+  updateProfile: (user: any, profile: { displayName?: string, photoURL?: string }) => updateProfile(user, profile),
+  setPersistence: (persistenceType: string) => setPersistence(persistenceType),
   browserLocalPersistence,
   browserSessionPersistence
 };

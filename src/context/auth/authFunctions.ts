@@ -1,5 +1,6 @@
 
-import { auth, firebaseAuth } from '../../firebase';
+import { auth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, updateProfile, setPersistence } from '../../firebase';
+import { firebaseAuth } from '../../firebase';
 import { User } from './types';
 import { determineUserRole } from './utils';
 
@@ -10,14 +11,14 @@ export const login = async (email: string, password: string, rememberMe = false)
     
     // Set persistence type based on remember me option
     if (rememberMe) {
-      await auth.setPersistence(firebaseAuth.browserLocalPersistence);
+      await setPersistence('local');
       localStorage.setItem('authPersistence', 'local');
     } else {
-      await auth.setPersistence(firebaseAuth.browserSessionPersistence);
+      await setPersistence('session');
       localStorage.setItem('authPersistence', 'session');
     }
     
-    const { user: authUser } = await auth.signInWithEmailAndPassword(email, password);
+    const { user: authUser } = await signInWithEmailAndPassword(email, password);
     if (!authUser) {
       throw new Error('Failed to get user after login');
     }
@@ -53,7 +54,7 @@ export const signIn = async (email: string, password: string, rememberMe = false
 export const signUp = async (email: string, password: string): Promise<User> => {
   try {
     console.log('Attempting signup for:', email);
-    const { user: authUser } = await auth.createUserWithEmailAndPassword(email, password);
+    const { user: authUser } = await createUserWithEmailAndPassword(email, password);
     if (!authUser) {
       throw new Error('Failed to get user after signup');
     }
@@ -78,7 +79,7 @@ export const signUp = async (email: string, password: string): Promise<User> => 
 export const logout = async (): Promise<void> => {
   try {
     console.log('Logging out user');
-    await auth.signOut();
+    await signOut();
     // Clear remembered auth persistence
     localStorage.removeItem('authPersistence');
   } catch (error) {
@@ -91,7 +92,7 @@ export const logout = async (): Promise<void> => {
 export const updateUserProfile = async (displayName: string): Promise<void> => {
   try {
     if (auth.currentUser) {
-      await auth.updateProfile(auth.currentUser, { displayName });
+      await updateProfile(auth.currentUser, { displayName });
       console.log('User profile updated:', displayName);
     } else {
       throw new Error('No user is signed in');
