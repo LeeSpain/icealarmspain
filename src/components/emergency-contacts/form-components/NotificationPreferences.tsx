@@ -3,11 +3,21 @@ import React from 'react';
 import { useLanguage } from '@/context/LanguageContext';
 import { FormField } from '@/components/ui/form';
 import { UseFormReturn } from 'react-hook-form';
-import { ContactFormValues } from '../types';
 import FormSectionWrapper from './FormSectionWrapper';
 
+// Use the same form type as in other components
+type FormProps = UseFormReturn<{
+  name: string;
+  relationship: string;
+  phone: string;
+  email: string;
+  priority: number;
+  receivesAlerts: boolean;
+  receivesUpdates: boolean;
+}>;
+
 interface NotificationPreferencesProps {
-  form: UseFormReturn<ContactFormValues>;
+  form: FormProps;
 }
 
 const NotificationPreferences: React.FC<NotificationPreferencesProps> = ({ form }) => {
