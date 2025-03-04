@@ -41,8 +41,6 @@ const Footer: React.FC = () => {
               <li><Link to="/devices/sos-pendant" onClick={handleClick} className="text-muted-foreground hover:text-ice-600 transition-colors">SOS Pendant</Link></li>
               <li><Link to="/devices/medical-dispenser" onClick={handleClick} className="text-muted-foreground hover:text-ice-600 transition-colors">Medical Dispenser</Link></li>
               <li><Link to="/devices/glucose-monitor" onClick={handleClick} className="text-muted-foreground hover:text-ice-600 transition-colors">Glucose Monitor</Link></li>
-              <li><Link to="/products" onClick={handleClick} className="text-muted-foreground hover:text-ice-600 transition-colors">AI Guardian</Link></li>
-              <li><Link to="/dashboard" onClick={handleClick} className="text-muted-foreground hover:text-ice-600 transition-colors">ICE Members Dashboard</Link></li>
             </ul>
           </div>
           
