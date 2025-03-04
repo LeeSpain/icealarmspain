@@ -1,11 +1,13 @@
 
 import React from "react";
-import { useLanguage } from "@/context/LanguageContext";
+import { useLanguage, Language } from "@/context/LanguageContext";
 import { Link } from "react-router-dom";
 
-const PricingInfo: React.FC = () => {
-  const { language } = useLanguage();
-  
+interface PricingInfoProps {
+  language: Language;
+}
+
+const PricingInfo: React.FC<PricingInfoProps> = ({ language }) => {
   return (
     <div className="container mx-auto px-4 max-w-4xl">
       <div className="py-8 px-4 bg-white rounded-lg shadow-md">

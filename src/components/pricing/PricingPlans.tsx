@@ -2,6 +2,7 @@
 import React from "react";
 import { AlertCircle } from "lucide-react";
 import PricingPlan from "./PricingPlan";
+import { Language } from "@/context/LanguageContext";
 
 interface PricingPlansProps {
   plans: Array<{
@@ -11,7 +12,7 @@ interface PricingPlansProps {
     features: string[];
     isPopular?: boolean;
   }>;
-  language: string;
+  language: Language;
 }
 
 const PricingPlans: React.FC<PricingPlansProps> = ({ plans, language }) => {

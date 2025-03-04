@@ -2,9 +2,10 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ButtonCustom } from "@/components/ui/button-custom";
+import { Language } from "@/context/LanguageContext";
 
 interface PricingActionsProps {
-  language: string;
+  language: Language;
 }
 
 const PricingActions: React.FC<PricingActionsProps> = ({ language }) => {

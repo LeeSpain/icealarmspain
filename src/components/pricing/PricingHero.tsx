@@ -1,9 +1,10 @@
 
 import React from "react";
 import { Shield, Sparkles } from "lucide-react";
+import { Language } from "@/context/LanguageContext";
 
 interface PricingHeroProps {
-  language: string;
+  language: Language;
 }
 
 const PricingHero: React.FC<PricingHeroProps> = ({ language }) => {
