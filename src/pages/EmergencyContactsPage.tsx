@@ -184,7 +184,7 @@ const EmergencyContactsPage: React.FC = () => {
         <div className="container mx-auto px-4 py-8">
           <PageHeader
             title={language === 'en' ? "Emergency Contacts" : "Contactos de Emergencia"}
-            description={language === 'en' 
+            subtitle={language === 'en' 
               ? "Manage your emergency contacts and test the alert system."
               : "Gestiona tus contactos de emergencia y prueba el sistema de alertas."}
           />
