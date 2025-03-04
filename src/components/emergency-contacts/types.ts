@@ -10,4 +10,24 @@ export interface Contact {
   receivesUpdates: boolean;
 }
 
+export type AlertType = 'emergency' | 'medical' | 'activity' | 'all';
+
 export type TestStatus = 'idle' | 'sending' | 'success' | 'error';
+
+export interface TestResult {
+  id: string;
+  timestamp: Date;
+  type: AlertType;
+  success: boolean;
+  recipients: string[];
+  errorMessage?: string;
+}
+
+export interface TestLog {
+  contactId: string;
+  timestamp: Date;
+  alertType: AlertType;
+  delivered: boolean;
+  deliveryMethod: 'sms' | 'email' | 'call';
+  message: string;
+}

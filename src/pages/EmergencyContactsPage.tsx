@@ -1,3 +1,4 @@
+
 import React from "react";
 import { useLanguage } from "@/context/LanguageContext";
 import MemberSidebar from "@/components/member/MemberSidebar";
@@ -19,12 +20,17 @@ const EmergencyContactsPage: React.FC = () => {
     newContact,
     activeTab,
     testStatus,
+    selectedAlertType,
+    testResults,
+    testLogs,
     setActiveTab,
     handleAddContact,
     handleDeleteContact,
     handleToggleSetting,
     handleInputChange,
-    handleTestAlerts
+    handleTestAlerts,
+    handleChangeAlertType,
+    clearTestHistory
   } = useEmergencyContacts({ language });
   
   const content = {
@@ -146,7 +152,12 @@ const EmergencyContactsPage: React.FC = () => {
                 contacts={contacts}
                 language={language}
                 testStatus={testStatus}
+                selectedAlertType={selectedAlertType}
+                testResults={testResults}
+                testLogs={testLogs}
                 onTestAlerts={handleTestAlerts}
+                onChangeAlertType={handleChangeAlertType}
+                onClearHistory={clearTestHistory}
                 setActiveTab={setActiveTab}
               />
             </TabsContent>
