@@ -1,23 +1,29 @@
 
 import { Activity, BellRing, PlusSquare } from "lucide-react";
-import React from 'react';
+import { LucideIcon } from "lucide-react";
+
+export interface AITopic {
+  id: string;
+  label: string;
+  icon: LucideIcon;
+}
 
 // Topics the AI can help with
-export const AI_TOPICS = {
+export const AI_TOPICS: Record<string, AITopic[]> = {
   en: [
-    { id: 'health', label: 'Health Data', icon: <Activity className="h-4 w-4" /> },
-    { id: 'devices', label: 'Device Setup', icon: <BellRing className="h-4 w-4" /> },
-    { id: 'medications', label: 'Medications', icon: <PlusSquare className="h-4 w-4" /> },
+    { id: 'health', label: 'Health Data', icon: Activity },
+    { id: 'devices', label: 'Device Setup', icon: BellRing },
+    { id: 'medications', label: 'Medications', icon: PlusSquare },
   ],
   es: [
-    { id: 'health', label: 'Datos de Salud', icon: <Activity className="h-4 w-4" /> },
-    { id: 'devices', label: 'Configuración de Dispositivos', icon: <BellRing className="h-4 w-4" /> },
-    { id: 'medications', label: 'Medicamentos', icon: <PlusSquare className="h-4 w-4" /> },
+    { id: 'health', label: 'Datos de Salud', icon: Activity },
+    { id: 'devices', label: 'Configuración de Dispositivos', icon: BellRing },
+    { id: 'medications', label: 'Medicamentos', icon: PlusSquare },
   ]
 };
 
 // Knowledge base for the AI to reference
-export const KNOWLEDGE_BASE = {
+export const KNOWLEDGE_BASE: Record<string, Record<string, string[]>> = {
   health: {
     en: [
       "Your blood pressure readings show a stable trend over the past month.",

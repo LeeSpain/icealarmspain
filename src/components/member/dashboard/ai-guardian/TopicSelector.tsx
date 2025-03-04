@@ -10,6 +10,7 @@ interface TopicSelectorProps {
 
 const TopicSelector: React.FC<TopicSelectorProps> = ({ selectedTopic, onTopicSelect }) => {
   const { language } = useLanguage();
+  const lang = language === 'en' ? 'en' : 'es';
   
   return (
     <>
@@ -19,23 +20,26 @@ const TopicSelector: React.FC<TopicSelectorProps> = ({ selectedTopic, onTopicSel
             {language === 'en' ? 'Discussing:' : 'Discutiendo:'}
           </span>
           <span className="px-2 py-0.5 bg-guardian-100 text-guardian-700 rounded-full flex items-center">
-            {AI_TOPICS[language === 'en' ? 'en' : 'es'].find(t => t.id === selectedTopic)?.icon}
-            <span className="ml-1">
-              {AI_TOPICS[language === 'en' ? 'en' : 'es'].find(t => t.id === selectedTopic)?.label}
+            {React.createElement(
+              AI_TOPICS[lang].find(t => t.id === selectedTopic)?.icon || 'div',
+              { className: "h-4 w-4 mr-1" }
+            )}
+            <span>
+              {AI_TOPICS[lang].find(t => t.id === selectedTopic)?.label}
             </span>
           </span>
         </div>
       )}
       
       <div className="flex flex-wrap gap-2">
-        {AI_TOPICS[language === 'en' ? 'en' : 'es'].map(topic => (
+        {AI_TOPICS[lang].map(topic => (
           <button
             key={topic.id}
             onClick={() => onTopicSelect(topic.id)}
             className="px-2 py-1 text-xs bg-slate-100 hover:bg-slate-200 rounded-md flex items-center"
           >
-            {topic.icon}
-            <span className="ml-1">{topic.label}</span>
+            {React.createElement(topic.icon, { className: "h-4 w-4 mr-1" })}
+            <span>{topic.label}</span>
           </button>
         ))}
       </div>
