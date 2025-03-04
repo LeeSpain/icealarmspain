@@ -4,17 +4,10 @@ import { useLanguage } from '@/context/LanguageContext';
 import { FormField } from '@/components/ui/form';
 import { UseFormReturn } from 'react-hook-form';
 import FormSectionWrapper from './FormSectionWrapper';
+import { ContactFormSchemaType } from '../AddContactTab';
 
 interface NotificationPreferencesProps {
-  form: UseFormReturn<{
-    name: string;
-    relationship: string;
-    phone: string;
-    email: string;
-    priority: number;
-    receivesAlerts: boolean;
-    receivesUpdates: boolean;
-  }>;
+  form: UseFormReturn<ContactFormSchemaType>;
 }
 
 const NotificationPreferences: React.FC<NotificationPreferencesProps> = ({ form }) => {

@@ -6,7 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useLanguage } from '@/context/LanguageContext';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Form } from '@/components/ui/form';
-import { Contact, ContactFormValues } from './types';
+import { Contact } from './types';
 import ContactBasicInfo from './form-components/ContactBasicInfo';
 import ContactPriority from './form-components/ContactPriority';
 import NotificationPreferences from './form-components/NotificationPreferences';
@@ -32,7 +32,7 @@ const contactSchema = z.object({
 });
 
 // Create a type from the Zod schema to ensure they match
-type FormSchemaType = z.infer<typeof contactSchema>;
+export type ContactFormSchemaType = z.infer<typeof contactSchema>;
 
 interface AddContactTabProps {
   onAddContact: (contact: Omit<Contact, 'id'>) => Promise<boolean>;
@@ -43,7 +43,7 @@ const AddContactTab: React.FC<AddContactTabProps> = ({ onAddContact }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Use the Zod schema type for the form
-  const form = useForm<FormSchemaType>({
+  const form = useForm<ContactFormSchemaType>({
     resolver: zodResolver(contactSchema),
     defaultValues: {
       name: '',
@@ -56,7 +56,7 @@ const AddContactTab: React.FC<AddContactTabProps> = ({ onAddContact }) => {
     },
   });
 
-  const onSubmit = async (data: FormSchemaType) => {
+  const onSubmit = async (data: ContactFormSchemaType) => {
     setIsSubmitting(true);
     try {
       // The form validation ensures all required fields are present

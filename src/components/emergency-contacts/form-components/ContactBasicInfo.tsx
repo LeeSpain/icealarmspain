@@ -6,17 +6,10 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { User, Users, Phone, Mail } from 'lucide-react';
 import { UseFormReturn } from 'react-hook-form';
+import { ContactFormSchemaType } from '../AddContactTab';
 
 interface ContactBasicInfoProps {
-  form: UseFormReturn<{
-    name: string;
-    relationship: string;
-    phone: string;
-    email: string;
-    priority: number;
-    receivesAlerts: boolean;
-    receivesUpdates: boolean;
-  }>;
+  form: UseFormReturn<ContactFormSchemaType>;
 }
 
 const ContactBasicInfo: React.FC<ContactBasicInfoProps> = ({ form }) => {
