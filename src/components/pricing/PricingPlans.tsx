@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useEffect } from "react";
 import PricingPlan from "./PricingPlan";
 import { Link } from "react-router-dom";
 
@@ -17,6 +17,11 @@ interface PricingPlansProps {
 }
 
 const PricingPlans: React.FC<PricingPlansProps> = ({ plans, language }) => {
+  // Add useEffect to scroll to top when component mounts
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+  
   const getMonthlyPrice = (deviceCount: number) => {
     const basePrice = 24.99;
     let discount = 0;
@@ -41,7 +46,7 @@ const PricingPlans: React.FC<PricingPlansProps> = ({ plans, language }) => {
             features={plan.features}
             isPopular={plan.isPopular}
             ctaText={language === 'en' ? 'Select Plan' : 'Seleccionar Plan'}
-            ctaUrl="/join" // Changed from "/checkout" to "/join"
+            ctaUrl="/join" 
             language={language}
           />
         ))}

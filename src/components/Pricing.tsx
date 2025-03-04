@@ -1,10 +1,8 @@
-
 import React from "react";
 import { useLanguage } from "@/context/LanguageContext";
 import { useNavigate } from "react-router-dom";
 import PricingHero from "./pricing/PricingHero";
 import PricingPlans from "./pricing/PricingPlans";
-import PricingInfo from "./pricing/PricingInfo";
 import PricingActions from "./pricing/PricingActions";
 
 const Pricing: React.FC = () => {
@@ -93,7 +91,6 @@ const Pricing: React.FC = () => {
     <section id="pricing" className="py-20 bg-gradient-to-b from-white to-ice-50">
       <PricingHero language={language} />
       <PricingPlans plans={plans} language={language} />
-      <PricingInfo language={language} />
       <PricingActions language={language} />
     </section>
   );

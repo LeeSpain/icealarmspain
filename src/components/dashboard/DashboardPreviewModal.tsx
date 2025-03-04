@@ -1,5 +1,4 @@
-
-import React from "react";
+import React, { useEffect } from "react";
 import { X } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useLanguage } from "@/context/LanguageContext";
@@ -16,6 +15,17 @@ const DashboardPreviewModal: React.FC<DashboardPreviewModalProps> = ({
   onOpenChange,
 }) => {
   const { language } = useLanguage();
+
+  useEffect(() => {
+    if (open) {
+      window.scrollTo(0, 0);
+    }
+  }, [open]);
+
+  const handleLinkClick = () => {
+    window.scrollTo(0, 0);
+    onOpenChange(false);
+  };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -121,7 +131,7 @@ const DashboardPreviewModal: React.FC<DashboardPreviewModalProps> = ({
                   ? 'Last update: 5 minutes ago'
                   : 'Última actualización: hace 5 minutos'}
               </div>
-              <Link to="/join">
+              <Link to="/join" onClick={handleLinkClick}>
                 <ButtonCustom size="sm">
                   {language === 'en' ? 'Sign Up Now' : 'Regístrate Ahora'}
                 </ButtonCustom>

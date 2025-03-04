@@ -27,6 +27,11 @@ const PricingPlan: React.FC<PricingPlanProps> = ({
   ctaUrl,
   language
 }) => {
+  // Function to handle click and scroll to top
+  const handleClick = () => {
+    window.scrollTo(0, 0);
+  };
+
   return (
     <div className={`rounded-xl overflow-hidden transition-all duration-300 ${
       isPopular 
@@ -59,7 +64,7 @@ const PricingPlan: React.FC<PricingPlanProps> = ({
           ))}
         </ul>
         
-        <Link to={ctaUrl}>
+        <Link to={ctaUrl} onClick={handleClick}>
           <ButtonCustom 
             variant={isPopular ? "primary" : "outline"} 
             className={`w-full ${isPopular ? "bg-ice-600 hover:bg-ice-700" : "border-ice-600 text-ice-600 hover:bg-ice-50"}`}
