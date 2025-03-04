@@ -1,10 +1,10 @@
 
 import React from 'react';
-import { useAuth } from '@/context/AuthContext';
+import { useAuth } from '@/context/auth';
 import SidebarHeader from './SidebarHeader';
 import SidebarNavigation from './SidebarNavigation';
 import UserProfile from './UserProfile';
-import { User } from '@/context/AuthContext';
+import { User } from '@/context/auth';
 import { cn } from '@/lib/utils';
 
 interface SidebarProps {

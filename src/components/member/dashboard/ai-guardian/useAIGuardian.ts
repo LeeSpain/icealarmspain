@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { toast } from "react-toastify";
 import { useLanguage } from "@/context/LanguageContext";
-import { useAuth } from "@/context/AuthContext";
+import { useAuth } from "@/context/auth";
 import { KNOWLEDGE_BASE } from './constants';
 
 export const useAIGuardian = () => {

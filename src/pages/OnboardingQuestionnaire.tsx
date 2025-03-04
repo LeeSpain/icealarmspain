@@ -2,7 +2,7 @@
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useLanguage } from "@/context/LanguageContext";
-import { useAuth } from "@/context/AuthContext";
+import { useAuth } from "@/context/auth";
 import QuestionnaireLayout from "@/components/questionnaire/QuestionnaireLayout";
 import QuestionnaireForm from "@/components/questionnaire/QuestionnaireForm";
 

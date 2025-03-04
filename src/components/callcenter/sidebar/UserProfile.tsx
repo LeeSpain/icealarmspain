@@ -1,12 +1,12 @@
 
 import React, { useState } from "react";
 import { LogOut, User as UserIcon, Circle } from "lucide-react";
-import { User } from "@/context/AuthContext";
+import { User } from "@/context/auth";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { ModeToggle } from "@/components/mode-toggle";
 import { Badge } from "@/components/ui/badge";
-import { useAuth } from "@/context/AuthContext";
+import { useAuth } from "@/context/auth";
 import { useNavigate } from "react-router-dom";
 import { 
   DropdownMenu,

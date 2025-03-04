@@ -1,10 +1,9 @@
-
 import React, { useState } from "react";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import MemberSidebar from "@/components/member/MemberSidebar";
 import { useLanguage } from "@/context/LanguageContext";
-import { useAuth } from "@/context/AuthContext";
+import { useAuth } from "@/context/auth";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { User, Phone, Home, Mail, Shield, UserCog, Key } from "lucide-react";
 import { Button } from "@/components/ui/button";

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Menu, X, LogOut } from "lucide-react";
 import Logo from "./Logo";
@@ -6,7 +5,7 @@ import { ButtonCustom } from "./ui/button-custom";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import LanguageSwitcher from "./LanguageSwitcher";
 import { useLanguage } from "@/context/LanguageContext";
-import { useAuth } from "@/context/AuthContext";
+import { useAuth } from "@/context/auth";
 
 const Navbar: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -16,7 +15,6 @@ const Navbar: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   
-  // Add debugging to track the translation system
   console.log("Navbar component rendering, path:", location.pathname);
   console.log("Current language:", language);
   console.log("Available translations:", t("nav.home"), t("nav.devices"), t("nav.signup"));
@@ -47,7 +45,6 @@ const Navbar: React.FC = () => {
     return user?.role === 'admin' ? "/admin" : "/dashboard";
   };
   
-  // Use hardcoded strings as fallback to ensure something displays in preview
   const navLinks = [
     { name: language === 'en' ? "Home" : "Inicio", href: "/", isAnchor: false },
     { name: language === 'en' ? "Devices" : "Dispositivos", href: "/products", isAnchor: false },
@@ -80,7 +77,6 @@ const Navbar: React.FC = () => {
     }
   };
   
-  // Use hardcoded strings as fallbacks for important UI elements
   const loginText = language === 'en' ? "Login" : "Iniciar Sesión";
   const signupText = language === 'en' ? "Sign Up" : "Registrarse";
   const logoutText = language === 'en' ? "Logout" : "Cerrar Sesión";
@@ -97,7 +93,6 @@ const Navbar: React.FC = () => {
             <Logo />
           </Link>
           
-          {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
             {navLinks.map((link) => (
               <span key={link.name}>
@@ -135,7 +130,6 @@ const Navbar: React.FC = () => {
             )}
           </div>
           
-          {/* Mobile Menu Button */}
           <div className="flex md:hidden items-center space-x-2">
             <LanguageSwitcher />
             <button
@@ -153,7 +147,6 @@ const Navbar: React.FC = () => {
         </div>
       </div>
       
-      {/* Mobile Menu */}
       {isMobileMenuOpen && (
         <div className="md:hidden bg-white border-t">
           <div className="container mx-auto px-4 py-4 space-y-3">

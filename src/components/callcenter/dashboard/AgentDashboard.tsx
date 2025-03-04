@@ -1,6 +1,6 @@
 
 import React from "react";
-import { useAuth } from "@/context/AuthContext";
+import { useAuth } from "@/context/auth";
 import { mockCallData } from "../stats/mock-data";
 import { mockTickets } from "../ticketing/mock-data";
 import { getMockNotifications } from "../notifications/mock-notifications";

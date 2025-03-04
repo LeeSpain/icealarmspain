@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { ToastContainer, toast } from 'react-toastify';
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "@/context/AuthContext";
+import { useAuth } from "@/context/auth";
 import { useLanguage } from "@/context/LanguageContext";
 import 'react-toastify/dist/ReactToastify.css';
 
