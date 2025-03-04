@@ -32,12 +32,6 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({ orderData }) => {
     console.log("OrderSummary productTax:", orderData.productTax);
     console.log("OrderSummary shippingTotal:", orderData.shippingTotal);
     console.log("OrderSummary total:", orderData.total);
-    
-    // Check for problematic values
-    if (orderData.items && orderData.items.length > 0 && orderData.total === 0) {
-      console.warn("Warning: OrderSummary has items but total is zero - possible calculation issue");
-      console.log("Items details:", JSON.stringify(orderData.items));
-    }
   }, [orderData]);
   
   // Get membership type display name
@@ -74,7 +68,8 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({ orderData }) => {
   const safeMonthlyTax = ensureNumber(orderData.monthlyTax);
   
   // Check if we have items but zero values
-  const hasDataIssue = orderData.items && orderData.items.length > 0 && safeTotal === 0;
+  const hasItems = orderData.items && Array.isArray(orderData.items) && orderData.items.length > 0;
+  const hasDataIssue = hasItems && safeTotal === 0;
   
   return (
     <Card>
@@ -111,7 +106,7 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({ orderData }) => {
             {language === 'en' ? "Items" : "Artículos"} ({orderData.deviceCount || 0})
           </h3>
           <ul className="space-y-2">
-            {orderData.items && orderData.items.length > 0 ? (
+            {hasItems ? (
               orderData.items.map((item, index) => (
                 <li key={index} className="flex justify-between text-sm py-1">
                   <span>{item.name} {item.quantity > 1 ? `(${item.quantity}x)` : ''}</span>

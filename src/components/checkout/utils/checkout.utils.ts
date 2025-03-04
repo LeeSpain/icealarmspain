@@ -10,21 +10,33 @@ export const calculateOrderData = (cart: CartItem[], getTotalPrice: () => number
   console.log("calculateOrderData - Input cart:", cart);
   console.log("calculateOrderData - Cart length:", cart.length);
   
-  // If the cart is empty, return default values but with fixed prices for pricing page
+  // If the cart is empty, return default values with sample product
   if (cart.length === 0) {
-    console.log("calculateOrderData - Cart is empty, returning default values");
-    return {
+    console.log("calculateOrderData - Cart is empty, returning sample product");
+    const sampleOrderData = {
       membershipType: "individual",
-      items: [],
-      deviceCount: 0,
-      oneTimeTotal: 0,
-      productTax: 0,
-      shippingTotal: 0,
-      shippingTax: 0,
-      monthlyTotal: 0,
-      monthlyTax: 0,
-      total: 0
+      items: [
+        {
+          id: "sos",
+          name: "SOS Pendant",
+          price: 110.00,
+          quantity: 1,
+          monthlyPrice: 24.99,
+          image: "/lovable-uploads/ad65a632-e7ef-4c61-a20e-7b6ff282a87a.png"
+        }
+      ],
+      deviceCount: 1,
+      oneTimeTotal: 110.00,
+      productTax: 23.10,  // 21% of 110
+      shippingTotal: 14.99,
+      shippingTax: 3.15,  // 21% of 14.99
+      monthlyTotal: 24.99,
+      monthlyTax: 2.50,   // 10% of 24.99
+      total: 151.24       // 110 + 23.10 + 14.99 + 3.15
     };
+    
+    console.log("calculateOrderData - Returning sample data:", sampleOrderData);
+    return sampleOrderData;
   }
 
   // Map cart items to order items

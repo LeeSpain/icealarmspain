@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -76,20 +77,27 @@ const Join: React.FC = () => {
       return;
     }
     
-    console.log("Handling checkout", { selectedDevices, membershipType, totals });
+    console.log("Join - Handling checkout", { selectedDevices, membershipType, totals });
     
     const orderItems = selectedDevices.map(sd => {
       const device = devices.find(d => d.id === sd.id);
+      if (!device) {
+        console.error("Device not found:", sd.id);
+        return null;
+      }
       return {
         id: sd.id,
-        name: device?.name || "Unknown Device",
-        price: device?.price || 0,
+        name: device.name,
+        price: device.price,
         quantity: sd.quantity,
-        monthlyPrice: device?.monthlyPrice || 0,
-        image: device?.image || ""
+        monthlyPrice: device.monthlyPrice,
+        image: device.image
       };
-    });
+    }).filter(item => item !== null);
     
+    console.log("Join - Created order items:", orderItems);
+    
+    // Create the full order data object with correct totals
     const orderData = {
       membershipType,
       items: orderItems,
@@ -97,14 +105,22 @@ const Join: React.FC = () => {
       oneTimeTotal: totals.oneTimeTotal,
       productTax: totals.productTax,
       shippingTotal: totals.totalShipping,
+      shippingTax: totals.shippingTax,
       monthlyTotal: totals.totalMonthlyBase,
       monthlyTax: totals.monthlyTax,
       total: totals.totalWithShipping, // Total one-time payment including tax and shipping
       isNewCustomer: !isAuthenticated // Add flag for new customer checkout
     };
     
-    console.log("Navigating to checkout with data:", orderData);
-    navigate("/checkout", { state: { orderData } });
+    console.log("Join - Complete order data for checkout:", orderData);
+    
+    // Use React Router for navigation with the order data
+    navigate("/checkout", { 
+      state: { 
+        orderData: orderData,
+        fromJoin: true 
+      }
+    });
   };
   
   return (

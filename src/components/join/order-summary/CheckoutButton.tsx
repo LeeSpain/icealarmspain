@@ -1,7 +1,6 @@
 
 import React from "react";
 import { ButtonCustom } from "@/components/ui/button-custom";
-import { useNavigate } from "react-router-dom";
 
 interface CheckoutButtonProps {
   onCheckout: () => void;
@@ -9,19 +8,13 @@ interface CheckoutButtonProps {
 }
 
 const CheckoutButton: React.FC<CheckoutButtonProps> = ({ onCheckout, language }) => {
-  const navigate = useNavigate();
-  
   const handleCheckout = (e: React.MouseEvent) => {
     console.log("CheckoutButton clicked");
     e.preventDefault(); // Prevent any default navigation
     e.stopPropagation(); // Stop event propagation
     
-    // Call the parent handler first if it exists
+    // Call the parent handler which has all the navigation logic
     onCheckout();
-    
-    // Use React Router to navigate with state flag to prevent redirect
-    console.log("CheckoutButton: Navigating to /checkout");
-    navigate("/checkout", { state: { fromCheckoutButton: true } });
   };
 
   return (
