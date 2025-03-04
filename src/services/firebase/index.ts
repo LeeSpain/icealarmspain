@@ -5,3 +5,4 @@
 export * from './auth';
 export * from './payment';
 export * from './config';
+export * from './analytics';

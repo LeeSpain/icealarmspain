@@ -1,4 +1,3 @@
-
 import { 
   getAuth, 
   createUserWithEmailAndPassword as firebaseCreateUser, 
@@ -10,12 +9,14 @@ import {
   setPersistence as firebaseSetPersistence
 } from 'firebase/auth';
 import { initializeApp } from 'firebase/app';
+import { getAnalytics } from 'firebase/analytics';
 import { MockAuth } from './mockAuth';
 import { hasRealFirebaseConfig, getFirebaseConfig } from './config';
 
 // Initialize auth service based on configuration
 let auth: any;
 let firebaseApp: any;
+let analytics: any;
 
 // Create and export auth instance
 if (hasRealFirebaseConfig) {
@@ -24,6 +25,12 @@ if (hasRealFirebaseConfig) {
   try {
     firebaseApp = initializeApp(getFirebaseConfig());
     auth = getAuth(firebaseApp);
+    
+    // Initialize analytics if in browser environment
+    if (typeof window !== 'undefined') {
+      analytics = getAnalytics(firebaseApp);
+      console.log('Firebase Analytics initialized');
+    }
   } catch (error) {
     console.error('Error initializing Firebase:', error);
     console.warn('Falling back to mock authentication');
@@ -86,4 +93,4 @@ export const firebaseAuth = {
   browserSessionPersistence
 };
 
-export { auth };
+export { auth, analytics };
