@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useLanguage } from "@/context/LanguageContext";
@@ -11,7 +12,10 @@ export const useCheckout = () => {
   const navigate = useNavigate();
   const location = useLocation();
   
+  // Reference to track if this is the initial render
   const initialRender = useRef(true);
+  // Track if the user came from a direct button click
+  const fromDirectCheckout = useRef(false);
   
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
@@ -40,25 +44,33 @@ export const useCheckout = () => {
   
   const locationOrderData = location.state?.orderData;
   
+  // Set fromDirectCheckout flag if we have location state data
+  useEffect(() => {
+    if (locationOrderData) {
+      fromDirectCheckout.current = true;
+    }
+  }, [locationOrderData]);
+  
   useEffect(() => {
     console.log("Checkout useEffect - Cart length:", cart.length);
     console.log("Checkout useEffect - Location state:", locationOrderData);
+    console.log("Checkout useEffect - fromDirectCheckout:", fromDirectCheckout.current);
     
     const randomOrderId = "ICE-" + Math.floor(100000 + Math.random() * 900000);
     setOrderId(randomOrderId);
     
+    // Only redirect if this is the initial render, the cart is empty,
+    // there's no location state data, and the user didn't come from a direct checkout button
     if (initialRender.current) {
       initialRender.current = false;
       
-      if (cart.length === 0 && !locationOrderData) {
-        console.log("Cart is empty and no location state data, showing toast");
+      if (cart.length === 0 && !locationOrderData && !fromDirectCheckout.current) {
+        console.log("Cart is empty, no location state data, showing toast and redirecting");
         toast.info(language === 'en' 
           ? "Please add items to your cart first" 
           : "Por favor, agregue artículos a su carrito primero");
         
-        setTimeout(() => {
-          navigate('/products');
-        }, 100);
+        navigate('/products');
       }
     }
   }, [cart.length, navigate, language, locationOrderData]);

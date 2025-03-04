@@ -1,3 +1,4 @@
+
 import React, { useEffect, useCallback } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -21,9 +22,9 @@ const Products: React.FC = () => {
     e.preventDefault();
     e.stopPropagation();
     
-    // Use React Router for navigation
+    // Use React Router for navigation with state flag to prevent redirect
     console.log("Products page: Navigating to /checkout");
-    navigate("/checkout");
+    navigate("/checkout", { state: { fromCheckoutButton: true } });
   }, [navigate]);
 
   const featuresList = language === 'en' ? [

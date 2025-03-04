@@ -19,9 +19,9 @@ const CheckoutButton: React.FC<CheckoutButtonProps> = ({ onCheckout, language })
     // Call the parent handler first if it exists
     onCheckout();
     
-    // Use React Router to navigate
+    // Use React Router to navigate with state flag to prevent redirect
     console.log("CheckoutButton: Navigating to /checkout");
-    navigate("/checkout");
+    navigate("/checkout", { state: { fromCheckoutButton: true } });
   };
 
   return (

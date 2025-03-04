@@ -15,9 +15,9 @@ const DeviceCTA: React.FC<DeviceCTAProps> = ({ language }) => {
     e.preventDefault();
     e.stopPropagation();
     
-    // Use React Router for navigation
+    // Use React Router for navigation with state flag to prevent redirect
     console.log("DeviceCTA: Navigating to /checkout");
-    navigate("/checkout");
+    navigate("/checkout", { state: { fromCheckoutButton: true } });
   };
 
   return (

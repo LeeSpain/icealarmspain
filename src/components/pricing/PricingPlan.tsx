@@ -24,9 +24,9 @@ const PricingPlan: React.FC<PricingPlanProps> = ({ plan, language, index }) => {
     e.preventDefault();
     e.stopPropagation();
     
-    // Use React Router to navigate
+    // Use React Router to navigate with state flag to prevent redirect
     console.log("PricingPlan: Navigating to /checkout");
-    navigate("/checkout");
+    navigate("/checkout", { state: { fromCheckoutButton: true } });
   }, [navigate]);
 
   return (
