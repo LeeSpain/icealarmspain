@@ -1,4 +1,3 @@
-
 // Firebase configuration
 // This file supports both mock implementation for development and real Firebase for production
 
@@ -51,12 +50,25 @@ class MockAuth {
       throw new Error("The email address is badly formatted.");
     }
     
-    // Simulate successful sign-in for demo credentials
-    if (
-      (email === "admin@icealarm.es" && password === "admin123") ||
+    // Simulate successful sign-in for test credentials - simplified and fixed logic
+    // Make sure admin@icealarm.es with admin123 always works
+    if (email === "admin@icealarm.es" && password === "admin123") {
+      this.currentUser = {
+        uid: 'mock-uid-admin-' + Date.now(),
+        email: email,
+        displayName: 'Admin User',
+      };
+      
+      // Notify all listeners that the auth state has changed
+      this.authStateListeners.forEach(callback => callback(this.currentUser));
+      
+      return { user: this.currentUser };
+    }
+    // Other test accounts
+    else if (
       (email === "member@icealarm.es" && password === "member123") ||
       (email === "agent@icealarm.es" && password === "agent123") || 
-      (email.includes('admin') && password === 'admin123') ||
+      (email.includes('admin') && password === 'admin123' && email !== "admin@icealarm.es") ||
       (email.includes('member') && password === 'member123') ||
       (email.includes('agent') && password === 'agent123') ||
       (email.includes('demo') && password.length >= 6)

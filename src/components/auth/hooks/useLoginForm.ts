@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+
+import { useState, useEffect, useRef } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { validateForm } from "../AuthFormUtils";
 import { useAuth } from "@/providers/AuthProvider";
@@ -29,6 +30,7 @@ export const useLoginForm = ({
   const { toast } = useToast();
   const { login } = useAuth();
   const navigate = useNavigate();
+  const isMounted = useRef(true);
   
   const [formData, setFormData] = useState<LoginFormData>({
     email: "",
@@ -41,15 +43,22 @@ export const useLoginForm = ({
   
   const isLoading = externalLoading !== undefined ? externalLoading : internalLoading;
 
+  // Set up cleanup function to prevent memory leaks
   useEffect(() => {
-    if (externalError) {
+    return () => {
+      isMounted.current = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (externalError && isMounted.current) {
       setInternalError(externalError);
     }
   }, [externalError]);
 
   useEffect(() => {
     const savedEmail = localStorage.getItem('rememberedEmail');
-    if (savedEmail) {
+    if (savedEmail && isMounted.current) {
       setFormData(prev => ({ ...prev, email: savedEmail }));
       setRememberMe(true);
     }
@@ -75,16 +84,20 @@ export const useLoginForm = ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (isLoading) return;
+    if (isLoading || !isMounted.current) return;
     
     const newErrors = validateForm(formData, "login", language);
-    setErrors(newErrors);
+    if (isMounted.current) {
+      setErrors(newErrors);
+    }
     if (Object.keys(newErrors).length > 0) return;
     
-    setInternalError(null);
-    
-    if (externalLoading === undefined) {
-      setInternalLoading(true);
+    if (isMounted.current) {
+      setInternalError(null);
+      
+      if (externalLoading === undefined) {
+        setInternalLoading(true);
+      }
     }
     
     if (rememberMe) {
@@ -109,16 +122,18 @@ export const useLoginForm = ({
       } else {
         await login(formData.email, formData.password, rememberMe);
         
-        if (redirectTo) {
+        if (redirectTo && isMounted.current) {
           navigate(redirectTo);
         }
       }
     } catch (error) {
       console.error("Login error in form:", error);
-      const errorMessage = error instanceof Error ? error.message : String(error);
-      setInternalError(errorMessage);
+      if (isMounted.current) {
+        const errorMessage = error instanceof Error ? error.message : String(error);
+        setInternalError(errorMessage);
+      }
     } finally {
-      if (externalLoading === undefined) {
+      if (isMounted.current && externalLoading === undefined) {
         setInternalLoading(false);
       }
     }

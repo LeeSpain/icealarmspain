@@ -1,12 +1,12 @@
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
 import { useAuth } from "@/context/auth";
 import { useLanguage } from "@/context/LanguageContext";
 
 export const useLoginPage = () => {
-  const { language } = useLanguage(); // Fix: get language from LanguageContext instead of location
+  const { language } = useLanguage();
   const navigate = useNavigate();
   const location = useLocation();
   const { toast } = useToast();
@@ -14,6 +14,16 @@ export const useLoginPage = () => {
   const [loginInProgress, setLoginInProgress] = useState(false);
   const [loginError, setLoginError] = useState<string | null>(null);
   const [redirectTriggered, setRedirectTriggered] = useState(false);
+  
+  // Use a ref to track mounted state to prevent memory leaks
+  const isMounted = useRef(true);
+  
+  // Set up cleanup function to prevent state updates after unmount
+  useEffect(() => {
+    return () => {
+      isMounted.current = false;
+    };
+  }, []);
   
   // Debug logs for authentication state
   console.log("Login page auth status:", { user, isAuthenticated, isLoading, provider: "using context/auth" });
@@ -27,7 +37,7 @@ export const useLoginPage = () => {
     console.log("Login page - Auth state:", { isAuthenticated, user, isLoading, redirectTriggered });
     
     // Only redirect if auth check is complete, user is authenticated, and no redirect has been triggered yet
-    if (!isLoading && isAuthenticated && user && !redirectTriggered) {
+    if (!isLoading && isAuthenticated && user && !redirectTriggered && isMounted.current) {
       console.log("User authenticated, preparing to redirect");
       
       // Set flag to prevent multiple redirects
@@ -38,16 +48,22 @@ export const useLoginPage = () => {
       console.log("Redirecting authenticated user to:", redirectTo);
       
       // Display success toast
-      toast({
-        title: language === 'en' ? "Login successful!" : "¡Inicio de sesión exitoso!",
-        description: language === 'en' ? "Redirecting to your dashboard..." : "Redirigiendo a tu panel...",
-      });
+      if (isMounted.current) {
+        toast({
+          title: language === 'en' ? "Login successful!" : "¡Inicio de sesión exitoso!",
+          description: language === 'en' ? "Redirecting to your dashboard..." : "Redirigiendo a tu panel...",
+        });
+      }
       
       // Use a small delay to ensure the redirect happens properly
-      setTimeout(() => {
-        console.log("Executing redirect now");
-        navigate(redirectTo, { replace: true });
+      const timeoutId = setTimeout(() => {
+        if (isMounted.current) {
+          console.log("Executing redirect now");
+          navigate(redirectTo, { replace: true });
+        }
       }, 500);
+      
+      return () => clearTimeout(timeoutId);
     }
   }, [isAuthenticated, isLoading, user, navigate, redirectParam, redirectTriggered, language, toast]);
   
@@ -59,7 +75,7 @@ export const useLoginPage = () => {
   // Set a timeout to prevent infinite loading state
   useEffect(() => {
     const timeoutId = setTimeout(() => {
-      if (isLoading) {
+      if (isLoading && isMounted.current) {
         console.log("Authentication check is taking too long, forcing reset");
         window.location.reload(); // Force reload if checking takes too long
       }
@@ -83,7 +99,7 @@ export const useLoginPage = () => {
   };
   
   const handleLoginSuccess = async (email: string, password: string, rememberMe: boolean) => {
-    if (loginInProgress) return; // Prevent multiple login attempts
+    if (loginInProgress || !isMounted.current) return; // Prevent multiple login attempts
     
     setLoginInProgress(true);
     setLoginError(null);
@@ -92,7 +108,7 @@ export const useLoginPage = () => {
       console.log("Attempting login with:", email, "Remember me:", rememberMe);
       const success = await signIn(email, password, rememberMe);
       
-      if (!success) {
+      if (!success && isMounted.current) {
         setLoginError(language === 'en' ? "Invalid email or password" : "Correo o contraseña inválidos");
         toast({
           title: language === 'en' ? "Login failed" : "Error de inicio de sesión",
@@ -104,14 +120,16 @@ export const useLoginPage = () => {
       // The useEffect will handle the redirection and success toast if login succeeds
     } catch (error) {
       console.error("Login error:", error);
-      const errorMessage = error instanceof Error ? error.message : String(error);
-      setLoginError(errorMessage);
-      toast({
-        title: language === 'en' ? "Login error" : "Error de inicio de sesión",
-        description: language === 'en' ? errorMessage : "Algo salió mal",
-        variant: "destructive",
-      });
-      setLoginInProgress(false);
+      if (isMounted.current) {
+        const errorMessage = error instanceof Error ? error.message : String(error);
+        setLoginError(errorMessage);
+        toast({
+          title: language === 'en' ? "Login error" : "Error de inicio de sesión",
+          description: language === 'en' ? errorMessage : "Algo salió mal",
+          variant: "destructive",
+        });
+        setLoginInProgress(false);
+      }
     }
   };
 
@@ -127,6 +145,6 @@ export const useLoginPage = () => {
     redirectParam,
     isMockAuth,
     handleLoginSuccess,
-    language // Make sure to return the language property
+    language
   };
 };

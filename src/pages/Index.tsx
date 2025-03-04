@@ -1,5 +1,5 @@
 
-import React, { useEffect } from "react";
+import React, { useEffect, useCallback, useRef } from "react";
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import DeviceShowcase from "@/components/DeviceShowcase";
@@ -16,32 +16,49 @@ const Index: React.FC = () => {
   console.log("Index component rendering - SHOULD BE VISIBLE");
   const { language } = useLanguage();
   
-  // Smooth scroll implementation
+  // Reference to track if component is mounted
+  const isMounted = useRef(true);
+  
+  // Define the scroll handler function using useCallback to avoid recreating it on each render
+  const handleAnchorClick = useCallback((e: Event) => {
+    e.preventDefault();
+    
+    const target = e.currentTarget as HTMLAnchorElement;
+    const targetId = target.getAttribute('href');
+    if (targetId === "#") return;
+    
+    const targetElement = document.querySelector(targetId as string);
+    if (targetElement) {
+      window.scrollTo({
+        top: targetElement.getBoundingClientRect().top + window.scrollY - 80,
+        behavior: 'smooth'
+      });
+    }
+  }, []);
+  
+  // Smooth scroll implementation with proper cleanup
   useEffect(() => {
     console.log("Setting up smooth scroll");
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-      anchor.addEventListener('click', function (e) {
-        e.preventDefault();
-        
-        const targetId = this.getAttribute('href');
-        if (targetId === "#") return;
-        
-        const targetElement = document.querySelector(targetId);
-        if (targetElement) {
-          window.scrollTo({
-            top: targetElement.getBoundingClientRect().top + window.scrollY - 80,
-            behavior: 'smooth'
-          });
-        }
-      });
+    
+    // Reset the mounted ref on mount
+    isMounted.current = true;
+    
+    // Select all anchor links that start with #
+    const anchorLinks = document.querySelectorAll('a[href^="#"]');
+    
+    // Add event listeners
+    anchorLinks.forEach(anchor => {
+      anchor.addEventListener('click', handleAnchorClick);
     });
     
+    // Cleanup function
     return () => {
-      document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.removeEventListener('click', function (e) {});
+      isMounted.current = false;
+      anchorLinks.forEach(anchor => {
+        anchor.removeEventListener('click', handleAnchorClick);
       });
     };
-  }, []);
+  }, [handleAnchorClick]);
   
   console.log("Index about to render JSX");
   

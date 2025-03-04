@@ -1,6 +1,5 @@
 
-import React, { createContext, useState, useContext, useEffect, ReactNode } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { createContext, useState, useContext, useEffect, ReactNode, useRef } from 'react';
 import { auth, firebaseAuth } from '../firebase';
 import { toast } from 'react-toastify';
 
@@ -72,6 +71,14 @@ interface AuthProviderProps {
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const isMounted = useRef(true);
+
+  // Set up cleanup function to prevent memory leaks
+  useEffect(() => {
+    return () => {
+      isMounted.current = false;
+    };
+  }, []);
 
   // Listen for auth state changes
   useEffect(() => {
@@ -94,6 +101,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
     
     const unsubscribe = auth.onAuthStateChanged((authUser) => {
+      if (!isMounted.current) return;
+      
       if (authUser) {
         // User is signed in
         const user: User = {
@@ -117,7 +126,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     });
 
     // Cleanup subscription
-    return () => unsubscribe();
+    return () => {
+      unsubscribe();
+      isMounted.current = false;
+    };
   }, []);
 
   // Login function
@@ -150,11 +162,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         language: 'en',
       };
       
-      toast.success('Login successful!');
+      if (isMounted.current) {
+        toast.success('Login successful!');
+      }
+      
       return user;
     } catch (error) {
       console.error('Login error:', error);
-      toast.error(`Login failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      if (isMounted.current) {
+        toast.error(`Login failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      }
       throw error;
     }
   };
@@ -195,11 +212,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         language: 'en',
       };
       
-      toast.success('Account created successfully!');
+      if (isMounted.current) {
+        toast.success('Account created successfully!');
+      }
+      
       return user;
     } catch (error) {
       console.error('Signup error:', error);
-      toast.error(`Signup failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      if (isMounted.current) {
+        toast.error(`Signup failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      }
       throw error;
     }
   };
@@ -211,10 +233,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       await auth.signOut();
       // Clear remembered auth persistence
       localStorage.removeItem('authPersistence');
-      toast.success('You have been logged out');
+      if (isMounted.current) {
+        toast.success('You have been logged out');
+      }
     } catch (error) {
       console.error('Logout error:', error);
-      toast.error(`Logout failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      if (isMounted.current) {
+        toast.error(`Logout failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      }
       throw error;
     }
   };
@@ -224,15 +250,19 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       if (auth.currentUser) {
         await auth.updateProfile(auth.currentUser, { displayName });
-        setUser(prev => prev ? { ...prev, name: displayName, displayName } : null);
-        console.log('User profile updated:', displayName);
-        toast.success('Profile updated successfully');
+        if (isMounted.current) {
+          setUser(prev => prev ? { ...prev, name: displayName, displayName } : null);
+          console.log('User profile updated:', displayName);
+          toast.success('Profile updated successfully');
+        }
       } else {
         throw new Error('No user is signed in');
       }
     } catch (error) {
       console.error('Update profile error:', error);
-      toast.error(`Profile update failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      if (isMounted.current) {
+        toast.error(`Profile update failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      }
       throw error;
     }
   };

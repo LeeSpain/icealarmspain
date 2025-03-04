@@ -1,14 +1,17 @@
 
-import React from "react";
+import React, { useCallback } from "react";
 import Logo from "./Logo";
 import { Facebook, Twitter, Instagram, Linkedin, Send } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const Footer: React.FC = () => {
-  // Function to handle click and scroll to top
-  const handleClick = () => {
-    window.scrollTo(0, 0);
-  };
+  // Function to handle click and scroll to top - memoized with useCallback
+  const handleClick = useCallback(() => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  }, []);
 
   return (
     <footer className="bg-white pt-16 pb-8 border-t border-gray-100">
@@ -20,16 +23,16 @@ const Footer: React.FC = () => {
               AI-powered health monitoring and emergency response system that provides peace of mind for you and your loved ones.
             </p>
             <div className="flex space-x-4">
-              <a href="#" className="text-gray-400 hover:text-ice-600 transition-colors">
+              <a href="#" className="text-gray-400 hover:text-ice-600 transition-colors" aria-label="Facebook">
                 <Facebook size={20} />
               </a>
-              <a href="#" className="text-gray-400 hover:text-ice-600 transition-colors">
+              <a href="#" className="text-gray-400 hover:text-ice-600 transition-colors" aria-label="Twitter">
                 <Twitter size={20} />
               </a>
-              <a href="#" className="text-gray-400 hover:text-ice-600 transition-colors">
+              <a href="#" className="text-gray-400 hover:text-ice-600 transition-colors" aria-label="Instagram">
                 <Instagram size={20} />
               </a>
-              <a href="#" className="text-gray-400 hover:text-ice-600 transition-colors">
+              <a href="#" className="text-gray-400 hover:text-ice-600 transition-colors" aria-label="LinkedIn">
                 <Linkedin size={20} />
               </a>
             </div>
@@ -63,8 +66,12 @@ const Footer: React.FC = () => {
                 type="email"
                 placeholder="Your email"
                 className="flex-1 px-4 py-2 text-sm border border-gray-200 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-ice-500 focus:border-transparent"
+                aria-label="Your email"
               />
-              <button className="bg-ice-600 text-white px-3 py-2 rounded-r-lg hover:bg-ice-700 transition-colors">
+              <button 
+                className="bg-ice-600 text-white px-3 py-2 rounded-r-lg hover:bg-ice-700 transition-colors"
+                aria-label="Subscribe"
+              >
                 <Send size={16} />
               </button>
             </div>
