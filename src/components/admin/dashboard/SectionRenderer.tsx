@@ -17,41 +17,21 @@ interface SectionRendererProps {
   onActivityAdded: (type: string, description: string) => void;
 }
 
-// Define types for components that need the onAction prop
-interface ActionProps {
-  onAction: (action: string) => void;
-}
-
-// Type declaration for UserManagement component
-interface UserManagementProps extends ActionProps {}
-
-// Type declaration for ClientManagement component
-interface ClientManagementProps extends ActionProps {}
-
-// Type declaration for DeviceManagement component
-interface DeviceManagementProps extends ActionProps {}
-
-// Type declaration for AlertsManagement component
-interface AlertsManagementProps extends ActionProps {}
-
-// Type declaration for AdminUsersManagement component
-interface AdminUsersManagementProps extends ActionProps {}
-
-// Type declaration for RolesManagement component
-interface RolesManagementProps extends ActionProps {}
-
-// Type declaration for PermissionsManagement component
-interface PermissionsManagementProps extends ActionProps {}
+// Import the proper types from their definition files
+import { UserManagementProps } from "@/components/admin/UserManagement.d";
+import { ClientManagementProps } from "@/components/admin/ClientManagement.d";
+import { DeviceManagementProps } from "@/components/admin/DeviceManagement.d";
+import { AlertsManagementProps } from "@/components/admin/AlertsManagement.d";
+import { AdminUsersManagementProps } from "@/components/admin/AdminUsersManagement.d";
+import { RolesManagementProps } from "@/components/admin/RolesManagement.d";
+import { PermissionsManagementProps } from "@/components/admin/PermissionsManagement.d";
+import { InventoryManagementProps } from "@/components/admin/InventoryManagement.d";
 
 // Type declaration for PlaceholderSection component
-interface PlaceholderSectionProps extends ActionProps {
+interface PlaceholderSectionProps {
   title: string;
   description: string;
-}
-
-// Type for components that need section and onAction props
-interface InventoryManagementProps extends ActionProps {
-  section: "orders-list" | "inventory";
+  onAction: (action: string) => void;
 }
 
 const SectionRenderer: React.FC<SectionRendererProps> = ({
