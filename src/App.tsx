@@ -13,6 +13,7 @@ import Products from './pages/Products';
 import Contact from './pages/Contact';
 import AboutUs from './pages/AboutUs';
 import Checkout from './pages/Checkout';
+import Commercial from './pages/Commercial';
 import { AuthProvider } from './context/auth/AuthProvider';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import { ToastContainer } from 'react-toastify';
@@ -37,6 +38,7 @@ function App() {
             <Route path="/contact" element={<Contact />} />
             <Route path="/about" element={<AboutUs />} />
             <Route path="/checkout" element={<Checkout />} />
+            <Route path="/commercial" element={<Commercial />} />
             
             {/* Protected routes */}
             <Route path="/dashboard" element={

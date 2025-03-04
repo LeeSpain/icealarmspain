@@ -2,8 +2,14 @@
 import React from "react";
 import Logo from "./Logo";
 import { Facebook, Twitter, Instagram, Linkedin, Send } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const Footer: React.FC = () => {
+  // Function to handle click and scroll to top
+  const handleClick = () => {
+    window.scrollTo(0, 0);
+  };
+
   return (
     <footer className="bg-white pt-16 pb-8 border-t border-gray-100">
       <div className="container mx-auto px-4 md:px-6">
@@ -32,22 +38,20 @@ const Footer: React.FC = () => {
           <div>
             <h3 className="font-medium text-lg mb-4">Products</h3>
             <ul className="space-y-2">
-              <li><a href="#" className="text-muted-foreground hover:text-ice-600 transition-colors">SOS Pendant</a></li>
-              <li><a href="#" className="text-muted-foreground hover:text-ice-600 transition-colors">Medical Dispenser</a></li>
-              <li><a href="#" className="text-muted-foreground hover:text-ice-600 transition-colors">Glucose Monitor</a></li>
-              <li><a href="#" className="text-muted-foreground hover:text-ice-600 transition-colors">AI Guardian</a></li>
-              <li><a href="#" className="text-muted-foreground hover:text-ice-600 transition-colors">ICE Members Dashboard</a></li>
+              <li><Link to="/devices/sos-pendant" onClick={handleClick} className="text-muted-foreground hover:text-ice-600 transition-colors">SOS Pendant</Link></li>
+              <li><Link to="/devices/medical-dispenser" onClick={handleClick} className="text-muted-foreground hover:text-ice-600 transition-colors">Medical Dispenser</Link></li>
+              <li><Link to="/devices/glucose-monitor" onClick={handleClick} className="text-muted-foreground hover:text-ice-600 transition-colors">Glucose Monitor</Link></li>
+              <li><Link to="/products" onClick={handleClick} className="text-muted-foreground hover:text-ice-600 transition-colors">AI Guardian</Link></li>
+              <li><Link to="/dashboard" onClick={handleClick} className="text-muted-foreground hover:text-ice-600 transition-colors">ICE Members Dashboard</Link></li>
             </ul>
           </div>
           
           <div>
             <h3 className="font-medium text-lg mb-4">Company</h3>
             <ul className="space-y-2">
-              <li><a href="#" className="text-muted-foreground hover:text-ice-600 transition-colors">About Us</a></li>
-              <li><a href="#" className="text-muted-foreground hover:text-ice-600 transition-colors">Our Mission</a></li>
-              <li><a href="#" className="text-muted-foreground hover:text-ice-600 transition-colors">Careers</a></li>
-              <li><a href="#" className="text-muted-foreground hover:text-ice-600 transition-colors">Press</a></li>
-              <li><a href="#" className="text-muted-foreground hover:text-ice-600 transition-colors">Contact</a></li>
+              <li><Link to="/about" onClick={handleClick} className="text-muted-foreground hover:text-ice-600 transition-colors">About Us</Link></li>
+              <li><Link to="/commercial" onClick={handleClick} className="text-muted-foreground hover:text-ice-600 transition-colors">Commercial Partners</Link></li>
+              <li><Link to="/contact" onClick={handleClick} className="text-muted-foreground hover:text-ice-600 transition-colors">Contact</Link></li>
             </ul>
           </div>
           
@@ -74,9 +78,9 @@ const Footer: React.FC = () => {
             &copy; {new Date().getFullYear()} ICE Alarm España. All rights reserved.
           </p>
           <div className="space-x-4">
-            <a href="#" className="text-muted-foreground text-sm hover:text-ice-600 transition-colors">Privacy Policy</a>
-            <a href="#" className="text-muted-foreground text-sm hover:text-ice-600 transition-colors">Terms of Service</a>
-            <a href="#" className="text-muted-foreground text-sm hover:text-ice-600 transition-colors">Cookie Policy</a>
+            <Link to="/privacy" onClick={handleClick} className="text-muted-foreground text-sm hover:text-ice-600 transition-colors">Privacy Policy</Link>
+            <Link to="/terms" onClick={handleClick} className="text-muted-foreground text-sm hover:text-ice-600 transition-colors">Terms of Service</Link>
+            <Link to="/contact" onClick={handleClick} className="text-muted-foreground text-sm hover:text-ice-600 transition-colors">Cookie Policy</Link>
           </div>
         </div>
       </div>

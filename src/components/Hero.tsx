@@ -9,6 +9,11 @@ const Hero: React.FC = () => {
   const { language, t } = useLanguage();
   console.log("Hero component rendering with language:", language);
 
+  // Function to handle click and scroll to top
+  const handleClick = () => {
+    window.scrollTo(0, 0);
+  };
+
   return (
     <section 
       id="home" 
@@ -62,7 +67,7 @@ const Hero: React.FC = () => {
             </p>
             
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-6">
-              <Link to="/products">
+              <Link to="/products" onClick={handleClick}>
                 <ButtonCustom size="lg" className="group relative overflow-hidden shadow-md">
                   <span className="relative z-10 flex items-center">
                     {language === 'en' ? 'Explore Solutions' : 'Explorar Soluciones'}
@@ -71,7 +76,6 @@ const Hero: React.FC = () => {
                   <span className="absolute inset-0 bg-gradient-to-r from-ice-500 to-ice-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-0"></span>
                 </ButtonCustom>
               </Link>
-              {/* Removed the "Learn More" button as requested */}
             </div>
           </div>
           
