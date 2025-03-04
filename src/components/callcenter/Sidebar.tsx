@@ -1,8 +1,9 @@
+
 import React from 'react';
 import { useAuth } from '@/context/auth';
-import SidebarHeader from './SidebarHeader';
-import SidebarNavigation from './SidebarNavigation';
-import UserProfile from './UserProfile';
+import SidebarHeader from './sidebar/SidebarHeader';
+import SidebarNavigation from './sidebar/SidebarNavigation';
+import UserProfile from './sidebar/UserProfile';
 import { User } from '@/context/auth';
 import { cn } from '@/lib/utils';
 
@@ -39,6 +40,15 @@ const Sidebar: React.FC<SidebarProps> = ({
         collapsed={collapsed}
         onLogout={logout}
       />
+
+      {user && (
+        <div className="mt-auto p-4 border-t border-gray-200">
+          <UserProfile 
+            user={user}
+            collapsed={collapsed}
+          />
+        </div>
+      )}
     </div>
   );
 };
