@@ -32,7 +32,6 @@ const OneTimeCosts: React.FC<OneTimeCostsProps> = ({
   const safeOneTimeTotal = ensureNumber(oneTimeTotal);
   const safeProductTax = ensureNumber(productTax);
   const safeShippingTotal = ensureNumber(shippingTotal);
-  const safeShippingTax = ensureNumber(shippingTax);
   const safeTotal = ensureNumber(total);
 
   return (
@@ -56,13 +55,6 @@ const OneTimeCosts: React.FC<OneTimeCostsProps> = ({
           {language === 'en' ? "Shipping" : "Envío"}:
         </span>
         <span>€{safeShippingTotal.toFixed(2)}</span>
-      </div>
-      
-      <div className="flex justify-between text-sm">
-        <span className="text-muted-foreground">
-          {language === 'en' ? "Shipping IVA (21%)" : "IVA de envío (21%)"}:
-        </span>
-        <span>€{safeShippingTax.toFixed(2)}</span>
       </div>
       
       <Separator />
