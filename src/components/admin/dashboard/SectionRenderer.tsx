@@ -22,8 +22,35 @@ interface ActionProps {
   onAction: (action: string) => void;
 }
 
+// Type declaration for UserManagement component
+interface UserManagementProps extends ActionProps {}
+
+// Type declaration for ClientManagement component
+interface ClientManagementProps extends ActionProps {}
+
+// Type declaration for DeviceManagement component
+interface DeviceManagementProps extends ActionProps {}
+
+// Type declaration for AlertsManagement component
+interface AlertsManagementProps extends ActionProps {}
+
+// Type declaration for AdminUsersManagement component
+interface AdminUsersManagementProps extends ActionProps {}
+
+// Type declaration for RolesManagement component
+interface RolesManagementProps extends ActionProps {}
+
+// Type declaration for PermissionsManagement component
+interface PermissionsManagementProps extends ActionProps {}
+
+// Type declaration for PlaceholderSection component
+interface PlaceholderSectionProps extends ActionProps {
+  title: string;
+  description: string;
+}
+
 // Type for components that need section and onAction props
-interface InventorySectionProps extends ActionProps {
+interface InventoryManagementProps extends ActionProps {
   section: "orders-list" | "inventory";
 }
 
