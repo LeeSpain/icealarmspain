@@ -1,125 +1,97 @@
 
-import React from "react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Switch } from "@/components/ui/switch";
-import { Badge } from "@/components/ui/badge";
-import { 
-  AlertTriangle, 
-  UserX, 
-  Bell, 
-  Phone, 
-  Mail, 
-  User,
-  Clock 
-} from "lucide-react";
-
-interface Contact {
-  id: string;
-  name: string;
-  relationship: string;
-  phone: string;
-  email: string;
-  priority: number;
-  receivesAlerts: boolean;
-  receivesUpdates: boolean;
-}
+import React from 'react';
+import { useLanguage } from '@/context/LanguageContext';
+import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Contact } from './types';
+import { Mail, Phone, User, Bell, BellOff, CheckCircle, AlertCircle } from 'lucide-react';
 
 interface ContactCardProps {
   contact: Contact;
-  language: 'en' | 'es';
-  onDelete: (id: string) => void;
-  onToggleSetting: (id: string, setting: 'receivesAlerts' | 'receivesUpdates') => void;
-  relations: {[key: string]: string};
+  isSelected: boolean;
+  onSelect: () => void;
 }
 
 const ContactCard: React.FC<ContactCardProps> = ({ 
   contact, 
-  language, 
-  onDelete, 
-  onToggleSetting,
-  relations
+  isSelected,
+  onSelect 
 }) => {
-  const ct = {
-    contactDetails: language === 'en' ? "Contact Details" : "Detalles del Contacto",
-    notificationPreferences: language === 'en' ? "Notification Preferences" : "Preferencias de Notificación",
-    alerts: language === 'en' ? "Emergency Alerts" : "Alertas de Emergencia",
-    updates: language === 'en' ? "Regular Updates" : "Actualizaciones Regulares",
-    priority: language === 'en' ? "Priority" : "Prioridad"
+  const { language } = useLanguage();
+  
+  const renderPriorityIndicator = (priority: number) => {
+    let colorClass = "bg-gray-500";
+    
+    if (priority <= 2) {
+      colorClass = "bg-red-500"; // High priority
+    } else if (priority <= 5) {
+      colorClass = "bg-amber-500"; // Medium priority
+    } else {
+      colorClass = "bg-blue-500"; // Low priority
+    }
+    
+    return (
+      <div className="flex items-center">
+        <span className={`h-3 w-3 rounded-full ${colorClass} mr-1.5`}></span>
+        <span className="text-sm text-muted-foreground">
+          {language === 'en' ? 'Priority' : 'Prioridad'}: {priority}
+        </span>
+      </div>
+    );
   };
   
   return (
-    <Card key={contact.id} className="overflow-hidden">
-      <CardHeader className="bg-ice-50 pb-2">
-        <div className="flex justify-between items-start">
-          <div>
-            <CardTitle className="flex items-center">
-              <User className="h-5 w-5 mr-2 text-ice-600" />
+    <Card 
+      onClick={onSelect}
+      className={`cursor-pointer transition-all duration-200 hover:shadow-md ${
+        isSelected ? 'ring-2 ring-ice-500 shadow-md' : ''
+      }`}
+    >
+      <CardContent className="p-4">
+        <div className="flex justify-between items-start mb-3">
+          <div className="space-y-1">
+            <h3 className="font-medium flex items-center">
+              <User className="h-4 w-4 mr-1.5 text-ice-600" />
               {contact.name}
-            </CardTitle>
-            <CardDescription>
-              {relations[contact.relationship] || contact.relationship}
-              {contact.priority === 1 && (
-                <Badge variant="outline" className="ml-2 bg-orange-50 text-orange-700 border-orange-200">
-                  Primary
-                </Badge>
-              )}
-            </CardDescription>
+            </h3>
+            <Badge variant="outline">
+              {contact.relationship}
+            </Badge>
           </div>
-          <Button 
-            variant="ghost" 
-            size="icon"
-            className="text-red-500 hover:text-red-700 hover:bg-red-50"
-            onClick={() => onDelete(contact.id)}
-          >
-            <UserX className="h-5 w-5" />
-          </Button>
+          {renderPriorityIndicator(contact.priority)}
         </div>
-      </CardHeader>
-      <CardContent className="pt-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <h4 className="text-sm font-medium text-muted-foreground">{ct.contactDetails}</h4>
-            <div className="flex items-center">
-              <Phone className="h-4 w-4 mr-2 text-muted-foreground" />
-              <span>{contact.phone}</span>
-            </div>
-            {contact.email && (
-              <div className="flex items-center">
-                <Mail className="h-4 w-4 mr-2 text-muted-foreground" />
-                <span>{contact.email}</span>
-              </div>
-            )}
-            <div className="flex items-center">
-              <Clock className="h-4 w-4 mr-2 text-muted-foreground" />
-              <span>
-                {ct.priority}: {contact.priority}
-              </span>
-            </div>
+        
+        <div className="space-y-2 mt-4">
+          <div className="flex items-center text-sm">
+            <Phone className="h-4 w-4 mr-2 text-gray-500" />
+            <span>{contact.phone}</span>
           </div>
-          
-          <div className="space-y-3">
-            <h4 className="text-sm font-medium text-muted-foreground">{ct.notificationPreferences}</h4>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center">
-                <AlertTriangle className="h-4 w-4 mr-2 text-red-500" />
-                <span>{ct.alerts}</span>
-              </div>
-              <Switch 
-                checked={contact.receivesAlerts}
-                onCheckedChange={() => onToggleSetting(contact.id, 'receivesAlerts')}
-              />
-            </div>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center">
-                <Bell className="h-4 w-4 mr-2 text-blue-500" />
-                <span>{ct.updates}</span>
-              </div>
-              <Switch 
-                checked={contact.receivesUpdates}
-                onCheckedChange={() => onToggleSetting(contact.id, 'receivesUpdates')}
-              />
-            </div>
+          <div className="flex items-center text-sm">
+            <Mail className="h-4 w-4 mr-2 text-gray-500" />
+            <span className="truncate">{contact.email}</span>
+          </div>
+        </div>
+        
+        <div className="flex space-x-3 mt-4 pt-3 border-t">
+          <div className="flex items-center">
+            {contact.receivesAlerts ? (
+              <Bell className="h-4 w-4 mr-1.5 text-green-500" />
+            ) : (
+              <BellOff className="h-4 w-4 mr-1.5 text-gray-400" />
+            )}
+            <span className="text-xs text-muted-foreground">
+              {language === 'en' ? 'Alerts' : 'Alertas'}
+            </span>
+          </div>
+          <div className="flex items-center">
+            {contact.receivesUpdates ? (
+              <CheckCircle className="h-4 w-4 mr-1.5 text-green-500" />
+            ) : (
+              <AlertCircle className="h-4 w-4 mr-1.5 text-gray-400" />
+            )}
+            <span className="text-xs text-muted-foreground">
+              {language === 'en' ? 'Updates' : 'Actualizaciones'}
+            </span>
           </div>
         </div>
       </CardContent>

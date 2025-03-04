@@ -1,379 +1,265 @@
 
-import React from "react";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { User, BellOff, Send, CheckCircle, AlertTriangle, History, Trash2 } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { AlertType, TestResult, TestLog, TestStatus } from "./types";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { format } from "date-fns";
-import { Separator } from "@/components/ui/separator";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Label } from "@/components/ui/label";
-
-interface Contact {
-  id: string;
-  name: string;
-  relationship: string;
-  phone: string;
-  email: string;
-  priority: number;
-  receivesAlerts: boolean;
-  receivesUpdates: boolean;
-}
+import React, { useState } from 'react';
+import { useLanguage } from '@/context/LanguageContext';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Label } from '@/components/ui/label';
+import { Checkbox } from '@/components/ui/checkbox';
+import { ButtonCustom } from '@/components/ui/button-custom';
+import { Loader2, Bell, CheckCircle2, XCircle, AlertTriangle, Shield, HeartPulse, Activity } from 'lucide-react';
+import { Contact, AlertType, TestResult, TestStatus } from './types';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 interface TestAlertsTabProps {
   contacts: Contact[];
-  language: 'en' | 'es';
-  testStatus: TestStatus;
-  selectedAlertType: AlertType;
-  testResults: TestResult[];
-  testLogs: TestLog[];
-  onTestAlerts: () => void;
-  onChangeAlertType: (type: AlertType) => void;
-  onClearHistory: () => void;
-  setActiveTab: (tab: string) => void;
+  isLoading: boolean;
+  testInProgress: boolean;
+  lastTestResult: TestResult | null;
+  onTestAlert: (type: AlertType, contactIds: string[]) => Promise<boolean>;
 }
 
 const TestAlertsTab: React.FC<TestAlertsTabProps> = ({
   contacts,
-  language,
-  testStatus,
-  selectedAlertType,
-  testResults,
-  testLogs,
-  onTestAlerts,
-  onChangeAlertType,
-  onClearHistory,
-  setActiveTab
+  isLoading,
+  testInProgress,
+  lastTestResult,
+  onTestAlert,
 }) => {
-  const ct = language === 'en' ? {
-    title: 'Test Emergency Alerts',
-    description: 'Send a test emergency alert to verify your contacts receive notifications correctly',
-    alertsWillBeSent: 'Alerts will be sent to:',
-    noContactsForTest: 'No contacts configured to receive alerts',
-    addContactFirst: 'Please add contacts and enable alerts first',
-    tabAdd: 'Add Contact',
-    sendTestAlert: 'Send Test Alert',
-    testingAlert: 'Sending test alerts...',
-    testSuccess: 'Test completed successfully',
-    testError: 'Test completed with errors',
-    history: 'Test History',
-    logs: 'Alert Logs',
-    alertTypeLabel: 'Alert Type',
-    alertTypes: {
-      all: 'All Alerts',
-      emergency: 'Emergency',
-      medical: 'Medical',
-      activity: 'Activity'
-    },
-    clearHistory: 'Clear History',
-    noTestResults: 'No test results yet',
-    runFirstTest: 'Run your first test to see results',
-    noTestLogs: 'No test logs available',
-    testDetails: 'Test Details',
-    timestamp: 'Timestamp',
-    alertType: 'Alert Type',
-    status: 'Status',
-    recipients: 'Recipients',
-    deliveryMethod: 'Delivery Method',
-    message: 'Message',
-    sms: 'SMS',
-    email: 'Email',
-    call: 'Phone Call',
-    delivered: 'Delivered',
-    failed: 'Failed',
-    primary: 'Primary',
-    tabResults: 'Results',
-    tabContacts: 'Recipients',
-    tabLogs: 'Delivery Logs'
-  } : {
-    title: 'Probar Alertas de Emergencia',
-    description: 'Envíe una alerta de emergencia de prueba para verificar que sus contactos reciban las notificaciones correctamente',
-    alertsWillBeSent: 'Se enviarán alertas a:',
-    noContactsForTest: 'No hay contactos configurados para recibir alertas',
-    addContactFirst: 'Por favor agregue contactos y habilite las alertas primero',
-    tabAdd: 'Agregar Contacto',
-    sendTestAlert: 'Enviar Alerta de Prueba',
-    testingAlert: 'Enviando alertas de prueba...',
-    testSuccess: 'Prueba completada exitosamente',
-    testError: 'Prueba completada con errores',
-    history: 'Historial de Pruebas',
-    logs: 'Registros de Alertas',
-    alertTypeLabel: 'Tipo de Alerta',
-    alertTypes: {
-      all: 'Todas las Alertas',
-      emergency: 'Emergencia',
-      medical: 'Médica',
-      activity: 'Actividad'
-    },
-    clearHistory: 'Borrar Historial',
-    noTestResults: 'No hay resultados de pruebas aún',
-    runFirstTest: 'Ejecute su primera prueba para ver resultados',
-    noTestLogs: 'No hay registros de prueba disponibles',
-    testDetails: 'Detalles de la Prueba',
-    timestamp: 'Hora',
-    alertType: 'Tipo de Alerta',
-    status: 'Estado',
-    recipients: 'Destinatarios',
-    deliveryMethod: 'Método de Entrega',
-    message: 'Mensaje',
-    sms: 'SMS',
-    email: 'Correo',
-    call: 'Llamada',
-    delivered: 'Entregado',
-    failed: 'Fallido',
-    primary: 'Primario',
-    tabResults: 'Resultados',
-    tabContacts: 'Destinatarios',
-    tabLogs: 'Registros de Entrega'
+  const { language } = useLanguage();
+  const [selectedAlertType, setSelectedAlertType] = useState<AlertType>('emergency');
+  const [selectedContactIds, setSelectedContactIds] = useState<string[]>([]);
+  const [testStatus, setTestStatus] = useState<TestStatus>('idle');
+
+  const handleCheckboxChange = (contactId: string, checked: boolean) => {
+    if (checked) {
+      setSelectedContactIds(prev => [...prev, contactId]);
+    } else {
+      setSelectedContactIds(prev => prev.filter(id => id !== contactId));
+    }
   };
 
-  const alertEnabledContacts = contacts.filter(c => c.receivesAlerts);
-  
-  if (alertEnabledContacts.length === 0) {
+  const handleAlertTypeChange = (value: string) => {
+    setSelectedAlertType(value as AlertType);
+  };
+
+  const handleTestAlert = async () => {
+    if (selectedContactIds.length === 0) {
+      return; // No contacts selected
+    }
+
+    setTestStatus('sending');
+    const success = await onTestAlert(selectedAlertType, selectedContactIds);
+    setTestStatus(success ? 'success' : 'error');
+    
+    // Reset status after a few seconds
+    setTimeout(() => {
+      setTestStatus('idle');
+    }, 5000);
+  };
+
+  if (isLoading) {
     return (
       <Card>
-        <CardContent className="pt-6">
-          <div className="flex flex-col items-center justify-center py-8 text-center">
-            <div className="rounded-full bg-ice-100 p-3 mb-4">
-              <BellOff className="h-6 w-6 text-ice-600" />
-            </div>
-            <h3 className="mb-2 font-medium">{ct.noContactsForTest}</h3>
-            <p className="text-muted-foreground mb-4">{ct.addContactFirst}</p>
-            <Button onClick={() => setActiveTab("add")}>
-              {ct.tabAdd}
-            </Button>
-          </div>
+        <CardHeader>
+          <CardTitle>
+            {language === 'en' ? 'Test Alert System' : 'Probar Sistema de Alertas'}
+          </CardTitle>
+          <CardDescription>
+            {language === 'en' 
+              ? 'Send test alerts to your emergency contacts.'
+              : 'Enviar alertas de prueba a tus contactos de emergencia.'}
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="flex justify-center items-center py-12">
+          <Loader2 className="h-8 w-8 animate-spin text-ice-600" />
         </CardContent>
       </Card>
     );
   }
-  
-  const getTestResultStatusBadge = (success: boolean) => {
-    return success ? (
-      <Badge className="bg-green-100 text-green-700 border-green-200 flex items-center gap-1">
-        <CheckCircle className="h-3 w-3" />
-        {ct.testSuccess}
-      </Badge>
-    ) : (
-      <Badge className="bg-red-100 text-red-700 border-red-200 flex items-center gap-1">
-        <AlertTriangle className="h-3 w-3" />
-        {ct.testError}
-      </Badge>
+
+  if (contacts.length === 0) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>
+            {language === 'en' ? 'No Contacts Available' : 'No Hay Contactos Disponibles'}
+          </CardTitle>
+          <CardDescription>
+            {language === 'en' 
+              ? 'You need to add emergency contacts before testing the alert system.'
+              : 'Necesitas añadir contactos de emergencia antes de probar el sistema de alertas.'}
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="py-8 text-center">
+          <p className="mb-4 text-muted-foreground">
+            {language === 'en'
+              ? 'Add emergency contacts first to test the alert system.'
+              : 'Añade contactos de emergencia primero para probar el sistema de alertas.'}
+          </p>
+          <ButtonCustom onClick={() => window.location.hash = '#add-contact'}>
+            {language === 'en' ? 'Add Contact' : 'Añadir Contacto'}
+          </ButtonCustom>
+        </CardContent>
+      </Card>
     );
-  };
-  
-  const getContactNameById = (id: string): string => {
-    const contact = contacts.find(c => c.id === id);
-    return contact ? contact.name : 'Unknown';
-  };
-  
-  const getAlertTypeName = (type: AlertType): string => {
-    return ct.alertTypes[type];
-  };
-  
-  const getDeliveryMethodIcon = (method: 'sms' | 'email' | 'call') => {
-    switch (method) {
-      case 'sms':
-        return <Badge variant="outline" className="text-blue-600">SMS</Badge>;
-      case 'email':
-        return <Badge variant="outline" className="text-purple-600">Email</Badge>;
-      case 'call':
-        return <Badge variant="outline" className="text-orange-600">Call</Badge>;
-    }
-  };
-  
+  }
+
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{ct.title}</CardTitle>
-        <CardDescription>{ct.description}</CardDescription>
+        <CardTitle>
+          {language === 'en' ? 'Test Alert System' : 'Probar Sistema de Alertas'}
+        </CardTitle>
+        <CardDescription>
+          {language === 'en' 
+            ? 'Send test alerts to verify your emergency contact system.'
+            : 'Envía alertas de prueba para verificar tu sistema de contactos de emergencia.'}
+        </CardDescription>
       </CardHeader>
-      
+
       <CardContent className="space-y-6">
-        <div className="bg-ice-50 p-4 rounded-md">
-          <h3 className="text-sm font-medium mb-3">{ct.alertTypeLabel}</h3>
-          
+        {lastTestResult && (
+          <Alert variant={lastTestResult.success ? "default" : "destructive"} className="mb-6">
+            <div className="flex items-start">
+              {lastTestResult.success ? (
+                <CheckCircle2 className="h-5 w-5 mr-2 text-green-500" />
+              ) : (
+                <XCircle className="h-5 w-5 mr-2 text-destructive" />
+              )}
+              <div>
+                <AlertTitle>
+                  {lastTestResult.success 
+                    ? (language === 'en' ? 'Test Successful' : 'Prueba Exitosa')
+                    : (language === 'en' ? 'Test Failed' : 'Prueba Fallida')}
+                </AlertTitle>
+                <AlertDescription>
+                  {lastTestResult.success
+                    ? (language === 'en' 
+                        ? `Test ${lastTestResult.type} alerts were sent to ${lastTestResult.recipients.join(', ')}.`
+                        : `Alertas de prueba de tipo ${lastTestResult.type} fueron enviadas a ${lastTestResult.recipients.join(', ')}.`)
+                    : (lastTestResult.errorMessage || (language === 'en' ? 'An error occurred' : 'Ocurrió un error'))}
+                </AlertDescription>
+              </div>
+            </div>
+          </Alert>
+        )}
+
+        <div>
+          <h3 className="text-lg font-medium mb-3">
+            {language === 'en' ? 'Alert Type' : 'Tipo de Alerta'}
+          </h3>
           <RadioGroup 
-            value={selectedAlertType} 
-            onValueChange={(value) => onChangeAlertType(value as AlertType)}
-            className="grid grid-cols-2 gap-2 sm:grid-cols-4"
+            defaultValue="emergency" 
+            value={selectedAlertType}
+            onValueChange={handleAlertTypeChange}
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4"
           >
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="all" id="all" />
-              <Label htmlFor="all">{ct.alertTypes.all}</Label>
-            </div>
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-2 border p-4 rounded-md">
               <RadioGroupItem value="emergency" id="emergency" />
-              <Label htmlFor="emergency">{ct.alertTypes.emergency}</Label>
+              <Label htmlFor="emergency" className="flex items-center cursor-pointer">
+                <Shield className="h-5 w-5 mr-2 text-red-500" />
+                {language === 'en' ? 'Emergency' : 'Emergencia'}
+              </Label>
             </div>
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-2 border p-4 rounded-md">
               <RadioGroupItem value="medical" id="medical" />
-              <Label htmlFor="medical">{ct.alertTypes.medical}</Label>
+              <Label htmlFor="medical" className="flex items-center cursor-pointer">
+                <HeartPulse className="h-5 w-5 mr-2 text-pink-500" />
+                {language === 'en' ? 'Medical' : 'Médica'}
+              </Label>
             </div>
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-2 border p-4 rounded-md">
               <RadioGroupItem value="activity" id="activity" />
-              <Label htmlFor="activity">{ct.alertTypes.activity}</Label>
+              <Label htmlFor="activity" className="flex items-center cursor-pointer">
+                <Activity className="h-5 w-5 mr-2 text-blue-500" />
+                {language === 'en' ? 'Activity' : 'Actividad'}
+              </Label>
+            </div>
+            <div className="flex items-center space-x-2 border p-4 rounded-md">
+              <RadioGroupItem value="all" id="all" />
+              <Label htmlFor="all" className="flex items-center cursor-pointer">
+                <AlertTriangle className="h-5 w-5 mr-2 text-amber-500" />
+                {language === 'en' ? 'All Types' : 'Todos los Tipos'}
+              </Label>
             </div>
           </RadioGroup>
         </div>
-        
-        <Tabs defaultValue="contacts" className="w-full">
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="contacts">{ct.tabContacts}</TabsTrigger>
-            <TabsTrigger value="results">{ct.tabResults}</TabsTrigger>
-            <TabsTrigger value="logs">{ct.tabLogs}</TabsTrigger>
-          </TabsList>
-          
-          <TabsContent value="contacts" className="space-y-4 mt-4">
-            <h3 className="text-sm font-medium">{ct.alertsWillBeSent}</h3>
-            <div className="space-y-2 max-h-[300px] overflow-y-auto pr-1">
-              {alertEnabledContacts
-                .sort((a, b) => a.priority - b.priority)
-                .map(contact => (
-                  <div key={contact.id} className="flex items-center p-3 bg-ice-50 rounded-md">
-                    <User className="h-5 w-5 mr-2 text-ice-600 flex-shrink-0" />
-                    <div className="flex-1 min-w-0">
-                      <div className="font-medium">{contact.name}</div>
-                      <div className="text-sm text-muted-foreground truncate">{contact.phone}</div>
-                      {contact.email && (
-                        <div className="text-sm text-muted-foreground truncate">{contact.email}</div>
-                      )}
-                    </div>
-                    {contact.priority === 1 && (
-                      <Badge className="bg-orange-100 text-orange-700 border-orange-200 ml-2 flex-shrink-0">
-                        {ct.primary}
-                      </Badge>
-                    )}
-                  </div>
-                ))}
-            </div>
-          </TabsContent>
-          
-          <TabsContent value="results" className="space-y-4 mt-4">
-            <div className="flex justify-between items-center">
-              <h3 className="text-sm font-medium">{ct.history}</h3>
-              {testResults.length > 0 && (
-                <Button variant="outline" size="sm" onClick={onClearHistory} className="h-8">
-                  <Trash2 className="h-4 w-4 mr-1" />
-                  {ct.clearHistory}
-                </Button>
-              )}
-            </div>
-            
-            {testResults.length === 0 ? (
-              <div className="text-center py-8 bg-ice-50 rounded-md">
-                <History className="h-8 w-8 mx-auto text-muted-foreground mb-2" />
-                <h3 className="font-medium">{ct.noTestResults}</h3>
-                <p className="text-sm text-muted-foreground">{ct.runFirstTest}</p>
+
+        <div className="mt-6">
+          <h3 className="text-lg font-medium mb-3">
+            {language === 'en' ? 'Select Contacts to Test' : 'Seleccionar Contactos para Probar'}
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {contacts.map((contact) => (
+              <div 
+                key={contact.id} 
+                className="flex items-start space-x-3 border p-4 rounded-md"
+              >
+                <Checkbox 
+                  id={`contact-${contact.id}`} 
+                  checked={selectedContactIds.includes(contact.id)}
+                  onCheckedChange={(checked) => 
+                    handleCheckboxChange(contact.id, checked as boolean)
+                  }
+                />
+                <div className="grid gap-1.5">
+                  <Label 
+                    htmlFor={`contact-${contact.id}`}
+                    className="font-medium cursor-pointer"
+                  >
+                    {contact.name}
+                  </Label>
+                  <p className="text-sm text-muted-foreground">
+                    {contact.relationship} • {contact.phone}
+                  </p>
+                </div>
               </div>
-            ) : (
-              <div className="space-y-3 max-h-[300px] overflow-y-auto pr-1">
-                {testResults.map((result) => (
-                  <div key={result.id} className="bg-ice-50 rounded-md p-3 space-y-2">
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <span className="text-sm font-medium">
-                          {getAlertTypeName(result.type)}
-                        </span>
-                        <div className="text-xs text-muted-foreground">
-                          {format(new Date(result.timestamp), 'PPpp')}
-                        </div>
-                      </div>
-                      {getTestResultStatusBadge(result.success)}
-                    </div>
-                    
-                    <div className="text-sm">
-                      <span className="text-muted-foreground">{ct.recipients}: </span>
-                      <span>
-                        {result.recipients.map(id => getContactNameById(id)).join(', ')}
-                      </span>
-                    </div>
-                    
-                    {result.errorMessage && (
-                      <div className="text-sm text-red-600">
-                        {result.errorMessage}
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            )}
-          </TabsContent>
-          
-          <TabsContent value="logs" className="space-y-4 mt-4">
-            <h3 className="text-sm font-medium">{ct.logs}</h3>
-            
-            {testLogs.length === 0 ? (
-              <div className="text-center py-8 bg-ice-50 rounded-md">
-                <History className="h-8 w-8 mx-auto text-muted-foreground mb-2" />
-                <h3 className="font-medium">{ct.noTestLogs}</h3>
-                <p className="text-sm text-muted-foreground">{ct.runFirstTest}</p>
-              </div>
-            ) : (
-              <div className="space-y-2 max-h-[300px] overflow-y-auto pr-1">
-                {testLogs.map((log, index) => (
-                  <div key={index} className="bg-ice-50 rounded-md p-3 text-sm">
-                    <div className="flex items-center justify-between mb-1">
-                      <div className="font-medium">{getContactNameById(log.contactId)}</div>
-                      <div className="flex items-center gap-2">
-                        {getDeliveryMethodIcon(log.deliveryMethod)}
-                        {log.delivered ? (
-                          <Badge variant="outline" className="bg-green-50 text-green-600 border-green-200">
-                            {ct.delivered}
-                          </Badge>
-                        ) : (
-                          <Badge variant="outline" className="bg-red-50 text-red-600 border-red-200">
-                            {ct.failed}
-                          </Badge>
-                        )}
-                      </div>
-                    </div>
-                    <div className="text-xs text-muted-foreground mb-1">
-                      {format(new Date(log.timestamp), 'PPpp')} - {getAlertTypeName(log.alertType)}
-                    </div>
-                    <div className="text-xs bg-white p-2 rounded border">
-                      {log.message}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </TabsContent>
-        </Tabs>
-        
-        <Button 
-          onClick={onTestAlerts}
-          className="w-full"
-          disabled={testStatus !== 'idle'}
-        >
-          {testStatus === 'idle' && (
-            <>
-              <Send className="mr-2 h-4 w-4" />
-              {ct.sendTestAlert}
-            </>
-          )}
-          {testStatus === 'sending' && (
-            <>
-              <span className="animate-spin mr-2">⏳</span>
-              {ct.testingAlert}
-            </>
-          )}
-          {testStatus === 'success' && (
-            <>
-              <CheckCircle className="mr-2 h-4 w-4" />
-              {ct.testSuccess}
-            </>
-          )}
-          {testStatus === 'error' && (
-            <>
-              <AlertTriangle className="mr-2 h-4 w-4" />
-              {ct.testError}
-            </>
-          )}
-        </Button>
+            ))}
+          </div>
+        </div>
+
+        {selectedContactIds.length === 0 && (
+          <Alert variant="destructive" className="mt-4">
+            <AlertTriangle className="h-4 w-4 mr-2" />
+            <AlertDescription>
+              {language === 'en' 
+                ? 'Please select at least one contact to send test alerts.'
+                : 'Selecciona al menos un contacto para enviar alertas de prueba.'}
+            </AlertDescription>
+          </Alert>
+        )}
+
+        <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-md mt-6">
+          <div className="flex items-center mb-2">
+            <AlertTriangle className="h-5 w-5 text-amber-500 mr-2" />
+            <h3 className="font-medium">
+              {language === 'en' ? 'Important Notice' : 'Aviso Importante'}
+            </h3>
+          </div>
+          <p className="text-sm text-muted-foreground">
+            {language === 'en' 
+              ? 'This will send real test messages to the selected contacts. Please use this feature responsibly and inform your contacts in advance about potential test alerts.'
+              : 'Esto enviará mensajes de prueba reales a los contactos seleccionados. Utiliza esta función de manera responsable e informa a tus contactos con antelación sobre posibles alertas de prueba.'}
+          </p>
+        </div>
       </CardContent>
+
+      <CardFooter>
+        <ButtonCustom 
+          className="w-full"
+          onClick={handleTestAlert}
+          disabled={testInProgress || selectedContactIds.length === 0}
+          isLoading={testInProgress}
+        >
+          {!testInProgress && (
+            <>
+              <Bell className="h-5 w-5 mr-2" />
+              {language === 'en' ? 'Send Test Alert' : 'Enviar Alerta de Prueba'}
+            </>
+          )}
+          {testInProgress && (language === 'en' ? 'Sending Test Alert...' : 'Enviando Alerta de Prueba...')}
+        </ButtonCustom>
+      </CardFooter>
     </Card>
   );
 };

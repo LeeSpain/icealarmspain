@@ -1,171 +1,294 @@
 
-import React from "react";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Switch } from "@/components/ui/switch";
-import { AlertTriangle, Bell } from "lucide-react";
+import React, { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useLanguage } from '@/context/LanguageContext';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { ButtonCustom } from '@/components/ui/button-custom';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Switch } from '@/components/ui/switch';
+import { Loader2, User, Phone, Mail, Users, AlertTriangle, Bell } from 'lucide-react';
+import { Contact } from './types';
+
+// Form schema with validation
+const contactSchema = z.object({
+  name: z.string().min(2, {
+    message: "Name must be at least 2 characters.",
+  }),
+  relationship: z.string().min(1, {
+    message: "Please select a relationship.",
+  }),
+  phone: z.string().min(9, {
+    message: "Phone number must be at least 9 digits.",
+  }),
+  email: z.string().email({
+    message: "Please enter a valid email address.",
+  }),
+  priority: z.number().min(1).max(10),
+  receivesAlerts: z.boolean(),
+  receivesUpdates: z.boolean(),
+});
+
+type ContactFormValues = z.infer<typeof contactSchema>;
 
 interface AddContactTabProps {
-  newContact: {
-    name: string;
-    relationship: string;
-    phone: string;
-    email: string;
-    priority: number;
-    receivesAlerts: boolean;
-    receivesUpdates: boolean;
-  };
-  onInputChange: (field: string, value: string | number | boolean) => void;
-  onAddContact: () => void;
-  language: 'en' | 'es';
-  relations: {[key: string]: string};
+  onAddContact: (contact: Omit<Contact, 'id'>) => Promise<boolean>;
 }
 
-const AddContactTab: React.FC<AddContactTabProps> = ({
-  newContact,
-  onInputChange,
-  onAddContact,
-  language,
-  relations
-}) => {
-  const ct = language === 'en' ? {
-    addContact: "Add Contact",
-    description: "Add a new emergency contact to be notified in case of emergencies",
-    name: "Full Name",
-    relationship: "Relationship",
-    phone: "Phone Number",
-    email: "Email Address",
-    priority: "Priority",
-    notificationPreferences: "Notification Preferences",
-    alerts: "Emergency Alerts",
-    updates: "Regular Updates"
-  } : {
-    addContact: "Agregar Contacto",
-    description: "Agregue un nuevo contacto de emergencia para ser notificado en caso de emergencias",
-    name: "Nombre Completo",
-    relationship: "Relación",
-    phone: "Número de Teléfono",
-    email: "Dirección de Email",
-    priority: "Prioridad",
-    notificationPreferences: "Preferencias de Notificación",
-    alerts: "Alertas de Emergencia",
-    updates: "Actualizaciones Regulares"
+const AddContactTab: React.FC<AddContactTabProps> = ({ onAddContact }) => {
+  const { language } = useLanguage();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Initialize form with default values
+  const form = useForm<ContactFormValues>({
+    resolver: zodResolver(contactSchema),
+    defaultValues: {
+      name: '',
+      relationship: '',
+      phone: '',
+      email: '',
+      priority: 3,
+      receivesAlerts: true,
+      receivesUpdates: true,
+    },
+  });
+
+  const onSubmit = async (data: ContactFormValues) => {
+    setIsSubmitting(true);
+    try {
+      const success = await onAddContact(data);
+      if (success) {
+        form.reset(); // Reset form on success
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{ct.addContact}</CardTitle>
-        <CardDescription>{ct.description}</CardDescription>
+        <CardTitle>
+          {language === 'en' ? 'Add Emergency Contact' : 'Añadir Contacto de Emergencia'}
+        </CardTitle>
+        <CardDescription>
+          {language === 'en' 
+            ? 'Add people who should be contacted in case of emergency.'
+            : 'Añade personas que deben ser contactadas en caso de emergencia.'}
+        </CardDescription>
       </CardHeader>
-      <CardContent className="space-y-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <Label htmlFor="name">{ct.name}</Label>
-            <Input 
-              id="name" 
-              value={newContact.name}
-              onChange={(e) => onInputChange("name", e.target.value)}
-              placeholder={language === 'en' ? "John Doe" : "Juan Pérez"}
-              required
-            />
-          </div>
-          
-          <div className="space-y-2">
-            <Label htmlFor="relationship">{ct.relationship}</Label>
-            <Select 
-              value={newContact.relationship}
-              onValueChange={(value) => onInputChange("relationship", value)}
-            >
-              <SelectTrigger id="relationship">
-                <SelectValue placeholder={ct.relationship} />
-              </SelectTrigger>
-              <SelectContent>
-                {Object.entries(relations).map(([key, value]) => (
-                  <SelectItem key={key} value={key}>{value}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-          
-          <div className="space-y-2">
-            <Label htmlFor="phone">{ct.phone}</Label>
-            <Input 
-              id="phone" 
-              value={newContact.phone}
-              onChange={(e) => onInputChange("phone", e.target.value)}
-              placeholder="+1 (555) 123-4567"
-              required
-            />
-          </div>
-          
-          <div className="space-y-2">
-            <Label htmlFor="email">{ct.email}</Label>
-            <Input 
-              id="email" 
-              type="email"
-              value={newContact.email}
-              onChange={(e) => onInputChange("email", e.target.value)}
-              placeholder="email@example.com"
-            />
-          </div>
-          
-          <div className="space-y-2">
-            <Label htmlFor="priority">{ct.priority}</Label>
-            <Select 
-              value={newContact.priority.toString()}
-              onValueChange={(value) => onInputChange("priority", parseInt(value))}
-            >
-              <SelectTrigger id="priority">
-                <SelectValue placeholder={ct.priority} />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="1">1 - Primary</SelectItem>
-                <SelectItem value="2">2</SelectItem>
-                <SelectItem value="3">3</SelectItem>
-                <SelectItem value="4">4</SelectItem>
-                <SelectItem value="5">5 - Lowest</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
-        
-        <div className="space-y-3 pt-2">
-          <h4 className="text-sm font-medium">{ct.notificationPreferences}</h4>
-          <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <AlertTriangle className="h-4 w-4 mr-2 text-red-500" />
-              <Label htmlFor="receives-alerts" className="cursor-pointer">
-                {ct.alerts}
-              </Label>
+      <CardContent>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      {language === 'en' ? 'Full Name' : 'Nombre Completo'}
+                    </FormLabel>
+                    <FormControl>
+                      <div className="relative">
+                        <User className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 h-4 w-4" />
+                        <Input 
+                          placeholder={language === 'en' ? "John Doe" : "Juan Pérez"} 
+                          className="pl-10" 
+                          {...field} 
+                        />
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="relationship"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      {language === 'en' ? 'Relationship' : 'Parentesco'}
+                    </FormLabel>
+                    <FormControl>
+                      <div className="relative">
+                        <Users className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 h-4 w-4 pointer-events-none" />
+                        <Select 
+                          onValueChange={field.onChange} 
+                          defaultValue={field.value}
+                        >
+                          <SelectTrigger className="pl-10 w-full">
+                            <SelectValue placeholder={language === 'en' ? "Select relationship" : "Seleccionar parentesco"} />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="Spouse">{language === 'en' ? "Spouse" : "Cónyuge"}</SelectItem>
+                            <SelectItem value="Partner">{language === 'en' ? "Partner" : "Pareja"}</SelectItem>
+                            <SelectItem value="Parent">{language === 'en' ? "Parent" : "Padre/Madre"}</SelectItem>
+                            <SelectItem value="Child">{language === 'en' ? "Child" : "Hijo/a"}</SelectItem>
+                            <SelectItem value="Sibling">{language === 'en' ? "Sibling" : "Hermano/a"}</SelectItem>
+                            <SelectItem value="Friend">{language === 'en' ? "Friend" : "Amigo/a"}</SelectItem>
+                            <SelectItem value="Caregiver">{language === 'en' ? "Caregiver" : "Cuidador/a"}</SelectItem>
+                            <SelectItem value="Doctor">{language === 'en' ? "Doctor" : "Médico"}</SelectItem>
+                            <SelectItem value="Other">{language === 'en' ? "Other" : "Otro"}</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="phone"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      {language === 'en' ? 'Phone Number' : 'Número de Teléfono'}
+                    </FormLabel>
+                    <FormControl>
+                      <div className="relative">
+                        <Phone className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 h-4 w-4" />
+                        <Input 
+                          placeholder="+34 612 345 678" 
+                          className="pl-10" 
+                          {...field}
+                          type="tel"
+                        />
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      {language === 'en' ? 'Email Address' : 'Correo Electrónico'}
+                    </FormLabel>
+                    <FormControl>
+                      <div className="relative">
+                        <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 h-4 w-4" />
+                        <Input 
+                          placeholder={language === 'en' ? "john.doe@example.com" : "juan.perez@ejemplo.com"} 
+                          className="pl-10" 
+                          {...field}
+                          type="email" 
+                        />
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="priority"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      {language === 'en' ? 'Priority (1-10)' : 'Prioridad (1-10)'}
+                    </FormLabel>
+                    <FormControl>
+                      <div className="relative">
+                        <AlertTriangle className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 h-4 w-4" />
+                        <Input 
+                          type="number" 
+                          min={1} 
+                          max={10} 
+                          className="pl-10" 
+                          {...field}
+                          onChange={(e) => field.onChange(parseInt(e.target.value) || 1)}
+                        />
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             </div>
-            <Switch 
-              id="receives-alerts"
-              checked={newContact.receivesAlerts}
-              onCheckedChange={(checked) => onInputChange("receivesAlerts", checked)}
-            />
-          </div>
-          <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <Bell className="h-4 w-4 mr-2 text-blue-500" />
-              <Label htmlFor="receives-updates" className="cursor-pointer">
-                {ct.updates}
-              </Label>
+
+            <div className="space-y-4">
+              <FormField
+                control={form.control}
+                name="receivesAlerts"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-center justify-between p-4 border rounded-lg">
+                    <div className="space-y-0.5">
+                      <FormLabel>
+                        {language === 'en' ? 'Emergency Alerts' : 'Alertas de Emergencia'}
+                      </FormLabel>
+                      <p className="text-sm text-muted-foreground">
+                        {language === 'en' 
+                          ? 'Receive notifications during emergencies'
+                          : 'Recibir notificaciones durante emergencias'}
+                      </p>
+                    </div>
+                    <FormControl>
+                      <Switch
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="receivesUpdates"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-center justify-between p-4 border rounded-lg">
+                    <div className="space-y-0.5">
+                      <FormLabel>
+                        {language === 'en' ? 'Status Updates' : 'Actualizaciones de Estado'}
+                      </FormLabel>
+                      <p className="text-sm text-muted-foreground">
+                        {language === 'en'
+                          ? 'Receive regular status updates and notifications'
+                          : 'Recibir actualizaciones regulares de estado y notificaciones'}
+                      </p>
+                    </div>
+                    <FormControl>
+                      <Switch
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
             </div>
-            <Switch 
-              id="receives-updates"
-              checked={newContact.receivesUpdates}
-              onCheckedChange={(checked) => onInputChange("receivesUpdates", checked)}
-            />
-          </div>
-        </div>
-        
-        <Button onClick={onAddContact} className="w-full mt-6">
-          {ct.addContact}
-        </Button>
+            
+            <CardFooter className="px-0 pt-6">
+              <ButtonCustom 
+                type="submit" 
+                className="w-full" 
+                disabled={isSubmitting}
+                isLoading={isSubmitting}
+              >
+                {!isSubmitting && (
+                  <>
+                    <Bell className="mr-2 h-4 w-4" />
+                    {language === 'en' ? 'Add Emergency Contact' : 'Añadir Contacto de Emergencia'}
+                  </>
+                )}
+                {isSubmitting && (language === 'en' ? 'Adding contact...' : 'Añadiendo contacto...')}
+              </ButtonCustom>
+            </CardFooter>
+          </form>
+        </Form>
       </CardContent>
     </Card>
   );
