@@ -93,7 +93,7 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
 
   // Debug the checkout function to ensure it's working
   const handleCheckoutClick = () => {
-    console.log("Checkout button clicked");
+    console.log("OrderSummary: Checkout button clicked, forwarding to parent handler");
     onCheckout();
   };
 

@@ -11,6 +11,8 @@ const CheckoutButton: React.FC<CheckoutButtonProps> = ({ onCheckout, language })
   // This function ensures the onCheckout callback is triggered correctly
   const handleCheckout = (e: React.MouseEvent) => {
     e.preventDefault(); // Prevent any default navigation
+    e.stopPropagation(); // Stop event propagation
+    console.log("Checkout button clicked, triggering onCheckout");
     onCheckout(); // Call the provided onCheckout function from parent
   };
 
@@ -18,6 +20,7 @@ const CheckoutButton: React.FC<CheckoutButtonProps> = ({ onCheckout, language })
     <ButtonCustom 
       className="w-full mt-4 text-lg py-6" 
       onClick={handleCheckout}
+      type="button"
     >
       {language === 'en' ? "Proceed to Checkout" : "Proceder al Pago"}
     </ButtonCustom>
