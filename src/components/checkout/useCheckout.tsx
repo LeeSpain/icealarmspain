@@ -20,6 +20,7 @@ export const useCheckout = () => {
     email: "",
     address: "",
     city: "",
+    state: "", // Added the missing state property here
     country: "",
     postalCode: "",
     phone: "",

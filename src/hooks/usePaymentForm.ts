@@ -24,13 +24,13 @@ export const usePaymentForm = (
     name: user?.name || "",
     email: user?.email || "",
     password: "",
-    phone: "",   // Initialize phone property
-    nie: "",     // Initialize NIE property
+    phone: "",   // Phone property is initialized
+    nie: "",     // NIE property is initialized
     address: {
       line1: "",
       line2: "",
       city: "",
-      state: "",
+      state: "",  // Make sure state is included here
       postalCode: "",
       country: "España",
     },
@@ -109,7 +109,7 @@ export const usePaymentForm = (
       nie: formData.nie,
       address: formData.address.line1 + (formData.address.line2 ? ', ' + formData.address.line2 : ''),
       city: formData.address.city,
-      state: formData.address.state,
+      state: formData.address.state,  // This should be passed to the billingInfo
       postalCode: formData.address.postalCode,
       country: formData.address.country
     };
