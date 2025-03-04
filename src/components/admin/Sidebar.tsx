@@ -1,216 +1,341 @@
-
-import React, { useState, useEffect } from "react";
-import { 
-  LayoutDashboard, 
-  User, 
-  UserCog, 
-  Shield, 
-  Lock, 
-  AlertTriangle, 
-  List, 
-  Package,
-  BarChart,
-  Settings,
-  Monitor,
-  PhoneCall,
-  FileText,
-  HelpCircle,
-  MapPin,
-  ShoppingCart,
-  Percent,
+import React from 'react';
+import {
+  LayoutDashboard,
   Users,
-} from "lucide-react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import { useLanguage } from "@/context/LanguageContext";
-import { cn } from "@/lib/utils";
+  Calendar,
+  AlertTriangle,
+  Package,
+  BarChart3,
+  Settings,
+  FileText,
+  LockKeyhole,
+  Shield,
+  ChevronLeft,
+  ChevronRight
+} from 'lucide-react';
+import { NavLink } from 'react-router-dom';
 
 interface SidebarProps {
   activeSection: string;
   setActiveSection: (section: string) => void;
   collapsed: boolean;
   setCollapsed: (collapsed: boolean) => void;
+  userData?: any;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ activeSection, setActiveSection, collapsed, setCollapsed }) => {
-  const location = useLocation();
-  const navigate = useNavigate();
-  const { t } = useLanguage();
-  const [isMobileView, setIsMobileView] = useState(false);
-
-  useEffect(() => {
-    // Check if the component is mounted
-    let isMounted = true;
-
-    const handleResize = () => {
-      if (isMounted) {
-        setIsMobileView(window.innerWidth < 768); // Adjust the breakpoint as needed
-      }
-    };
-
-    // Set initial value
-    handleResize();
-
-    // Set up event listener
-    window.addEventListener('resize', handleResize);
-
-    // Clean up event listener on unmount
-    return () => {
-      window.removeEventListener('resize', handleResize);
-      isMounted = false; // Prevent setting state on unmounted component
-    };
-  }, []);
-
-  const handleSectionClick = (sectionId: string) => {
-    setActiveSection(sectionId);
-    if (isMobileView) {
-      setCollapsed(true); // Close sidebar on mobile view
-    }
-    navigate(`/admin?section=${sectionId}`);
-  };
-
-  // Define the sidebar sections and their items
-  const sidebarSections = [
+const Sidebar: React.FC<SidebarProps> = ({ 
+  activeSection, 
+  setActiveSection, 
+  collapsed, 
+  setCollapsed,
+  userData 
+}) => {
+  const navItems = [
     {
-      title: "Dashboard",
-      items: [
-        { id: "dashboard", label: "Overview", icon: LayoutDashboard },
-      ]
+      name: 'Dashboard',
+      icon: <LayoutDashboard size={20} />,
+      path: '/admin',
+      section: 'dashboard',
+      roles: ['admin'],
     },
     {
-      title: "Administration",
-      items: [
-        { id: "admin-users", label: "Admin Users", icon: Shield },
-        { id: "roles", label: "Roles", icon: Users },
-        { id: "permissions", label: "Permissions", icon: Lock },
-      ]
+      name: 'Users',
+      icon: <Users size={20} />,
+      path: '/admin/users',
+      section: 'users',
+      roles: ['admin'],
     },
     {
-      title: "Users",
-      items: [
-        { id: "users", label: "Customers", icon: User },
-        { id: "clients", label: "Client Management", icon: UserCog },
-      ]
+      name: 'Clients',
+      icon: <Users size={20} />,
+      path: '/admin/clients',
+      section: 'clients',
+      roles: ['admin'],
     },
     {
-      title: "Devices",
-      items: [
-        { id: "devices", label: "Device Management", icon: Monitor },
-        { id: "device-monitoring", label: "Device Monitoring", icon: AlertTriangle },
-        { id: "device-maintenance", label: "Device Maintenance", icon: Settings },
-      ]
+      name: 'Devices',
+      icon: <Smartphone size={20} />,
+      path: '/admin/devices',
+      section: 'devices',
+      roles: ['admin'],
     },
     {
-      title: "Call Center",
-      items: [
-        { id: "call-center", label: "Call Center Overview", icon: PhoneCall },
-        { id: "call-logs", label: "Call Logs", icon: FileText },
-        { id: "agent-performance", label: "Agent Performance", icon: BarChart },
-      ]
+      name: 'Alerts',
+      icon: <AlertTriangle size={20} />,
+      path: '/admin/alerts',
+      section: 'alerts',
+      roles: ['admin'],
     },
     {
-      title: "Sales & Marketing",
-      items: [
-        { id: "products", label: "Products", icon: Package },
-        { id: "product-catalog", label: "Product Catalog", icon: List },
-        { id: "product-pricing", label: "Product Pricing", icon: Percent },
-        { id: "subscriptions", label: "Subscriptions", icon: ShoppingCart },
-      ]
+      name: 'Admin Users',
+      icon: <Users size={20} />,
+      path: '/admin/admin-users',
+      section: 'admin-users',
+      roles: ['admin'],
     },
     {
-      title: "Support",
-      items: [
-        { id: "support", label: "Support Tickets", icon: HelpCircle },
-        { id: "knowledge-base", label: "Knowledge Base", icon: FileText },
-        { id: "faqs", label: "FAQs", icon: HelpCircle },
-      ]
+      name: 'Roles',
+      icon: <Shield size={20} />,
+      path: '/admin/roles',
+      section: 'roles',
+      roles: ['admin'],
     },
     {
-      title: "Operations",
-      items: [
-        { id: "alerts", label: "Alerts Management", icon: AlertTriangle },
-        { id: "inventory", label: "Inventory Management", icon: Package },
-        { id: "orders-list", label: "Orders List", icon: List },
-        { id: "regions", label: "Regions", icon: MapPin },
-      ]
+      name: 'Permissions',
+      icon: <LockKeyhole size={20} />,
+      path: '/admin/permissions',
+      section: 'permissions',
+      roles: ['admin'],
     },
     {
-      title: "Analytics",
-      items: [
-        { id: "analytics", label: "Analytics Dashboard", icon: BarChart },
-        { id: "metrics", label: "Performance Metrics", icon: Percent },
-      ]
+      name: 'Orders',
+      icon: <ShoppingCart size={20} />,
+      path: '/admin/orders-list',
+      section: 'orders-list',
+      roles: ['admin'],
     },
     {
-      title: "Settings",
-      items: [
-        { id: "general", label: "General Settings", icon: Settings },
-        { id: "security", label: "Security Settings", icon: Lock },
-        { id: "notifications", label: "Notifications", icon: AlertTriangle },
-      ]
-    }
+      name: 'Inventory',
+      icon: <Package size={20} />,
+      path: '/admin/inventory',
+      section: 'inventory',
+      roles: ['admin'],
+    },
+    {
+      name: 'Finance',
+      icon: <DollarSign size={20} />,
+      path: '/admin/finance',
+      section: 'finance',
+      roles: ['admin'],
+    },
+    {
+      name: 'Sales',
+      icon: <BarChart3 size={20} />,
+      path: '/admin/sales',
+      section: 'sales',
+      roles: ['admin'],
+    },
+    {
+      name: 'Invoices',
+      icon: <FileText size={20} />,
+      path: '/admin/invoices',
+      section: 'invoices',
+      roles: ['admin'],
+    },
+    {
+      name: 'Reports',
+      icon: <FileText size={20} />,
+      path: '/admin/reports',
+      section: 'reports',
+      roles: ['admin'],
+    },
+    {
+      name: 'Settings',
+      icon: <Settings size={20} />,
+      path: '/admin/settings',
+      section: 'settings',
+      roles: ['admin'],
+    },
+    {
+      name: 'Device Monitoring',
+      icon: <Smartphone size={20} />,
+      path: '/admin/device-monitoring',
+      section: 'device-monitoring',
+      roles: ['admin'],
+    },
+    {
+      name: 'Device Maintenance',
+      icon: <Settings size={20} />,
+      path: '/admin/device-maintenance',
+      section: 'device-maintenance',
+      roles: ['admin'],
+    },
+    {
+      name: 'Call Center',
+      icon: <MessageSquare size={20} />,
+      path: '/admin/call-center',
+      section: 'call-center',
+      roles: ['admin'],
+    },
+    {
+      name: 'Call Logs',
+      icon: <FileText size={20} />,
+      path: '/admin/call-logs',
+      section: 'call-logs',
+      roles: ['admin'],
+    },
+    {
+      name: 'Agent Performance',
+      icon: <BarChart3 size={20} />,
+      path: '/admin/agent-performance',
+      section: 'agent-performance',
+      roles: ['admin'],
+    },
+    {
+      name: 'Client Details',
+      icon: <Users size={20} />,
+      path: '/admin/client-details',
+      section: 'client-details',
+      roles: ['admin'],
+    },
+    {
+      name: 'Client Onboarding',
+      icon: <UserPlus size={20} />,
+      path: '/admin/client-onboarding',
+      section: 'client-onboarding',
+      roles: ['admin'],
+    },
+    {
+      name: 'Incidents',
+      icon: <AlertTriangle size={20} />,
+      path: '/admin/incidents',
+      section: 'incidents',
+      roles: ['admin'],
+    },
+    {
+      name: 'Emergency',
+      icon: <AlertTriangle size={20} />,
+      path: '/admin/emergency',
+      section: 'emergency',
+      roles: ['admin'],
+    },
+    {
+      name: 'Regions',
+      icon: <MapPin size={20} />,
+      path: '/admin/regions',
+      section: 'regions',
+      roles: ['admin'],
+    },
+    {
+      name: 'Products',
+      icon: <Package size={20} />,
+      path: '/admin/products',
+      section: 'products',
+      roles: ['admin'],
+    },
+    {
+      name: 'Product Catalog',
+      icon: <FileText size={20} />,
+      path: '/admin/product-catalog',
+      section: 'product-catalog',
+      roles: ['admin'],
+    },
+    {
+      name: 'Product Pricing',
+      icon: <DollarSign size={20} />,
+      path: '/admin/product-pricing',
+      section: 'product-pricing',
+      roles: ['admin'],
+    },
+    {
+      name: 'Subscriptions',
+      icon: <Calendar size={20} />,
+      path: '/admin/subscriptions',
+      section: 'subscriptions',
+      roles: ['admin'],
+    },
+    {
+      name: 'Support',
+      icon: <MessageSquare size={20} />,
+      path: '/admin/support',
+      section: 'support',
+      roles: ['admin'],
+    },
+    {
+      name: 'Knowledge Base',
+      icon: <FileText size={20} />,
+      path: '/admin/knowledge-base',
+      section: 'knowledge-base',
+      roles: ['admin'],
+    },
+    {
+      name: 'FAQs',
+      icon: <MessageSquare size={20} />,
+      path: '/admin/faqs',
+      section: 'faqs',
+      roles: ['admin'],
+    },
+    {
+      name: 'Analytics',
+      icon: <BarChart3 size={20} />,
+      path: '/admin/analytics',
+      section: 'analytics',
+      roles: ['admin'],
+    },
+    {
+      name: 'Metrics',
+      icon: <BarChart3 size={20} />,
+      path: '/admin/metrics',
+      section: 'metrics',
+      roles: ['admin'],
+    },
+    {
+      name: 'General',
+      icon: <Settings size={20} />,
+      path: '/admin/general',
+      section: 'general',
+      roles: ['admin'],
+    },
+    {
+      name: 'Security',
+      icon: <LockKeyhole size={20} />,
+      path: '/admin/security',
+      section: 'security',
+      roles: ['admin'],
+    },
+    {
+      name: 'Notifications',
+      icon: <Bell size={20} />,
+      path: '/admin/notifications',
+      section: 'notifications',
+      roles: ['admin'],
+    },
   ];
 
   return (
-    <aside
-      className={cn(
-        "flex flex-col w-64 bg-ice-50 border-r border-ice-200 transition-all duration-300",
-        collapsed ? "-ml-64" : "ml-0",
-        isMobileView ? "fixed top-0 left-0 h-full z-50" : "relative",
+    <div className={`bg-ice-800 text-white h-screen overflow-y-auto transition-all duration-300 ${collapsed ? 'w-16' : 'w-64'}`}>
+      {!collapsed && userData && (
+        <div className="p-4 border-b border-ice-700">
+          <div className="flex items-center mb-2">
+            <div className="w-10 h-10 rounded-full bg-ice-600 flex items-center justify-center text-white font-bold mr-3">
+              {userData.displayName?.[0]?.toUpperCase() || userData.email?.[0]?.toUpperCase() || 'A'}
+            </div>
+            <div className="overflow-hidden">
+              <div className="font-medium truncate">{userData.displayName || userData.email}</div>
+              <div className="text-xs text-ice-300 truncate">Admin</div>
+            </div>
+          </div>
+        </div>
       )}
-    >
-      <div className="flex items-center justify-between h-16 px-4 border-b border-ice-200">
-        <span className="font-bold text-lg text-ice-800">{t("adminDashboard.title")}</span>
-        <button
-          className="md:hidden text-ice-600 hover:text-ice-800 focus:outline-none"
-          onClick={() => setCollapsed(true)}
-          aria-label="Close sidebar"
+      
+      <div className="p-4 border-b border-ice-700 flex justify-between items-center">
+        {!collapsed && <span className="font-bold text-lg">IceAlarm</span>}
+        <button 
+          onClick={() => setCollapsed(!collapsed)} 
+          className="text-ice-300 hover:text-white"
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="h-6 w-6"
-          >
-            <line x1="18" y1="6" x2="6" y2="18" />
-            <line x1="6" y1="6" x2="18" y2="18" />
-          </svg>
+          {collapsed ? <ChevronRight size={20} /> : <ChevronLeft size={20} />}
         </button>
       </div>
-      <div className="flex-1 overflow-y-auto p-4">
-        {sidebarSections.map((section, index) => (
-          <div key={index} className="mb-6">
-            {section.title && (
-              <h3 className="font-medium text-sm text-ice-500 mb-2">
-                {t(`adminDashboard.${section.title.toLowerCase().replace(/\s+/g, '')}`)}
-              </h3>
-            )}
-            <ul className="space-y-1">
-              {section.items.map((item) => (
-                <li key={item.id}>
-                  <Link
-                    to={`/admin?section=${item.id}`}
-                    className={cn(
-                      "flex items-center px-3 py-2 rounded-md text-sm font-medium hover:bg-ice-100 hover:text-ice-700 transition-colors duration-200",
-                      activeSection === item.id
-                        ? "bg-ice-100 text-ice-700 font-semibold"
-                        : "text-ice-500"
-                    )}
-                    onClick={() => handleSectionClick(item.id)}
-                  >
-                    <item.icon className="w-4 h-4 mr-2" />
-                    <span>{t(`adminDashboard.${item.label.toLowerCase().replace(/\s+/g, '')}`)}</span>
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
+
+      <nav className="py-4">
+        {navItems.map((item) => (
+          <NavLink
+            key={item.name}
+            to={item.path}
+            className={({ isActive }) =>
+              `flex items-center space-x-2 px-4 py-2 transition-colors duration-200
+              ${isActive ? 'bg-ice-700 text-white' : 'text-ice-300 hover:text-white hover:bg-ice-700'}
+              ${collapsed ? 'justify-center' : ''}`
+            }
+            onClick={() => setActiveSection(item.section)}
+          >
+            {item.icon}
+            {!collapsed && <span>{item.name}</span>}
+          </NavLink>
         ))}
-      </div>
-    </aside>
+      </nav>
+    </div>
   );
 };
 

@@ -48,25 +48,53 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (authUser) {
         // User is signed in
         const role = determineUserRole(authUser.email || '');
+        
+        // Create user profile with additional fields
         const user: User = {
           uid: authUser.uid,
-          id: authUser.uid, // Add id property that matches uid
+          id: authUser.uid,
           email: authUser.email,
-          name: authUser.displayName,
-          displayName: authUser.displayName,
-          role, // Add role based on email
-          profileCompleted: false, // Default value
-          language: 'en', // Default language
+          name: authUser.displayName || authUser.email?.split('@')[0] || 'Admin User',
+          displayName: authUser.displayName || authUser.email?.split('@')[0] || 'Admin User',
+          role,
+          profileCompleted: Boolean(authUser.displayName),
+          language: localStorage.getItem('language') || 'en',
+          lastLogin: new Date().toISOString(),
+          createdAt: authUser.metadata?.creationTime || new Date().toISOString(),
         };
+        
         setUser(user);
         console.log('User authenticated:', user.email, 'Role:', user.role);
+        
+        // Store user info in localStorage for persistence across page refreshes
+        localStorage.setItem('currentUser', JSON.stringify({
+          email: user.email,
+          role: user.role,
+          displayName: user.displayName,
+          language: user.language
+        }));
       } else {
         // User is signed out
         setUser(null);
+        localStorage.removeItem('currentUser');
         console.log('User signed out');
       }
+      
       setIsLoading(false);
     });
+
+    // Try to restore user from localStorage to prevent flashing
+    const storedUser = localStorage.getItem('currentUser');
+    if (storedUser && !user) {
+      try {
+        const parsedUser = JSON.parse(storedUser);
+        console.log('Restoring user session from localStorage temporarily');
+        // Don't set as fully authenticated, but use for UI display while checking auth
+      } catch (e) {
+        console.error('Error parsing stored user', e);
+        localStorage.removeItem('currentUser');
+      }
+    }
 
     // Cleanup subscription
     return () => {
@@ -79,7 +107,26 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const wrappedUpdateUserProfile = async (displayName: string): Promise<void> => {
     await authFunctions.updateUserProfile(displayName);
     if (isMounted.current) {
-      setUser(prev => prev ? { ...prev, name: displayName, displayName } : null);
+      setUser(prev => prev ? { 
+        ...prev, 
+        name: displayName, 
+        displayName, 
+        profileCompleted: true 
+      } : null);
+      
+      // Update localStorage
+      const storedUser = localStorage.getItem('currentUser');
+      if (storedUser) {
+        try {
+          const parsedUser = JSON.parse(storedUser);
+          localStorage.setItem('currentUser', JSON.stringify({
+            ...parsedUser,
+            displayName
+          }));
+        } catch (e) {
+          console.error('Error updating stored user', e);
+        }
+      }
     }
   };
 

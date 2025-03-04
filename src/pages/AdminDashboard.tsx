@@ -25,6 +25,16 @@ const AdminDashboard: React.FC = () => {
   const { user, isAuthenticated, isLoading } = useAuth();
   const { t, language } = useLanguage();
   const navigate = useNavigate();
+  const [dashboardData, setDashboardData] = useState({
+    totalRevenue: "€0",
+    totalCustomers: "0",
+    activeDevices: "0",
+    pendingOrders: "0",
+    monthlyGrowth: "0%",
+    customerSatisfaction: "0%",
+    revenueByProduct: [],
+    recentActivities: []
+  });
 
   // Check authentication and redirect if needed
   useEffect(() => {
@@ -48,9 +58,55 @@ const AdminDashboard: React.FC = () => {
         }
       } else {
         console.log("AdminDashboard - User authenticated with correct role");
+        // Fetch initial dashboard data
+        fetchDashboardData();
+        
+        // Welcome the admin user
+        if (user) {
+          const timeOfDay = getTimeOfDay();
+          toast.success(`${timeOfDay}, ${user.displayName || user.email?.split('@')[0] || 'Admin'}! Welcome to IceAlarm España admin dashboard.`);
+        }
       }
     }
   }, [isAuthenticated, user, navigate, isLoading]);
+  
+  // Get time of day for greeting
+  const getTimeOfDay = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return 'Good morning';
+    if (hour < 18) return 'Good afternoon';
+    return 'Good evening';
+  };
+  
+  // Fetch dashboard data - in a real app, this would come from a database
+  const fetchDashboardData = async () => {
+    try {
+      // For now, we'll use realistic sample data
+      // In a real implementation, this would be an API call
+      const data = {
+        totalRevenue: "€0",
+        totalCustomers: "0",
+        activeDevices: "0",
+        pendingOrders: "0",
+        monthlyGrowth: "0%",
+        customerSatisfaction: "0%",
+        revenueByProduct: [
+          { name: "IceAlarm Pro", value: 0 },
+          { name: "IceAlarm Standard", value: 0 },
+          { name: "IceAlarm Basic", value: 0 },
+        ],
+        recentActivities: [
+          { id: 1, type: "System", description: "Dashboard initialized", time: "Just now" },
+          { id: 2, type: "User", description: `${user?.displayName || user?.email?.split('@')[0] || 'Admin'} logged in`, time: "Just now" },
+        ]
+      };
+      
+      setDashboardData(data);
+    } catch (error) {
+      console.error("Error fetching dashboard data:", error);
+      toast.error("Failed to load dashboard data. Please refresh the page.");
+    }
+  };
 
   // Show loading state while authentication is being checked
   if (isLoading) {
@@ -80,28 +136,43 @@ const AdminDashboard: React.FC = () => {
     );
   }
 
+  // Function to add a new activity to the dashboard
+  const addActivity = (type: string, description: string) => {
+    const newActivity = {
+      id: Date.now(),
+      type,
+      description,
+      time: "Just now"
+    };
+    
+    setDashboardData(prev => ({
+      ...prev,
+      recentActivities: [newActivity, ...prev.recentActivities.slice(0, 4)]
+    }));
+  };
+
   // Render the appropriate section based on activeSection
   const renderActiveSection = () => {
     switch (activeSection) {
       case "dashboard":
-        return <DashboardMetrics dashboardMetrics={dashboardMetrics} />;
+        return <DashboardMetrics dashboardMetrics={dashboardData} />;
       case "users":
-        return <UserManagement />;
+        return <UserManagement onAction={(action) => addActivity("User", action)} />;
       case "clients":
-        return <ClientManagement />;
+        return <ClientManagement onAction={(action) => addActivity("Client", action)} />;
       case "devices":
-        return <DeviceManagement />;
+        return <DeviceManagement onAction={(action) => addActivity("Device", action)} />;
       case "alerts":
-        return <AlertsManagement />;
+        return <AlertsManagement onAction={(action) => addActivity("Alert", action)} />;
       case "admin-users":
-        return <AdminUsersManagement />;
+        return <AdminUsersManagement onAction={(action) => addActivity("Admin", action)} />;
       case "roles":
-        return <RolesManagement />;  
+        return <RolesManagement onAction={(action) => addActivity("Role", action)} />;  
       case "permissions":
-        return <PermissionsManagement />;
+        return <PermissionsManagement onAction={(action) => addActivity("Permission", action)} />;
       case "orders-list":
       case "inventory":
-        return <InventoryManagement section={activeSection} />;
+        return <InventoryManagement section={activeSection} onAction={(action) => addActivity("Inventory", action)} />;
       // Use PlaceholderSection for less important or not yet implemented sections
       case "orders":
       case "finance":
@@ -134,32 +205,11 @@ const AdminDashboard: React.FC = () => {
         return <PlaceholderSection 
           title={activeSection.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')} 
           description={`Manage ${activeSection.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')} section`} 
+          onAction={(action) => addActivity(activeSection.charAt(0).toUpperCase() + activeSection.slice(1), action)}
         />;
       default:
-        return <DashboardMetrics dashboardMetrics={dashboardMetrics} />;
+        return <DashboardMetrics dashboardMetrics={dashboardData} />;
     }
-  };
-
-  // Dummy data for dashboard metrics
-  const dashboardMetrics = {
-    totalRevenue: "€2,543,960",
-    totalCustomers: "1,429",
-    activeDevices: "3,892",
-    pendingOrders: "47",
-    monthlyGrowth: "+12.5%",
-    customerSatisfaction: "94%",
-    revenueByProduct: [
-      { name: "IceAlarm Pro", value: 45 },
-      { name: "IceAlarm Standard", value: 30 },
-      { name: "IceAlarm Basic", value: 25 },
-    ],
-    recentActivities: [
-      { id: 1, type: "New Order", description: "New order #37429 from Empresa de Madrid", time: "2 hours ago" },
-      { id: 2, type: "Support", description: "Support ticket #2947 resolved", time: "4 hours ago" },
-      { id: 3, type: "Device", description: "28 new devices activated in Barcelona region", time: "Yesterday" },
-      { id: 4, type: "Payment", description: "Payment of €34,500 received from Hotel Group", time: "Yesterday" },
-      { id: 5, type: "Maintenance", description: "Scheduled maintenance completed for 156 devices", time: "2 days ago" },
-    ]
   };
 
   return (
@@ -172,6 +222,7 @@ const AdminDashboard: React.FC = () => {
         setActiveSection={setActiveSection}
         collapsed={sidebarCollapsed}
         setCollapsed={setSidebarCollapsed}
+        userData={user}
       />
       
       {/* Main Content */}

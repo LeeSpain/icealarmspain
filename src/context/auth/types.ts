@@ -9,6 +9,9 @@ export interface User {
   role?: string;
   profileCompleted?: boolean;
   language?: string;
+  lastLogin?: string;
+  createdAt?: string;
+  photoURL?: string | null;
 }
 
 // Define the AuthContext type
