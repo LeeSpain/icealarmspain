@@ -19,7 +19,8 @@ import {
   Phone, 
   Mail, 
   User,
-  Send 
+  Send,
+  CheckCircle 
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "@/components/ui/use-toast";
