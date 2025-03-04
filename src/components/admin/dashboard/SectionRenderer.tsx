@@ -48,26 +48,39 @@ const SectionRenderer: React.FC<SectionRendererProps> = ({
       case "dashboard":
         return <DashboardMetrics dashboardMetrics={dashboardData} />;
       case "users":
-        return <UserManagement onAction={(action: string) => addActivity("User", action)} as unknown as UserManagementProps />;
+        return React.createElement(UserManagement as React.ComponentType<UserManagementProps>, {
+          onAction: (action: string) => addActivity("User", action)
+        });
       case "clients":
-        return <ClientManagement onAction={(action: string) => addActivity("Client", action)} as unknown as ClientManagementProps />;
+        return React.createElement(ClientManagement as React.ComponentType<ClientManagementProps>, {
+          onAction: (action: string) => addActivity("Client", action)
+        });
       case "devices":
-        return <DeviceManagement onAction={(action: string) => addActivity("Device", action)} as unknown as DeviceManagementProps />;
+        return React.createElement(DeviceManagement as React.ComponentType<DeviceManagementProps>, {
+          onAction: (action: string) => addActivity("Device", action)
+        });
       case "alerts":
-        return <AlertsManagement onAction={(action: string) => addActivity("Alert", action)} as unknown as AlertsManagementProps />;
+        return React.createElement(AlertsManagement as React.ComponentType<AlertsManagementProps>, {
+          onAction: (action: string) => addActivity("Alert", action)
+        });
       case "admin-users":
-        return <AdminUsersManagement onAction={(action: string) => addActivity("Admin", action)} as unknown as AdminUsersManagementProps />;
+        return React.createElement(AdminUsersManagement as React.ComponentType<AdminUsersManagementProps>, {
+          onAction: (action: string) => addActivity("Admin", action)
+        });
       case "roles":
-        return <RolesManagement onAction={(action: string) => addActivity("Role", action)} as unknown as RolesManagementProps />;
+        return React.createElement(RolesManagement as React.ComponentType<RolesManagementProps>, {
+          onAction: (action: string) => addActivity("Role", action)
+        });
       case "permissions":
-        return <PermissionsManagement onAction={(action: string) => addActivity("Permission", action)} as unknown as PermissionsManagementProps />;
+        return React.createElement(PermissionsManagement as React.ComponentType<PermissionsManagementProps>, {
+          onAction: (action: string) => addActivity("Permission", action)
+        });
       case "orders-list":
       case "inventory":
-        return <InventoryManagement 
-          section={activeSection as "orders-list" | "inventory"}
-          onAction={(action: string) => addActivity("Inventory", action)}
-          as unknown as InventoryManagementProps
-        />;
+        return React.createElement(InventoryManagement as React.ComponentType<InventoryManagementProps>, {
+          section: activeSection as "orders-list" | "inventory",
+          onAction: (action: string) => addActivity("Inventory", action)
+        });
       default:
         return <PlaceholderSection 
           title={activeSection.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')} 
