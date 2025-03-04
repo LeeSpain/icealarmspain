@@ -12,7 +12,7 @@ import ContactPriority from './form-components/ContactPriority';
 import NotificationPreferences from './form-components/NotificationPreferences';
 import FormActions from './form-components/FormActions';
 
-// Form schema with validation
+// Form schema with validation - ensure all fields are required
 const contactSchema = z.object({
   name: z.string().min(2, {
     message: "Name must be at least 2 characters.",
@@ -31,9 +31,6 @@ const contactSchema = z.object({
   receivesUpdates: z.boolean(),
 });
 
-// We'll use the Zod schema to also define our form type
-type FormData = z.infer<typeof contactSchema>;
-
 interface AddContactTabProps {
   onAddContact: (contact: Omit<Contact, 'id'>) => Promise<boolean>;
 }
@@ -42,8 +39,8 @@ const AddContactTab: React.FC<AddContactTabProps> = ({ onAddContact }) => {
   const { language } = useLanguage();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Initialize form with default values
-  const form = useForm<FormData>({
+  // Initialize form with default values - use ContactFormValues directly
+  const form = useForm<ContactFormValues>({
     resolver: zodResolver(contactSchema),
     defaultValues: {
       name: '',
@@ -56,7 +53,7 @@ const AddContactTab: React.FC<AddContactTabProps> = ({ onAddContact }) => {
     },
   });
 
-  const onSubmit = async (data: FormData) => {
+  const onSubmit = async (data: ContactFormValues) => {
     setIsSubmitting(true);
     try {
       // The form validation ensures all required fields are present
