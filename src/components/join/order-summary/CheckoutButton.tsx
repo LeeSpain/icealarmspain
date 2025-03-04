@@ -10,9 +10,10 @@ interface CheckoutButtonProps {
 const CheckoutButton: React.FC<CheckoutButtonProps> = ({ onCheckout, language }) => {
   // This function ensures the onCheckout callback is triggered correctly
   const handleCheckout = (e: React.MouseEvent) => {
+    console.log("CheckoutButton clicked, preventing default behavior");
     e.preventDefault(); // Prevent any default navigation
     e.stopPropagation(); // Stop event propagation
-    console.log("Checkout button clicked, triggering onCheckout");
+    console.log("Triggering onCheckout callback");
     onCheckout(); // Call the provided onCheckout function from parent
   };
 

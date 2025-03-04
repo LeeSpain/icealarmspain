@@ -59,7 +59,7 @@ const PricingPlan: React.FC<PricingPlanProps> = ({ plan, language, index }) => {
               {language === 'en' ? "View Devices" : "Ver Dispositivos"}
             </ButtonCustom>
           </Link>
-          <Link to="/join">
+          <Link to="/checkout">
             <ButtonCustom className="w-full">
               {language === 'en' ? "Select Plan" : "Seleccionar Plan"}
             </ButtonCustom>

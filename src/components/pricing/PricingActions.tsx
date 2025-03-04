@@ -8,6 +8,7 @@ interface PricingActionsProps {
 }
 
 const PricingActions: React.FC<PricingActionsProps> = ({ language }) => {
+  console.log("PricingActions rendering with link to /checkout");
   return (
     <div className="container mx-auto px-4 md:px-6">
       <div className="text-center max-w-3xl mx-auto mt-12">
@@ -17,7 +18,7 @@ const PricingActions: React.FC<PricingActionsProps> = ({ language }) => {
               {language === 'en' ? "View Device Information" : "Ver Información de Dispositivos"}
             </ButtonCustom>
           </Link>
-          <Link to="/join">
+          <Link to="/checkout">
             <ButtonCustom variant="primary" size="lg">
               {language === 'en' ? "Proceed to Checkout" : "Proceder al Pago"}
             </ButtonCustom>

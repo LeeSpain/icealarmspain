@@ -8,6 +8,7 @@ interface DeviceCTAProps {
 }
 
 const DeviceCTA: React.FC<DeviceCTAProps> = ({ language }) => {
+  console.log("DeviceCTA rendering with link to /checkout");
   return (
     <section className="py-20 bg-gradient-to-b from-ice-50 to-white text-center">
       <div className="container mx-auto px-4">
@@ -22,7 +23,7 @@ const DeviceCTA: React.FC<DeviceCTAProps> = ({ language }) => {
             : "Elija los dispositivos que mejor se adapten a sus necesidades y comience su camino hacia un mejor monitoreo de la salud hoy."}
         </p>
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-          <Link to="/join">
+          <Link to="/checkout">
             <ButtonCustom size="lg">
               {language === 'en' ? "Start Checkout Process" : "Iniciar Proceso de Compra"}
             </ButtonCustom>

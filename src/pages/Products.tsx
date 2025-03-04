@@ -100,7 +100,7 @@ const Products: React.FC = () => {
                       <span className="absolute inset-0 bg-gradient-to-r from-ice-500 to-ice-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-0"></span>
                     </ButtonCustom>
                   </Link>
-                  <Link to="/join">
+                  <Link to="/checkout">
                     <ButtonCustom variant="outline" size="lg" className="border-ice-200 hover:border-ice-300 shadow-sm">
                       {language === 'en' ? 'Start Checkout Process' : 'Iniciar Proceso de Compra'}
                     </ButtonCustom>
@@ -158,7 +158,7 @@ const Products: React.FC = () => {
                 : "Únase a miles de clientes satisfechos que confían en ICE Alarm España para sus necesidades de monitoreo de salud y respuesta de emergencia."}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link to="/join">
+              <Link to="/checkout">
                 <ButtonCustom variant="secondary" size="lg">
                   {language === 'en' ? "Start Checkout Process" : "Iniciar Proceso de Compra"}
                 </ButtonCustom>
