@@ -1,9 +1,10 @@
-
 import React, { useState, useEffect } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { ButtonCustom } from "@/components/ui/button-custom";
 import { Mail, User, ArrowRight, Phone, AlertCircle } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
+import { useAuth } from "@/providers/AuthProvider";
+import { useNavigate } from "react-router-dom";
 import AuthInput from "./AuthInput";
 import PasswordInput from "./PasswordInput";
 import { validateForm, SocialSignIn, AuthFormFooter } from "./AuthFormUtils";
@@ -24,6 +25,9 @@ const SignupForm: React.FC<SignupFormProps> = ({
 }) => {
   const { language } = useLanguage();
   const { toast } = useToast();
+  const { signUp } = useAuth();
+  const navigate = useNavigate();
+  
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -75,34 +79,25 @@ const SignupForm: React.FC<SignupFormProps> = ({
       setInternalLoading(true);
     }
     
-    // Call onSuccess handler if provided
-    if (onSuccess) {
-      try {
+    try {
+      if (onSuccess) {
         await onSuccess(formData.email, formData.password);
-      } catch (error) {
-        console.error("Signup error in form:", error);
-        const errorMessage = error instanceof Error ? error.message : String(error);
-        setInternalError(errorMessage);
+      } else {
+        // Use our AuthContext signUp function
+        await signUp(formData.email, formData.password, formData.name);
         
-        if (externalLoading === undefined) {
-          setInternalLoading(false);
-        }
+        // Navigate to redirectTo or default location
+        const redirectPath = redirectTo || '/onboarding';
+        navigate(redirectPath);
       }
-    } else {
-      // Handle demo mode (without actual signup)
-      setTimeout(() => {
-        if (externalLoading === undefined) {
-          setInternalLoading(false);
-        }
-        
-        toast({
-          title: language === 'en' ? "Account created!" : "¡Cuenta creada!",
-          description: language === 'en' 
-            ? "Welcome to ICE Alarm España." 
-            : "Bienvenido a ICE Alarm España.",
-          variant: "default",
-        });
-      }, 2000);
+    } catch (error) {
+      console.error("Signup error in form:", error);
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      setInternalError(errorMessage);
+    } finally {
+      if (externalLoading === undefined) {
+        setInternalLoading(false);
+      }
     }
   };
 

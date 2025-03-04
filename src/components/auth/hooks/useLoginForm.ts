@@ -2,6 +2,8 @@
 import { useState, useEffect } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { validateForm } from "../AuthFormUtils";
+import { useAuth } from "@/providers/AuthProvider";
+import { useNavigate } from "react-router-dom";
 
 interface LoginFormData {
   email: string;
@@ -13,15 +15,20 @@ interface UseLoginFormProps {
   externalError?: string | null;
   language: string;
   onSubmit?: (email: string, password: string, rememberMe: boolean) => void | Promise<void>;
+  redirectTo?: string;
 }
 
 export const useLoginForm = ({ 
   externalLoading, 
   externalError, 
   language, 
-  onSubmit 
+  onSubmit,
+  redirectTo
 }: UseLoginFormProps) => {
   const { toast } = useToast();
+  const { login } = useAuth();
+  const navigate = useNavigate();
+  
   const [formData, setFormData] = useState<LoginFormData>({
     email: "",
     password: "",
@@ -85,36 +92,32 @@ export const useLoginForm = ({
       localStorage.removeItem('rememberedEmail');
     }
     
-    if (onSubmit) {
-      try {
+    try {
+      if (onSubmit) {
         const result = onSubmit(formData.email, formData.password, rememberMe);
         
         if (result instanceof Promise) {
           await result;
         }
-      } catch (error) {
-        console.error("Login error in form:", error);
-        const errorMessage = error instanceof Error ? error.message : String(error);
-        setInternalError(errorMessage);
+      } else {
+        // Use AuthProvider login if no onSubmit is provided
+        await login(formData.email, formData.password, rememberMe);
         
-        if (externalLoading === undefined) {
-          setInternalLoading(false);
+        // Success toast is handled by the AuthProvider
+        
+        // Navigate if redirectTo is provided
+        if (redirectTo) {
+          navigate(redirectTo);
         }
       }
-    } else {
-      setTimeout(() => {
-        if (externalLoading === undefined) {
-          setInternalLoading(false);
-        }
-        
-        toast({
-          title: language === 'en' ? "Login successful!" : "¡Inicio de sesión exitoso!",
-          description: language === 'en' 
-            ? "Welcome back to ICE Alarm España." 
-            : "Bienvenido de nuevo a ICE Alarm España.",
-          variant: "default",
-        });
-      }, 2000);
+    } catch (error) {
+      console.error("Login error in form:", error);
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      setInternalError(errorMessage);
+    } finally {
+      if (externalLoading === undefined) {
+        setInternalLoading(false);
+      }
     }
   };
 

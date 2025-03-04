@@ -5,7 +5,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import AuthForm from "@/components/AuthForm";
 import { useLanguage } from "@/context/LanguageContext";
-import { useAuth } from "@/context/AuthContext";
+import { useAuth } from "@/providers/AuthProvider";
 import { useToast } from "@/components/ui/use-toast";
 import { Card, CardContent } from "@/components/ui/card";
 import { Loader2 } from "lucide-react";
@@ -55,7 +55,7 @@ const Login: React.FC = () => {
   }, [isAuthenticated, isLoading, user, navigate, redirectParam, redirectTriggered, language, toast]);
   
   // Helper function to determine default redirect based on role
-  const getDefaultRedirect = (role: string) => {
+  const getDefaultRedirect = (role?: string) => {
     switch (role) {
       case 'admin':
         return '/admin';
