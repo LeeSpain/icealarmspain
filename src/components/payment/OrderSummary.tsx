@@ -25,11 +25,16 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({ orderData }) => {
   
   // Add more detailed debugging to identify issues
   useEffect(() => {
-    console.log("OrderSummary received data:", orderData);
+    console.log("OrderSummary component received data:", orderData);
     console.log("OrderSummary total:", orderData.total);
     console.log("OrderSummary oneTimeTotal:", orderData.oneTimeTotal);
     console.log("OrderSummary productTax:", orderData.productTax);
     console.log("OrderSummary items:", orderData.items);
+    
+    // Alert if we detect zeros where we shouldn't have them
+    if (orderData.items && orderData.items.length > 0 && orderData.total === 0) {
+      console.warn("Warning: OrderSummary has items but total is zero - possible data issue");
+    }
   }, [orderData]);
   
   // Get membership type display name
@@ -47,6 +52,9 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({ orderData }) => {
         return language === 'en' ? 'Individual' : 'Individual';
     }
   };
+
+  // Check if we have items but zero values - this might indicate a data issue
+  const hasDataIssue = orderData.items && orderData.items.length > 0 && orderData.total === 0;
   
   return (
     <Card>
@@ -58,6 +66,16 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({ orderData }) => {
       </CardHeader>
       
       <CardContent className="space-y-4">
+        {hasDataIssue && (
+          <div className="bg-yellow-50 p-3 rounded-md text-xs mb-4 border border-yellow-200">
+            <p className="text-yellow-700">
+              {language === 'en' 
+                ? "Data is still loading. If this persists, please refresh the page." 
+                : "Los datos aún se están cargando. Si persiste, actualice la página."}
+            </p>
+          </div>
+        )}
+        
         <div>
           <h3 className="font-medium mb-2 flex items-center">
             <Users className="mr-2 h-4 w-4 text-ice-500" />
@@ -73,12 +91,18 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({ orderData }) => {
             {language === 'en' ? "Items" : "Artículos"} ({orderData.deviceCount || 0})
           </h3>
           <ul className="space-y-2">
-            {orderData.items && orderData.items.map((item, index) => (
-              <li key={index} className="flex justify-between text-sm py-1">
-                <span>{item.name} {item.quantity > 1 ? `(${item.quantity}x)` : ''}</span>
-                <span>€{(item.price * item.quantity).toFixed(2)}</span>
+            {orderData.items && orderData.items.length > 0 ? (
+              orderData.items.map((item, index) => (
+                <li key={index} className="flex justify-between text-sm py-1">
+                  <span>{item.name} {item.quantity > 1 ? `(${item.quantity}x)` : ''}</span>
+                  <span>€{(item.price * item.quantity).toFixed(2)}</span>
+                </li>
+              ))
+            ) : (
+              <li className="text-sm text-muted-foreground">
+                {language === 'en' ? "No items in cart" : "No hay artículos en el carrito"}
               </li>
-            ))}
+            )}
           </ul>
         </div>
         

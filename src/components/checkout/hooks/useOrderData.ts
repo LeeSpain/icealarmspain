@@ -18,8 +18,8 @@ export const useOrderData = () => {
   
   // Debug output to see what data we're receiving
   useEffect(() => {
-    console.log("Location state:", location.state);
-    console.log("Location order data:", locationOrderData);
+    console.log("useOrderData hook - Location state:", location.state);
+    console.log("useOrderData hook - Location order data:", locationOrderData);
     if (locationOrderData) {
       console.log("Using order data from location state:", locationOrderData);
     } else {
@@ -28,11 +28,15 @@ export const useOrderData = () => {
   }, [location.state, locationOrderData]);
   
   // Use passed order data if available, otherwise calculate from cart
-  const orderData: OrderData = locationOrderData || calculateOrderData(cart, getTotalPrice);
+  // We now ensure the locationOrderData is used when available
+  const orderData: OrderData = 
+    locationOrderData && Object.keys(locationOrderData).length > 0 
+      ? locationOrderData 
+      : calculateOrderData(cart, getTotalPrice);
   
   // Debug output to verify final data
   useEffect(() => {
-    console.log("Final order data being used:", orderData);
+    console.log("Final orderData being used in useOrderData:", orderData);
   }, [orderData]);
   
   // Initialize order ID if not already set

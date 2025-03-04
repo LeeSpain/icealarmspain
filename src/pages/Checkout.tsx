@@ -1,4 +1,3 @@
-
 import React, { useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -16,11 +15,15 @@ const Checkout: React.FC = () => {
   const { language } = useLanguage();
   const location = useLocation();
   
-  // Add debugging to check location state
+  // Add detailed debugging to check location state
   useEffect(() => {
-    console.log("Checkout location state:", location.state);
+    console.log("Checkout page - Mounted with location state:", location.state);
     if (location.state?.orderData) {
-      console.log("Checkout has orderData in state:", location.state.orderData);
+      console.log("Checkout page has orderData in state:", location.state.orderData);
+      console.log("Order items:", location.state.orderData.items);
+      console.log("Order total:", location.state.orderData.total);
+    } else {
+      console.log("Checkout page - No orderData in location state");
     }
   }, [location.state]);
   
@@ -38,11 +41,13 @@ const Checkout: React.FC = () => {
     getTotalPrice
   } = useCheckout();
   
-  // Debug orderData
+  // Debug orderData from useCheckout
   useEffect(() => {
-    console.log("Checkout component received orderData:", orderData);
+    console.log("Checkout component received orderData from useCheckout:", orderData);
+    console.log("OrderData has items:", orderData.items?.length || 0);
+    console.log("OrderData total:", orderData.total);
   }, [orderData]);
-  
+
   return (
     <div className="min-h-screen bg-ice-50/30 py-12">
       <div className="container max-w-6xl mx-auto px-4">

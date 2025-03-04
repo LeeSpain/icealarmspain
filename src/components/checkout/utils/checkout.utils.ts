@@ -7,7 +7,8 @@ export const generateOrderId = (): string => {
 };
 
 export const calculateOrderData = (cart: CartItem[], getTotalPrice: () => number): OrderData => {
-  console.log("Calculating order data from cart:", cart);
+  console.log("calculateOrderData - Input cart:", cart);
+  console.log("calculateOrderData - getTotalPrice function:", getTotalPrice);
 
   const items = cart.map(item => ({
     id: item.id,
@@ -18,10 +19,21 @@ export const calculateOrderData = (cart: CartItem[], getTotalPrice: () => number
     image: item.image || ""
   }));
 
+  // Get the total price directly first for debugging
+  const rawTotalPrice = getTotalPrice();
+  console.log("calculateOrderData - Raw getTotalPrice result:", rawTotalPrice);
+
   // Calculate totals properly
   const deviceCount = cart.reduce((total, item) => total + item.quantity, 0);
-  const oneTimeTotal = getTotalPrice();
-  console.log("One-time total from getTotalPrice:", oneTimeTotal);
+  const oneTimeTotal = rawTotalPrice > 0 ? rawTotalPrice : 
+    cart.reduce((total, item) => {
+      const itemPrice = typeof item.price === 'string' 
+        ? parseFloat(item.price.replace(/[^0-9.]/g, '')) 
+        : item.price;
+      return total + (itemPrice * item.quantity);
+    }, 0);
+    
+  console.log("calculateOrderData - Calculated oneTimeTotal:", oneTimeTotal);
   
   const productTax = oneTimeTotal * 0.21;
   const shippingTotal = deviceCount * 14.99;
@@ -35,20 +47,7 @@ export const calculateOrderData = (cart: CartItem[], getTotalPrice: () => number
   
   const total = oneTimeTotal + productTax + shippingTotal + shippingTax;
 
-  console.log("Calculated order data:", {
-    items,
-    deviceCount,
-    oneTimeTotal,
-    productTax,
-    shippingTotal,
-    shippingTax,
-    monthlyTotal,
-    monthlyTax,
-    total
-  });
-
-  // Make sure we're returning a valid OrderData object with all required fields
-  return {
+  const result = {
     membershipType: "individual",
     items,
     deviceCount,
@@ -60,4 +59,8 @@ export const calculateOrderData = (cart: CartItem[], getTotalPrice: () => number
     monthlyTax,
     total
   };
+
+  console.log("calculateOrderData - Final calculated order data:", result);
+
+  return result;
 };
