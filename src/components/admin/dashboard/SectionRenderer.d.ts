@@ -1,7 +1,7 @@
 
-import React from 'react';
+import React from "react";
 
-interface SectionRendererProps {
+export interface SectionRendererProps {
   activeSection: string;
   dashboardData: any;
   onActivityAdded: (type: string, description: string) => void;

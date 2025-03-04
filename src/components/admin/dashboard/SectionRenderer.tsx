@@ -17,6 +17,16 @@ interface SectionRendererProps {
   onActivityAdded: (type: string, description: string) => void;
 }
 
+// Define types for components that need the onAction prop
+interface ActionProps {
+  onAction: (action: string) => void;
+}
+
+// Type for components that need section and onAction props
+interface InventorySectionProps extends ActionProps {
+  section: "orders-list" | "inventory";
+}
+
 const SectionRenderer: React.FC<SectionRendererProps> = ({
   activeSection,
   dashboardData,
