@@ -8,7 +8,7 @@ import CallCenterDashboard from './pages/CallCenterDashboard';
 import ProfilePage from './pages/ProfilePage';
 import OnboardingQuestionnaire from './pages/OnboardingQuestionnaire';
 import NotFound from './pages/NotFound';
-import { AuthProvider } from './context/auth';
+import { AuthProvider } from './context/auth/AuthProvider';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';

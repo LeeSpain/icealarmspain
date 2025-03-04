@@ -10,7 +10,7 @@ import { useLanguage } from "@/context/LanguageContext";
 import DashboardPreview from "@/components/dashboard/DashboardPreview";
 import DecorativeElements from "@/components/layout/DecorativeElements";
 import SectionDivider from "@/components/layout/SectionDivider";
-import SEO from "@/components/layout/SEO";
+import { Helmet } from "react-helmet-async";
 
 const Index: React.FC = () => {
   console.log("Index component rendering - SHOULD BE VISIBLE");
@@ -52,10 +52,10 @@ const Index: React.FC = () => {
   
   return (
     <div className="flex flex-col min-h-screen bg-gradient-to-b from-white via-ice-50/30 to-white">
-      <SEO 
-        description={seoDescription}
-        ogType="website"
-      />
+      <Helmet>
+        <meta name="description" content={seoDescription} />
+        <meta property="og:type" content="website" />
+      </Helmet>
       
       {/* Enhanced Decorative Elements */}
       <DecorativeElements />
