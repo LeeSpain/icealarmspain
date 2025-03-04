@@ -1,5 +1,4 @@
-
-import React from "react";
+import React, { useCallback } from "react";
 
 export interface DashboardActivity {
   id: number;
@@ -13,8 +12,9 @@ interface ActivityManagerProps {
   onActivityAdded: (activities: DashboardActivity[]) => void;
 }
 
-const ActivityManager: React.FC<ActivityManagerProps> = ({ activities, onActivityAdded }) => {
-  const addActivity = (type: string, description: string) => {
+// Convert to a custom hook instead of a component since it's returning a function
+export const useActivityManager = ({ activities, onActivityAdded }: ActivityManagerProps) => {
+  const addActivity = useCallback((type: string, description: string) => {
     const newActivity = {
       id: Date.now(),
       type,
@@ -26,9 +26,14 @@ const ActivityManager: React.FC<ActivityManagerProps> = ({ activities, onActivit
     onActivityAdded(updatedActivities);
     
     return description;
-  };
+  }, [activities, onActivityAdded]);
   
   return { addActivity };
+};
+
+// Keeping an empty component for backwards compatibility if needed
+const ActivityManager: React.FC<ActivityManagerProps> = () => {
+  return null; // This component doesn't render anything
 };
 
 export default ActivityManager;

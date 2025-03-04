@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { ToastContainer, toast } from 'react-toastify';
 import { useNavigate } from "react-router-dom";
@@ -10,7 +9,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import Sidebar from "@/components/admin/Sidebar";
 import SectionRenderer from "@/components/admin/dashboard/SectionRenderer";
 import AdminDashboardLoading from "@/components/admin/dashboard/AdminDashboardLoading";
-import { DashboardActivity } from "@/components/admin/dashboard/ActivityManager";
+import { DashboardActivity, useActivityManager } from "@/components/admin/dashboard/ActivityManager";
 
 const AdminDashboard: React.FC = () => {
   const [activeSection, setActiveSection] = useState<string>("dashboard");
@@ -92,19 +91,15 @@ const AdminDashboard: React.FC = () => {
     }
   };
 
-  const addActivity = (type: string, description: string) => {
-    const newActivity: DashboardActivity = {
-      id: Date.now(),
-      type,
-      description,
-      time: "Just now"
-    };
-    
-    setDashboardData(prev => ({
-      ...prev,
-      recentActivities: [newActivity, ...prev.recentActivities.slice(0, 4)]
-    }));
-  };
+  const { addActivity } = useActivityManager({
+    activities: dashboardData.recentActivities as DashboardActivity[],
+    onActivityAdded: (updatedActivities) => {
+      setDashboardData(prev => ({
+        ...prev,
+        recentActivities: updatedActivities
+      }));
+    }
+  });
 
   if (isLoading) {
     return <AdminDashboardLoading />;

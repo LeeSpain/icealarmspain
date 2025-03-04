@@ -26,36 +26,41 @@ const SectionRenderer: React.FC<SectionRendererProps> = ({
     onActivityAdded(type, action);
   };
 
-  switch (activeSection) {
-    case "dashboard":
-      return <DashboardMetrics dashboardMetrics={dashboardData} />;
-    case "users":
-      return <UserManagement onAction={(action) => addActivity("User", action)} />;
-    case "clients":
-      return <ClientManagement onAction={(action) => addActivity("Client", action)} />;
-    case "devices":
-      return <DeviceManagement onAction={(action) => addActivity("Device", action)} />;
-    case "alerts":
-      return <AlertsManagement onAction={(action) => addActivity("Alert", action)} />;
-    case "admin-users":
-      return <AdminUsersManagement onAction={(action) => addActivity("Admin", action)} />;
-    case "roles":
-      return <RolesManagement onAction={(action) => addActivity("Role", action)} />;  
-    case "permissions":
-      return <PermissionsManagement onAction={(action) => addActivity("Permission", action)} />;
-    case "orders-list":
-    case "inventory":
-      return <InventoryManagement 
-        section={activeSection as "orders-list" | "inventory"}
-        onAction={(action) => addActivity("Inventory", action)} 
-      />;
-    default:
-      return <PlaceholderSection 
-        title={activeSection.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')} 
-        description={`Manage ${activeSection.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')} section`} 
-        onAction={(action) => addActivity(activeSection.charAt(0).toUpperCase() + activeSection.slice(1), action)}
-      />;
-  }
+  // Create a type guard to ensure components with different props are handled correctly
+  const renderSection = () => {
+    switch (activeSection) {
+      case "dashboard":
+        return <DashboardMetrics dashboardMetrics={dashboardData} />;
+      case "users":
+        return <UserManagement onAction={(action) => addActivity("User", action)} />;
+      case "clients":
+        return <ClientManagement onAction={(action) => addActivity("Client", action)} />;
+      case "devices":
+        return <DeviceManagement onAction={(action) => addActivity("Device", action)} />;
+      case "alerts":
+        return <AlertsManagement onAction={(action) => addActivity("Alert", action)} />;
+      case "admin-users":
+        return <AdminUsersManagement onAction={(action) => addActivity("Admin", action)} />;
+      case "roles":
+        return <RolesManagement onAction={(action) => addActivity("Role", action)} />;  
+      case "permissions":
+        return <PermissionsManagement onAction={(action) => addActivity("Permission", action)} />;
+      case "orders-list":
+      case "inventory":
+        return <InventoryManagement 
+          section={activeSection as "orders-list" | "inventory"}
+          onAction={(action) => addActivity("Inventory", action)} 
+        />;
+      default:
+        return <PlaceholderSection 
+          title={activeSection.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')} 
+          description={`Manage ${activeSection.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')} section`} 
+          onAction={(action) => addActivity(activeSection.charAt(0).toUpperCase() + activeSection.slice(1), action)}
+        />;
+    }
+  };
+
+  return renderSection();
 };
 
 export default SectionRenderer;
