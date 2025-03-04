@@ -29,9 +29,7 @@ const Join: React.FC = () => {
   const devices = getDevices(language);
   
   const handleSignupSuccess = () => {
-    // Check if user has selected devices
     if (selectedDevices.length === 0) {
-      // Redirect to dashboard after successful signup if no devices selected
       toast.success(
         language === 'en' 
           ? "Account created successfully! You can now add devices to your account." 
@@ -41,7 +39,6 @@ const Join: React.FC = () => {
         navigate('/dashboard');
       }, 1500);
     } else {
-      // Proceed to checkout with the selected devices
       handleCheckout(true);
     }
   };
@@ -70,7 +67,6 @@ const Join: React.FC = () => {
   const totals = calculateTotals(devices, selectedDevices, membershipType);
   
   const handleCheckout = (skipSignup = false) => {
-    // If no devices selected, show error
     if (selectedDevices.length === 0) {
       toast.error(
         language === 'en'
@@ -80,10 +76,8 @@ const Join: React.FC = () => {
       return;
     }
     
-    // Always allow proceeding to checkout even if not authenticated
-    // We'll only show signup form if the user explicitly requests it
+    console.log("Handling checkout", { selectedDevices, membershipType, totals });
     
-    // Prepare order data for checkout
     const orderItems = selectedDevices.map(sd => {
       const device = devices.find(d => d.id === sd.id);
       return {
@@ -109,7 +103,7 @@ const Join: React.FC = () => {
       isNewCustomer: !isAuthenticated // Add flag for new customer checkout
     };
     
-    // Navigate to checkout with order data
+    console.log("Navigating to checkout with data:", orderData);
     navigate("/checkout", { state: { orderData } });
   };
   
@@ -146,7 +140,7 @@ const Join: React.FC = () => {
                 devices={devices}
                 membershipType={membershipType}
                 membershipTypes={membershipTypes}
-                onCheckout={handleCheckout}
+                onCheckout={() => handleCheckout(false)}
                 language={language}
               />
               

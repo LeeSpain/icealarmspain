@@ -91,6 +91,12 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
 
   const discountText = getDiscountText();
 
+  // Debug the checkout function to ensure it's working
+  const handleCheckoutClick = () => {
+    console.log("Checkout button clicked");
+    onCheckout();
+  };
+
   return (
     <div className="max-w-3xl mx-auto glass-panel p-6 mb-10 animate-fade-in">
       <OrderSummaryHeader language={language} />
@@ -111,7 +117,7 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
       <InfoNotice language={language} />
       
       <CheckoutButton 
-        onCheckout={onCheckout}
+        onCheckout={handleCheckoutClick}
         language={language}
       />
     </div>
