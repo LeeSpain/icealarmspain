@@ -18,6 +18,9 @@ import ProtectedRoute from './components/auth/ProtectedRoute';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { LanguageProvider } from './context/LanguageContext';
+import SOSPendantPage from './pages/SOSPendantPage';
+import MedicalDispenserPage from './pages/MedicalDispenserPage';
+import GlucoseMonitorPage from './pages/GlucoseMonitorPage';
 
 function App() {
   return (
@@ -61,6 +64,11 @@ function App() {
                 <OnboardingQuestionnaire />
               </ProtectedRoute>
             } />
+            
+            {/* Device-specific routes */}
+            <Route path="/devices/sos-pendant" element={<SOSPendantPage />} />
+            <Route path="/devices/medical-dispenser" element={<MedicalDispenserPage />} />
+            <Route path="/devices/glucose-monitor" element={<GlucoseMonitorPage />} />
             
             {/* Add additional routes for product details, etc. */}
             <Route path="/product/:id" element={<Products />} />
