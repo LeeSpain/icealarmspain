@@ -2,6 +2,8 @@
 import React from "react";
 import ContactCards from "./ContactCards";
 import ContactForm from "./ContactForm";
+import VisitUsSection from "./VisitUsSection";
+import AIGuardianSection from "./AIGuardianSection";
 
 const ContactContent: React.FC = () => {
   return (
@@ -12,7 +14,9 @@ const ContactContent: React.FC = () => {
             <div className="w-24 h-1 bg-gradient-to-r from-ice-400 to-guardian-500 mx-auto rounded-full"></div>
           </div>
           
+          <AIGuardianSection />
           <ContactCards />
+          <VisitUsSection />
           <ContactForm />
         </div>
       </div>
