@@ -43,33 +43,31 @@ const SectionRenderer: React.FC<SectionRendererProps> = ({
     onActivityAdded(type, action);
   };
 
-  // Cast the components to any to bypass the TypeScript errors temporarily
-  // This is not ideal but will work until we can fix the type definitions properly
+  // Using type assertions correctly for TypeScript
   const renderSection = () => {
     switch (activeSection) {
       case "dashboard":
         return <DashboardMetrics dashboardMetrics={dashboardData} />;
       case "users":
-        return <UserManagement onAction={(action) => addActivity("User", action)} as any />;
+        return React.createElement(UserManagement, { onAction: (action: string) => addActivity("User", action) });
       case "clients":
-        return <ClientManagement onAction={(action) => addActivity("Client", action)} as any />;
+        return React.createElement(ClientManagement, { onAction: (action: string) => addActivity("Client", action) });
       case "devices":
-        return <DeviceManagement onAction={(action) => addActivity("Device", action)} as any />;
+        return React.createElement(DeviceManagement, { onAction: (action: string) => addActivity("Device", action) });
       case "alerts":
-        return <AlertsManagement onAction={(action) => addActivity("Alert", action)} as any />;
+        return React.createElement(AlertsManagement, { onAction: (action: string) => addActivity("Alert", action) });
       case "admin-users":
-        return <AdminUsersManagement onAction={(action) => addActivity("Admin", action)} as any />;
+        return React.createElement(AdminUsersManagement, { onAction: (action: string) => addActivity("Admin", action) });
       case "roles":
-        return <RolesManagement onAction={(action) => addActivity("Role", action)} as any />;  
+        return React.createElement(RolesManagement, { onAction: (action: string) => addActivity("Role", action) });
       case "permissions":
-        return <PermissionsManagement onAction={(action) => addActivity("Permission", action)} as any />;
+        return React.createElement(PermissionsManagement, { onAction: (action: string) => addActivity("Permission", action) });
       case "orders-list":
       case "inventory":
-        return <InventoryManagement 
-          section={activeSection as "orders-list" | "inventory"}
-          onAction={(action) => addActivity("Inventory", action)} 
-          as any
-        />;
+        return React.createElement(InventoryManagement, {
+          section: activeSection as "orders-list" | "inventory",
+          onAction: (action: string) => addActivity("Inventory", action)
+        });
       default:
         return <PlaceholderSection 
           title={activeSection.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')} 
