@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { ToastContainer, toast } from 'react-toastify';
 import { useNavigate } from "react-router-dom";
@@ -36,17 +35,14 @@ const AdminDashboard: React.FC = () => {
     recentActivities: []
   });
 
-  // Check authentication and redirect if needed
   useEffect(() => {
     console.log("AdminDashboard - Auth state:", { isAuthenticated, user, isLoading });
     
-    // Only process redirects when loading is complete
     if (!isLoading) {
       if (!isAuthenticated) {
         console.log("AdminDashboard - Not authenticated, redirecting to login");
         navigate('/login');
       } else if (user && user.role !== 'admin') {
-        // Redirect based on role
         console.log("AdminDashboard - User has incorrect role:", user.role);
         switch (user.role) {
           case 'callcenter':
@@ -58,10 +54,8 @@ const AdminDashboard: React.FC = () => {
         }
       } else {
         console.log("AdminDashboard - User authenticated with correct role");
-        // Fetch initial dashboard data
         fetchDashboardData();
         
-        // Welcome the admin user
         if (user) {
           const timeOfDay = getTimeOfDay();
           toast.success(`${timeOfDay}, ${user.displayName || user.email?.split('@')[0] || 'Admin'}! Welcome to IceAlarm España admin dashboard.`);
@@ -70,7 +64,6 @@ const AdminDashboard: React.FC = () => {
     }
   }, [isAuthenticated, user, navigate, isLoading]);
   
-  // Get time of day for greeting
   const getTimeOfDay = () => {
     const hour = new Date().getHours();
     if (hour < 12) return 'Good morning';
@@ -78,11 +71,8 @@ const AdminDashboard: React.FC = () => {
     return 'Good evening';
   };
   
-  // Fetch dashboard data - in a real app, this would come from a database
   const fetchDashboardData = async () => {
     try {
-      // For now, we'll use realistic sample data
-      // In a real implementation, this would be an API call
       const data = {
         totalRevenue: "€0",
         totalCustomers: "0",
@@ -108,7 +98,6 @@ const AdminDashboard: React.FC = () => {
     }
   };
 
-  // Show loading state while authentication is being checked
   if (isLoading) {
     return (
       <div className="flex h-screen items-center justify-center bg-ice-50/30">
@@ -122,7 +111,6 @@ const AdminDashboard: React.FC = () => {
     );
   }
 
-  // Only render if user is authenticated and has admin role
   if (!isAuthenticated || !user || user.role !== 'admin') {
     return (
       <div className="flex h-screen items-center justify-center bg-ice-50/30">
@@ -136,7 +124,6 @@ const AdminDashboard: React.FC = () => {
     );
   }
 
-  // Function to add a new activity to the dashboard
   const addActivity = (type: string, description: string) => {
     const newActivity = {
       id: Date.now(),
@@ -151,7 +138,6 @@ const AdminDashboard: React.FC = () => {
     }));
   };
 
-  // Render the appropriate section based on activeSection
   const renderActiveSection = () => {
     switch (activeSection) {
       case "dashboard":
@@ -172,43 +158,16 @@ const AdminDashboard: React.FC = () => {
         return <PermissionsManagement onAction={(action) => addActivity("Permission", action)} />;
       case "orders-list":
       case "inventory":
-        return <InventoryManagement section={activeSection} onAction={(action) => addActivity("Inventory", action)} />;
-      // Use PlaceholderSection for less important or not yet implemented sections
-      case "orders":
-      case "finance":
-      case "sales":
-      case "invoices":
-      case "reports":
-      case "settings":
-      case "device-monitoring":
-      case "device-maintenance":
-      case "call-center":
-      case "call-logs":
-      case "agent-performance":
-      case "client-details":
-      case "client-onboarding":
-      case "incidents":
-      case "emergency":
-      case "regions":
-      case "products":
-      case "product-catalog":
-      case "product-pricing":
-      case "subscriptions":
-      case "support":
-      case "knowledge-base":
-      case "faqs":
-      case "analytics":
-      case "metrics":
-      case "general":
-      case "security":
-      case "notifications":
+        return <InventoryManagement 
+          section={activeSection} 
+          onAction={(action) => addActivity("Inventory", action)} 
+        />;
+      default:
         return <PlaceholderSection 
           title={activeSection.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')} 
           description={`Manage ${activeSection.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')} section`} 
           onAction={(action) => addActivity(activeSection.charAt(0).toUpperCase() + activeSection.slice(1), action)}
         />;
-      default:
-        return <DashboardMetrics dashboardMetrics={dashboardData} />;
     }
   };
 
@@ -216,7 +175,6 @@ const AdminDashboard: React.FC = () => {
     <div className="flex h-screen bg-ice-50/30">
       <ToastContainer />
       
-      {/* Sidebar */}
       <Sidebar 
         activeSection={activeSection}
         setActiveSection={setActiveSection}
@@ -225,7 +183,6 @@ const AdminDashboard: React.FC = () => {
         userData={user}
       />
       
-      {/* Main Content */}
       <div className="flex-1 overflow-auto transition-all duration-300">
         <div className="p-6 w-full">
           {renderActiveSection()}

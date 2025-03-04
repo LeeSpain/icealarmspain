@@ -1,3 +1,4 @@
+
 import React from 'react';
 import {
   LayoutDashboard,
@@ -11,7 +12,14 @@ import {
   LockKeyhole,
   Shield,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  Smartphone,
+  ShoppingCart,
+  DollarSign,
+  MessageSquare,
+  UserPlus,
+  MapPin,
+  Bell
 } from 'lucide-react';
 import { NavLink } from 'react-router-dom';
 
