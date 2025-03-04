@@ -30,6 +30,7 @@ export const useLoginPage = () => {
     user, 
     isAuthenticated, 
     isLoading, 
+    redirectTriggered,
     provider: import.meta.env.VITE_FIREBASE_API_KEY ? "Using real Firebase auth" : "Using mock auth" 
   });
   
@@ -60,15 +61,11 @@ export const useLoginPage = () => {
         });
       }
       
-      // Use a small delay to ensure the redirect happens properly
-      const timeoutId = setTimeout(() => {
-        if (isMounted.current) {
-          console.log("Executing redirect now");
-          navigate(redirectTo, { replace: true });
-        }
-      }, 500);
-      
-      return () => clearTimeout(timeoutId);
+      // Execute the redirect immediately instead of with timeout
+      if (isMounted.current) {
+        console.log("Executing redirect now to:", redirectTo);
+        navigate(redirectTo, { replace: true });
+      }
     }
   }, [isAuthenticated, isLoading, user, navigate, redirectParam, redirectTriggered, language, toast]);
   
@@ -94,6 +91,7 @@ export const useLoginPage = () => {
 
   // Helper function to determine default redirect based on role
   const getDefaultRedirect = (role?: string) => {
+    console.log("Determining redirect for role:", role);
     switch (role) {
       case 'admin':
         return '/admin';

@@ -23,13 +23,17 @@ export const login = async (email: string, password: string, rememberMe = false)
       throw new Error('Failed to get user after login');
     }
     
+    // Determine role based on email
+    const role = determineUserRole(email);
+    console.log('Login successful. Determined role:', role);
+    
     const user: User = {
       uid: authUser.uid,
       id: authUser.uid,
       email: authUser.email,
       name: authUser.displayName,
       displayName: authUser.displayName,
-      role: determineUserRole(email),
+      role,
       profileCompleted: false,
       language: 'en',
     };
@@ -69,13 +73,17 @@ export const signUp = async (email: string, password: string, displayName?: stri
       await updateProfile(authUser, { displayName });
     }
     
+    // Determine role based on email
+    const role = determineUserRole(email);
+    console.log('Signup successful. Determined role:', role);
+    
     const user: User = {
       uid: authUser.uid,
       id: authUser.uid,
       email: authUser.email,
       name: displayName || authUser.displayName,
       displayName: displayName || authUser.displayName,
-      role: determineUserRole(email),
+      role,
       profileCompleted: false,
       language: 'en',
     };

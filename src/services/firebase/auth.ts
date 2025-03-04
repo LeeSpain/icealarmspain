@@ -1,3 +1,4 @@
+
 import { 
   getAuth, 
   createUserWithEmailAndPassword as firebaseCreateUser, 
@@ -6,7 +7,8 @@ import {
   updateProfile as firebaseUpdateProfile,
   browserLocalPersistence,
   browserSessionPersistence,
-  setPersistence as firebaseSetPersistence
+  setPersistence as firebaseSetPersistence,
+  onAuthStateChanged
 } from 'firebase/auth';
 import { initializeApp } from 'firebase/app';
 import { getAnalytics } from 'firebase/analytics';
@@ -43,6 +45,7 @@ if (hasRealFirebaseConfig) {
 
 // Export wrapped methods to ensure consistent interface between real and mock
 export const signInWithEmailAndPassword = async (email: string, password: string) => {
+  console.log('Signing in with email and password...');
   if (hasRealFirebaseConfig) {
     return firebaseSignIn(auth, email, password);
   } else {
@@ -51,6 +54,7 @@ export const signInWithEmailAndPassword = async (email: string, password: string
 };
 
 export const createUserWithEmailAndPassword = async (email: string, password: string) => {
+  console.log('Creating user with email and password...');
   if (hasRealFirebaseConfig) {
     return firebaseCreateUser(auth, email, password);
   } else {
@@ -59,6 +63,7 @@ export const createUserWithEmailAndPassword = async (email: string, password: st
 };
 
 export const signOut = async () => {
+  console.log('Signing out...');
   if (hasRealFirebaseConfig) {
     return firebaseSignOut(auth);
   } else {
@@ -67,6 +72,7 @@ export const signOut = async () => {
 };
 
 export const updateProfile = async (user: any, profile: { displayName?: string, photoURL?: string }) => {
+  console.log('Updating profile...');
   if (hasRealFirebaseConfig) {
     return firebaseUpdateProfile(user, profile);
   } else {
@@ -75,6 +81,7 @@ export const updateProfile = async (user: any, profile: { displayName?: string, 
 };
 
 export const setPersistence = async (persistenceType: string) => {
+  console.log('Setting persistence to:', persistenceType);
   if (hasRealFirebaseConfig) {
     return firebaseSetPersistence(auth, persistenceType === 'local' ? browserLocalPersistence : browserSessionPersistence);
   } else {
@@ -90,7 +97,14 @@ export const firebaseAuth = {
   updateProfile: (user: any, profile: { displayName?: string, photoURL?: string }) => updateProfile(user, profile),
   setPersistence: (persistenceType: string) => setPersistence(persistenceType),
   browserLocalPersistence,
-  browserSessionPersistence
+  browserSessionPersistence,
+  onAuthStateChanged: (callback: any) => {
+    if (hasRealFirebaseConfig) {
+      return onAuthStateChanged(auth, callback);
+    } else {
+      return (auth as MockAuth).onAuthStateChanged(callback);
+    }
+  }
 };
 
 export { auth, analytics };

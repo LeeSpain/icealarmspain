@@ -5,6 +5,7 @@ import { User, AuthContextType } from './types';
 import { determineUserRole } from './utils';
 import { AuthContext } from './context';
 import * as authFunctions from './authFunctions';
+import { toast } from 'react-toastify';
 
 // Create the AuthProvider component
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -28,12 +29,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     
     // Set the persistence based on the stored value
     if (persistenceType === 'local') {
-      auth.setPersistence(firebaseAuth.browserLocalPersistence)
+      firebaseAuth.setPersistence('local')
         .catch((error) => {
           console.error('Error setting persistence:', error);
         });
     } else {
-      auth.setPersistence(firebaseAuth.browserSessionPersistence)
+      firebaseAuth.setPersistence('session')
         .catch((error) => {
           console.error('Error setting persistence:', error);
         });
@@ -42,15 +43,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const unsubscribe = auth.onAuthStateChanged((authUser) => {
       if (!isMounted.current) return;
       
+      console.log("Auth state changed:", authUser ? "User authenticated" : "No user");
+      
       if (authUser) {
         // User is signed in
+        const role = determineUserRole(authUser.email || '');
         const user: User = {
           uid: authUser.uid,
           id: authUser.uid, // Add id property that matches uid
           email: authUser.email,
           name: authUser.displayName,
           displayName: authUser.displayName,
-          role: determineUserRole(authUser.email || ''), // Add role based on email
+          role, // Add role based on email
           profileCompleted: false, // Default value
           language: 'en', // Default language
         };

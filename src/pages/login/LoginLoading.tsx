@@ -22,6 +22,11 @@ export const LoginLoading: React.FC<LoginLoadingProps> = ({
             ? (language === 'en' ? 'Checking authentication...' : 'Verificando autenticación...')
             : (language === 'en' ? 'Redirecting to dashboard...' : 'Redirigiendo al panel...')}
         </p>
+        <p className="text-xs text-gray-500 mt-1">
+          {language === 'en' 
+            ? 'If this takes more than a few seconds, please try refreshing the page' 
+            : 'Si esto toma más de unos segundos, intente actualizar la página'}
+        </p>
       </div>
     </div>
   );
