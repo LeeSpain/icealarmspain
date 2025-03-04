@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { ToastContainer, toast } from 'react-toastify';
 import { useNavigate } from "react-router-dom";
@@ -17,6 +18,17 @@ import DeviceManagement from "@/components/admin/DeviceManagement";
 import AdminUsersManagement from "@/components/admin/AdminUsersManagement";
 import RolesManagement from "@/components/admin/RolesManagement";
 import PermissionsManagement from "@/components/admin/PermissionsManagement";
+
+// Define the types for components that don't explicitly include the onAction prop
+interface AdminComponentProps {
+  onAction: (action: string) => void;
+}
+
+// Define specific props for InventoryManagement
+interface InventoryProps {
+  section: "orders-list" | "inventory";
+  onAction: (action: string) => void;
+}
 
 const AdminDashboard: React.FC = () => {
   const [activeSection, setActiveSection] = useState<string>("dashboard");
@@ -153,9 +165,9 @@ const AdminDashboard: React.FC = () => {
       case "admin-users":
         return <AdminUsersManagement onAction={(action) => addActivity("Admin", action)} />;
       case "roles":
-        return <RolesManagement onAction={(action) => addActivity("Role", action)} />;  
+        return <RolesManagement />;  
       case "permissions":
-        return <PermissionsManagement onAction={(action) => addActivity("Permission", action)} />;
+        return <PermissionsManagement />;
       case "orders-list":
       case "inventory":
         return <InventoryManagement 
