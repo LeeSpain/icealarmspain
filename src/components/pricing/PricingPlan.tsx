@@ -1,84 +1,75 @@
 
-import React, { useCallback } from "react";
-import { Check } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import React from "react";
+import { Check, ArrowRightIcon } from "lucide-react";
 import { ButtonCustom } from "@/components/ui/button-custom";
+import { Link } from "react-router-dom";
 
 interface PricingPlanProps {
-  plan: {
-    title: string;
-    description: string;
-    deviceCount: number;
-    features: string[];
-    isPopular?: boolean;
-  };
+  title: string;
+  description: string;
+  price: string;
+  period: string;
+  features: string[];
+  isPopular?: boolean;
+  ctaText: string;
+  ctaUrl: string;
   language: string;
-  index: number;
 }
 
-const PricingPlan: React.FC<PricingPlanProps> = ({ plan, language, index }) => {
-  const navigate = useNavigate();
-  
-  const handleCheckoutClick = useCallback((e: React.MouseEvent) => {
-    console.log("PricingPlan: Select Plan button clicked");
-    e.preventDefault();
-    e.stopPropagation();
-    
-    // Use React Router to navigate with state flag to prevent redirect
-    console.log("PricingPlan: Navigating to /checkout");
-    navigate("/checkout", { state: { fromCheckoutButton: true } });
-  }, [navigate]);
-
+const PricingPlan: React.FC<PricingPlanProps> = ({
+  title,
+  description,
+  price,
+  period,
+  features,
+  isPopular,
+  ctaText,
+  ctaUrl,
+  language
+}) => {
   return (
-    <div 
-      className={`relative bg-white rounded-3xl shadow-subtle overflow-hidden border transition-all duration-300 hover:shadow-lg animate-slide-up ${
-        plan.isPopular ? "border-ice-400 transform md:scale-105" : "border-gray-100"
-      }`}
-      style={{ animationDelay: `${(index + 1) * 0.1}s` }}
-    >
-      {plan.isPopular && (
-        <div className="absolute top-0 right-0 bg-ice-500 text-white px-3 py-1 text-xs font-medium rounded-bl-lg">
-          {language === 'en' ? "Recommended" : "Recomendado"}
+    <div className={`rounded-xl overflow-hidden transition-all duration-300 ${
+      isPopular 
+        ? "border-2 border-ice-500 shadow-lg scale-105 transform z-10 bg-white" 
+        : "border border-gray-200 shadow hover:shadow-md bg-white"
+    }`}>
+      {isPopular && (
+        <div className="py-1.5 px-4 bg-ice-500 text-white text-center text-sm font-medium">
+          {language === 'en' ? 'Most Popular' : 'Más Popular'}
         </div>
       )}
       
       <div className="p-6">
-        <h3 className="text-xl font-semibold mb-2">{plan.title}</h3>
+        <h3 className="text-xl font-semibold mb-2">{title}</h3>
+        <p className="text-muted-foreground text-sm mb-6">{description}</p>
         
-        <p className="text-muted-foreground text-sm mb-6">
-          {plan.description}
-        </p>
-        
-        <div className="bg-ice-50 rounded-lg p-3 text-center mb-6">
-          <span className="text-sm font-medium text-ice-700">
-            {language === 'en' ? `${plan.deviceCount} Device Connection${plan.deviceCount > 1 ? 's' : ''}` : 
-            `${plan.deviceCount} Conexión${plan.deviceCount > 1 ? 'es' : ''} de Dispositivo`}
-          </span>
+        <div className="mb-6">
+          <span className="text-3xl font-bold">{price}</span>
+          <span className="text-muted-foreground ml-1">{period}</span>
         </div>
         
         <ul className="space-y-3 mb-8">
-          {plan.features.map((feature, idx) => (
-            <li key={idx} className="flex items-start">
-              <Check size={18} className="text-green-500 mr-2 flex-shrink-0 mt-0.5" />
-              <span className="text-sm">{feature}</span>
+          {features.map((feature, index) => (
+            <li key={index} className="flex items-start text-sm">
+              <div className="mr-3 mt-1 bg-ice-100 rounded-full p-0.5">
+                <Check size={12} className="text-ice-600" />
+              </div>
+              <span>{feature}</span>
             </li>
           ))}
         </ul>
         
-        <div className="flex flex-col gap-3">
-          <Link to="/products">
-            <ButtonCustom variant="outline" className="w-full">
-              {language === 'en' ? "View Devices" : "Ver Dispositivos"}
-            </ButtonCustom>
-          </Link>
+        <Link to={ctaUrl}>
           <ButtonCustom 
-            className="w-full" 
-            onClick={handleCheckoutClick}
-            data-testid="pricing-plan-checkout-button"
+            variant={isPopular ? "default" : "outline"} 
+            className={`w-full ${isPopular ? "bg-ice-600 hover:bg-ice-700" : "border-ice-600 text-ice-600 hover:bg-ice-50"}`}
           >
-            {language === 'en' ? "Select Plan" : "Seleccionar Plan"}
+            <span className="flex items-center justify-center">
+              {ctaText}
+              <ArrowRightIcon size={16} className="ml-2" />
+            </span>
           </ButtonCustom>
-        </div>
+        </Link>
       </div>
     </div>
   );

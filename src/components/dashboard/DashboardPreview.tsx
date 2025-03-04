@@ -1,12 +1,13 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { LayoutDashboard, ArrowUpCircle } from "lucide-react";
-import { Link } from "react-router-dom";
 import { ButtonCustom } from "@/components/ui/button-custom";
 import { useLanguage } from "@/context/LanguageContext";
+import DashboardPreviewModal from "./DashboardPreviewModal";
 
 const DashboardPreview: React.FC = () => {
   const { language } = useLanguage();
+  const [previewOpen, setPreviewOpen] = useState(false);
   
   return (
     <section id="dashboard-example" className="py-20 bg-white relative">
@@ -54,9 +55,12 @@ const DashboardPreview: React.FC = () => {
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-sm text-gray-500">{language === 'en' ? 'Weekly Average:' : 'Promedio Semanal:'} <span className="font-medium text-ice-700">79%</span></span>
-                  <Link to="/dashboard" className="text-xs text-ice-600 hover:text-ice-700 flex items-center">
+                  <button 
+                    onClick={() => setPreviewOpen(true)}
+                    className="text-xs text-ice-600 hover:text-ice-700 flex items-center"
+                  >
                     {language === 'en' ? 'View Details' : 'Ver Detalles'} →
-                  </Link>
+                  </button>
                 </div>
               </div>
               
@@ -122,17 +126,21 @@ const DashboardPreview: React.FC = () => {
           </div>
           
           <div className="px-6 py-4 bg-ice-50/70 border-t border-ice-100 flex justify-center">
-            <Link to="/dashboard">
-              <ButtonCustom size="sm" className="group">
-                <span className="flex items-center">
-                  {language === 'en' ? 'See Dashboard Example' : 'Ver Ejemplo del Panel'}
-                  <ArrowUpCircle className="ml-2 h-4 w-4 rotate-90 transition group-hover:translate-x-1" />
-                </span>
-              </ButtonCustom>
-            </Link>
+            <ButtonCustom size="sm" className="group" onClick={() => setPreviewOpen(true)}>
+              <span className="flex items-center">
+                {language === 'en' ? 'See Dashboard Example' : 'Ver Ejemplo del Panel'}
+                <ArrowUpCircle className="ml-2 h-4 w-4 rotate-90 transition group-hover:translate-x-1" />
+              </span>
+            </ButtonCustom>
           </div>
         </div>
       </div>
+      
+      {/* Dashboard Preview Modal */}
+      <DashboardPreviewModal 
+        open={previewOpen} 
+        onOpenChange={setPreviewOpen} 
+      />
     </section>
   );
 };

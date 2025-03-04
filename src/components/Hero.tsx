@@ -71,11 +71,7 @@ const Hero: React.FC = () => {
                   <span className="absolute inset-0 bg-gradient-to-r from-ice-500 to-ice-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-0"></span>
                 </ButtonCustom>
               </Link>
-              <Link to="/dashboard">
-                <ButtonCustom variant="outline" size="lg" className="border-ice-200 hover:border-ice-300 shadow-sm">
-                  {language === 'en' ? 'Learn More' : 'Más Información'}
-                </ButtonCustom>
-              </Link>
+              {/* Removed the "Learn More" button as requested */}
             </div>
           </div>
           
