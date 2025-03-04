@@ -82,10 +82,10 @@ export const calculateTotals = (
   
   const productTax = oneTimeTotal * productTaxRate;
   const monthlyTax = totalMonthlyBase * monthlyTaxRate;
-  const shippingTax = totalShipping * productTaxRate;
+  const shippingTax = 0; // No longer applying shipping tax
   
   const totalWithProductTax = oneTimeTotal + productTax;
-  const totalWithShipping = totalWithProductTax + totalShipping + shippingTax;
+  const totalWithShipping = totalWithProductTax + totalShipping; // No longer adding shipping tax
   const totalWithMonthlyTax = totalMonthlyBase + monthlyTax;
   
   return {

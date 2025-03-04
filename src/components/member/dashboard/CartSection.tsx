@@ -45,10 +45,10 @@ export const CartSection: React.FC<CartSectionProps> = ({ cart, onRemoveFromCart
     
     // Tax calculations
     const productTax = oneTimeTotal * 0.21; // 21% IVA for products
-    const shippingTax = shippingTotal * 0.21; // 21% IVA for shipping
+    const shippingTax = 0; // No longer charging shipping tax
     const monthlyTax = monthlyTotal * 0.10; // 10% IVA for services
     
-    const total = oneTimeTotal + productTax + shippingTotal + shippingTax;
+    const total = oneTimeTotal + productTax + shippingTotal;
     
     const orderData = {
       membershipType: "individual", // Default for cart checkout

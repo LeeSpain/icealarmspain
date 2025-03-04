@@ -29,10 +29,10 @@ export const calculateOrderData = (cart: CartItem[], getTotalPrice: () => number
       oneTimeTotal: 110.00,
       productTax: 23.10,  // 21% of 110
       shippingTotal: 14.99,
-      shippingTax: 3.15,  // 21% of 14.99
+      shippingTax: 0,     // No longer charging shipping tax
       monthlyTotal: 24.99,
       monthlyTax: 2.50,   // 10% of 24.99
-      total: 151.24       // 110 + 23.10 + 14.99 + 3.15
+      total: 148.09       // 110 + 23.10 + 14.99 (without shipping tax)
     };
     
     console.log("calculateOrderData - Returning sample data:", sampleOrderData);
@@ -77,7 +77,7 @@ export const calculateOrderData = (cart: CartItem[], getTotalPrice: () => number
   // Calculate taxes and shipping
   const productTax = oneTimeTotal * 0.21;
   const shippingTotal = deviceCount * 14.99;
-  const shippingTax = shippingTotal * 0.21;
+  const shippingTax = 0; // No longer charging shipping tax
   
   // Calculate monthly costs
   const monthlyTotal = cart.reduce((total, item) => {
@@ -86,8 +86,8 @@ export const calculateOrderData = (cart: CartItem[], getTotalPrice: () => number
   }, 0);
   const monthlyTax = monthlyTotal * 0.10;
   
-  // Calculate final total
-  const total = oneTimeTotal + productTax + shippingTotal + shippingTax;
+  // Calculate final total (without shipping tax)
+  const total = oneTimeTotal + productTax + shippingTotal;
 
   const result = {
     membershipType: "individual",

@@ -45,13 +45,6 @@ const CostsSummary: React.FC<CostsSummaryProps> = ({ totals, language, discountT
           <span>€{totals.totalShipping.toFixed(2)}</span>
         </div>
         
-        <div className="flex justify-between mb-1">
-          <span className="text-muted-foreground">
-            {language === 'en' ? "Shipping IVA (21%)" : "IVA de envío (21%)"}:
-          </span>
-          <span>€{totals.shippingTax.toFixed(2)}</span>
-        </div>
-        
         <div className="flex justify-between mb-4 pt-2 border-t border-gray-100">
           <span className="font-medium">
             {language === 'en' ? "Total one-time cost" : "Costo único total"}:

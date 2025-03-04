@@ -32,10 +32,10 @@ const PricingActions: React.FC<PricingActionsProps> = ({ language }) => {
       oneTimeTotal: 110.00,
       productTax: 23.10,  // 21% of 110
       shippingTotal: 14.99,
-      shippingTax: 3.15,  // 21% of 14.99
+      shippingTax: 0,     // No longer charging shipping tax
       monthlyTotal: 24.99,
       monthlyTax: 2.50,   // 10% of 24.99
-      total: 151.24       // 110 + 23.10 + 14.99 + 3.15
+      total: 148.09       // 110 + 23.10 + 14.99 (without shipping tax)
     };
     
     console.log("PricingActions: Navigating to /checkout with sample data:", sampleOrderData);
