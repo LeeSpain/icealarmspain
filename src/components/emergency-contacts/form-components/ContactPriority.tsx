@@ -5,10 +5,17 @@ import { FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/comp
 import { Input } from '@/components/ui/input';
 import { AlertTriangle } from 'lucide-react';
 import { UseFormReturn } from 'react-hook-form';
-import { ContactFormValues } from '../types';
 
 interface ContactPriorityProps {
-  form: UseFormReturn<ContactFormValues>;
+  form: UseFormReturn<{
+    name: string;
+    relationship: string;
+    phone: string;
+    email: string;
+    priority: number;
+    receivesAlerts: boolean;
+    receivesUpdates: boolean;
+  }>;
 }
 
 const ContactPriority: React.FC<ContactPriorityProps> = ({ form }) => {

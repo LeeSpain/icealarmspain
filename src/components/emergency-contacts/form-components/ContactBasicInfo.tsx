@@ -6,10 +6,17 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { User, Users, Phone, Mail } from 'lucide-react';
 import { UseFormReturn } from 'react-hook-form';
-import { ContactFormValues } from '../types';
 
 interface ContactBasicInfoProps {
-  form: UseFormReturn<ContactFormValues>;
+  form: UseFormReturn<{
+    name: string;
+    relationship: string;
+    phone: string;
+    email: string;
+    priority: number;
+    receivesAlerts: boolean;
+    receivesUpdates: boolean;
+  }>;
 }
 
 const ContactBasicInfo: React.FC<ContactBasicInfoProps> = ({ form }) => {
