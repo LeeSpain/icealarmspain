@@ -6,7 +6,7 @@ import "react-toastify/dist/ReactToastify.css";
 
 interface AuthFormProps {
   mode: "login" | "signup";
-  onSuccess?: (email: string, password: string) => void;
+  onSuccess?: (email: string, password: string, rememberMe?: boolean) => void;
   isLoading?: boolean;
   error?: string | null;
   redirectTo?: string;

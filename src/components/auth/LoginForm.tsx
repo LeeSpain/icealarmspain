@@ -9,9 +9,11 @@ import AuthInput from "./AuthInput";
 import PasswordInput from "./PasswordInput";
 import { validateForm, SocialSignIn, AuthFormFooter } from "./AuthFormUtils";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
 
 interface LoginFormProps {
-  onSuccess?: (email: string, password: string) => void;
+  onSuccess?: (email: string, password: string, rememberMe: boolean) => void;
   isLoading?: boolean;
   error?: string | null;
   redirectTo?: string;
@@ -29,6 +31,7 @@ const LoginForm: React.FC<LoginFormProps> = ({
     email: "",
     password: "",
   });
+  const [rememberMe, setRememberMe] = useState(false);
   const [internalLoading, setInternalLoading] = useState(false);
   const [internalError, setInternalError] = useState<string | null>(null);
   const [errors, setErrors] = useState<{[key: string]: string}>({});
@@ -41,6 +44,15 @@ const LoginForm: React.FC<LoginFormProps> = ({
       setInternalError(externalError);
     }
   }, [externalError]);
+
+  // Check for saved email in localStorage
+  useEffect(() => {
+    const savedEmail = localStorage.getItem('rememberedEmail');
+    if (savedEmail) {
+      setFormData(prev => ({ ...prev, email: savedEmail }));
+      setRememberMe(true);
+    }
+  }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -55,6 +67,10 @@ const LoginForm: React.FC<LoginFormProps> = ({
     if (internalError) {
       setInternalError(null);
     }
+  };
+
+  const handleRememberMeChange = () => {
+    setRememberMe(!rememberMe);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -76,10 +92,17 @@ const LoginForm: React.FC<LoginFormProps> = ({
       setInternalLoading(true);
     }
     
+    // Handle remember me
+    if (rememberMe) {
+      localStorage.setItem('rememberedEmail', formData.email);
+    } else {
+      localStorage.removeItem('rememberedEmail');
+    }
+    
     // Call onSuccess handler if provided
     if (onSuccess) {
       try {
-        await onSuccess(formData.email, formData.password);
+        await onSuccess(formData.email, formData.password, rememberMe);
       } catch (error) {
         console.error("Login error in form:", error);
         const errorMessage = error instanceof Error ? error.message : String(error);
@@ -113,6 +136,7 @@ const LoginForm: React.FC<LoginFormProps> = ({
   const loginText = t("login") || (language === 'en' ? "Login" : "Iniciar sesión");
   const loadingText = t("loading") || (language === 'en' ? "Loading..." : "Cargando...");
   const forgotPasswordText = language === 'en' ? "Forgot your password?" : "¿Olvidaste tu contraseña?";
+  const rememberMeText = language === 'en' ? "Remember me" : "Recordarme";
 
   // Check if using development mode
   const isDevelopmentMode = !import.meta.env.VITE_FIREBASE_API_KEY;
@@ -168,7 +192,21 @@ const LoginForm: React.FC<LoginFormProps> = ({
           language={language}
         />
         
-        <div className="flex items-center justify-end">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-2">
+            <Checkbox 
+              id="rememberMe" 
+              checked={rememberMe} 
+              onCheckedChange={handleRememberMeChange}
+              className="data-[state=checked]:bg-ice-600 data-[state=checked]:border-ice-600"
+            />
+            <Label 
+              htmlFor="rememberMe" 
+              className="text-sm font-medium text-gray-700 dark:text-gray-300 cursor-pointer"
+            >
+              {rememberMeText}
+            </Label>
+          </div>
           <div className="text-sm">
             <Link to="/reset-password" className="font-medium text-ice-600 hover:text-ice-500">
               {forgotPasswordText}

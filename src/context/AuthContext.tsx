@@ -1,3 +1,4 @@
+
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import { auth, firebaseAuth } from '../firebase';
 
@@ -18,8 +19,8 @@ interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
   isLoading: boolean;
-  login: (email: string, password: string) => Promise<User>;
-  signIn: (email: string, password: string) => Promise<boolean>;
+  login: (email: string, password: string, rememberMe?: boolean) => Promise<User>;
+  signIn: (email: string, password: string, rememberMe?: boolean) => Promise<boolean>;
   signUp: (email: string, password: string) => Promise<User>;
   logout: () => Promise<void>;
   updateUserProfile: (displayName: string) => Promise<void>;
@@ -69,6 +70,23 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // Listen for auth state changes
   useEffect(() => {
     console.log('Setting up auth state listener');
+    
+    // Check if persistence is enabled
+    const persistenceType = localStorage.getItem('authPersistence') || 'session';
+    
+    // Set the persistence based on the stored value
+    if (persistenceType === 'local') {
+      auth.setPersistence(firebaseAuth.browserLocalPersistence)
+        .catch((error) => {
+          console.error('Error setting persistence:', error);
+        });
+    } else {
+      auth.setPersistence(firebaseAuth.browserSessionPersistence)
+        .catch((error) => {
+          console.error('Error setting persistence:', error);
+        });
+    }
+    
     const unsubscribe = auth.onAuthStateChanged((authUser) => {
       if (authUser) {
         // User is signed in
@@ -97,9 +115,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, []);
 
   // Login function
-  const login = async (email: string, password: string): Promise<User> => {
+  const login = async (email: string, password: string, rememberMe = false): Promise<User> => {
     try {
-      console.log('Attempting login for:', email);
+      console.log('Attempting login for:', email, 'Remember me:', rememberMe);
+      
+      // Set persistence type based on remember me option
+      if (rememberMe) {
+        await auth.setPersistence(firebaseAuth.browserLocalPersistence);
+        localStorage.setItem('authPersistence', 'local');
+      } else {
+        await auth.setPersistence(firebaseAuth.browserSessionPersistence);
+        localStorage.setItem('authPersistence', 'session');
+      }
+      
       const { user: authUser } = await auth.signInWithEmailAndPassword(email, password);
       if (!authUser) {
         throw new Error('Failed to get user after login');
@@ -122,9 +150,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   // SignIn function (alternative name for login, needed for compatibility)
-  const signIn = async (email: string, password: string): Promise<boolean> => {
+  const signIn = async (email: string, password: string, rememberMe = false): Promise<boolean> => {
     try {
-      await login(email, password);
+      await login(email, password, rememberMe);
       return true;
     } catch (error) {
       console.error('SignIn error:', error);
@@ -162,6 +190,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       console.log('Logging out user:', user?.email);
       await auth.signOut();
+      // Clear remembered auth persistence
+      localStorage.removeItem('authPersistence');
     } catch (error) {
       console.error('Logout error:', error);
       throw error;

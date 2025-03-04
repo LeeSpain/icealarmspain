@@ -3,7 +3,16 @@
 // This file supports both mock implementation for development and real Firebase for production
 
 import { initializeApp } from 'firebase/app';
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, updateProfile } from 'firebase/auth';
+import { 
+  getAuth, 
+  createUserWithEmailAndPassword, 
+  signInWithEmailAndPassword, 
+  signOut, 
+  updateProfile,
+  browserLocalPersistence,
+  browserSessionPersistence,
+  setPersistence
+} from 'firebase/auth';
 
 // Check if we have Firebase config in environment variables
 const hasRealFirebaseConfig = 
@@ -14,6 +23,7 @@ const hasRealFirebaseConfig =
 class MockAuth {
   currentUser: any = null;
   authStateListeners: Array<(user: any | null) => void> = [];
+  persistenceType: string = 'session';
   
   // Mock implementation of onAuthStateChanged
   onAuthStateChanged(callback: (user: any | null) => void) {
@@ -31,7 +41,7 @@ class MockAuth {
   
   // Mock implementation of signInWithEmailAndPassword
   async signInWithEmailAndPassword(email: string, password: string) {
-    console.log("Mock signIn:", email);
+    console.log("Mock signIn:", email, "Persistence:", this.persistenceType);
     
     // Simulate network delay
     await new Promise(resolve => setTimeout(resolve, 800));
@@ -134,6 +144,13 @@ class MockAuth {
         this.authStateListeners.forEach(callback => callback(this.currentUser));
       }
     }
+  }
+  
+  // Mock implementation of setPersistence
+  async setPersistence(persistenceType: string) {
+    console.log("Setting mock persistence to:", persistenceType);
+    this.persistenceType = persistenceType;
+    return Promise.resolve();
   }
 }
 
@@ -267,5 +284,8 @@ export const firebaseAuth = {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signOut,
-  updateProfile
+  updateProfile,
+  setPersistence,
+  browserLocalPersistence,
+  browserSessionPersistence
 };

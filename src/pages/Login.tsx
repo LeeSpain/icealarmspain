@@ -73,15 +73,15 @@ const Login: React.FC = () => {
     window.scrollTo(0, 0);
   }, []);
   
-  const handleLoginSuccess = async (email: string, password: string) => {
+  const handleLoginSuccess = async (email: string, password: string, rememberMe: boolean) => {
     if (loginInProgress) return; // Prevent multiple login attempts
     
     setLoginInProgress(true);
     setLoginError(null);
     
     try {
-      console.log("Attempting login with:", email);
-      const success = await signIn(email, password);
+      console.log("Attempting login with:", email, "Remember me:", rememberMe);
+      const success = await signIn(email, password, rememberMe);
       
       if (!success) {
         setLoginError(language === 'en' ? "Invalid email or password" : "Correo o contraseña inválidos");
