@@ -1,7 +1,7 @@
 
 import React from "react";
-import { ButtonCustom } from "@/components/ui/button-custom";
 import { Link } from "react-router-dom";
+import { ButtonCustom } from "@/components/ui/button-custom";
 
 interface DeviceCTAProps {
   language: string;
@@ -9,27 +9,27 @@ interface DeviceCTAProps {
 
 const DeviceCTA: React.FC<DeviceCTAProps> = ({ language }) => {
   return (
-    <section className="py-16 bg-ice-600 text-white">
-      <div className="container mx-auto px-4 md:px-6 text-center">
-        <h2 className="text-3xl font-bold mb-6">
+    <section className="py-20 bg-gradient-to-b from-ice-50 to-white text-center">
+      <div className="container mx-auto px-4">
+        <h2 className="text-3xl md:text-4xl font-bold mb-6">
           {language === 'en' 
-            ? "Ready to experience peace of mind?" 
-            : "¿Listo para experimentar tranquilidad?"}
+            ? "Ready to Experience Complete Health Monitoring?" 
+            : "¿Listo para Experimentar un Monitoreo de Salud Completo?"}
         </h2>
-        <p className="text-lg mb-8 max-w-2xl mx-auto">
+        <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-8">
           {language === 'en'
-            ? "Join thousands of satisfied customers who trust ICE Alarm España for their health monitoring needs."
-            : "Únase a miles de clientes satisfechos que confían en ICE Alarm España para sus necesidades de monitoreo de salud."}
+            ? "Choose the devices that best suit your needs and start your journey to better health monitoring today."
+            : "Elija los dispositivos que mejor se adapten a sus necesidades y comience su camino hacia un mejor monitoreo de la salud hoy."}
         </p>
-        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
           <Link to="/join">
-            <ButtonCustom variant="secondary" size="lg">
-              {language === 'en' ? "Shop Now" : "Comprar Ahora"}
+            <ButtonCustom size="lg">
+              {language === 'en' ? "Get Started Today" : "Comience Hoy"}
             </ButtonCustom>
           </Link>
-          <Link to="/demo">
-            <ButtonCustom variant="outline" size="lg" className="text-white border-white hover:bg-white/10">
-              {language === 'en' ? "Request Demo" : "Solicitar Demo"}
+          <Link to="/pricing">
+            <ButtonCustom variant="outline" size="lg">
+              {language === 'en' ? "View Pricing" : "Ver Precios"}
             </ButtonCustom>
           </Link>
         </div>
