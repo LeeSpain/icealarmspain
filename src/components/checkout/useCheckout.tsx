@@ -4,6 +4,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { useLanguage } from "@/context/LanguageContext";
 import { useCart } from "@/components/payment/CartContext";
 import { toast } from "react-toastify";
+import { payment } from "@/firebase";
 
 export const useCheckout = () => {
   const { language } = useLanguage();
@@ -25,10 +26,15 @@ export const useCheckout = () => {
     nie: "" // NIE number field
   });
   const [paymentMethod, setPaymentMethod] = useState("credit_card");
-  const [cardDetails, setCardDetails] = useState({});
+  const [cardDetails, setCardDetails] = useState({
+    number: "",
+    name: "",
+    expiry: "",
+    cvc: ""
+  });
   const [orderId, setOrderId] = useState("");
   const [orderDate, setOrderDate] = useState(new Date().toISOString());
-  const [last4, setLast4] = useState("1234"); // Default dummy value
+  const [last4, setLast4] = useState(""); 
   
   // Get order data from location state if available
   const locationOrderData = location.state?.orderData;
@@ -64,16 +70,56 @@ export const useCheckout = () => {
     }
   };
   
-  const processPayment = () => {
+  const processPayment = async () => {
     setLoading(true);
     
-    // Simulate payment processing
-    setTimeout(() => {
-      setLoading(false);
+    try {
+      // Validate card details
+      if (paymentMethod === "credit_card") {
+        if (!cardDetails.number || !cardDetails.name || !cardDetails.expiry || !cardDetails.cvc) {
+          throw new Error(language === 'en' 
+            ? "Please fill in all card details" 
+            : "Por favor, completa todos los detalles de la tarjeta");
+        }
+      }
+      
+      // Mock payment processing
+      const fullName = `${billingInfo.firstName} ${billingInfo.lastName}`.trim();
+      
+      // Prepare address in the format expected by the payment processor
+      const address = {
+        line1: billingInfo.address,
+        line2: "",
+        city: billingInfo.city,
+        state: billingInfo.state || "",
+        postalCode: billingInfo.postalCode,
+        country: billingInfo.country
+      };
+      
+      // Process payment (simulated for now)
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      // Update the last4 digits from card details if available
+      if (cardDetails && cardDetails.number) {
+        const cardNumber = cardDetails.number.replace(/\s/g, '');
+        setLast4(cardNumber.slice(-4));
+      }
+      
       setStep(3);
       clearCart();
       window.scrollTo(0, 0);
-    }, 2000);
+      
+      // Show success toast
+      toast.success(language === 'en' 
+        ? "Payment processed successfully!" 
+        : "¡Pago procesado con éxito!");
+        
+    } catch (error) {
+      console.error("Payment error:", error);
+      toast.error(error instanceof Error ? error.message : String(error));
+    } finally {
+      setLoading(false);
+    }
   };
   
   const handleBackToShopping = () => {

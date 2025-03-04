@@ -90,79 +90,31 @@ export const usePaymentForm = (
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsProcessing(true);
-    setError(null);
     
-    try {
-      let userId = user?.uid;
-      let userEmail = user?.email;
-      
-      // If this is a new customer and we need to create an account
-      if (isNewCustomer && !user) {
-        if (!formData.password || formData.password.length < 6) {
-          throw new Error(language === 'en' 
-            ? "Please create a password (minimum 6 characters)" 
-            : "Por favor, crea una contraseña (mínimo 6 caracteres)");
-        }
-        
-        try {
-          // Create user account
-          const newUser = await signUp(formData.email, formData.password);
-          userId = newUser.uid;
-          userEmail = newUser.email;
-          
-          toast({
-            title: language === 'en' ? "Account Created" : "Cuenta Creada",
-            description: language === 'en' 
-              ? "Your account was created successfully!" 
-              : "¡Tu cuenta ha sido creada con éxito!",
-            variant: "default",
-          });
-        } catch (signupError) {
-          console.error("Error creating account:", signupError);
-          throw new Error(language === 'en'
-            ? "Failed to create account. Please try again."
-            : "Error al crear la cuenta. Por favor, inténtalo de nuevo.");
-        }
-      }
-      
-      // Process payment
-      const paymentResult = await payment.processPayment({
-        amount,
-        cardNumber: formData.cardNumber,
-        expiryDate: formData.expiryDate,
-        cvc: formData.cvc,
-        name: formData.name,
-        items,
-        userId: userId,
-        email: formData.email,
-        address: formData.address
-      });
-      
-      // Show success notification
-      toast({
-        title: language === 'en' ? "Payment Successful" : "Pago Exitoso",
-        description: language === 'en' 
-          ? `Your payment of €${amount.toFixed(2)} has been processed successfully.` 
-          : `Tu pago de €${amount.toFixed(2)} ha sido procesado con éxito.`,
-        variant: "default",
-      });
-      
-      // Call onSuccess callback with payment result
-      onSuccess(paymentResult);
-    } catch (err) {
-      console.error("Payment error:", err);
-      setError(err instanceof Error ? err.message : String(err));
-      
-      // Show error notification
-      toast({
-        title: language === 'en' ? "Payment Failed" : "Pago Fallido",
-        description: err instanceof Error ? err.message : String(err),
-        variant: "destructive",
-      });
-    } finally {
-      setIsProcessing(false);
+    // In step 1, we only validate billing info and don't process payment
+    if (!formData.email || !formData.phone || !formData.nie || !formData.address.line1 || 
+        !formData.address.city || !formData.address.state || !formData.address.postalCode) {
+      setError(language === 'en' 
+        ? "Please fill in all required billing information fields" 
+        : "Por favor, completa todos los campos obligatorios de facturación");
+      return;
     }
+    
+    // Just pass billing info to the next step
+    const billingInfo = {
+      firstName: formData.name.split(' ')[0] || '',
+      lastName: formData.name.split(' ').slice(1).join(' ') || '',
+      email: formData.email,
+      phone: formData.phone,
+      nie: formData.nie,
+      address: formData.address.line1 + (formData.address.line2 ? ', ' + formData.address.line2 : ''),
+      city: formData.address.city,
+      state: formData.address.state,
+      postalCode: formData.address.postalCode,
+      country: formData.address.country
+    };
+    
+    onSuccess(billingInfo);
   };
 
   return {

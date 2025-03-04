@@ -8,7 +8,6 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { CreditCard, AlertCircle, CheckCircle2 } from "lucide-react";
 import { usePaymentForm } from "@/hooks/usePaymentForm";
 import AccountCreationSection from "./AccountCreationSection";
-import CardInformationSection from "./CardInformationSection";
 import BillingInformationSection from "./BillingInformationSection";
 import PaymentAmountSummary from "./PaymentAmountSummary";
 import { PaymentFormProps } from "@/types/payment";
@@ -34,12 +33,12 @@ const PaymentForm: React.FC<PaymentFormProps> = ({
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <CreditCard className="h-5 w-5 text-ice-600" />
-          {language === 'en' ? "Payment Details" : "Detalles de Pago"}
+          {language === 'en' ? "Billing Information" : "Información de Facturación"}
         </CardTitle>
         <CardDescription>
           {language === 'en' 
-            ? "Enter your payment information to complete your purchase" 
-            : "Ingresa tu información de pago para completar tu compra"}
+            ? "Enter your billing information to proceed to payment" 
+            : "Ingresa tu información de facturación para proceder al pago"}
         </CardDescription>
       </CardHeader>
       
@@ -61,13 +60,6 @@ const PaymentForm: React.FC<PaymentFormProps> = ({
               <Separator />
             </>
           )}
-          
-          <CardInformationSection 
-            formData={formData} 
-            handleChange={handleChange} 
-          />
-          
-          <Separator />
           
           <BillingInformationSection 
             formData={formData} 
@@ -96,7 +88,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({
             {!isProcessing && (
               <>
                 <CheckCircle2 className="mr-2 h-4 w-4" />
-                {language === 'en' ? "Complete Purchase" : "Completar Compra"}
+                {language === 'en' ? "Continue to Payment" : "Continuar al Pago"}
               </>
             )}
             {isProcessing && (
