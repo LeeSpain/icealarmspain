@@ -16,6 +16,7 @@ const ContactForm: React.FC = () => {
     name: "",
     email: "",
     phone: "",
+    nie: "",
     subject: "",
     message: ""
   });
@@ -46,6 +47,7 @@ const ContactForm: React.FC = () => {
         name: "",
         email: "",
         phone: "",
+        nie: "",
         subject: "",
         message: ""
       });
@@ -118,19 +120,35 @@ const ContactForm: React.FC = () => {
               
               <div className="space-y-2">
                 <label htmlFor="phone" className="block text-sm font-medium">
-                  {language === 'en' ? 'Phone Number' : 'Número de Teléfono'}
+                  {language === 'en' ? 'Phone Number' : 'Número de Teléfono'} *
                 </label>
                 <Input
                   id="phone"
                   name="phone"
                   value={formData.phone}
                   onChange={handleChange}
+                  required
                   placeholder="+34 XXX XXX XXX"
                   className="transition-all duration-300 focus:border-ice-400"
                 />
               </div>
               
               <div className="space-y-2">
+                <label htmlFor="nie" className="block text-sm font-medium">
+                  {language === 'en' ? 'NIE Number' : 'Número NIE'} *
+                </label>
+                <Input
+                  id="nie"
+                  name="nie"
+                  value={formData.nie}
+                  onChange={handleChange}
+                  required
+                  placeholder={language === 'en' ? 'X-0000000-X' : 'X-0000000-X'}
+                  className="transition-all duration-300 focus:border-ice-400"
+                />
+              </div>
+              
+              <div className="space-y-2 md:col-span-2">
                 <label htmlFor="subject" className="block text-sm font-medium">
                   {language === 'en' ? 'Subject' : 'Asunto'} *
                 </label>

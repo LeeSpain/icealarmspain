@@ -46,5 +46,12 @@ export const personalQuestions: Question = {
       type: "email",
       required: true,
     },
+    {
+      id: "phone",
+      questionEn: "Phone Number",
+      questionEs: "Número de Teléfono", 
+      type: "phone",
+      required: true,
+    },
   ],
 };
