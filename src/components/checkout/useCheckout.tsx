@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useLanguage } from "@/context/LanguageContext";
@@ -48,14 +47,19 @@ export const useCheckout = () => {
     const randomOrderId = "ICE-" + Math.floor(100000 + Math.random() * 900000);
     setOrderId(randomOrderId);
     
-    // Redirect if no items in cart and no location state (can't proceed with empty checkout)
+    // Don't redirect if we have location state data, even if cart is empty
+    // This allows direct navigation to checkout with prepared order data
     if (cart.length === 0 && !locationOrderData) {
+      console.log("Cart is empty and no location state data, showing toast");
       toast.info(language === 'en' 
         ? "Please add items to your cart first" 
         : "Por favor, agregue artículos a su carrito primero");
-      navigate('/products');
+      // Use setTimeout to avoid immediate redirection during component mount
+      setTimeout(() => {
+        navigate('/products');
+      }, 100);
     }
-  }, [cart, navigate, language, locationOrderData]);
+  }, [cart.length, navigate, language, locationOrderData]);
   
   const handleBillingInfoSubmit = (data: any) => {
     setBillingInfo(data);
