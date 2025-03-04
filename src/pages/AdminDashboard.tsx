@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { ToastContainer, toast } from 'react-toastify';
 import { useNavigate } from "react-router-dom";
@@ -25,9 +24,8 @@ interface AdminComponentProps {
 }
 
 // Define specific props for InventoryManagement
-interface InventoryProps {
+interface InventoryProps extends AdminComponentProps {
   section: "orders-list" | "inventory";
-  onAction: (action: string) => void;
 }
 
 const AdminDashboard: React.FC = () => {
@@ -165,13 +163,13 @@ const AdminDashboard: React.FC = () => {
       case "admin-users":
         return <AdminUsersManagement onAction={(action) => addActivity("Admin", action)} />;
       case "roles":
-        return <RolesManagement />;  
+        return <RolesManagement onAction={(action) => addActivity("Role", action)} />;  
       case "permissions":
-        return <PermissionsManagement />;
+        return <PermissionsManagement onAction={(action) => addActivity("Permission", action)} />;
       case "orders-list":
       case "inventory":
         return <InventoryManagement 
-          section={activeSection} 
+          section={activeSection as "orders-list" | "inventory"}
           onAction={(action) => addActivity("Inventory", action)} 
         />;
       default:

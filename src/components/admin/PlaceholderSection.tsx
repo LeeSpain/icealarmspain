@@ -8,7 +8,7 @@ import { toast } from "react-toastify";
 interface PlaceholderSectionProps {
   title: string;
   description: string;
-  onAction?: (action: string) => void;
+  onAction: (action: string) => void;
 }
 
 const PlaceholderSection: React.FC<PlaceholderSectionProps> = ({ 
