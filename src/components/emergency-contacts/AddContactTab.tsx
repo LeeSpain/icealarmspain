@@ -29,7 +29,7 @@ const contactSchema = z.object({
   priority: z.number().min(1).max(10),
   receivesAlerts: z.boolean(),
   receivesUpdates: z.boolean(),
-});
+}).required();
 
 interface AddContactTabProps {
   onAddContact: (contact: Omit<Contact, 'id'>) => Promise<boolean>;
