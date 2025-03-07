@@ -3,7 +3,8 @@ import React from 'react';
 import { useLanguage } from '@/context/LanguageContext';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
-import { Alert, AlertDescription, AlertTriangle } from '@/components/ui/alert';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { AlertTriangle } from 'lucide-react';
 import { Contact } from '../types';
 
 interface ContactSelectionProps {
