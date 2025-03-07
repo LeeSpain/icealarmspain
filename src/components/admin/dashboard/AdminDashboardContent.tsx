@@ -12,8 +12,16 @@ import PermissionsManagement from "@/components/admin/PermissionsManagement";
 import InventoryManagement from "@/components/admin/InventoryManagement";
 import PlaceholderSection from "@/components/admin/PlaceholderSection";
 
-// Import types from .d.ts files - these are automatically recognized by TypeScript
-// without explicitly importing the types
+// Import types directly from .d.ts files
+import type { UserManagementProps } from "../UserManagement.d";
+import type { ClientManagementProps } from "../ClientManagement.d";
+import type { DeviceManagementProps } from "../DeviceManagement.d";
+import type { AlertsManagementProps } from "../AlertsManagement.d";
+import type { AdminUsersManagementProps } from "../AdminUsersManagement.d";
+import type { RolesManagementProps } from "../RolesManagement.d";
+import type { PermissionsManagementProps } from "../PermissionsManagement.d";
+import type { InventoryManagementProps } from "../InventoryManagement.d";
+import type { ClientOnboardingProps } from "../ClientOnboarding.d";
 
 interface AdminDashboardContentProps {
   activeSection: string;

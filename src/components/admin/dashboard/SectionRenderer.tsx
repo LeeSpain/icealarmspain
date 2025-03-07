@@ -12,8 +12,16 @@ import AdminUsersManagement from "@/components/admin/AdminUsersManagement";
 import RolesManagement from "@/components/admin/RolesManagement";
 import PermissionsManagement from "@/components/admin/PermissionsManagement";
 
-// Import types from .d.ts files are recognized by TypeScript automatically
-// No need to explicitly import them
+// Import types directly from .d.ts files
+import type { UserManagementProps } from "../UserManagement.d";
+import type { ClientManagementProps } from "../ClientManagement.d";
+import type { DeviceManagementProps } from "../DeviceManagement.d";
+import type { AlertsManagementProps } from "../AlertsManagement.d";
+import type { AdminUsersManagementProps } from "../AdminUsersManagement.d";
+import type { RolesManagementProps } from "../RolesManagement.d";
+import type { PermissionsManagementProps } from "../PermissionsManagement.d";
+import type { InventoryManagementProps } from "../InventoryManagement.d";
+import type { ClientOnboardingProps } from "../ClientOnboarding.d";
 
 interface SectionRendererProps {
   activeSection: string;
