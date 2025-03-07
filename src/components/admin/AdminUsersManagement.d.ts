@@ -2,7 +2,7 @@
 import { ReactNode } from 'react';
 
 export interface AdminUsersManagementProps {
-  onAction?: (action: string) => void;
+  onAction: (action: string) => void;
 }
 
 declare const AdminUsersManagement: React.FC<AdminUsersManagementProps>;

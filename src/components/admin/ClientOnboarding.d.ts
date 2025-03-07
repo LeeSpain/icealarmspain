@@ -2,7 +2,7 @@
 import { ReactNode } from 'react';
 
 export interface ClientOnboardingProps {
-  onAction?: (action: string) => void;
+  onAction: (action: string) => void;
 }
 
 declare const ClientOnboarding: React.FC<ClientOnboardingProps>;
