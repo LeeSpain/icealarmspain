@@ -1,13 +1,13 @@
 
 import React, { useState } from "react";
 import { 
-  Badge,
-  Button,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { AlertTriangle, CheckCircle, XCircle, MoreVertical, RefreshCw, Power, Settings, AlertCircle } from "lucide-react";
 import { Device } from "./types";
 import { toast } from "react-toastify";
