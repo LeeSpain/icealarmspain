@@ -19,18 +19,20 @@ const Sidebar: React.FC<SidebarProps> = ({
   userData 
 }) => {
   return (
-    <div className={`bg-ice-800 text-white h-screen overflow-y-auto transition-all duration-300 ${collapsed ? 'w-16' : 'w-64'}`}>
+    <div className={`bg-ice-800 text-white h-screen flex flex-col overflow-hidden transition-all duration-300 ${collapsed ? 'w-16' : 'w-64'}`}>
       <SidebarHeader
         userData={userData}
         collapsed={collapsed}
         setCollapsed={setCollapsed}
       />
       
-      <SidebarNavigation
-        activeSection={activeSection}
-        setActiveSection={setActiveSection}
-        collapsed={collapsed}
-      />
+      <div className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-ice-600 scrollbar-track-ice-800">
+        <SidebarNavigation
+          activeSection={activeSection}
+          setActiveSection={setActiveSection}
+          collapsed={collapsed}
+        />
+      </div>
     </div>
   );
 };
