@@ -12,7 +12,8 @@ import { reportsAnalyticsItems } from './reports-analytics';
 import { supportKnowledgeItems } from './support-knowledge';
 import { configurationItems } from './configuration';
 
-export { NavItem } from './types';
+// Use 'export type' for re-exporting types
+export type { NavItem } from './types';
 
 export const navigationItems: NavItem[] = [
   ...dashboardItems,
