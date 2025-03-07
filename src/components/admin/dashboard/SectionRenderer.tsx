@@ -12,6 +12,16 @@ import AdminUsersManagement from "@/components/admin/AdminUsersManagement";
 import RolesManagement from "@/components/admin/RolesManagement";
 import PermissionsManagement from "@/components/admin/PermissionsManagement";
 
+// Import types
+import type { UserManagementProps } from "@/components/admin/UserManagement";
+import type { ClientManagementProps } from "@/components/admin/ClientManagement";
+import type { AlertsManagementProps } from "@/components/admin/AlertsManagement";
+import type { DeviceManagementProps } from "@/components/admin/DeviceManagement";
+import type { AdminUsersManagementProps } from "@/components/admin/AdminUsersManagement";
+import type { RolesManagementProps } from "@/components/admin/RolesManagement";
+import type { PermissionsManagementProps } from "@/components/admin/PermissionsManagement";
+import type { InventoryManagementProps } from "@/components/admin/InventoryManagement";
+
 interface SectionRendererProps {
   activeSection: string;
   dashboardData: any;
