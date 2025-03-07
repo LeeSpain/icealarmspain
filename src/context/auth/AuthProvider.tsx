@@ -1,11 +1,11 @@
 
 import React, { useState, useEffect, useRef } from 'react';
-import { auth, firebaseAuth } from '../../services/firebase';
 import { User, AuthContextType } from './types';
 import { determineUserRole } from './utils';
 import { AuthContext } from './context';
 import * as authFunctions from './authFunctions';
 import { toast } from 'react-toastify';
+import { supabase } from '../../integrations/supabase/client';
 
 // Create the AuthProvider component
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -24,43 +24,69 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     console.log('Setting up auth state listener');
     
-    // Check if persistence is enabled
-    const persistenceType = localStorage.getItem('authPersistence') || 'session';
+    // Check if the user session exists
+    const checkSession = async () => {
+      try {
+        const { data, error } = await supabase.auth.getSession();
+        if (error) throw error;
+        
+        if (data.session?.user) {
+          const supabaseUser = data.session.user;
+          const role = determineUserRole(supabaseUser.email || '');
+          
+          const user: User = {
+            uid: supabaseUser.id,
+            id: supabaseUser.id,
+            email: supabaseUser.email,
+            name: supabaseUser.user_metadata.name || supabaseUser.email?.split('@')[0],
+            displayName: supabaseUser.user_metadata.name || supabaseUser.email?.split('@')[0],
+            role,
+            profileCompleted: !!supabaseUser.user_metadata.name,
+            language: localStorage.getItem('language') || 'en',
+            lastLogin: new Date().toISOString(),
+            createdAt: supabaseUser.created_at,
+          };
+          
+          setUser(user);
+          console.log('User authenticated from session:', user.email, 'Role:', user.role);
+        }
+        
+        if (isMounted.current) {
+          setIsLoading(false);
+        }
+      } catch (error) {
+        console.error('Error checking session:', error);
+        if (isMounted.current) {
+          setIsLoading(false);
+        }
+      }
+    };
     
-    // Set the persistence based on the stored value
-    if (persistenceType === 'local') {
-      firebaseAuth.setPersistence('local')
-        .catch((error) => {
-          console.error('Error setting persistence:', error);
-        });
-    } else {
-      firebaseAuth.setPersistence('session')
-        .catch((error) => {
-          console.error('Error setting persistence:', error);
-        });
-    }
+    // Initial session check
+    checkSession();
     
-    const unsubscribe = auth.onAuthStateChanged((authUser) => {
+    // Set up auth state change listener
+    const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
+      console.log('Auth state changed:', event);
+      
       if (!isMounted.current) return;
       
-      console.log("Auth state changed:", authUser ? "User authenticated" : "No user");
-      
-      if (authUser) {
+      if (session?.user) {
         // User is signed in
-        const role = determineUserRole(authUser.email || '');
+        const supabaseUser = session.user;
+        const role = determineUserRole(supabaseUser.email || '');
         
-        // Create user profile with additional fields
         const user: User = {
-          uid: authUser.uid,
-          id: authUser.uid,
-          email: authUser.email,
-          name: authUser.displayName || authUser.email?.split('@')[0] || 'Admin User',
-          displayName: authUser.displayName || authUser.email?.split('@')[0] || 'Admin User',
+          uid: supabaseUser.id,
+          id: supabaseUser.id,
+          email: supabaseUser.email,
+          name: supabaseUser.user_metadata.name || supabaseUser.email?.split('@')[0],
+          displayName: supabaseUser.user_metadata.name || supabaseUser.email?.split('@')[0],
           role,
-          profileCompleted: Boolean(authUser.displayName),
+          profileCompleted: !!supabaseUser.user_metadata.name,
           language: localStorage.getItem('language') || 'en',
           lastLogin: new Date().toISOString(),
-          createdAt: authUser.metadata?.creationTime || new Date().toISOString(),
+          createdAt: supabaseUser.created_at,
         };
         
         setUser(user);
@@ -73,32 +99,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           displayName: user.displayName,
           language: user.language
         }));
-      } else {
+      } else if (event === 'SIGNED_OUT') {
         // User is signed out
         setUser(null);
         localStorage.removeItem('currentUser');
         console.log('User signed out');
       }
-      
-      setIsLoading(false);
     });
-
-    // Try to restore user from localStorage to prevent flashing
-    const storedUser = localStorage.getItem('currentUser');
-    if (storedUser && !user) {
-      try {
-        const parsedUser = JSON.parse(storedUser);
-        console.log('Restoring user session from localStorage temporarily');
-        // Don't set as fully authenticated, but use for UI display while checking auth
-      } catch (e) {
-        console.error('Error parsing stored user', e);
-        localStorage.removeItem('currentUser');
-      }
-    }
 
     // Cleanup subscription
     return () => {
-      unsubscribe();
+      authListener.subscription.unsubscribe();
       isMounted.current = false;
     };
   }, []);
@@ -106,7 +117,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // Create wrapped versions of the auth functions that can update state
   const wrappedUpdateUserProfile = async (displayName: string): Promise<void> => {
     await authFunctions.updateUserProfile(displayName);
-    if (isMounted.current) {
+    if (isMounted.current && user) {
       setUser(prev => prev ? { 
         ...prev, 
         name: displayName, 

@@ -1,6 +1,7 @@
 
+// Re-export everything from the auth context
+export * from './context';
 export * from './types';
-export * from './utils';
 export * from './AuthProvider';
 export * from './hooks';
-export * from './context';
+export * from './utils';

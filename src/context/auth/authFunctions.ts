@@ -1,5 +1,5 @@
 
-import { auth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, updateProfile, setPersistence } from '../../services/firebase';
+import { supabase } from '../../integrations/supabase/client';
 import { User } from './types';
 import { determineUserRole } from './utils';
 import { toast } from 'react-toastify';
@@ -10,16 +10,17 @@ export const login = async (email: string, password: string, rememberMe = false)
     console.log('Attempting login for:', email, 'Remember me:', rememberMe);
     
     // Set persistence type based on remember me option
-    if (rememberMe) {
-      await setPersistence('local');
-      localStorage.setItem('authPersistence', 'local');
-    } else {
-      await setPersistence('session');
-      localStorage.setItem('authPersistence', 'session');
-    }
+    const persistence = rememberMe ? 'local' : 'session';
+    localStorage.setItem('authPersistence', persistence);
     
-    const { user: authUser } = await signInWithEmailAndPassword(email, password);
-    if (!authUser) {
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+    
+    if (error) throw error;
+    
+    if (!data.user) {
       throw new Error('Failed to get user after login');
     }
     
@@ -28,13 +29,13 @@ export const login = async (email: string, password: string, rememberMe = false)
     console.log('Login successful. Determined role:', role);
     
     const user: User = {
-      uid: authUser.uid,
-      id: authUser.uid,
-      email: authUser.email,
-      name: authUser.displayName,
-      displayName: authUser.displayName,
+      uid: data.user.id,
+      id: data.user.id,
+      email: data.user.email,
+      name: data.user.user_metadata.name || data.user.email?.split('@')[0],
+      displayName: data.user.user_metadata.name || data.user.email?.split('@')[0],
       role,
-      profileCompleted: false,
+      profileCompleted: !!data.user.user_metadata.name,
       language: 'en',
     };
     
@@ -63,14 +64,23 @@ export const signIn = async (email: string, password: string, rememberMe = false
 export const signUp = async (email: string, password: string, displayName?: string): Promise<User> => {
   try {
     console.log('Attempting signup for:', email);
-    const { user: authUser } = await createUserWithEmailAndPassword(email, password);
-    if (!authUser) {
-      throw new Error('Failed to get user after signup');
-    }
     
-    // Update profile with display name if provided
-    if (displayName && authUser) {
-      await updateProfile(authUser, { displayName });
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: {
+          name: displayName,
+          first_name: displayName?.split(' ')[0],
+          last_name: displayName?.split(' ').slice(1).join(' '),
+        }
+      }
+    });
+    
+    if (error) throw error;
+    
+    if (!data.user) {
+      throw new Error('Failed to get user after signup');
     }
     
     // Determine role based on email
@@ -78,17 +88,17 @@ export const signUp = async (email: string, password: string, displayName?: stri
     console.log('Signup successful. Determined role:', role);
     
     const user: User = {
-      uid: authUser.uid,
-      id: authUser.uid,
-      email: authUser.email,
-      name: displayName || authUser.displayName,
-      displayName: displayName || authUser.displayName,
+      uid: data.user.id,
+      id: data.user.id,
+      email: data.user.email,
+      name: displayName || data.user.email?.split('@')[0],
+      displayName: displayName || data.user.email?.split('@')[0],
       role,
-      profileCompleted: false,
+      profileCompleted: !!displayName,
       language: 'en',
     };
     
-    toast.success('Account created successfully!');
+    toast.success('Account created successfully! Please check your email for verification.');
     
     return user;
   } catch (error) {
@@ -102,7 +112,9 @@ export const signUp = async (email: string, password: string, displayName?: stri
 export const logout = async (): Promise<void> => {
   try {
     console.log('Logging out user');
-    await signOut();
+    const { error } = await supabase.auth.signOut();
+    if (error) throw error;
+    
     // Clear remembered auth persistence
     localStorage.removeItem('authPersistence');
     toast.success('You have been logged out');
@@ -116,13 +128,18 @@ export const logout = async (): Promise<void> => {
 // Update user profile function
 export const updateUserProfile = async (displayName: string): Promise<void> => {
   try {
-    if (auth.currentUser) {
-      await updateProfile(auth.currentUser, { displayName });
-      console.log('User profile updated:', displayName);
-      toast.success('Profile updated successfully');
-    } else {
-      throw new Error('No user is signed in');
-    }
+    const { error } = await supabase.auth.updateUser({
+      data: { 
+        name: displayName,
+        first_name: displayName.split(' ')[0],
+        last_name: displayName.split(' ').slice(1).join(' ')
+      }
+    });
+    
+    if (error) throw error;
+    
+    console.log('User profile updated:', displayName);
+    toast.success('Profile updated successfully');
   } catch (error) {
     console.error('Update profile error:', error);
     toast.error(`Profile update failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
