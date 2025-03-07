@@ -3,6 +3,7 @@ import React from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { useLanguage } from "@/context/LanguageContext";
 import { useAuth } from "@/context/auth";
+import { Input } from "@/components/ui/input";
 
 interface PersonalDetailsTabContentProps {
   editMode: boolean;
@@ -136,7 +137,7 @@ const InfoField: React.FC<InfoFieldProps> = ({ label, value, editMode }) => {
         <input 
           type="text" 
           defaultValue={value} 
-          className="w-full p-2 border rounded-md" 
+          className="w-full p-2 border rounded-md bg-[#FEC6A1] text-white placeholder:text-white/70" 
         />
       ) : (
         <div className="p-2 bg-gray-50 rounded-md border">{value}</div>

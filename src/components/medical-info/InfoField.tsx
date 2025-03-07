@@ -21,7 +21,7 @@ export const InfoField: React.FC<InfoFieldProps> = ({
         <input 
           type="text" 
           defaultValue={value} 
-          className="w-full p-2 border rounded-md" 
+          className="w-full p-2 border rounded-md bg-[#FEC6A1] text-white placeholder:text-white/70" 
           onChange={(e) => onChange(e.target.value)}
         />
       ) : (
