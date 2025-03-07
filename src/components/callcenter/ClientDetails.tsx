@@ -15,6 +15,7 @@ import ClientDetailsTabs from "./client-details/ClientDetailsTabs";
 import ClientDetailsTab from "./client-details/ClientDetailsTab";
 import DevicesTab from "./client-details/DevicesTab";
 import InteractionHistoryTab from "./client-details/InteractionHistoryTab";
+import HealthDataTab from "./client-details/HealthDataTab";
 
 interface ClientDetailsProps {
   selectedClientId: number | null;
@@ -45,6 +46,11 @@ const ClientDetails: React.FC<ClientDetailsProps> = ({ selectedClientId }) => {
     setEditMode(false);
     toast.success("Client details updated successfully");
   };
+
+  // Handle remote device update/reset
+  const handleRemoteDeviceAction = (deviceId: number, action: string) => {
+    toast.success(`Device ${deviceId}: ${action} action initiated`);
+  };
   
   if (!selectedClient) {
     return <NoClientSelected />;
@@ -66,6 +72,7 @@ const ClientDetails: React.FC<ClientDetailsProps> = ({ selectedClientId }) => {
             activeTab={activeTab}
             setActiveTab={setActiveTab}
             deviceCount={clientDevices.length}
+            showHealthTab={true}
           />
         </CardHeader>
         
@@ -78,11 +85,19 @@ const ClientDetails: React.FC<ClientDetailsProps> = ({ selectedClientId }) => {
           )}
           
           {activeTab === "devices" && (
-            <DevicesTab devices={clientDevices} />
+            <DevicesTab 
+              devices={clientDevices} 
+              allowRemoteActions={true}
+              onRemoteAction={handleRemoteDeviceAction}
+            />
           )}
           
           {activeTab === "history" && (
             <InteractionHistoryTab interactions={clientInteractions} />
+          )}
+
+          {activeTab === "health" && (
+            <HealthDataTab clientId={selectedClient.id} />
           )}
         </CardContent>
       </Card>

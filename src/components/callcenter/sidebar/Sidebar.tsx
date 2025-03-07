@@ -34,12 +34,19 @@ const Sidebar: React.FC<SidebarProps> = ({
         onToggleCollapse={() => setCollapsed(!collapsed)} 
       />
       
-      <SidebarNavigation 
-        activeSection={activeSection}
-        setActiveSection={setActiveSection}
-        collapsed={collapsed}
-        onLogout={logout}
-      />
+      <div className="flex-1 overflow-y-auto">
+        <SidebarNavigation 
+          activeSection={activeSection}
+          setActiveSection={setActiveSection}
+          collapsed={collapsed}
+          onLogout={logout}
+        />
+      </div>
+
+      {/* User profile at the bottom */}
+      <div className="p-3 border-t border-gray-200">
+        <UserProfile user={user} collapsed={collapsed} handleLogout={logout} />
+      </div>
     </div>
   );
 };
