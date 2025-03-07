@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { ToastContainer, toast } from 'react-toastify';
 import { useNavigate, useLocation } from "react-router-dom";
@@ -34,6 +33,13 @@ import RolesManagement from "@/components/admin/RolesManagement";
 import PermissionsManagement from "@/components/admin/PermissionsManagement";
 import InventoryManagement from "@/components/admin/InventoryManagement";
 import PlaceholderSection from "@/components/admin/PlaceholderSection";
+
+// Type declaration for PlaceholderSection component
+interface PlaceholderSectionProps {
+  title: string;
+  description: string;
+  onAction?: (action: string) => void;
+}
 
 const AdminDashboard: React.FC = () => {
   const location = useLocation();
