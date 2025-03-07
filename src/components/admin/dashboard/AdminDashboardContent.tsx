@@ -12,7 +12,7 @@ import PermissionsManagement from "@/components/admin/PermissionsManagement";
 import InventoryManagement from "@/components/admin/InventoryManagement";
 import PlaceholderSection from "@/components/admin/PlaceholderSection";
 
-// Since we're having issues with the type imports, we'll define a common prop interface
+// Define common interfaces for components
 interface ActionProps {
   onAction: (action: string) => void;
 }

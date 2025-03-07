@@ -12,7 +12,7 @@ import AdminUsersManagement from "@/components/admin/AdminUsersManagement";
 import RolesManagement from "@/components/admin/RolesManagement";
 import PermissionsManagement from "@/components/admin/PermissionsManagement";
 
-// Since we're having issues with the type imports, we'll define a common prop interface
+// Define common interfaces for components
 interface ActionProps {
   onAction: (action: string) => void;
 }
