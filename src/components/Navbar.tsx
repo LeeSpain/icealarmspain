@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Menu, X, LogOut } from "lucide-react";
 import Logo from "./Logo";
@@ -35,10 +34,16 @@ const Navbar: React.FC = () => {
     };
   }, []);
   
-  const handleLogout = () => {
-    logout();
-    navigate('/');
-    setIsMobileMenuOpen(false);
+  const handleLogout = async () => {
+    try {
+      await logout();
+      navigate('/');
+      setIsMobileMenuOpen(false);
+    } catch (error) {
+      console.error("Error during logout:", error);
+      navigate('/login');
+      setIsMobileMenuOpen(false);
+    }
   };
   
   const getDashboardLink = () => {
@@ -55,7 +60,6 @@ const Navbar: React.FC = () => {
   ];
   
   const renderNavLink = (link: { name: string; href: string; isAnchor: boolean }, onClick?: () => void) => {
-    // Always use Link component for internal navigation, never use anchor tags
     return (
       <Link
         to={link.href}

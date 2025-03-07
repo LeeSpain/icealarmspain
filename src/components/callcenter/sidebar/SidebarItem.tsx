@@ -19,6 +19,12 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
   active = false,
   collapsed = false
 }) => {
+  // Create a wrapper function to handle click events
+  const handleClick = (e: React.MouseEvent) => {
+    e.preventDefault(); // Prevent default behavior 
+    if (onClick) onClick();
+  };
+  
   return (
     <Button
       variant="ghost"
@@ -27,7 +33,7 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
         active ? "bg-ice-100 text-ice-700" : "hover:bg-ice-50 text-gray-600",
         collapsed ? "px-2" : "px-3"
       )}
-      onClick={onClick}
+      onClick={handleClick}
     >
       <Icon className={cn("h-5 w-5", collapsed ? "mr-0" : "mr-2")} size={18} />
       {!collapsed && <span>{label}</span>}

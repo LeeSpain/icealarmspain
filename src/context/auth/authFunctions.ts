@@ -112,16 +112,40 @@ export const signUp = async (email: string, password: string, displayName?: stri
 export const logout = async (): Promise<void> => {
   try {
     console.log('Logging out user');
+    
+    // Check if there's an active session before attempting to sign out
+    const { data: sessionData } = await supabase.auth.getSession();
+    
+    if (!sessionData.session) {
+      console.log('No active session found, cleaning up local state only');
+      // Just clean up local state if there's no session
+      localStorage.removeItem('authPersistence');
+      localStorage.removeItem('currentUser');
+      toast.success('You have been logged out');
+      return;
+    }
+    
     const { error } = await supabase.auth.signOut();
     if (error) throw error;
     
     // Clear remembered auth persistence
     localStorage.removeItem('authPersistence');
+    localStorage.removeItem('currentUser');
     toast.success('You have been logged out');
   } catch (error) {
     console.error('Logout error:', error);
-    toast.error(`Logout failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
-    throw error;
+    
+    // Even if there's an error, try to clean up the local state
+    localStorage.removeItem('authPersistence');
+    localStorage.removeItem('currentUser');
+    
+    // Show a more user-friendly error
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    if (errorMessage.includes('session') || errorMessage.includes('Session')) {
+      toast.info('You have been logged out');
+    } else {
+      toast.error(`Logout issue: ${errorMessage}`);
+    }
   }
 };
 
