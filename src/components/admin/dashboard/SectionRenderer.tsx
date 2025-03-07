@@ -12,16 +12,10 @@ import AdminUsersManagement from "@/components/admin/AdminUsersManagement";
 import RolesManagement from "@/components/admin/RolesManagement";
 import PermissionsManagement from "@/components/admin/PermissionsManagement";
 
-// Import types directly from .d.ts files
-import type { UserManagementProps } from "../UserManagement.d";
-import type { ClientManagementProps } from "../ClientManagement.d";
-import type { DeviceManagementProps } from "../DeviceManagement.d";
-import type { AlertsManagementProps } from "../AlertsManagement.d";
-import type { AdminUsersManagementProps } from "../AdminUsersManagement.d";
-import type { RolesManagementProps } from "../RolesManagement.d";
-import type { PermissionsManagementProps } from "../PermissionsManagement.d";
-import type { InventoryManagementProps } from "../InventoryManagement.d";
-import type { ClientOnboardingProps } from "../ClientOnboarding.d";
+// Since we're having issues with the type imports, we'll define a common prop interface
+interface ActionProps {
+  onAction: (action: string) => void;
+}
 
 interface SectionRendererProps {
   activeSection: string;
