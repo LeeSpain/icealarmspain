@@ -2,9 +2,10 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { LucideIcon } from 'lucide-react';
 
 interface SidebarItemProps {
-  icon: React.ElementType;
+  icon: LucideIcon;
   label: string;
   onClick?: () => void;
   active?: boolean;
@@ -28,7 +29,7 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
       )}
       onClick={onClick}
     >
-      <Icon className={cn("h-5 w-5", collapsed ? "mr-0" : "mr-2")} />
+      <Icon className={cn("h-5 w-5", collapsed ? "mr-0" : "mr-2")} size={18} />
       {!collapsed && <span>{label}</span>}
     </Button>
   );

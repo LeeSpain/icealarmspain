@@ -1,6 +1,6 @@
 
 // Types for call center notifications
-export type NotificationType = 'sos' | 'high-glucose' | 'device-offline';
+export type NotificationType = 'sos' | 'high-glucose' | 'device-offline' | 'medical' | 'device-alert';
 
 export interface Notification {
   id: string;

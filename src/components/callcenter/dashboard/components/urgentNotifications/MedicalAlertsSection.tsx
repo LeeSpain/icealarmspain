@@ -6,15 +6,15 @@ import { Badge } from "@/components/ui/badge";
 import { Notification } from "../../../notifications/NotificationTypes";
 
 interface MedicalAlertsSectionProps {
-  notifications: Notification[];
+  alerts: Notification[];
   handleViewAll: (section: string) => void;
 }
 
 const MedicalAlertsSection: React.FC<MedicalAlertsSectionProps> = ({ 
-  notifications, 
+  alerts, 
   handleViewAll 
 }) => {
-  const urgentNotifications = notifications.filter(n => 
+  const urgentNotifications = alerts.filter(n => 
     !n.read && (n.type === 'sos' || n.type === 'high-glucose')
   );
 

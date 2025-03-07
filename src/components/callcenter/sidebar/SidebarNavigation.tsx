@@ -3,7 +3,7 @@ import React from "react";
 import { 
   Home, 
   MessageCircle, 
-  TicketIcon, 
+  Ticket as TicketIcon, 
   User, 
   Settings, 
   BarChart3, 
@@ -35,28 +35,28 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({
           {!collapsed && "DASHBOARD"}
         </div>
         <SidebarItem 
-          icon={<Home size={18} />} 
+          icon={Home} 
           label="Dashboard" 
           active={activeSection === "dashboard"} 
           collapsed={collapsed}
           onClick={() => setActiveSection("dashboard")}
         />
         <SidebarItem 
-          icon={<TicketIcon size={18} />} 
+          icon={TicketIcon} 
           label="Tickets" 
           active={activeSection === "tickets"} 
           collapsed={collapsed}
           onClick={() => setActiveSection("tickets")}
         />
         <SidebarItem 
-          icon={<MessageCircle size={18} />} 
+          icon={MessageCircle} 
           label="Chat" 
           active={activeSection === "chat"} 
           collapsed={collapsed}
           onClick={() => setActiveSection("chat")}
         />
         <SidebarItem 
-          icon={<User size={18} />} 
+          icon={User} 
           label="Clients" 
           active={activeSection === "clients"} 
           collapsed={collapsed}
@@ -67,21 +67,21 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({
           {!collapsed && "MANAGEMENT"}
         </div>
         <SidebarItem 
-          icon={<HardDrive size={18} />} 
+          icon={HardDrive} 
           label="Devices" 
           active={activeSection === "devices"} 
           collapsed={collapsed}
           onClick={() => setActiveSection("devices")}
         />
         <SidebarItem 
-          icon={<BarChart3 size={18} />} 
+          icon={BarChart3} 
           label="Stats" 
           active={activeSection === "stats"} 
           collapsed={collapsed}
           onClick={() => setActiveSection("stats")}
         />
         <SidebarItem 
-          icon={<Calendar size={18} />} 
+          icon={Calendar} 
           label="Schedule" 
           active={activeSection === "schedule"} 
           collapsed={collapsed}
@@ -92,21 +92,21 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({
           {!collapsed && "OTHER"}
         </div>
         <SidebarItem 
-          icon={<Lightbulb size={18} />} 
+          icon={Lightbulb} 
           label="Knowledge Base" 
           active={activeSection === "knowledge"} 
           collapsed={collapsed}
           onClick={() => setActiveSection("knowledge")}
         />
         <SidebarItem 
-          icon={<Bell size={18} />} 
+          icon={Bell} 
           label="Notifications" 
           active={activeSection === "notifications"} 
           collapsed={collapsed}
           onClick={() => setActiveSection("notifications")}
         />
         <SidebarItem 
-          icon={<Settings size={18} />} 
+          icon={Settings} 
           label="Profile" 
           active={activeSection === "profile"} 
           collapsed={collapsed}
@@ -117,7 +117,7 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({
       {/* Logout button at the bottom */}
       <div className="mt-auto pt-4 border-t border-gray-200">
         <SidebarItem 
-          icon={<LogOut size={18} />} 
+          icon={LogOut} 
           label="Logout" 
           active={false} 
           collapsed={collapsed}
