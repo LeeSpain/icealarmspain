@@ -32,7 +32,7 @@ export const useLoginPage = () => {
     isAuthenticated, 
     isLoading, 
     redirectTriggered,
-    provider: import.meta.env.VITE_FIREBASE_API_KEY ? "Using real Firebase auth" : "Using mock auth" 
+    provider: import.meta.env.VITE_FIREBASE_API_KEY ? "Using real Firebase auth" : "Using Supabase auth" 
   });
   
   // Check if there's a redirect parameter
@@ -106,6 +106,10 @@ export const useLoginPage = () => {
         return '/call-center';
       case 'member':
         return '/dashboard';
+      case 'technician':
+        return '/technician';
+      case 'support':
+        return '/support';
       default:
         return '/dashboard';
     }
@@ -155,8 +159,8 @@ export const useLoginPage = () => {
     }
   };
 
-  // Detect if we're using mock auth
-  const isMockAuth = !import.meta.env.VITE_FIREBASE_API_KEY;
+  // Detect authentication provider
+  const isMockAuth = !import.meta.env.VITE_FIREBASE_API_KEY && !import.meta.env.VITE_SUPABASE_URL;
 
   return {
     user,
