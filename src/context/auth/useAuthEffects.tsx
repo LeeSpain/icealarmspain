@@ -133,14 +133,14 @@ export const useAuthEffects = ({ setUser, setIsLoading }: UseAuthEffectsProps) =
       }
       
       // Ensure loading state is completed
-      if (isMounted.current && isLoading) {
+      if (isMounted.current) {
         setIsLoading(false);
       }
     });
 
     // Add a fallback to prevent infinite loading
     const fallbackTimer = setTimeout(() => {
-      if (isMounted.current && isLoading) {
+      if (isMounted.current) {
         console.log("Auth check fallback timeout triggered");
         setIsLoading(false);
       }
@@ -152,5 +152,5 @@ export const useAuthEffects = ({ setUser, setIsLoading }: UseAuthEffectsProps) =
       clearTimeout(fallbackTimer);
       isMounted.current = false;
     };
-  }, [setUser, setIsLoading, isLoading]);
+  }, [setUser, setIsLoading]);
 };
