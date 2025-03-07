@@ -30,14 +30,16 @@ const MemberSidebar: React.FC<MemberSidebarProps> = ({
     const path = location.pathname;
     
     if (path === '/dashboard') return 'dashboard';
-    if (path === '/profile') return 'profile';
-    if (path === '/settings') return 'settings';
-    if (path === '/help') return 'help';
-    if (path.startsWith('/health/metrics')) return 'health-metrics';
-    if (path.startsWith('/health/medications')) return 'medications';
-    if (path.startsWith('/devices/sos-pendant')) return 'sos-pendant';
-    if (path.startsWith('/devices/glucose-monitor')) return 'glucose-monitor';
-    if (path.startsWith('/devices/medical-dispenser')) return 'medical-dispenser';
+    if (path.startsWith('/dashboard/profile')) return 'profile';
+    if (path.startsWith('/dashboard/settings')) return 'settings';
+    if (path.startsWith('/dashboard/help')) return 'help';
+    if (path.startsWith('/dashboard/health/metrics')) return 'health-metrics';
+    if (path.startsWith('/dashboard/health/medications')) return 'medications';
+    if (path.startsWith('/dashboard/devices/sos-pendant')) return 'sos-pendant';
+    if (path.startsWith('/dashboard/devices/glucose-monitor')) return 'glucose-monitor';
+    if (path.startsWith('/dashboard/devices/medical-dispenser')) return 'medical-dispenser';
+    if (path.startsWith('/dashboard/emergency-contacts')) return 'emergency-contacts';
+    if (path.startsWith('/dashboard/chat')) return 'chat';
     
     return activePage;
   };

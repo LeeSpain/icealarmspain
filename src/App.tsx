@@ -22,6 +22,16 @@ import { LanguageProvider } from './context/LanguageContext';
 import SOSPendantPage from './pages/SOSPendantPage';
 import MedicalDispenserPage from './pages/MedicalDispenserPage';
 import GlucoseMonitorPage from './pages/GlucoseMonitorPage';
+import DashboardSOSPendantPage from './pages/dashboard/DashboardSOSPendantPage';
+import DashboardGlucoseMonitorPage from './pages/dashboard/DashboardGlucoseMonitorPage';
+import DashboardMedicalDispenserPage from './pages/dashboard/DashboardMedicalDispenserPage';
+import DashboardHealthMetricsPage from './pages/dashboard/DashboardHealthMetricsPage';
+import DashboardMedicationsPage from './pages/dashboard/DashboardMedicationsPage';
+import DashboardEmergencyContactsPage from './pages/dashboard/DashboardEmergencyContactsPage';
+import DashboardSettingsPage from './pages/dashboard/DashboardSettingsPage';
+import DashboardHelpPage from './pages/dashboard/DashboardHelpPage';
+import DashboardProfilePage from './pages/dashboard/DashboardProfilePage';
+import DashboardChatPage from './pages/dashboard/DashboardChatPage';
 
 function App() {
   return (
@@ -40,12 +50,71 @@ function App() {
             <Route path="/checkout" element={<Checkout />} />
             <Route path="/commercial" element={<Commercial />} />
             
-            {/* Protected routes */}
+            {/* Public device info pages */}
+            <Route path="/devices/sos-pendant" element={<SOSPendantPage />} />
+            <Route path="/devices/medical-dispenser" element={<MedicalDispenserPage />} />
+            <Route path="/devices/glucose-monitor" element={<GlucoseMonitorPage />} />
+            
+            {/* Dashboard route with nested routes */}
             <Route path="/dashboard" element={
               <ProtectedRoute allowedRoles={['member', 'admin']}>
                 <DashboardPage />
               </ProtectedRoute>
             } />
+            
+            {/* Nested dashboard routes */}
+            <Route path="/dashboard/devices/sos-pendant" element={
+              <ProtectedRoute allowedRoles={['member', 'admin']}>
+                <DashboardSOSPendantPage />
+              </ProtectedRoute>
+            } />
+            <Route path="/dashboard/devices/glucose-monitor" element={
+              <ProtectedRoute allowedRoles={['member', 'admin']}>
+                <DashboardGlucoseMonitorPage />
+              </ProtectedRoute>
+            } />
+            <Route path="/dashboard/devices/medical-dispenser" element={
+              <ProtectedRoute allowedRoles={['member', 'admin']}>
+                <DashboardMedicalDispenserPage />
+              </ProtectedRoute>
+            } />
+            <Route path="/dashboard/health/metrics" element={
+              <ProtectedRoute allowedRoles={['member', 'admin']}>
+                <DashboardHealthMetricsPage />
+              </ProtectedRoute>
+            } />
+            <Route path="/dashboard/health/medications" element={
+              <ProtectedRoute allowedRoles={['member', 'admin']}>
+                <DashboardMedicationsPage />
+              </ProtectedRoute>
+            } />
+            <Route path="/dashboard/emergency-contacts" element={
+              <ProtectedRoute allowedRoles={['member', 'admin']}>
+                <DashboardEmergencyContactsPage />
+              </ProtectedRoute>
+            } />
+            <Route path="/dashboard/profile" element={
+              <ProtectedRoute allowedRoles={['member', 'admin']}>
+                <DashboardProfilePage />
+              </ProtectedRoute>
+            } />
+            <Route path="/dashboard/settings" element={
+              <ProtectedRoute allowedRoles={['member', 'admin']}>
+                <DashboardSettingsPage />
+              </ProtectedRoute>
+            } />
+            <Route path="/dashboard/help" element={
+              <ProtectedRoute allowedRoles={['member', 'admin']}>
+                <DashboardHelpPage />
+              </ProtectedRoute>
+            } />
+            <Route path="/dashboard/chat" element={
+              <ProtectedRoute allowedRoles={['member', 'admin']}>
+                <DashboardChatPage />
+              </ProtectedRoute>
+            } />
+            
+            {/* Admin routes */}
             <Route path="/admin" element={
               <ProtectedRoute allowedRoles={['admin']}>
                 <AdminDashboard />
@@ -66,11 +135,6 @@ function App() {
                 <OnboardingQuestionnaire />
               </ProtectedRoute>
             } />
-            
-            {/* Device-specific routes */}
-            <Route path="/devices/sos-pendant" element={<SOSPendantPage />} />
-            <Route path="/devices/medical-dispenser" element={<MedicalDispenserPage />} />
-            <Route path="/devices/glucose-monitor" element={<GlucoseMonitorPage />} />
             
             {/* Add additional routes for product details, etc. */}
             <Route path="/product/:id" element={<Products />} />
