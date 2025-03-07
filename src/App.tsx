@@ -133,6 +133,18 @@ function App() {
               </ProtectedRoute>
             } />
             
+            {/* Support both the standalone and dashboard onboarding paths */}
+            <Route path="/onboarding-questionnaire" element={
+              <ProtectedRoute>
+                <OnboardingQuestionnaire />
+              </ProtectedRoute>
+            } />
+            <Route path="/onboarding" element={
+              <ProtectedRoute>
+                <OnboardingQuestionnaire />
+              </ProtectedRoute>
+            } />
+            
             {/* Admin routes */}
             <Route path="/admin" element={
               <ProtectedRoute allowedRoles={['admin']}>
@@ -147,11 +159,6 @@ function App() {
             <Route path="/profile" element={
               <ProtectedRoute>
                 <ProfilePage />
-              </ProtectedRoute>
-            } />
-            <Route path="/onboarding" element={
-              <ProtectedRoute>
-                <OnboardingQuestionnaire />
               </ProtectedRoute>
             } />
             
