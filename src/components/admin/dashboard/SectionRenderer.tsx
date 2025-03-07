@@ -19,7 +19,7 @@ import type { ClientOnboardingProps } from "@/components/admin/ClientOnboarding.
 import type { DeviceManagementProps } from "@/components/admin/DeviceManagement.d";
 import type { AlertsManagementProps } from "@/components/admin/AlertsManagement.d";
 import type { AdminUsersManagementProps } from "@/components/admin/AdminUsersManagement.d";
-import type { RolesManagementProps } from "@/components/admin/RolesManagement.d";
+import type { RolesManagementProps } from "@/components/admin/roles/types";
 import type { PermissionsManagementProps } from "@/components/admin/PermissionsManagement.d";
 import type { InventoryManagementProps } from "@/components/admin/InventoryManagement.d";
 
@@ -50,48 +50,32 @@ const SectionRenderer: React.FC<SectionRendererProps> = ({
       case "dashboard":
         return <DashboardMetrics dashboardMetrics={dashboardData} />;
       case "users":
-        return React.createElement(UserManagement as React.ComponentType<UserManagementProps>, {
-          onAction: (action: string) => addActivity("User", action)
-        });
+        return <UserManagement onAction={(action: string) => { addActivity("User", action); }} />;
       case "clients":
-        return React.createElement(ClientManagement as React.ComponentType<ClientManagementProps>, {
-          onAction: (action: string) => addActivity("Client", action)
-        });
+        return <ClientManagement onAction={(action: string) => { addActivity("Client", action); }} />;
       case "client-onboarding":
-        return React.createElement(ClientOnboarding as React.ComponentType<ClientOnboardingProps>, {
-          onAction: (action: string) => addActivity("Client", action)
-        });
+        return <ClientOnboarding onAction={(action: string) => { addActivity("Client", action); }} />;
       case "devices":
-        return React.createElement(DeviceManagement as React.ComponentType<DeviceManagementProps>, {
-          onAction: (action: string) => addActivity("Device", action)
-        });
+        return <DeviceManagement onAction={(action: string) => { addActivity("Device", action); }} />;
       case "alerts":
-        return React.createElement(AlertsManagement as React.ComponentType<AlertsManagementProps>, {
-          onAction: (action: string) => addActivity("Alert", action)
-        });
+        return <AlertsManagement onAction={(action: string) => { addActivity("Alert", action); }} />;
       case "admin-users":
-        return React.createElement(AdminUsersManagement as React.ComponentType<AdminUsersManagementProps>, {
-          onAction: (action: string) => addActivity("Admin", action)
-        });
+        return <AdminUsersManagement onAction={(action: string) => { addActivity("Admin", action); }} />;
       case "roles":
-        return React.createElement(RolesManagement as React.ComponentType<RolesManagementProps>, {
-          onAction: (action: string) => addActivity("Role", action)
-        });
+        return <RolesManagement onAction={(action: string) => { addActivity("Role", action); }} />;
       case "permissions":
-        return React.createElement(PermissionsManagement as React.ComponentType<PermissionsManagementProps>, {
-          onAction: (action: string) => addActivity("Permission", action)
-        });
+        return <PermissionsManagement onAction={(action: string) => { addActivity("Permission", action); }} />;
       case "orders-list":
       case "inventory":
-        return React.createElement(InventoryManagement as React.ComponentType<InventoryManagementProps>, {
-          section: activeSection as "orders-list" | "inventory",
-          onAction: (action: string) => addActivity("Inventory", action)
-        });
+        return <InventoryManagement 
+          section={activeSection as "orders-list" | "inventory"}
+          onAction={(action: string) => { addActivity("Inventory", action); }}
+        />;
       default:
         return <PlaceholderSection 
           title={activeSection.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')} 
           description={`Manage ${activeSection.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')} section`} 
-          onAction={(action) => addActivity(activeSection.charAt(0).toUpperCase() + activeSection.slice(1), action)}
+          onAction={(action) => { addActivity(activeSection.charAt(0).toUpperCase() + activeSection.slice(1), action); }}
         />;
     }
   };
