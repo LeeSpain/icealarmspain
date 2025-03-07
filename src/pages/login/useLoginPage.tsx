@@ -14,6 +14,7 @@ export const useLoginPage = () => {
   const [loginInProgress, setLoginInProgress] = useState(false);
   const [loginError, setLoginError] = useState<string | null>(null);
   const [redirectTriggered, setRedirectTriggered] = useState(false);
+  const [authTimeout, setAuthTimeout] = useState(false);
   
   // Use a ref to track mounted state to prevent memory leaks
   const isMounted = useRef(true);
@@ -41,6 +42,11 @@ export const useLoginPage = () => {
   // Handle redirection after successful authentication
   useEffect(() => {
     console.log("Login page - Auth state:", { isAuthenticated, user, isLoading, redirectTriggered });
+    
+    // Clear any auth timeout flags when auth status changes
+    if (!isLoading) {
+      setAuthTimeout(false);
+    }
     
     // Only redirect if auth check is complete, user is authenticated, and no redirect has been triggered yet
     if (!isLoading && isAuthenticated && user && !redirectTriggered && isMounted.current) {
@@ -79,12 +85,13 @@ export const useLoginPage = () => {
     const timeoutId = setTimeout(() => {
       if (isLoading && isMounted.current) {
         console.log("Authentication check is taking too long, forcing reset");
+        setAuthTimeout(true);
         setLoginError(language === 'en' 
-          ? "Authentication service is not responding. Please try again later." 
-          : "El servicio de autenticación no responde. Por favor, inténtelo más tarde."
+          ? "Authentication service is not responding. Please try again or refresh the page." 
+          : "El servicio de autenticación no responde. Por favor, inténtelo de nuevo o actualice la página."
         );
       }
-    }, 5000); // 5 seconds timeout
+    }, 8000); // 8 seconds timeout
     
     return () => clearTimeout(timeoutId);
   }, [isLoading, language]);
@@ -154,11 +161,12 @@ export const useLoginPage = () => {
   return {
     user,
     isAuthenticated,
-    isLoading,
+    isLoading: isLoading && !authTimeout, // Stop showing loading if timeout occurred
     loginInProgress,
     loginError,
     redirectParam,
     isMockAuth,
+    authTimeout,
     handleLoginSuccess,
     language
   };

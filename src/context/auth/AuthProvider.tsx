@@ -12,6 +12,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const isMounted = useRef(true);
+  const authChecked = useRef(false);
 
   // Set up cleanup function to prevent memory leaks
   useEffect(() => {
@@ -27,8 +28,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // Check if the user session exists
     const checkSession = async () => {
       try {
+        console.log("Checking for existing session...");
         const { data, error } = await supabase.auth.getSession();
-        if (error) throw error;
+        
+        if (error) {
+          console.error("Session check error:", error);
+          throw error;
+        }
+        
+        console.log("Session check result:", data.session ? "Session found" : "No session found");
         
         if (data.session?.user) {
           const supabaseUser = data.session.user;
@@ -47,16 +55,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             createdAt: supabaseUser.created_at,
           };
           
-          setUser(user);
-          console.log('User authenticated from session:', user.email, 'Role:', user.role);
+          if (isMounted.current) {
+            setUser(user);
+            console.log('User authenticated from session:', user.email, 'Role:', user.role);
+          }
         }
         
         if (isMounted.current) {
+          authChecked.current = true;
           setIsLoading(false);
         }
       } catch (error) {
         console.error('Error checking session:', error);
         if (isMounted.current) {
+          authChecked.current = true;
           setIsLoading(false);
         }
       }
@@ -70,6 +82,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       console.log('Auth state changed:', event);
       
       if (!isMounted.current) return;
+      
+      // Force auth check to complete if INITIAL_SESSION event happens
+      if (event === 'INITIAL_SESSION') {
+        if (!authChecked.current && isMounted.current) {
+          authChecked.current = true;
+          setIsLoading(false);
+        }
+        return;
+      }
       
       if (session?.user) {
         // User is signed in
@@ -89,8 +110,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           createdAt: supabaseUser.created_at,
         };
         
-        setUser(user);
-        console.log('User authenticated:', user.email, 'Role:', user.role);
+        if (isMounted.current) {
+          setUser(user);
+          setIsLoading(false);
+          console.log('User authenticated:', user.email, 'Role:', user.role);
+        }
         
         // Store user info in localStorage for persistence across page refreshes
         localStorage.setItem('currentUser', JSON.stringify({
@@ -101,15 +125,32 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }));
       } else if (event === 'SIGNED_OUT') {
         // User is signed out
-        setUser(null);
+        if (isMounted.current) {
+          setUser(null);
+          setIsLoading(false);
+        }
         localStorage.removeItem('currentUser');
         console.log('User signed out');
       }
+      
+      // Ensure loading state is completed
+      if (isMounted.current && isLoading) {
+        setIsLoading(false);
+      }
     });
+
+    // Add a fallback to prevent infinite loading
+    const fallbackTimer = setTimeout(() => {
+      if (isMounted.current && isLoading) {
+        console.log("Auth check fallback timeout triggered");
+        setIsLoading(false);
+      }
+    }, 10000); // 10 second fallback
 
     // Cleanup subscription
     return () => {
       authListener.subscription.unsubscribe();
+      clearTimeout(fallbackTimer);
       isMounted.current = false;
     };
   }, []);

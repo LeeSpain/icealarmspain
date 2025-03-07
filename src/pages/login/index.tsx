@@ -15,12 +15,14 @@ const Login: React.FC = () => {
     loginError,
     redirectParam,
     isMockAuth,
+    authTimeout,
     handleLoginSuccess,
-    language // Now this is correctly obtained from the hook
+    language
   } = useLoginPage();
   
   // Render loading state if authentication is being checked or user is already authenticated
-  if (isLoading || (isAuthenticated && user)) {
+  // But don't render loading if there's an auth timeout
+  if ((isLoading || (isAuthenticated && user)) && !authTimeout) {
     return <LoginLoading 
       isLoading={isLoading} 
       isAuthenticated={!!user} 
