@@ -1,22 +1,32 @@
-
 import React, { useState, useEffect } from "react";
 import { ToastContainer, toast } from 'react-toastify';
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/context/auth";
 import { useLanguage } from "@/context/LanguageContext";
-import 'react-toastify/dist/ReactToastify.css';
+import 'react-toastify/dist/ReactToastify.css";
 
 // Admin components
 import Sidebar from "@/components/admin/Sidebar";
 import SectionRenderer from "@/components/admin/dashboard/SectionRenderer";
 import AdminDashboardLoading from "@/components/admin/dashboard/AdminDashboardLoading";
 import { DashboardActivity, useActivityManager } from "@/components/admin/dashboard/ActivityManager";
-import AdminUsersManagement from "@/components/admin/AdminUsersManagement";
+import type { UserManagementProps } from "@/components/admin/UserManagement.d";
+import type { ClientManagementProps } from "@/components/admin/ClientManagement.d";
+import type { ClientOnboardingProps } from "@/components/admin/ClientOnboarding.d";
+import type { DeviceManagementProps } from "@/components/admin/DeviceManagement.d";
+import type { AlertsManagementProps } from "@/components/admin/AlertsManagement.d";
+import type { AdminUsersManagementProps } from "@/components/admin/AdminUsersManagement.d";
+import type { RolesManagementProps } from "@/components/admin/RolesManagement.d";
+import type { PermissionsManagementProps } from "@/components/admin/PermissionsManagement.d";
+import type { InventoryManagementProps } from "@/components/admin/InventoryManagement.d";
+
+// Import specific components
 import UserManagement from "@/components/admin/UserManagement";
 import ClientManagement from "@/components/admin/ClientManagement";
 import ClientOnboarding from "@/components/admin/ClientOnboarding";
 import DeviceManagement from "@/components/admin/DeviceManagement";
 import AlertsManagement from "@/components/admin/AlertsManagement";
+import AdminUsersManagement from "@/components/admin/AdminUsersManagement";
 import RolesManagement from "@/components/admin/RolesManagement";
 import PermissionsManagement from "@/components/admin/PermissionsManagement";
 import InventoryManagement from "@/components/admin/InventoryManagement";
@@ -40,7 +50,6 @@ const AdminDashboard: React.FC = () => {
     recentActivities: []
   });
 
-  // Determine active section from URL path
   useEffect(() => {
     const path = location.pathname;
     let section = 'dashboard';
@@ -48,7 +57,6 @@ const AdminDashboard: React.FC = () => {
     if (path === '/admin') {
       section = 'dashboard';
     } else {
-      // Extract section from path like /admin/users -> users
       const pathParts = path.split('/');
       if (pathParts.length >= 3) {
         section = pathParts[2];
@@ -131,7 +139,6 @@ const AdminDashboard: React.FC = () => {
     }
   });
 
-  // Handle section changes
   const handleSectionChange = (section: string) => {
     setActiveSection(section);
     navigate(`/admin/${section === 'dashboard' ? '' : section}`);
@@ -165,23 +172,26 @@ const AdminDashboard: React.FC = () => {
           />
         );
       case 'users':
-        return <UserManagement onAction={(action) => addActivity("User", action)} />;
+        return <UserManagement onAction={(action: string) => addActivity("User", action)} />;
       case 'clients':
-        return <ClientManagement onAction={(action) => addActivity("Client", action)} />;
+        return <ClientManagement onAction={(action: string) => addActivity("Client", action)} />;
       case 'devices':
-        return <DeviceManagement onAction={(action) => addActivity("Device", action)} />;
+        return <DeviceManagement onAction={(action: string) => addActivity("Device", action)} />;
       case 'alerts':
-        return <AlertsManagement onAction={(action) => addActivity("Alert", action)} />;
+        return <AlertsManagement onAction={(action: string) => addActivity("Alert", action)} />;
       case 'admin-users':
-        return <AdminUsersManagement onAction={(action) => addActivity("Admin", action)} />;
+        return <AdminUsersManagement onAction={(action: string) => addActivity("Admin", action)} />;
       case 'roles':
-        return <RolesManagement onAction={(action) => addActivity("Role", action)} />;
+        return <RolesManagement onAction={(action: string) => addActivity("Role", action)} />;
       case 'permissions':
-        return <PermissionsManagement onAction={(action) => addActivity("Permission", action)} />;
+        return <PermissionsManagement onAction={(action: string) => addActivity("Permission", action)} />;
       case 'client-onboarding':
-        return <ClientOnboarding onAction={(action) => addActivity("Client", action)} />;
+        return <ClientOnboarding onAction={(action: string) => addActivity("Client", action)} />;
       case 'inventory':
-        return <InventoryManagement onAction={(action) => addActivity("Inventory", action)} />;
+        return <InventoryManagement 
+          section="inventory"
+          onAction={(action: string) => addActivity("Inventory", action)} 
+        />;
       default:
         return (
           <PlaceholderSection 
