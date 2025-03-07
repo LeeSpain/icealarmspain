@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { navigationItems, NavItem } from './navigationItems';
+import { navigationItems, NavItem } from './navigation';
 import SidebarNavItem from './SidebarNavItem';
 
 interface SidebarNavigationProps {
