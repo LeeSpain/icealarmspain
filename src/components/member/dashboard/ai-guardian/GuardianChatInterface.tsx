@@ -27,13 +27,14 @@ const GuardianChatInterface: React.FC<GuardianChatInterfaceProps> = ({
       
       <TopicSelector 
         selectedTopic={selectedTopic} 
-        onTopicSelect={onTopicSelect} 
+        onSelectTopic={onTopicSelect} 
       />
       
       <MessageInput 
         input={input} 
         setInput={setInput} 
         onSubmit={onSubmit} 
+        onSendMessage={() => {}} // We're using onSubmit instead
       />
     </div>
   );

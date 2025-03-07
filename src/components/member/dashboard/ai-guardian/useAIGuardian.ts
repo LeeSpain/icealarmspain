@@ -12,6 +12,8 @@ export const useAIGuardian = () => {
   const [selectedTopic, setSelectedTopic] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [showWelcome, setShowWelcome] = useState(true);
+  const [input, setInput] = useState(""); 
+  const [isInteracting, setIsInteracting] = useState(false);
   
   // Initialize the chat with a greeting message
   useEffect(() => {
@@ -22,6 +24,24 @@ export const useAIGuardian = () => {
     setMessages([{ text: greeting, type: 'guardian' }]);
   }, [language, user]);
 
+  const handleStartInteraction = () => {
+    setIsInteracting(true);
+    setShowWelcome(false);
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!input.trim() || isLoading) return;
+    
+    sendMessage(input);
+    setInput("");
+  };
+
+  const handleTopicSelect = (topic: string) => {
+    setSelectedTopic(topic);
+    responseFromKnowledgeBase(topic);
+  };
+
   const sendMessage = (message: string) => {
     if (!message.trim()) return;
     
@@ -29,6 +49,7 @@ export const useAIGuardian = () => {
     setMessages(prev => [...prev, {text: message, type: 'user'}]);
     setIsLoading(true);
     setShowWelcome(false);
+    setIsInteracting(true);
     
     // Process user query
     setTimeout(() => {
@@ -94,6 +115,12 @@ export const useAIGuardian = () => {
     setSelectedTopic,
     sendMessage,
     isLoading,
-    showWelcome
+    showWelcome,
+    input,
+    setInput,
+    isInteracting,
+    handleStartInteraction,
+    handleSubmit,
+    handleTopicSelect
   };
 };
