@@ -5,78 +5,52 @@ import { useLanguage } from "@/context/LanguageContext";
 import { useAuth } from "@/context/auth";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { toast } from "react-toastify";
-import { User, Phone, MapPin, Stethoscope, Clock, Heart } from "lucide-react";
-
-// Define the form schema with Zod
-const personalDetailsSchema = z.object({
-  name: z.string().min(2, { message: "Name must be at least 2 characters" }),
-  email: z.string().email({ message: "Invalid email address" }),
-  phone: z.string().min(6, { message: "Phone number is required" }),
-  address: z.string().min(5, { message: "Address is required" }),
-  dob: z.string().min(1, { message: "Date of birth is required" }),
-  nie: z.string().optional(),
-  passport: z.string().optional(),
-  emergencyContact: z.string().min(5, { message: "Emergency contact is required" }),
-  bloodType: z.string().optional(),
-  allergies: z.string().optional(),
-  medicalConditions: z.string().optional(),
-  medications: z.string().optional(),
-  notes: z.string().optional(),
-});
-
-type PersonalDetailsFormValues = z.infer<typeof personalDetailsSchema>;
+import { User, Phone, MapPin, Stethoscope, Clock, Heart, PlusCircle, Edit, Save, X, PillIcon, PhoneCall } from "lucide-react";
+import PersonalDetailsTabContent from "@/components/personal-details/PersonalDetailsTabContent";
+import MedicationsTabContent from "@/components/personal-details/MedicationsTabContent";
+import EmergencyContactsTabContent from "@/components/personal-details/EmergencyContactsTabContent";
 
 const DashboardPersonalDetailsPage: React.FC = () => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const { language } = useLanguage();
   const { user } = useAuth();
+  const [activeTab, setActiveTab] = useState("personal");
+  const [editMode, setEditMode] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Initialize the form
-  const form = useForm<PersonalDetailsFormValues>({
-    resolver: zodResolver(personalDetailsSchema),
-    defaultValues: {
-      name: user?.name || "",
-      email: user?.email || "",
-      phone: "",
-      address: "",
-      dob: "",
-      nie: "",
-      passport: "",
-      emergencyContact: "",
-      bloodType: "",
-      allergies: "",
-      medicalConditions: "",
-      medications: "",
-      notes: "",
-    },
-  });
+  // Load questionnaire data from localStorage
+  useEffect(() => {
+    const savedData = localStorage.getItem('userQuestionnaire');
+    if (savedData) {
+      console.log("Loaded saved questionnaire data:", JSON.parse(savedData));
+      // In a real app, you would use this data to populate the personal details form
+    }
+  }, []);
 
-  // Handle form submission
-  const onSubmit = (data: PersonalDetailsFormValues) => {
+  const handleSaveChanges = () => {
     setIsLoading(true);
     
     // Simulate API call
     setTimeout(() => {
-      console.log("Form data submitted:", data);
       toast.success(
         language === 'en' 
-          ? "Personal details saved successfully!" 
-          : "¡Datos personales guardados con éxito!"
+          ? "Your changes have been saved successfully!" 
+          : "¡Tus cambios se han guardado con éxito!"
       );
       setIsLoading(false);
-      
-      // In a real application, you would update the user profile in the database
-      // updateUserProfile(user.id, data)
+      setEditMode(false);
     }, 1000);
+  };
+
+  const handleCancelEdit = () => {
+    setEditMode(false);
+    toast.info(
+      language === 'en'
+        ? "Edit mode cancelled. No changes were saved."
+        : "Modo de edición cancelado. No se guardaron cambios."
+    );
   };
 
   return (
@@ -88,300 +62,91 @@ const DashboardPersonalDetailsPage: React.FC = () => {
       
       <div className="flex-1 overflow-auto">
         <div className="p-6 max-w-7xl mx-auto">
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold text-ice-800 mb-2">
-              {language === 'en' ? 'Complete Personal Details' : 'Completar Datos Personales'}
-            </h1>
-            <p className="text-ice-700">
-              {language === 'en' 
-                ? 'This information is crucial for emergency services' 
-                : 'Esta información es crucial para los servicios de emergencia'}
-            </p>
+          <div className="mb-8 flex justify-between items-center">
+            <div>
+              <h1 className="text-3xl font-bold text-ice-800 mb-2">
+                {language === 'en' ? 'Personal Details' : 'Datos Personales'}
+              </h1>
+              <p className="text-ice-700">
+                {language === 'en' 
+                  ? 'Your complete profile information for emergency services' 
+                  : 'Tu información completa de perfil para servicios de emergencia'}
+              </p>
+            </div>
+            
+            <div className="flex space-x-2">
+              {editMode ? (
+                <>
+                  <Button
+                    variant="outline"
+                    className="flex items-center gap-1"
+                    onClick={handleCancelEdit}
+                  >
+                    <X size={16} />
+                    {language === 'en' ? 'Cancel' : 'Cancelar'}
+                  </Button>
+                  <Button
+                    className="flex items-center gap-1 bg-ice-600 hover:bg-ice-700"
+                    onClick={handleSaveChanges}
+                    disabled={isLoading}
+                  >
+                    {isLoading ? (
+                      <Clock className="h-4 w-4 animate-spin" />
+                    ) : (
+                      <Save size={16} />
+                    )}
+                    {language === 'en' ? 'Save Changes' : 'Guardar Cambios'}
+                  </Button>
+                </>
+              ) : (
+                <Button
+                  className="flex items-center gap-1 bg-ice-600 hover:bg-ice-700"
+                  onClick={() => setEditMode(true)}
+                >
+                  <Edit size={16} />
+                  {language === 'en' ? 'Edit Information' : 'Editar Información'}
+                </Button>
+              )}
+            </div>
           </div>
           
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-              <Card>
-                <CardHeader>
-                  <div className="flex items-center gap-2">
-                    <User className="h-5 w-5 text-ice-500" />
-                    <CardTitle>
-                      {language === 'en' ? 'Basic Information' : 'Información Básica'}
-                    </CardTitle>
-                  </div>
-                  <CardDescription>
-                    {language === 'en' 
-                      ? 'Your personal identification details' 
-                      : 'Tus datos de identificación personal'}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <FormField
-                      control={form.control}
-                      name="name"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>
-                            {language === 'en' ? 'Full Name' : 'Nombre Completo'}
-                          </FormLabel>
-                          <FormControl>
-                            <Input {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    
-                    <FormField
-                      control={form.control}
-                      name="email"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>
-                            {language === 'en' ? 'Email Address' : 'Correo Electrónico'}
-                          </FormLabel>
-                          <FormControl>
-                            <Input {...field} type="email" />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    
-                    <FormField
-                      control={form.control}
-                      name="phone"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>
-                            {language === 'en' ? 'Phone Number' : 'Número de Teléfono'}
-                          </FormLabel>
-                          <FormControl>
-                            <Input {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    
-                    <FormField
-                      control={form.control}
-                      name="dob"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>
-                            {language === 'en' ? 'Date of Birth' : 'Fecha de Nacimiento'}
-                          </FormLabel>
-                          <FormControl>
-                            <Input {...field} type="date" />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    
-                    <FormField
-                      control={form.control}
-                      name="nie"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>
-                            {language === 'en' ? 'NIE Number' : 'Número NIE'}
-                          </FormLabel>
-                          <FormControl>
-                            <Input {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    
-                    <FormField
-                      control={form.control}
-                      name="passport"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>
-                            {language === 'en' ? 'Passport Number' : 'Número de Pasaporte'}
-                          </FormLabel>
-                          <FormControl>
-                            <Input {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                </CardContent>
-              </Card>
-              
-              <Card>
-                <CardHeader>
-                  <div className="flex items-center gap-2">
-                    <MapPin className="h-5 w-5 text-ice-500" />
-                    <CardTitle>
-                      {language === 'en' ? 'Contact & Address' : 'Contacto y Dirección'}
-                    </CardTitle>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-1 gap-6">
-                    <FormField
-                      control={form.control}
-                      name="address"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>
-                            {language === 'en' ? 'Full Address' : 'Dirección Completa'}
-                          </FormLabel>
-                          <FormControl>
-                            <Textarea {...field} rows={3} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    
-                    <FormField
-                      control={form.control}
-                      name="emergencyContact"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>
-                            {language === 'en' ? 'Emergency Contact' : 'Contacto de Emergencia'}
-                          </FormLabel>
-                          <FormControl>
-                            <Input {...field} placeholder={language === 'en' ? "Name and phone number" : "Nombre y número de teléfono"} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                </CardContent>
-              </Card>
-              
-              <Card>
-                <CardHeader>
-                  <div className="flex items-center gap-2">
-                    <Stethoscope className="h-5 w-5 text-ice-500" />
-                    <CardTitle>
-                      {language === 'en' ? 'Medical Information' : 'Información Médica'}
-                    </CardTitle>
-                  </div>
-                  <CardDescription>
-                    {language === 'en' 
-                      ? 'Important health details for emergency responders' 
-                      : 'Detalles de salud importantes para servicios de emergencia'}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <FormField
-                      control={form.control}
-                      name="bloodType"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>
-                            {language === 'en' ? 'Blood Type' : 'Grupo Sanguíneo'}
-                          </FormLabel>
-                          <FormControl>
-                            <Input {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    
-                    <FormField
-                      control={form.control}
-                      name="allergies"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>
-                            {language === 'en' ? 'Allergies' : 'Alergias'}
-                          </FormLabel>
-                          <FormControl>
-                            <Input {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    
-                    <FormField
-                      control={form.control}
-                      name="medicalConditions"
-                      render={({ field }) => (
-                        <FormItem className="col-span-1 md:col-span-2">
-                          <FormLabel>
-                            {language === 'en' ? 'Medical Conditions' : 'Condiciones Médicas'}
-                          </FormLabel>
-                          <FormControl>
-                            <Textarea {...field} rows={3} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    
-                    <FormField
-                      control={form.control}
-                      name="medications"
-                      render={({ field }) => (
-                        <FormItem className="col-span-1 md:col-span-2">
-                          <FormLabel>
-                            {language === 'en' ? 'Current Medications' : 'Medicamentos Actuales'}
-                          </FormLabel>
-                          <FormControl>
-                            <Textarea {...field} rows={3} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    
-                    <FormField
-                      control={form.control}
-                      name="notes"
-                      render={({ field }) => (
-                        <FormItem className="col-span-1 md:col-span-2">
-                          <FormLabel>
-                            {language === 'en' ? 'Additional Notes' : 'Notas Adicionales'}
-                          </FormLabel>
-                          <FormControl>
-                            <Textarea {...field} rows={3} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                </CardContent>
-              </Card>
-              
-              <div className="flex justify-end">
-                <Button 
-                  type="submit" 
-                  className="bg-ice-600 hover:bg-ice-700" 
-                  disabled={isLoading}
-                >
-                  {isLoading ? (
-                    <span className="flex items-center">
-                      <Clock className="h-4 w-4 animate-spin mr-2" />
-                      {language === 'en' ? 'Saving...' : 'Guardando...'}
-                    </span>
-                  ) : (
-                    <span className="flex items-center">
-                      <Heart className="h-4 w-4 mr-2" />
-                      {language === 'en' ? 'Save Details' : 'Guardar Detalles'}
-                    </span>
-                  )}
-                </Button>
-              </div>
-            </form>
-          </Form>
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+            <TabsList className="w-full bg-white border mb-6 p-0 h-auto">
+              <TabsTrigger
+                value="personal"
+                className="flex-1 py-3 data-[state=active]:bg-ice-50 data-[state=active]:border-b-2 data-[state=active]:border-ice-600 rounded-none"
+              >
+                <User className="h-4 w-4 mr-2" />
+                {language === 'en' ? 'Personal Information' : 'Información Personal'}
+              </TabsTrigger>
+              <TabsTrigger
+                value="medications"
+                className="flex-1 py-3 data-[state=active]:bg-ice-50 data-[state=active]:border-b-2 data-[state=active]:border-ice-600 rounded-none"
+              >
+                <PillIcon className="h-4 w-4 mr-2" />
+                {language === 'en' ? 'Medications' : 'Medicamentos'}
+              </TabsTrigger>
+              <TabsTrigger
+                value="emergency"
+                className="flex-1 py-3 data-[state=active]:bg-ice-50 data-[state=active]:border-b-2 data-[state=active]:border-ice-600 rounded-none"
+              >
+                <PhoneCall className="h-4 w-4 mr-2" />
+                {language === 'en' ? 'Emergency Contacts' : 'Contactos de Emergencia'}
+              </TabsTrigger>
+            </TabsList>
+            
+            <TabsContent value="personal" className="mt-0">
+              <PersonalDetailsTabContent editMode={editMode} />
+            </TabsContent>
+            
+            <TabsContent value="medications" className="mt-0">
+              <MedicationsTabContent editMode={editMode} />
+            </TabsContent>
+            
+            <TabsContent value="emergency" className="mt-0">
+              <EmergencyContactsTabContent editMode={editMode} />
+            </TabsContent>
+          </Tabs>
         </div>
       </div>
     </div>

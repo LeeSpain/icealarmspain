@@ -64,6 +64,13 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({
         collapsed={collapsed}
         onClick={() => navigate("/dashboard/personal-details")}
       />
+      <SidebarItem 
+        icon={<PhoneCall size={18} />} 
+        label="Emergency Contacts" 
+        active={isActive("/dashboard/emergency-contacts")} 
+        collapsed={collapsed}
+        onClick={() => navigate("/dashboard/emergency-contacts")}
+      />
       
       <div className="my-2 px-4 text-xs font-semibold text-muted-foreground">
         {!collapsed && "DEVICES"}
@@ -113,13 +120,6 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({
         active={isActive("/dashboard/health/medications")} 
         collapsed={collapsed}
         onClick={() => navigate("/dashboard/health/medications")}
-      />
-      <SidebarItem 
-        icon={<PhoneCall size={18} />} 
-        label="Emergency Contacts" 
-        active={isActive("/dashboard/emergency-contacts")} 
-        collapsed={collapsed}
-        onClick={() => navigate("/dashboard/emergency-contacts")}
       />
       
       <div className="my-2 px-4 text-xs font-semibold text-muted-foreground">

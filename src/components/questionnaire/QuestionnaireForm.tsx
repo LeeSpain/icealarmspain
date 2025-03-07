@@ -10,10 +10,12 @@ import RegularQuestionSection from './RegularQuestionSection';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { useLanguage } from '@/context/LanguageContext';
+import { useAuth } from '@/context/auth';
 
 const QuestionnaireForm: React.FC = () => {
   const { language } = useLanguage();
   const navigate = useNavigate();
+  const { user } = useAuth();
   
   const {
     answers,
@@ -48,15 +50,24 @@ const QuestionnaireForm: React.FC = () => {
       multiEntries: multiEntries
     };
     
-    console.log("Answers:", formattedAnswers);
+    console.log("Answers submitted:", formattedAnswers);
+    
+    // Save to local storage for demonstration purposes
+    localStorage.setItem('userQuestionnaire', JSON.stringify(formattedAnswers));
+    
+    // In a real application, you would save this to your database and update the user's profile
+    // updateUserProfile(user.id, formattedAnswers)
     
     toast.success(
       language === "en"
-        ? "Questionnaire submitted successfully!"
-        : "¡Cuestionario enviado con éxito!"
+        ? "Questionnaire submitted successfully! Redirecting to personal details."
+        : "¡Cuestionario enviado con éxito! Redirigiendo a datos personales."
     );
     
-    navigate("/dashboard");
+    // Navigate to personal details page
+    setTimeout(() => {
+      navigate("/dashboard/personal-details");
+    }, 1500);
   };
 
   const currentQuestion = questions[currentQuestionIndex];

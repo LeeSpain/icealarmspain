@@ -5,29 +5,59 @@ import { useLanguage } from "@/context/LanguageContext";
 import { useAuth } from "@/context/auth";
 import QuestionnaireLayout from "@/components/questionnaire/QuestionnaireLayout";
 import QuestionnaireForm from "@/components/questionnaire/QuestionnaireForm";
+import { QuestionnaireProvider } from "@/components/questionnaire/QuestionnaireContext";
+import { toast } from "react-toastify";
 
 const OnboardingQuestionnaire: React.FC = () => {
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated, isLoading, user } = useAuth();
+  const { language } = useLanguage();
   const navigate = useNavigate();
   
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
       navigate("/login");
     }
-  }, [isAuthenticated, isLoading, navigate]);
+    
+    // If user has already completed profile, redirect to personal details page
+    if (user?.profileCompleted) {
+      toast.info(
+        language === 'en'
+          ? 'You have already completed your profile. Redirecting to personal details.'
+          : 'Ya has completado tu perfil. Redirigiendo a datos personales.'
+      );
+      navigate("/dashboard/personal-details");
+    }
+  }, [isAuthenticated, isLoading, navigate, user, language]);
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex h-screen items-center justify-center bg-ice-50/30">
+        <div className="flex flex-col items-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-ice-600 mb-4"></div>
+          <p className="text-ice-700">
+            {language === 'en' ? 'Loading...' : 'Cargando...'}
+          </p>
+        </div>
+      </div>
+    );
   }
 
   if (!isAuthenticated) {
-    return <div>Redirecting to login...</div>;
+    return (
+      <div className="flex h-screen items-center justify-center bg-ice-50/30">
+        <p className="text-ice-700">
+          {language === 'en' ? 'Redirecting to login...' : 'Redirigiendo al login...'}
+        </p>
+      </div>
+    );
   }
 
   return (
-    <QuestionnaireLayout>
-      <QuestionnaireForm />
-    </QuestionnaireLayout>
+    <QuestionnaireProvider>
+      <QuestionnaireLayout>
+        <QuestionnaireForm />
+      </QuestionnaireLayout>
+    </QuestionnaireProvider>
   );
 };
 

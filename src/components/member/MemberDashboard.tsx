@@ -65,7 +65,7 @@ const MemberDashboard: React.FC = () => {
   );
 
   const handlePersonalDetailsClick = () => {
-    navigate('/dashboard/personal-details');
+    navigate('/onboarding'); // Now redirects to the questionnaire
   };
   
   return (
