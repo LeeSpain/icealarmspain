@@ -12,28 +12,10 @@ import AdminUsersManagement from "@/components/admin/AdminUsersManagement";
 import RolesManagement from "@/components/admin/RolesManagement";
 import PermissionsManagement from "@/components/admin/PermissionsManagement";
 
-// Import types from type definition files
-import type { UserManagementProps } from "@/components/admin/UserManagement.d";
-import type { ClientManagementProps } from "@/components/admin/ClientManagement.d";
-import type { ClientOnboardingProps } from "@/components/admin/ClientOnboarding.d";
-import type { DeviceManagementProps } from "@/components/admin/DeviceManagement.d";
-import type { AlertsManagementProps } from "@/components/admin/AlertsManagement.d";
-import type { AdminUsersManagementProps } from "@/components/admin/AdminUsersManagement.d";
-import type { RolesManagementProps } from "@/components/admin/roles/types";
-import type { PermissionsManagementProps } from "@/components/admin/PermissionsManagement.d";
-import type { InventoryManagementProps } from "@/components/admin/InventoryManagement.d";
-
 interface SectionRendererProps {
   activeSection: string;
   dashboardData: any;
   onActivityAdded: (type: string, description: string) => void;
-}
-
-// Type declaration for PlaceholderSection component
-interface PlaceholderSectionProps {
-  title: string;
-  description: string;
-  onAction?: (action: string) => void;
 }
 
 const SectionRenderer: React.FC<SectionRendererProps> = ({
@@ -66,9 +48,13 @@ const SectionRenderer: React.FC<SectionRendererProps> = ({
       case "permissions":
         return <PermissionsManagement onAction={(action: string) => { addActivity("Permission", action); }} />;
       case "orders-list":
+        return <InventoryManagement 
+          section="orders-list"
+          onAction={(action: string) => { addActivity("Inventory", action); }}
+        />;
       case "inventory":
         return <InventoryManagement 
-          section={activeSection as "orders-list" | "inventory"}
+          section="inventory"
           onAction={(action: string) => { addActivity("Inventory", action); }}
         />;
       default:
