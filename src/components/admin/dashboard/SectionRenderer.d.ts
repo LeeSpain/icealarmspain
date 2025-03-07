@@ -1,5 +1,5 @@
 
-import React from "react";
+import { ReactNode } from 'react';
 
 export interface SectionRendererProps {
   activeSection: string;
@@ -8,5 +8,4 @@ export interface SectionRendererProps {
 }
 
 declare const SectionRenderer: React.FC<SectionRendererProps>;
-
 export default SectionRenderer;
