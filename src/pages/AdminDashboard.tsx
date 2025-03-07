@@ -173,32 +173,32 @@ const AdminDashboard: React.FC = () => {
           />
         );
       case 'users':
-        return <UserManagement onAction={(action: string) => addActivity("User", action)} />;
+        return <UserManagement onAction={(action: string) => { addActivity("User", action); }} />;
       case 'clients':
-        return <ClientManagement onAction={(action: string) => addActivity("Client", action)} />;
+        return <ClientManagement onAction={(action: string) => { addActivity("Client", action); }} />;
       case 'devices':
-        return <DeviceManagement onAction={(action: string) => addActivity("Device", action)} />;
+        return <DeviceManagement onAction={(action: string) => { addActivity("Device", action); }} />;
       case 'alerts':
-        return <AlertsManagement onAction={(action: string) => addActivity("Alert", action)} />;
+        return <AlertsManagement onAction={(action: string) => { addActivity("Alert", action); }} />;
       case 'admin-users':
-        return <AdminUsersManagement onAction={(action: string) => addActivity("Admin", action)} />;
+        return <AdminUsersManagement onAction={(action: string) => { addActivity("Admin", action); }} />;
       case 'roles':
-        return <RolesManagement onAction={(action: string) => addActivity("Role", action)} />;
+        return <RolesManagement onAction={(action: string) => { addActivity("Role", action); }} />;
       case 'permissions':
-        return <PermissionsManagement onAction={(action: string) => addActivity("Permission", action)} />;
+        return <PermissionsManagement onAction={(action: string) => { addActivity("Permission", action); }} />;
       case 'client-onboarding':
-        return <ClientOnboarding onAction={(action: string) => addActivity("Client", action)} />;
+        return <ClientOnboarding onAction={(action: string) => { addActivity("Client", action); }} />;
       case 'inventory':
         return <InventoryManagement 
           section="inventory"
-          onAction={(action: string) => addActivity("Inventory", action)} 
+          onAction={(action: string) => { addActivity("Inventory", action); }} 
         />;
       default:
         return (
           <PlaceholderSection 
             title={activeSection.charAt(0).toUpperCase() + activeSection.slice(1)} 
             description={`This is the ${activeSection} section of the admin dashboard.`}
-            onAction={(action) => addActivity(activeSection.charAt(0).toUpperCase() + activeSection.slice(1), action)}
+            onAction={(action) => { addActivity(activeSection.charAt(0).toUpperCase() + activeSection.slice(1), action); }}
           />
         );
     }
