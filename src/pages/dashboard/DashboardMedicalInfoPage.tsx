@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import MemberSidebar from "@/components/member/MemberSidebar";
 import { useLanguage } from "@/context/LanguageContext";
@@ -92,7 +91,8 @@ const DashboardMedicalInfoPage: React.FC = () => {
   };
 
   const handleCompleteQuestionnaire = () => {
-    navigate("/onboarding");
+    // Keep within dashboard by navigating to dashboard/onboarding instead of /onboarding
+    navigate("/dashboard/onboarding");
   };
 
   return (

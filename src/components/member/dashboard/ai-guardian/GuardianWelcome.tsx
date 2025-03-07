@@ -13,8 +13,15 @@ const GuardianWelcome: React.FC<GuardianWelcomeProps> = ({ onStartInteraction })
   const { language } = useLanguage();
   const { user } = useAuth();
   
-  // Get user's name or display name, fallback to first part of email if neither exists
-  const userName = user?.name || user?.displayName || (user?.email ? user.email.split('@')[0] : 'there');
+  // Get user's name, with proper fallbacks
+  const getUserName = () => {
+    if (user?.name) return user.name.split(' ')[0]; // Get first name only
+    if (user?.displayName) return user.displayName.split(' ')[0]; // Get first name only
+    if (user?.email) return user.email.split('@')[0]; // Use part before @ in email
+    return language === 'en' ? 'there' : 'allí'; // Default fallback
+  };
+  
+  const userName = getUserName();
   
   return (
     <div className="flex flex-col items-center text-center p-6">

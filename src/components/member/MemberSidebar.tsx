@@ -35,11 +35,13 @@ const MemberSidebar: React.FC<MemberSidebarProps> = ({
     if (path.startsWith('/dashboard/help')) return 'help';
     if (path.startsWith('/dashboard/health/metrics')) return 'health-metrics';
     if (path.startsWith('/dashboard/health/medications')) return 'medications';
+    if (path.startsWith('/dashboard/health/info')) return 'medical-info';
     if (path.startsWith('/dashboard/devices/sos-pendant')) return 'sos-pendant';
     if (path.startsWith('/dashboard/devices/glucose-monitor')) return 'glucose-monitor';
     if (path.startsWith('/dashboard/devices/medical-dispenser')) return 'medical-dispenser';
     if (path.startsWith('/dashboard/emergency-contacts')) return 'emergency-contacts';
     if (path.startsWith('/dashboard/chat')) return 'chat';
+    if (path.startsWith('/dashboard/personal-details')) return 'personal-details';
     
     return activePage;
   };

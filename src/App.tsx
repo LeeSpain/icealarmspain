@@ -126,6 +126,13 @@ function App() {
               </ProtectedRoute>
             } />
             
+            {/* Add the onboarding route inside the dashboard */}
+            <Route path="/dashboard/onboarding" element={
+              <ProtectedRoute allowedRoles={['member', 'admin']}>
+                <OnboardingQuestionnaire />
+              </ProtectedRoute>
+            } />
+            
             {/* Admin routes */}
             <Route path="/admin" element={
               <ProtectedRoute allowedRoles={['admin']}>
