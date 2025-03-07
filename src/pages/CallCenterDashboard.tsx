@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/auth";
@@ -36,11 +37,20 @@ const CallCenterDashboard: React.FC = () => {
         } else {
           navigate('/dashboard');
         }
+        toast.error("You don't have permission to access this area");
       } else {
         console.log("CallCenterDashboard - User authenticated with correct role");
       }
     }
   }, [isAuthenticated, user, navigate, isLoading]);
+
+  // Handle client selection from any component
+  const handleClientSelect = (clientId: number | null) => {
+    setSelectedClient(clientId);
+    if (clientId) {
+      setActiveSection("clients");
+    }
+  };
 
   if (isLoading) {
     return (
@@ -69,7 +79,7 @@ const CallCenterDashboard: React.FC = () => {
       case "dashboard":
         return <AgentDashboard setActiveSection={setActiveSection} />;
       case "tickets":
-        return <TicketingSystem onClientSelect={setSelectedClient} />;
+        return <TicketingSystem onClientSelect={handleClientSelect} />;
       case "chat":
         return <ChatSystem />;
       case "clients":

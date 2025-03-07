@@ -1,17 +1,14 @@
 
 import React from "react";
-import { AlertTriangle } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { useToast } from "@/hooks/use-toast";
-import { mockTickets } from "../ticketing/mock-data";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { AlertCircle } from "lucide-react";
 import { Notification } from "../notifications/NotificationTypes";
-
-// Import our new components
-import MedicalAlertsSection from "./components/urgentNotifications/MedicalAlertsSection";
+import EmptyNotificationsState from "./components/urgentNotifications/EmptyNotificationsState";
 import HighPriorityTicketsSection from "./components/urgentNotifications/HighPriorityTicketsSection";
 import UnreadMessagesSection from "./components/urgentNotifications/UnreadMessagesSection";
-import EmptyNotificationsState from "./components/urgentNotifications/EmptyNotificationsState";
+import MedicalAlertsSection from "./components/urgentNotifications/MedicalAlertsSection";
+import { mockTickets } from "../ticketing/mock-data";
+import { mockChatSessions, mockChatMessages } from "../chat/mock-data";
 
 interface UrgentNotificationsProps {
   notifications: Notification[];
@@ -22,67 +19,72 @@ const UrgentNotifications: React.FC<UrgentNotificationsProps> = ({
   notifications, 
   setActiveSection 
 }) => {
-  const { toast } = useToast();
-  
-  // Filter urgent notifications
-  const urgentNotifications = notifications.filter(n => 
-    !n.read && (n.type === 'sos' || n.type === 'high-glucose')
+  // Get high priority tickets
+  const highPriorityTickets = mockTickets.filter(ticket => 
+    ticket.priority === 'high' && ticket.status !== 'closed'
   );
   
-  // Filter pending high priority tickets
-  const urgentTickets = mockTickets.filter(ticket => 
-    ticket.status !== 'closed' && ticket.priority === 'high'
-  ).slice(0, 2); // Reduced from 3 to 2 items
-  
-  // Mock data for urgent chats - reduced to just one item
-  const urgentChats = [
-    { id: 1, clientName: "Maria García", message: "I'm having trouble with my medical dispenser", time: "5m ago", unread: true }
-  ];
-  
-  const handleViewAll = (section: string) => {
-    setActiveSection(section);
-    toast({
-      title: "Navigating to " + section,
-      description: "Loading all items in this category",
+  // Get client messages with unread messages
+  const unreadMessages = mockChatSessions
+    .filter(session => session.unreadCount > 0)
+    .map(session => {
+      // Find the last message for this session
+      const lastMessage = mockChatMessages
+        .filter(msg => msg.sessionId === session.id)
+        .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())[0];
+      
+      return {
+        id: session.id,
+        clientName: session.memberName,
+        message: lastMessage?.content || session.lastMessagePreview,
+        time: new Date(session.lastMessage).toLocaleTimeString([], {
+          hour: '2-digit',
+          minute: '2-digit'
+        }),
+        unread: true
+      };
     });
-  };
-
-  // Calculate total items for the badge
-  const totalUrgentItems = urgentNotifications.length + urgentTickets.length + urgentChats.length;
+  
+  // Get medical alerts
+  const medicalAlerts = notifications.filter(
+    notif => notif.type === 'medical' || notif.type === 'device-alert'
+  );
+  
+  // Decide if we have any urgent notifications
+  const hasUrgentNotifications = 
+    highPriorityTickets.length > 0 || 
+    unreadMessages.length > 0 || 
+    medicalAlerts.length > 0;
   
   return (
-    <Card className="border-l-4 border-red-500 shadow-md h-full">
-      <CardHeader className="pb-2 pt-3">
-        <div className="flex justify-between items-center">
-          <CardTitle className="text-sm font-bold flex items-center">
-            <AlertTriangle className="h-4 w-4 text-red-500 mr-1" />
-            Urgent & Important
-          </CardTitle>
-          <Badge variant="destructive" className="ml-2 text-xs py-0">
-            {totalUrgentItems} items
-          </Badge>
-        </div>
-        <CardDescription className="text-xs">
-          Critical items requiring immediate attention
-        </CardDescription>
+    <Card className="h-full">
+      <CardHeader className="pb-2">
+        <CardTitle className="text-md flex items-center gap-2">
+          <AlertCircle className="h-5 w-5 text-red-500" />
+          Urgent Notifications
+        </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-2 pb-3 pt-0">
-        <MedicalAlertsSection 
-          notifications={notifications} 
-          handleViewAll={handleViewAll} 
-        />
-        
-        <HighPriorityTicketsSection 
-          tickets={urgentTickets} 
-          handleViewAll={handleViewAll} 
-        />
-        
-        <UnreadMessagesSection 
-          chats={urgentChats} 
-          handleViewAll={handleViewAll} 
-        />
-        
-        {totalUrgentItems === 0 && <EmptyNotificationsState />}
+      <CardContent className="space-y-4">
+        {hasUrgentNotifications ? (
+          <>
+            <HighPriorityTicketsSection 
+              tickets={highPriorityTickets} 
+              handleViewAll={(section) => setActiveSection(section)} 
+            />
+            
+            <UnreadMessagesSection 
+              chats={unreadMessages}
+              handleViewAll={(section) => setActiveSection(section)}
+            />
+            
+            <MedicalAlertsSection 
+              alerts={medicalAlerts}
+              handleViewAll={(section) => setActiveSection(section)}
+            />
+          </>
+        ) : (
+          <EmptyNotificationsState />
+        )}
       </CardContent>
     </Card>
   );
