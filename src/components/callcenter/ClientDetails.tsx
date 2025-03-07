@@ -121,14 +121,16 @@ const ClientDetails: React.FC<ClientDetailsProps> = ({ selectedClientId }) => {
               </div>
             </div>
             <div className="mt-4">
-              <Input
-                type="search"
-                placeholder="Search clients by name, email or phone..."
-                value={searchQuery}
-                onChange={handleSearch}
-                className="w-full"
-                prefix={<Search className="h-4 w-4 text-muted-foreground" />}
-              />
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  type="search"
+                  placeholder="Search clients by name, email or phone..."
+                  value={searchQuery}
+                  onChange={handleSearch}
+                  className="w-full pl-10"
+                />
+              </div>
             </div>
           </CardHeader>
           <CardContent>
@@ -156,7 +158,7 @@ const ClientDetails: React.FC<ClientDetailsProps> = ({ selectedClientId }) => {
                         <div className="flex justify-between text-sm">
                           <span>Status:</span>
                           <span className={`font-medium ${client.status === 'Active' ? 'text-green-600' : 'text-orange-600'}`}>
-                            {client.status}
+                            {client.status || 'Unknown'}
                           </span>
                         </div>
                         <div className="flex justify-between text-sm mt-1">

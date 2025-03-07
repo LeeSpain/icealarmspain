@@ -12,6 +12,7 @@ export interface Client {
   subscriptionEndDate: string;
   lastContact: string;
   notes: string;
+  status?: string; // Added status field
 }
 
 export interface Device {

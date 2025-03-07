@@ -1,4 +1,3 @@
-
 import {
   LayoutDashboard,
   Users,
@@ -18,11 +17,11 @@ import {
   MapPin,
   Bell
 } from 'lucide-react';
-import React from 'react';
+import { LucideIcon } from 'lucide-react';
 
 export interface NavItem {
   name: string;
-  icon: typeof React.Component;
+  icon: LucideIcon;
   path: string;
   section: string;
   roles: string[];
