@@ -1,9 +1,10 @@
+
 import React, { useState, useEffect } from "react";
 import { ToastContainer, toast } from 'react-toastify';
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/context/auth";
 import { useLanguage } from "@/context/LanguageContext";
-import 'react-toastify/dist/ReactToastify.css";
+import 'react-toastify/dist/ReactToastify.css';
 
 // Admin components
 import Sidebar from "@/components/admin/Sidebar";
@@ -16,7 +17,7 @@ import type { ClientOnboardingProps } from "@/components/admin/ClientOnboarding.
 import type { DeviceManagementProps } from "@/components/admin/DeviceManagement.d";
 import type { AlertsManagementProps } from "@/components/admin/AlertsManagement.d";
 import type { AdminUsersManagementProps } from "@/components/admin/AdminUsersManagement.d";
-import type { RolesManagementProps } from "@/components/admin/RolesManagement.d";
+import type { RolesManagementProps } from "@/components/admin/roles/types";
 import type { PermissionsManagementProps } from "@/components/admin/PermissionsManagement.d";
 import type { InventoryManagementProps } from "@/components/admin/InventoryManagement.d";
 
