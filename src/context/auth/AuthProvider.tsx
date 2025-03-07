@@ -192,6 +192,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     signUp: authFunctions.signUp,
     logout: authFunctions.logout,
     updateUserProfile: wrappedUpdateUserProfile,
+    // Add admin functions
+    createUser: authFunctions.createUser,
+    getAllUsers: authFunctions.getAllUsers,
+    updateUserRole: authFunctions.updateUserRole,
+    deleteUser: authFunctions.deleteUser,
   };
 
   return (

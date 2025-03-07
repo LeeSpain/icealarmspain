@@ -25,4 +25,19 @@ export const AuthContext = createContext<AuthContextType>({
   updateUserProfile: async () => {
     throw new Error('updateUserProfile not implemented');
   },
+  // Admin functions
+  createUser: async () => {
+    throw new Error('createUser not implemented');
+    return {} as any;
+  },
+  getAllUsers: async () => {
+    throw new Error('getAllUsers not implemented');
+    return [];
+  },
+  updateUserRole: async () => {
+    throw new Error('updateUserRole not implemented');
+  },
+  deleteUser: async () => {
+    throw new Error('deleteUser not implemented');
+  },
 });
