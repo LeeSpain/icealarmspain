@@ -6,4 +6,5 @@ export interface UserManagementProps {
 }
 
 declare const UserManagement: React.FC<UserManagementProps>;
+
 export default UserManagement;

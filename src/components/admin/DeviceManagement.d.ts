@@ -6,4 +6,5 @@ export interface DeviceManagementProps {
 }
 
 declare const DeviceManagement: React.FC<DeviceManagementProps>;
+
 export default DeviceManagement;

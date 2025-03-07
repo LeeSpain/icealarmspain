@@ -6,4 +6,5 @@ export interface PermissionsManagementProps {
 }
 
 declare const PermissionsManagement: React.FC<PermissionsManagementProps>;
+
 export default PermissionsManagement;
