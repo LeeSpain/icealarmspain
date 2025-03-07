@@ -1,4 +1,3 @@
-
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Index from './pages/Index';
 import Login from './pages/Login';
@@ -32,6 +31,7 @@ import DashboardSettingsPage from './pages/dashboard/DashboardSettingsPage';
 import DashboardHelpPage from './pages/dashboard/DashboardHelpPage';
 import DashboardProfilePage from './pages/dashboard/DashboardProfilePage';
 import DashboardChatPage from './pages/dashboard/DashboardChatPage';
+import DashboardPersonalDetailsPage from './pages/dashboard/DashboardPersonalDetailsPage';
 
 function App() {
   return (
@@ -111,6 +111,11 @@ function App() {
             <Route path="/dashboard/chat" element={
               <ProtectedRoute allowedRoles={['member', 'admin']}>
                 <DashboardChatPage />
+              </ProtectedRoute>
+            } />
+            <Route path="/dashboard/personal-details" element={
+              <ProtectedRoute allowedRoles={['member', 'admin']}>
+                <DashboardPersonalDetailsPage />
               </ProtectedRoute>
             } />
             

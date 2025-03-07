@@ -1,18 +1,20 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "react-toastify";
+import { useAuth } from "@/context/auth";
 
 const ProfileInfo: React.FC = () => {
   const [editMode, setEditMode] = useState(false);
+  const { user } = useAuth();
   
-  // Mock initial profile data
+  // Mock initial profile data - in a real app, this would come from the user's profile
   const [profileData, setProfileData] = useState({
-    name: "Carlos Rodriguez",
-    email: "carlos.rodriguez@guardianai.com",
+    name: user?.name || "Carlos Rodriguez",
+    email: user?.email || "carlos.rodriguez@guardianai.com",
     phone: "+1 (555) 123-4567",
     languages: "English, Spanish",
     emergencyContact: "Maria Rodriguez, +1 (555) 987-6543",
@@ -22,6 +24,9 @@ const ProfileInfo: React.FC = () => {
   const handleSave = () => {
     setEditMode(false);
     toast.success("Profile information updated successfully");
+    
+    // In a real application, you would save the updated profile data to the database
+    // saveProfileData(user.id, profileData)
   };
   
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {

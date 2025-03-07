@@ -12,7 +12,9 @@ import {
   MessageSquare,
   Stethoscope,
   CalendarCheck,
-  PhoneCall
+  PhoneCall,
+  FileText,
+  Heart
 } from "lucide-react";
 import SidebarItem from "./SidebarItem";
 
@@ -44,7 +46,7 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({
       <SidebarItem 
         icon={<Home size={18} />} 
         label="Dashboard" 
-        active={isActive("/dashboard")} 
+        active={isActive("/dashboard") && location.pathname === "/dashboard"} 
         collapsed={collapsed}
         onClick={() => navigate("/dashboard")}
       />
@@ -54,6 +56,13 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({
         active={isActive("/dashboard/chat")} 
         collapsed={collapsed}
         onClick={() => navigate("/dashboard/chat")}
+      />
+      <SidebarItem 
+        icon={<FileText size={18} />} 
+        label="Personal Details" 
+        active={isActive("/dashboard/personal-details")} 
+        collapsed={collapsed}
+        onClick={() => navigate("/dashboard/personal-details")}
       />
       
       <div className="my-2 px-4 text-xs font-semibold text-muted-foreground">
@@ -90,6 +99,13 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({
         active={isActive("/dashboard/health/metrics")} 
         collapsed={collapsed}
         onClick={() => navigate("/dashboard/health/metrics")}
+      />
+      <SidebarItem 
+        icon={<Heart size={18} />} 
+        label="Medical Info" 
+        active={isActive("/dashboard/health/info")} 
+        collapsed={collapsed}
+        onClick={() => navigate("/dashboard/health/info")}
       />
       <SidebarItem 
         icon={<CalendarCheck size={18} />} 

@@ -65,7 +65,7 @@ const MemberDashboard: React.FC = () => {
   );
 
   const handlePersonalDetailsClick = () => {
-    navigate('/personal-details');
+    navigate('/dashboard/personal-details');
   };
   
   return (
