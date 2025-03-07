@@ -12,10 +12,23 @@ import PermissionsManagement from "@/components/admin/PermissionsManagement";
 import InventoryManagement from "@/components/admin/InventoryManagement";
 import PlaceholderSection from "@/components/admin/PlaceholderSection";
 
-// Define common interfaces for components
-interface ActionProps {
+// Import the type definitions
+import type { UserManagementProps } from "@/components/admin/UserManagement.d";
+import type { RolesManagementProps } from "@/components/admin/RolesManagement.d";
+import type { InventoryManagementProps } from "@/components/admin/InventoryManagement.d";
+
+// Define common interfaces for components that don't have explicit type definitions
+interface CommonActionProps {
   onAction: (action: string) => void;
 }
+
+// Define combined props for components with specific props plus the common action prop
+type ClientManagementProps = CommonActionProps;
+type ClientOnboardingProps = CommonActionProps;
+type DeviceManagementProps = CommonActionProps;
+type AlertsManagementProps = CommonActionProps;
+type AdminUsersManagementProps = CommonActionProps;
+type PermissionsManagementProps = CommonActionProps;
 
 interface AdminDashboardContentProps {
   activeSection: string;
