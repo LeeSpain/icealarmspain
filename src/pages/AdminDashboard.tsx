@@ -14,6 +14,7 @@ import { DashboardActivity, useActivityManager } from "@/components/admin/dashbo
 import AdminUsersManagement from "@/components/admin/AdminUsersManagement";
 import UserManagement from "@/components/admin/UserManagement";
 import ClientManagement from "@/components/admin/ClientManagement";
+import ClientOnboarding from "@/components/admin/ClientOnboarding";
 import DeviceManagement from "@/components/admin/DeviceManagement";
 import AlertsManagement from "@/components/admin/AlertsManagement";
 import RolesManagement from "@/components/admin/RolesManagement";
@@ -164,26 +165,29 @@ const AdminDashboard: React.FC = () => {
           />
         );
       case 'users':
-        return <UserManagement />;
+        return <UserManagement onAction={(action) => addActivity("User", action)} />;
       case 'clients':
-        return <ClientManagement />;
+        return <ClientManagement onAction={(action) => addActivity("Client", action)} />;
       case 'devices':
-        return <DeviceManagement />;
+        return <DeviceManagement onAction={(action) => addActivity("Device", action)} />;
       case 'alerts':
-        return <AlertsManagement />;
+        return <AlertsManagement onAction={(action) => addActivity("Alert", action)} />;
       case 'admin-users':
-        return <AdminUsersManagement />;
+        return <AdminUsersManagement onAction={(action) => addActivity("Admin", action)} />;
       case 'roles':
-        return <RolesManagement />;
+        return <RolesManagement onAction={(action) => addActivity("Role", action)} />;
       case 'permissions':
-        return <PermissionsManagement />;
+        return <PermissionsManagement onAction={(action) => addActivity("Permission", action)} />;
+      case 'client-onboarding':
+        return <ClientOnboarding onAction={(action) => addActivity("Client", action)} />;
       case 'inventory':
-        return <InventoryManagement />;
+        return <InventoryManagement onAction={(action) => addActivity("Inventory", action)} />;
       default:
         return (
           <PlaceholderSection 
             title={activeSection.charAt(0).toUpperCase() + activeSection.slice(1)} 
             description={`This is the ${activeSection} section of the admin dashboard.`}
+            onAction={(action) => addActivity(activeSection.charAt(0).toUpperCase() + activeSection.slice(1), action)}
           />
         );
     }

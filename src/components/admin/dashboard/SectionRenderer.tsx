@@ -6,6 +6,7 @@ import PlaceholderSection from "@/components/admin/PlaceholderSection";
 import AlertsManagement from "@/components/admin/AlertsManagement";
 import InventoryManagement from "@/components/admin/InventoryManagement";
 import ClientManagement from "@/components/admin/ClientManagement";
+import ClientOnboarding from "@/components/admin/ClientOnboarding";
 import DeviceManagement from "@/components/admin/DeviceManagement";
 import AdminUsersManagement from "@/components/admin/AdminUsersManagement";
 import RolesManagement from "@/components/admin/RolesManagement";
@@ -14,6 +15,7 @@ import PermissionsManagement from "@/components/admin/PermissionsManagement";
 // Import the proper types from their definition files properly
 import type { UserManagementProps } from "@/components/admin/UserManagement.d";
 import type { ClientManagementProps } from "@/components/admin/ClientManagement.d";
+import type { ClientOnboardingProps } from "@/components/admin/ClientOnboarding.d";
 import type { DeviceManagementProps } from "@/components/admin/DeviceManagement.d";
 import type { AlertsManagementProps } from "@/components/admin/AlertsManagement.d";
 import type { AdminUsersManagementProps } from "@/components/admin/AdminUsersManagement.d";
@@ -53,6 +55,10 @@ const SectionRenderer: React.FC<SectionRendererProps> = ({
         });
       case "clients":
         return React.createElement(ClientManagement as React.ComponentType<ClientManagementProps>, {
+          onAction: (action: string) => addActivity("Client", action)
+        });
+      case "client-onboarding":
+        return React.createElement(ClientOnboarding as React.ComponentType<ClientOnboardingProps>, {
           onAction: (action: string) => addActivity("Client", action)
         });
       case "devices":

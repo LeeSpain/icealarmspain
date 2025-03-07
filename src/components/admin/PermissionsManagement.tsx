@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import { useLanguage } from "@/context/LanguageContext";
-import { LockKeyhole, PlusCircle, Save, Pencil, Trash2, Filter, RefreshCw } from "lucide-react";
+import { LockKeyhole, Plus, Edit, Trash2, CheckCircle2, XCircle, Shield, Eye, Search } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -33,12 +33,14 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { Textarea } from "@/components/ui/textarea";
-import { Switch } from "@/components/ui/switch";
-import {
+import { 
   Select,
   SelectContent,
   SelectItem,
@@ -46,278 +48,205 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-// Define permission interface
 interface Permission {
   id: string;
   name: string;
   description: string;
   category: string;
-  isSystem: boolean;
-  rolesCount: number;
-  createdAt: string;
-  updatedAt: string;
+  roles: string[];
+  isSystemDefault: boolean;
 }
 
-// Define permission categories
-const permissionCategories = [
-  { value: "users", label: "Users & Accounts" },
-  { value: "devices", label: "Devices & Inventory" },
-  { value: "alerts", label: "Alerts & Notifications" },
-  { value: "billing", label: "Billing & Payments" },
-  { value: "reports", label: "Reports & Analytics" },
-  { value: "system", label: "System Settings" },
-  { value: "callcenter", label: "Call Center" },
-  { value: "clients", label: "Clients & Customers" },
-];
+interface Role {
+  id: string;
+  name: string;
+}
 
-// Mock permission data
-const initialPermissions: Permission[] = [
-  {
-    id: "perm-001",
-    name: "users.view",
-    description: "View user accounts and profiles",
-    category: "users",
-    isSystem: true,
-    rolesCount: 4,
-    createdAt: "2023-01-15T10:30:00Z",
-    updatedAt: "2023-01-15T10:30:00Z"
-  },
-  {
-    id: "perm-002",
-    name: "users.create",
-    description: "Create new user accounts",
-    category: "users",
-    isSystem: true,
-    rolesCount: 2,
-    createdAt: "2023-01-15T10:30:00Z",
-    updatedAt: "2023-01-15T10:30:00Z"
-  },
-  {
-    id: "perm-003",
-    name: "users.edit",
-    description: "Edit existing user accounts",
-    category: "users",
-    isSystem: true,
-    rolesCount: 2,
-    createdAt: "2023-01-15T10:30:00Z",
-    updatedAt: "2023-01-15T10:30:00Z"
-  },
-  {
-    id: "perm-004",
-    name: "users.delete",
-    description: "Delete user accounts",
-    category: "users",
-    isSystem: true,
-    rolesCount: 1,
-    createdAt: "2023-01-15T10:30:00Z",
-    updatedAt: "2023-01-15T10:30:00Z"
-  },
-  {
-    id: "perm-005",
-    name: "devices.view",
-    description: "View devices and their status",
-    category: "devices",
-    isSystem: true,
-    rolesCount: 5,
-    createdAt: "2023-01-15T10:30:00Z",
-    updatedAt: "2023-01-15T10:30:00Z"
-  },
-  {
-    id: "perm-006",
-    name: "devices.manage",
-    description: "Add, edit, and remove devices",
-    category: "devices",
-    isSystem: true,
-    rolesCount: 3,
-    createdAt: "2023-01-15T10:30:00Z",
-    updatedAt: "2023-01-15T10:30:00Z"
-  },
-  {
-    id: "perm-007",
-    name: "reports.view",
-    description: "View reports and analytics",
-    category: "reports",
-    isSystem: true,
-    rolesCount: 4,
-    createdAt: "2023-01-15T10:30:00Z",
-    updatedAt: "2023-01-15T10:30:00Z"
-  },
-  {
-    id: "perm-008",
-    name: "reports.create",
-    description: "Create and edit reports",
-    category: "reports",
-    isSystem: true,
-    rolesCount: 2,
-    createdAt: "2023-01-15T10:30:00Z",
-    updatedAt: "2023-01-15T10:30:00Z"
-  },
-  {
-    id: "perm-009",
-    name: "settings.view",
-    description: "View system settings",
-    category: "system",
-    isSystem: true,
-    rolesCount: 3,
-    createdAt: "2023-01-15T10:30:00Z",
-    updatedAt: "2023-01-15T10:30:00Z"
-  },
-  {
-    id: "perm-010",
-    name: "settings.manage",
-    description: "Modify system settings",
-    category: "system",
-    isSystem: true,
-    rolesCount: 1,
-    createdAt: "2023-01-15T10:30:00Z",
-    updatedAt: "2023-01-15T10:30:00Z"
-  },
-  {
-    id: "perm-011",
-    name: "billing.view",
-    description: "View billing information and history",
-    category: "billing",
-    isSystem: true,
-    rolesCount: 3,
-    createdAt: "2023-01-15T10:30:00Z",
-    updatedAt: "2023-01-15T10:30:00Z"
-  },
-  {
-    id: "perm-012",
-    name: "billing.manage",
-    description: "Manage billing and process payments",
-    category: "billing",
-    isSystem: true,
-    rolesCount: 1,
-    createdAt: "2023-01-15T10:30:00Z",
-    updatedAt: "2023-01-15T10:30:00Z"
-  },
-  {
-    id: "perm-013",
-    name: "callcenter.access",
-    description: "Access to call center features",
-    category: "callcenter",
-    isSystem: false,
-    rolesCount: 2,
-    createdAt: "2023-03-10T14:45:00Z",
-    updatedAt: "2023-03-10T14:45:00Z"
-  },
-  {
-    id: "perm-014",
-    name: "clients.view",
-    description: "View client information",
-    category: "clients",
-    isSystem: false,
-    rolesCount: 3,
-    createdAt: "2023-05-22T09:15:00Z",
-    updatedAt: "2023-05-22T09:15:00Z"
-  },
-  {
-    id: "perm-015",
-    name: "clients.manage",
-    description: "Manage client accounts and information",
-    category: "clients",
-    isSystem: false,
-    rolesCount: 2,
-    createdAt: "2023-05-22T09:15:00Z",
-    updatedAt: "2023-05-22T09:15:00Z"
-  }
-];
+interface PermissionsManagementProps {
+  onAction?: (action: string) => void;
+}
 
-const PermissionsManagement: React.FC = () => {
-  const [permissions, setPermissions] = useState<Permission[]>([]);
+const PermissionsManagement: React.FC<PermissionsManagementProps> = ({ onAction }) => {
+  const [permissions, setPermissions] = useState<Permission[]>([
+    {
+      id: "perm-1",
+      name: "users.view",
+      description: "Can view user information",
+      category: "User Management",
+      roles: ["admin", "callcenter"],
+      isSystemDefault: true
+    },
+    {
+      id: "perm-2",
+      name: "users.create",
+      description: "Can create new users",
+      category: "User Management",
+      roles: ["admin"],
+      isSystemDefault: true
+    },
+    {
+      id: "perm-3",
+      name: "users.edit",
+      description: "Can edit user information",
+      category: "User Management",
+      roles: ["admin"],
+      isSystemDefault: true
+    },
+    {
+      id: "perm-4",
+      name: "users.delete",
+      description: "Can delete users",
+      category: "User Management",
+      roles: ["admin"],
+      isSystemDefault: true
+    },
+    {
+      id: "perm-5",
+      name: "roles.manage",
+      description: "Can manage roles and permissions",
+      category: "Role Management",
+      roles: ["admin"],
+      isSystemDefault: true
+    },
+    {
+      id: "perm-6",
+      name: "devices.view",
+      description: "Can view device information",
+      category: "Device Management",
+      roles: ["admin", "callcenter"],
+      isSystemDefault: true
+    },
+    {
+      id: "perm-7",
+      name: "devices.manage",
+      description: "Can manage devices",
+      category: "Device Management",
+      roles: ["admin"],
+      isSystemDefault: true
+    },
+    {
+      id: "perm-8",
+      name: "clients.view",
+      description: "Can view client information",
+      category: "Client Management",
+      roles: ["admin", "callcenter"],
+      isSystemDefault: true
+    },
+    {
+      id: "perm-9",
+      name: "clients.manage",
+      description: "Can manage client accounts",
+      category: "Client Management",
+      roles: ["admin"],
+      isSystemDefault: true
+    },
+    {
+      id: "perm-10",
+      name: "alerts.view",
+      description: "Can view alert histories",
+      category: "Alerts",
+      roles: ["admin", "callcenter"],
+      isSystemDefault: true
+    },
+    {
+      id: "perm-11",
+      name: "alerts.manage",
+      description: "Can manage and respond to alerts",
+      category: "Alerts",
+      roles: ["admin", "callcenter"],
+      isSystemDefault: true
+    },
+    {
+      id: "perm-12",
+      name: "reports.view",
+      description: "Can view system reports",
+      category: "Reporting",
+      roles: ["admin"],
+      isSystemDefault: true
+    }
+  ]);
+  
+  const [roles, setRoles] = useState<Role[]>([
+    { id: "role-1", name: "admin" },
+    { id: "role-2", name: "callcenter" },
+    { id: "role-3", name: "member" }
+  ]);
+  
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
-  const [filteredPermissions, setFilteredPermissions] = useState<Permission[]>([]);
-  const [categoryFilter, setCategoryFilter] = useState("all");
+  const [activeTab, setActiveTab] = useState("all");
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [currentPermission, setCurrentPermission] = useState<Permission | null>(null);
+  const [isRoleAssignmentDialogOpen, setIsRoleAssignmentDialogOpen] = useState(false);
+  const [selectedPermission, setSelectedPermission] = useState<Permission | null>(null);
   const [formData, setFormData] = useState({
     name: "",
     description: "",
-    category: "users",
+    category: "",
   });
+  const [selectedRoles, setSelectedRoles] = useState<string[]>([]);
   const { language } = useLanguage();
-
-  // Translation helpers
+  
+  // Translation helper
   const t = (key: string, fallback: string): string => {
-    return language === 'en' ? fallback : getFallbackSpanish(key, fallback);
+    // Simple implementation - in a real app you'd use a proper i18n solution
+    if (language === 'es') {
+      const translations: Record<string, string> = {
+        "Permissions Management": "Gestión de Permisos",
+        "Manage system permissions and role assignments": "Gestionar permisos del sistema y asignaciones de roles",
+        "Add Permission": "Añadir Permiso",
+        "Search permissions...": "Buscar permisos...",
+        "All": "Todos",
+        "User Management": "Gestión de Usuarios",
+        "Role Management": "Gestión de Roles",
+        "Device Management": "Gestión de Dispositivos",
+        "Client Management": "Gestión de Clientes",
+        "Alerts": "Alertas",
+        "Reporting": "Informes",
+        "Permission": "Permiso",
+        "Description": "Descripción",
+        "Category": "Categoría",
+        "Roles": "Roles",
+        "Actions": "Acciones",
+        "Assign Roles": "Asignar Roles",
+        "Edit": "Editar",
+        "Delete": "Eliminar",
+        "No permissions found": "No se encontraron permisos",
+        "Create Permission": "Crear Permiso",
+        "Add a new permission to the system": "Añadir un nuevo permiso al sistema",
+        "Permission Name": "Nombre del Permiso",
+        "Use dot notation (e.g., resource.action)": "Use notación con puntos (ej., recurso.acción)",
+        "Permission Description": "Descripción del Permiso",
+        "Describe what this permission allows": "Describa qué permite este permiso",
+        "Permission Category": "Categoría del Permiso",
+        "Cancel": "Cancelar",
+        "Create": "Crear",
+        "Are you sure?": "¿Está seguro?",
+        "This will permanently delete the permission. This action cannot be undone.": "Esto eliminará permanentemente el permiso. Esta acción no se puede deshacer.",
+        "Edit Permission": "Editar Permiso",
+        "Update permission information": "Actualizar información del permiso",
+        "Update": "Actualizar",
+        "Select Roles": "Seleccionar Roles",
+        "Assign roles to this permission": "Asignar roles a este permiso",
+        "System Default": "Predeterminado del Sistema",
+        "This is a system-default permission and cannot be modified": "Este es un permiso predeterminado del sistema y no puede ser modificado"
+      };
+      return translations[fallback] || fallback;
+    }
+    return fallback;
   };
-
-  // Simple Spanish translations fallback
-  const getFallbackSpanish = (key: string, fallback: string): string => {
-    const spanishMap: Record<string, string> = {
-      "Permissions Management": "Gestión de Permisos",
-      "Manage system permissions that can be assigned to roles": "Gestiona los permisos del sistema que pueden asignarse a roles",
-      "Add Permission": "Añadir Permiso",
-      "Search permissions...": "Buscar permisos...",
-      "All Categories": "Todas las Categorías",
-      "Users & Accounts": "Usuarios y Cuentas",
-      "Devices & Inventory": "Dispositivos e Inventario",
-      "Alerts & Notifications": "Alertas y Notificaciones",
-      "Billing & Payments": "Facturación y Pagos",
-      "Reports & Analytics": "Informes y Analíticas",
-      "System Settings": "Configuración del Sistema",
-      "Call Center": "Centro de Llamadas",
-      "Clients & Customers": "Clientes",
-      "Permission": "Permiso",
-      "Description": "Descripción",
-      "Category": "Categoría",
-      "Used In": "Usado En",
-      "Actions": "Acciones",
-      "Edit": "Editar",
-      "Delete": "Eliminar",
-      "No permissions found": "No se encontraron permisos",
-      "Create Permission": "Crear Permiso",
-      "Add a new permission to the system": "Añade un nuevo permiso al sistema",
-      "Permission Name": "Nombre del Permiso",
-      "Permission Description": "Descripción del Permiso",
-      "Describe what this permission allows": "Describe lo que permite este permiso",
-      "Enter permission name (e.g. users.create)": "Ingrese el nombre del permiso (ej. usuarios.crear)",
-      "Enter permission description": "Ingrese la descripción del permiso",
-      "Select category": "Seleccionar categoría",
-      "Cancel": "Cancelar",
-      "Create": "Crear",
-      "Are you sure?": "¿Está seguro?",
-      "This will permanently delete the permission. This action cannot be undone.": "Esto eliminará permanentemente el permiso. Esta acción no se puede deshacer.",
-      "Permission created successfully": "Permiso creado con éxito",
-      "Permission updated successfully": "Permiso actualizado con éxito",
-      "Permission deleted successfully": "Permiso eliminado con éxito",
-      "Please fill all required fields": "Por favor complete todos los campos requeridos",
-      "Edit Permission": "Editar Permiso",
-      "Update permission information": "Actualizar información del permiso",
-      "Update": "Actualizar",
-      "System": "Sistema",
-      "roles": "roles",
-      "Cannot delete system permission": "No se puede eliminar un permiso del sistema"
-    };
-    
-    return spanishMap[fallback] || fallback;
-  };
-
+  
   useEffect(() => {
     // Simulate loading data from API
-    const fetchData = async () => {
-      setLoading(true);
-      try {
-        // Simulate API delay
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        setPermissions(initialPermissions);
-      } catch (error) {
-        console.error("Error fetching permissions:", error);
-        toast.error(t("Failed to load permissions", "Failed to load permissions"));
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 1000);
+    
+    return () => clearTimeout(timer);
   }, []);
-
-  useEffect(() => {
-    // Filter permissions based on search query and category filter
+  
+  const getFilteredPermissions = () => {
     let filtered = [...permissions];
     
     if (searchQuery) {
@@ -327,24 +256,25 @@ const PermissionsManagement: React.FC = () => {
       );
     }
     
-    if (categoryFilter !== "all") {
-      filtered = filtered.filter(permission => permission.category === categoryFilter);
+    if (activeTab !== "all") {
+      filtered = filtered.filter(permission => permission.category === activeTab);
     }
     
-    setFilteredPermissions(filtered);
-  }, [searchQuery, permissions, categoryFilter]);
-
-  const handleCreatePermission = () => {
+    return filtered;
+  };
+  
+  const openCreateDialog = () => {
     setFormData({
       name: "",
       description: "",
-      category: "users",
+      category: "User Management",
     });
+    setSelectedRoles([]);
     setIsCreateDialogOpen(true);
   };
-
-  const handleEditPermission = (permission: Permission) => {
-    setCurrentPermission(permission);
+  
+  const openEditDialog = (permission: Permission) => {
+    setSelectedPermission(permission);
     setFormData({
       name: permission.name,
       description: permission.description,
@@ -352,79 +282,117 @@ const PermissionsManagement: React.FC = () => {
     });
     setIsEditDialogOpen(true);
   };
-
-  const handleDeletePermission = (permission: Permission) => {
-    setCurrentPermission(permission);
+  
+  const openDeleteDialog = (permission: Permission) => {
+    setSelectedPermission(permission);
     setIsDeleteDialogOpen(true);
   };
-
-  const submitCreatePermission = () => {
-    if (!formData.name || !formData.description) {
-      toast.error(t("Please fill all required fields", "Please fill all required fields"));
+  
+  const openRoleAssignmentDialog = (permission: Permission) => {
+    setSelectedPermission(permission);
+    setSelectedRoles([...permission.roles]);
+    setIsRoleAssignmentDialogOpen(true);
+  };
+  
+  const handleCreatePermission = () => {
+    if (!formData.name || !formData.description || !formData.category) {
+      toast.error("Please fill all required fields");
       return;
     }
-
+    
     const newPermission: Permission = {
-      id: `perm-${Date.now()}`,
+      id: `perm-${permissions.length + 1}`,
       name: formData.name,
       description: formData.description,
       category: formData.category,
-      isSystem: false,
-      rolesCount: 0,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
+      roles: selectedRoles,
+      isSystemDefault: false
     };
-
+    
     setPermissions([...permissions, newPermission]);
     setIsCreateDialogOpen(false);
-    toast.success(t("Permission created successfully", "Permission created successfully"));
+    
+    if (onAction) {
+      onAction(`Created permission: ${formData.name}`);
+    }
+    
+    toast.success("Permission created successfully");
   };
-
-  const submitEditPermission = () => {
-    if (!currentPermission || !formData.name || !formData.description) {
-      toast.error(t("Please fill all required fields", "Please fill all required fields"));
+  
+  const handleEditPermission = () => {
+    if (!selectedPermission || !formData.name || !formData.description || !formData.category) {
+      toast.error("Please fill all required fields");
       return;
     }
-
+    
     const updatedPermissions = permissions.map(permission => {
-      if (permission.id === currentPermission.id) {
+      if (permission.id === selectedPermission.id) {
         return {
           ...permission,
           name: formData.name,
           description: formData.description,
-          category: formData.category,
-          updatedAt: new Date().toISOString()
+          category: formData.category
         };
       }
       return permission;
     });
-
+    
     setPermissions(updatedPermissions);
     setIsEditDialogOpen(false);
-    toast.success(t("Permission updated successfully", "Permission updated successfully"));
+    
+    if (onAction) {
+      onAction(`Updated permission: ${formData.name}`);
+    }
+    
+    toast.success("Permission updated successfully");
   };
-
-  const submitDeletePermission = () => {
-    if (!currentPermission) return;
-
-    // Check if the permission is a system permission
-    if (currentPermission.isSystem) {
-      toast.error(t("Cannot delete system permission", "Cannot delete system permission"));
+  
+  const handleDeletePermission = () => {
+    if (!selectedPermission) return;
+    
+    if (selectedPermission.isSystemDefault) {
+      toast.error("Cannot delete system default permissions");
       setIsDeleteDialogOpen(false);
       return;
     }
-
-    const updatedPermissions = permissions.filter(permission => permission.id !== currentPermission.id);
+    
+    const updatedPermissions = permissions.filter(
+      permission => permission.id !== selectedPermission.id
+    );
+    
     setPermissions(updatedPermissions);
     setIsDeleteDialogOpen(false);
-    toast.success(t("Permission deleted successfully", "Permission deleted successfully"));
+    
+    if (onAction) {
+      onAction(`Deleted permission: ${selectedPermission.name}`);
+    }
+    
+    toast.success("Permission deleted successfully");
   };
-
-  const getCategoryLabel = (categoryValue: string): string => {
-    const category = permissionCategories.find(cat => cat.value === categoryValue);
-    return category ? t(category.label, category.label) : categoryValue;
+  
+  const handleRoleAssignment = () => {
+    if (!selectedPermission) return;
+    
+    const updatedPermissions = permissions.map(permission => {
+      if (permission.id === selectedPermission.id) {
+        return {
+          ...permission,
+          roles: selectedRoles
+        };
+      }
+      return permission;
+    });
+    
+    setPermissions(updatedPermissions);
+    setIsRoleAssignmentDialogOpen(false);
+    
+    if (onAction) {
+      onAction(`Updated roles for permission: ${selectedPermission.name}`);
+    }
+    
+    toast.success("Roles assigned successfully");
   };
-
+  
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
@@ -433,66 +401,41 @@ const PermissionsManagement: React.FC = () => {
             {t("Permissions Management", "Permissions Management")}
           </h2>
           <p className="text-muted-foreground">
-            {t("Manage system permissions that can be assigned to roles", 
-              "Manage system permissions that can be assigned to roles")}
+            {t("Manage system permissions and role assignments", "Manage system permissions and role assignments")}
           </p>
         </div>
-        <Button onClick={handleCreatePermission} className="flex items-center gap-2">
-          <PlusCircle size={16} />
+        <Button onClick={openCreateDialog} className="flex items-center gap-2">
+          <Plus size={16} />
           {t("Add Permission", "Add Permission")}
         </Button>
       </div>
 
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
-        <div className="relative w-full md:w-64">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+        <div className="relative w-full sm:w-64">
           <Input
             placeholder={t("Search permissions...", "Search permissions...")}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="pl-8"
           />
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-            />
-          </svg>
+          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
         </div>
         
-        <div className="flex w-full md:w-auto">
-          <Select 
-            value={categoryFilter} 
-            onValueChange={setCategoryFilter}
-          >
-            <SelectTrigger className="w-full md:w-[220px]">
-              <Filter size={16} className="mr-2" />
-              <SelectValue placeholder={t("All Categories", "All Categories")} />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">{t("All Categories", "All Categories")}</SelectItem>
-              {permissionCategories.map((category) => (
-                <SelectItem key={category.value} value={category.value}>
-                  {t(category.label, category.label)}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          
-          <Button variant="ghost" size="icon" className="ml-2" onClick={() => {
-            setSearchQuery("");
-            setCategoryFilter("all");
-          }}>
-            <RefreshCw size={16} />
-          </Button>
-        </div>
+        <Tabs 
+          value={activeTab} 
+          onValueChange={setActiveTab}
+          className="w-full sm:w-auto"
+        >
+          <TabsList className="grid w-full grid-cols-3 sm:grid-cols-7">
+            <TabsTrigger value="all">{t("All", "All")}</TabsTrigger>
+            <TabsTrigger value="User Management">{t("User Management", "User")}</TabsTrigger>
+            <TabsTrigger value="Role Management">{t("Role Management", "Role")}</TabsTrigger>
+            <TabsTrigger value="Device Management">{t("Device Management", "Device")}</TabsTrigger>
+            <TabsTrigger value="Client Management">{t("Client Management", "Client")}</TabsTrigger>
+            <TabsTrigger value="Alerts">{t("Alerts", "Alerts")}</TabsTrigger>
+            <TabsTrigger value="Reporting">{t("Reporting", "Reports")}</TabsTrigger>
+          </TabsList>
+        </Tabs>
       </div>
 
       {loading ? (
@@ -509,37 +452,30 @@ const PermissionsManagement: React.FC = () => {
                 <TableHead>{t("Permission", "Permission")}</TableHead>
                 <TableHead className="hidden md:table-cell">{t("Description", "Description")}</TableHead>
                 <TableHead>{t("Category", "Category")}</TableHead>
-                <TableHead className="text-center">{t("Used In", "Used In")}</TableHead>
+                <TableHead>{t("Roles", "Roles")}</TableHead>
                 <TableHead className="text-right">{t("Actions", "Actions")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filteredPermissions.length === 0 ? (
+              {getFilteredPermissions().length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={5} className="text-center py-6 text-muted-foreground">
                     {t("No permissions found", "No permissions found")}
                   </TableCell>
                 </TableRow>
               ) : (
-                filteredPermissions.map((permission) => (
+                getFilteredPermissions().map((permission) => (
                   <TableRow key={permission.id}>
                     <TableCell className="font-medium">
                       <div className="flex items-center gap-2">
-                        <LockKeyhole size={16} className="text-ice-600" />
+                        <LockKeyhole className="w-4 h-4 text-ice-600" />
                         <div>
-                          <div className="flex items-center">
-                            {permission.name}
-                            {permission.isSystem && (
-                              <Badge className="ml-2 bg-blue-100 text-blue-800 hover:bg-blue-100">
-                                {t("System", "System")}
-                              </Badge>
-                            )}
-                          </div>
-                          <p className="text-xs text-muted-foreground md:hidden mt-1">
-                            {permission.description.length > 60 
-                              ? permission.description.substring(0, 60) + '...' 
-                              : permission.description}
-                          </p>
+                          <div className="font-mono text-sm">{permission.name}</div>
+                          {permission.isSystemDefault && (
+                            <Badge variant="outline" className="mt-1 text-xs">
+                              {t("System Default", "System Default")}
+                            </Badge>
+                          )}
                         </div>
                       </div>
                     </TableCell>
@@ -547,30 +483,46 @@ const PermissionsManagement: React.FC = () => {
                       {permission.description}
                     </TableCell>
                     <TableCell>
-                      <Badge variant="outline" className="capitalize">
-                        {getCategoryLabel(permission.category)}
+                      <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
+                        {permission.category}
                       </Badge>
                     </TableCell>
-                    <TableCell className="text-center">
-                      {permission.rolesCount} {t("roles", "roles")}
+                    <TableCell>
+                      <div className="flex flex-wrap gap-1">
+                        {permission.roles.map(role => (
+                          <Badge key={role} className="bg-gray-100 text-gray-800 hover:bg-gray-100">
+                            {role}
+                          </Badge>
+                        ))}
+                        <Button 
+                          variant="ghost" 
+                          size="sm" 
+                          className="h-6 text-xs"
+                          onClick={() => openRoleAssignmentDialog(permission)}
+                        >
+                          <Plus className="h-3 w-3 mr-1" />
+                          {permission.roles.length === 0 ? t("Assign", "Assign") : t("Edit", "Edit")}
+                        </Button>
+                      </div>
                     </TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end gap-2">
                         <Button 
                           variant="outline" 
                           size="sm" 
-                          onClick={() => handleEditPermission(permission)}
+                          onClick={() => openEditDialog(permission)}
+                          disabled={permission.isSystemDefault}
                         >
-                          <Pencil size={16} className="mr-1" />
+                          <Edit className="w-4 h-4 mr-1" />
                           {t("Edit", "Edit")}
                         </Button>
                         <Button 
                           variant="destructive" 
                           size="sm" 
-                          onClick={() => handleDeletePermission(permission)}
-                          disabled={permission.isSystem}
+                          onClick={() => openDeleteDialog(permission)}
+                          disabled={permission.isSystemDefault}
                         >
-                          <Trash2 size={16} className="mr-1" />
+                          <Trash2 className="w-4 h-4 mr-1" />
                           {t("Delete", "Delete")}
                         </Button>
                       </div>
@@ -595,58 +547,88 @@ const PermissionsManagement: React.FC = () => {
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="permission-name" className="text-right">
+            <div className="grid gap-2">
+              <Label htmlFor="name">
                 {t("Permission Name", "Permission Name")}
               </Label>
               <Input
-                id="permission-name"
+                id="name"
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                className="col-span-3"
-                placeholder={t("Enter permission name (e.g. users.create)", 
-                  "Enter permission name (e.g. users.create)")}
+                placeholder="resource.action"
               />
+              <p className="text-xs text-muted-foreground">
+                {t("Use dot notation (e.g., resource.action)", "Use dot notation (e.g., resource.action)")}
+              </p>
             </div>
-            <div className="grid grid-cols-4 items-start gap-4">
-              <Label htmlFor="permission-description" className="text-right pt-2">
-                {t("Description", "Description")}
+            <div className="grid gap-2">
+              <Label htmlFor="description">
+                {t("Permission Description", "Permission Description")}
               </Label>
               <Textarea
-                id="permission-description"
+                id="description"
                 value={formData.description}
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                className="col-span-3"
-                placeholder={t("Describe what this permission allows", "Describe what this permission allows")}
+                placeholder="Describe what this permission allows"
                 rows={3}
               />
+              <p className="text-xs text-muted-foreground">
+                {t("Describe what this permission allows", "Describe what this permission allows")}
+              </p>
             </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="permission-category" className="text-right">
-                {t("Category", "Category")}
+            <div className="grid gap-2">
+              <Label htmlFor="category">
+                {t("Permission Category", "Permission Category")}
               </Label>
-              <Select 
-                value={formData.category} 
+              <Select
+                value={formData.category}
                 onValueChange={(value) => setFormData({ ...formData, category: value })}
               >
-                <SelectTrigger id="permission-category" className="col-span-3">
-                  <SelectValue placeholder={t("Select category", "Select category")} />
+                <SelectTrigger>
+                  <SelectValue placeholder="Select category" />
                 </SelectTrigger>
                 <SelectContent>
-                  {permissionCategories.map((category) => (
-                    <SelectItem key={category.value} value={category.value}>
-                      {t(category.label, category.label)}
-                    </SelectItem>
-                  ))}
+                  <SelectItem value="User Management">User Management</SelectItem>
+                  <SelectItem value="Role Management">Role Management</SelectItem>
+                  <SelectItem value="Device Management">Device Management</SelectItem>
+                  <SelectItem value="Client Management">Client Management</SelectItem>
+                  <SelectItem value="Alerts">Alerts</SelectItem>
+                  <SelectItem value="Reporting">Reporting</SelectItem>
                 </SelectContent>
               </Select>
+            </div>
+            <div className="grid gap-2">
+              <Label>
+                {t("Assign Roles", "Assign Roles")}
+              </Label>
+              <div className="grid grid-cols-1 gap-2">
+                {roles.map(role => (
+                  <div key={role.id} className="flex items-center space-x-2">
+                    <Checkbox 
+                      id={`role-${role.id}`}
+                      checked={selectedRoles.includes(role.name)}
+                      onCheckedChange={(checked) => {
+                        if (checked) {
+                          setSelectedRoles([...selectedRoles, role.name]);
+                        } else {
+                          setSelectedRoles(selectedRoles.filter(r => r !== role.name));
+                        }
+                      }}
+                    />
+                    <Label htmlFor={`role-${role.id}`} className="flex items-center space-x-1">
+                      <Shield className="w-4 h-4" />
+                      <span>{role.name}</span>
+                    </Label>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsCreateDialogOpen(false)}>
               {t("Cancel", "Cancel")}
             </Button>
-            <Button onClick={submitCreatePermission}>
+            <Button onClick={handleCreatePermission}>
               {t("Create", "Create")}
             </Button>
           </DialogFooter>
@@ -665,49 +647,47 @@ const PermissionsManagement: React.FC = () => {
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="edit-permission-name" className="text-right">
+            <div className="grid gap-2">
+              <Label htmlFor="edit-name">
                 {t("Permission Name", "Permission Name")}
               </Label>
               <Input
-                id="edit-permission-name"
+                id="edit-name"
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                className="col-span-3"
-                placeholder={t("Enter permission name (e.g. users.create)", 
-                  "Enter permission name (e.g. users.create)")}
+                placeholder="resource.action"
               />
             </div>
-            <div className="grid grid-cols-4 items-start gap-4">
-              <Label htmlFor="edit-permission-description" className="text-right pt-2">
-                {t("Description", "Description")}
+            <div className="grid gap-2">
+              <Label htmlFor="edit-description">
+                {t("Permission Description", "Permission Description")}
               </Label>
               <Textarea
-                id="edit-permission-description"
+                id="edit-description"
                 value={formData.description}
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                className="col-span-3"
-                placeholder={t("Describe what this permission allows", "Describe what this permission allows")}
+                placeholder="Describe what this permission allows"
                 rows={3}
               />
             </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="edit-permission-category" className="text-right">
-                {t("Category", "Category")}
+            <div className="grid gap-2">
+              <Label htmlFor="edit-category">
+                {t("Permission Category", "Permission Category")}
               </Label>
-              <Select 
-                value={formData.category} 
+              <Select
+                value={formData.category}
                 onValueChange={(value) => setFormData({ ...formData, category: value })}
               >
-                <SelectTrigger id="edit-permission-category" className="col-span-3">
-                  <SelectValue placeholder={t("Select category", "Select category")} />
+                <SelectTrigger id="edit-category">
+                  <SelectValue placeholder="Select category" />
                 </SelectTrigger>
                 <SelectContent>
-                  {permissionCategories.map((category) => (
-                    <SelectItem key={category.value} value={category.value}>
-                      {t(category.label, category.label)}
-                    </SelectItem>
-                  ))}
+                  <SelectItem value="User Management">User Management</SelectItem>
+                  <SelectItem value="Role Management">Role Management</SelectItem>
+                  <SelectItem value="Device Management">Device Management</SelectItem>
+                  <SelectItem value="Client Management">Client Management</SelectItem>
+                  <SelectItem value="Alerts">Alerts</SelectItem>
+                  <SelectItem value="Reporting">Reporting</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -716,8 +696,53 @@ const PermissionsManagement: React.FC = () => {
             <Button variant="outline" onClick={() => setIsEditDialogOpen(false)}>
               {t("Cancel", "Cancel")}
             </Button>
-            <Button onClick={submitEditPermission}>
+            <Button onClick={handleEditPermission}>
               {t("Update", "Update")}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Role Assignment Dialog */}
+      <Dialog open={isRoleAssignmentDialogOpen} onOpenChange={setIsRoleAssignmentDialogOpen}>
+        <DialogContent className="sm:max-w-[400px]">
+          <DialogHeader>
+            <DialogTitle>
+              {t("Select Roles", "Select Roles")}
+            </DialogTitle>
+            <DialogDescription>
+              {t("Assign roles to this permission", "Assign roles to this permission")}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="py-4">
+            <div className="grid grid-cols-1 gap-2">
+              {roles.map(role => (
+                <div key={role.id} className="flex items-center space-x-2">
+                  <Checkbox 
+                    id={`assign-role-${role.id}`}
+                    checked={selectedRoles.includes(role.name)}
+                    onCheckedChange={(checked) => {
+                      if (checked) {
+                        setSelectedRoles([...selectedRoles, role.name]);
+                      } else {
+                        setSelectedRoles(selectedRoles.filter(r => r !== role.name));
+                      }
+                    }}
+                  />
+                  <Label htmlFor={`assign-role-${role.id}`} className="flex items-center space-x-1">
+                    <Shield className="w-4 h-4" />
+                    <span>{role.name}</span>
+                  </Label>
+                </div>
+              ))}
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsRoleAssignmentDialogOpen(false)}>
+              {t("Cancel", "Cancel")}
+            </Button>
+            <Button onClick={handleRoleAssignment}>
+              {t("Save", "Save")}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -732,19 +757,46 @@ const PermissionsManagement: React.FC = () => {
             </AlertDialogTitle>
             <AlertDialogDescription>
               {t("This will permanently delete the permission. This action cannot be undone.", 
-                `This will permanently delete the permission "${currentPermission?.name}". This action cannot be undone.`)}
+                `This will permanently delete the permission "${selectedPermission?.name}". This action cannot be undone.`)}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>
               {t("Cancel", "Cancel")}
             </AlertDialogCancel>
-            <AlertDialogAction onClick={submitDeletePermission} className="bg-red-600">
+            <AlertDialogAction onClick={handleDeletePermission} className="bg-red-600">
               {t("Delete", "Delete")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+      
+      {selectedPermission?.isSystemDefault && (
+        <AlertDialog 
+          open={isEditDialogOpen || isDeleteDialogOpen} 
+          onOpenChange={() => {
+            setIsEditDialogOpen(false);
+            setIsDeleteDialogOpen(false);
+          }}
+        >
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>
+                {t("System Default Permission", "System Default Permission")}
+              </AlertDialogTitle>
+              <AlertDialogDescription>
+                {t("This is a system-default permission and cannot be modified", 
+                  "This is a system-default permission and cannot be modified")}
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogAction>
+                {t("Understood", "Understood")}
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      )}
     </div>
   );
 };
