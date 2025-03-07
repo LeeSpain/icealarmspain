@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { navigationItems } from './navigationItems';
 import SidebarNavItem from './SidebarNavItem';
 
@@ -14,8 +15,15 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({
   setActiveSection, 
   collapsed 
 }) => {
+  const navigate = useNavigate();
+  
+  const handleNavigation = (section: string, path: string) => {
+    setActiveSection(section);
+    navigate(path);
+  };
+  
   return (
-    <nav className="py-4">
+    <nav className="py-4 overflow-y-auto max-h-[calc(100vh-120px)]">
       {navigationItems.map((item) => {
         const Icon = item.icon;
         return (
@@ -26,7 +34,8 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({
             path={item.path}
             section={item.section}
             collapsed={collapsed}
-            setActiveSection={setActiveSection}
+            setActiveSection={() => handleNavigation(item.section, item.path)}
+            isActive={activeSection === item.section}
           />
         );
       })}

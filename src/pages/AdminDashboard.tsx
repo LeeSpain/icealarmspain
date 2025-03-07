@@ -1,6 +1,7 @@
+
 import React, { useState, useEffect } from "react";
 import { ToastContainer, toast } from 'react-toastify';
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/context/auth";
 import { useLanguage } from "@/context/LanguageContext";
 import 'react-toastify/dist/ReactToastify.css';
@@ -10,9 +11,19 @@ import Sidebar from "@/components/admin/Sidebar";
 import SectionRenderer from "@/components/admin/dashboard/SectionRenderer";
 import AdminDashboardLoading from "@/components/admin/dashboard/AdminDashboardLoading";
 import { DashboardActivity, useActivityManager } from "@/components/admin/dashboard/ActivityManager";
+import AdminUsersManagement from "@/components/admin/AdminUsersManagement";
+import UserManagement from "@/components/admin/UserManagement";
+import ClientManagement from "@/components/admin/ClientManagement";
+import DeviceManagement from "@/components/admin/DeviceManagement";
+import AlertsManagement from "@/components/admin/AlertsManagement";
+import RolesManagement from "@/components/admin/RolesManagement";
+import PermissionsManagement from "@/components/admin/PermissionsManagement";
+import InventoryManagement from "@/components/admin/InventoryManagement";
+import PlaceholderSection from "@/components/admin/PlaceholderSection";
 
 const AdminDashboard: React.FC = () => {
-  const [activeSection, setActiveSection] = useState<string>("dashboard");
+  const location = useLocation();
+  const [activeSection, setActiveSection] = useState<string>("");
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const { user, isAuthenticated, isLoading } = useAuth();
   const { language } = useLanguage();
@@ -27,6 +38,24 @@ const AdminDashboard: React.FC = () => {
     revenueByProduct: [],
     recentActivities: []
   });
+
+  // Determine active section from URL path
+  useEffect(() => {
+    const path = location.pathname;
+    let section = 'dashboard';
+    
+    if (path === '/admin') {
+      section = 'dashboard';
+    } else {
+      // Extract section from path like /admin/users -> users
+      const pathParts = path.split('/');
+      if (pathParts.length >= 3) {
+        section = pathParts[2];
+      }
+    }
+    
+    setActiveSection(section);
+  }, [location.pathname]);
 
   useEffect(() => {
     console.log("AdminDashboard - Auth state:", { isAuthenticated, user, isLoading });
@@ -67,16 +96,16 @@ const AdminDashboard: React.FC = () => {
   const fetchDashboardData = async () => {
     try {
       const data = {
-        totalRevenue: "€0",
-        totalCustomers: "0",
-        activeDevices: "0",
-        pendingOrders: "0",
-        monthlyGrowth: "0%",
-        customerSatisfaction: "0%",
+        totalRevenue: "€25,320",
+        totalCustomers: "148",
+        activeDevices: "243",
+        pendingOrders: "12",
+        monthlyGrowth: "18%",
+        customerSatisfaction: "92%",
         revenueByProduct: [
-          { name: "IceAlarm Pro", value: 0 },
-          { name: "IceAlarm Standard", value: 0 },
-          { name: "IceAlarm Basic", value: 0 },
+          { name: "IceAlarm Pro", value: 12500 },
+          { name: "IceAlarm Standard", value: 8200 },
+          { name: "IceAlarm Basic", value: 4620 },
         ],
         recentActivities: [
           { id: 1, type: "System", description: "Dashboard initialized", time: "Just now" },
@@ -101,6 +130,12 @@ const AdminDashboard: React.FC = () => {
     }
   });
 
+  // Handle section changes
+  const handleSectionChange = (section: string) => {
+    setActiveSection(section);
+    navigate(`/admin/${section === 'dashboard' ? '' : section}`);
+  };
+
   if (isLoading) {
     return <AdminDashboardLoading />;
   }
@@ -118,13 +153,49 @@ const AdminDashboard: React.FC = () => {
     );
   }
 
+  const renderSectionComponent = () => {
+    switch (activeSection) {
+      case 'dashboard':
+        return (
+          <SectionRenderer 
+            activeSection="dashboard" 
+            dashboardData={dashboardData}
+            onActivityAdded={addActivity}
+          />
+        );
+      case 'users':
+        return <UserManagement />;
+      case 'clients':
+        return <ClientManagement />;
+      case 'devices':
+        return <DeviceManagement />;
+      case 'alerts':
+        return <AlertsManagement />;
+      case 'admin-users':
+        return <AdminUsersManagement />;
+      case 'roles':
+        return <RolesManagement />;
+      case 'permissions':
+        return <PermissionsManagement />;
+      case 'inventory':
+        return <InventoryManagement />;
+      default:
+        return (
+          <PlaceholderSection 
+            title={activeSection.charAt(0).toUpperCase() + activeSection.slice(1)} 
+            description={`This is the ${activeSection} section of the admin dashboard.`}
+          />
+        );
+    }
+  };
+
   return (
     <div className="flex h-screen bg-ice-50/30">
       <ToastContainer />
       
       <Sidebar 
         activeSection={activeSection}
-        setActiveSection={setActiveSection}
+        setActiveSection={handleSectionChange}
         collapsed={sidebarCollapsed}
         setCollapsed={setSidebarCollapsed}
         userData={user}
@@ -132,11 +203,7 @@ const AdminDashboard: React.FC = () => {
       
       <div className="flex-1 overflow-auto transition-all duration-300">
         <div className="p-6 w-full">
-          <SectionRenderer 
-            activeSection={activeSection} 
-            dashboardData={dashboardData}
-            onActivityAdded={addActivity}
-          />
+          {renderSectionComponent()}
         </div>
       </div>
     </div>

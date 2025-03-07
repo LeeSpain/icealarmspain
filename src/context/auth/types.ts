@@ -26,8 +26,22 @@ export interface AuthContextType {
   logout: () => Promise<void>;
   updateUserProfile: (displayName: string) => Promise<void>;
   // Admin functions
-  createUser?: (email: string, password: string, displayName: string, role: string) => Promise<User>;
-  getAllUsers?: () => Promise<User[]>;
-  updateUserRole?: (userId: string, newRole: string) => Promise<void>;
-  deleteUser?: (userId: string) => Promise<void>;
+  createUser: (email: string, password: string, displayName: string, role: string) => Promise<User>;
+  getAllUsers: () => Promise<User[]>;
+  updateUserRole: (userId: string, newRole: string) => Promise<void>;
+  deleteUser: (userId: string) => Promise<void>;
+  // Additional admin functions
+  updateUserStatus?: (userId: string, newStatus: 'active' | 'inactive' | 'pending') => Promise<void>;
+  resetUserPassword?: (userId: string) => Promise<string>; // Returns temporary password
+  getUserDetails?: (userId: string) => Promise<User>;
+  searchUsers?: (query: string) => Promise<User[]>;
+  assignDeviceToUser?: (userId: string, deviceId: string) => Promise<void>;
+  revokeDeviceFromUser?: (userId: string, deviceId: string) => Promise<void>;
+  getAdminStats?: () => Promise<{
+    totalUsers: number;
+    activeUsers: number;
+    newUsersToday: number;
+    newUsersThisWeek: number;
+    newUsersThisMonth: number;
+  }>;
 }

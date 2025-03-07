@@ -1,5 +1,5 @@
 
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Index from './pages/Index';
 import Login from './pages/Login';
 import Join from './pages/Join';
@@ -145,12 +145,19 @@ function App() {
               </ProtectedRoute>
             } />
             
-            {/* Admin routes */}
+            {/* Admin routes with admin section pages */}
             <Route path="/admin" element={
               <ProtectedRoute allowedRoles={['admin']}>
                 <AdminDashboard />
               </ProtectedRoute>
             } />
+            <Route path="/admin/*" element={
+              <ProtectedRoute allowedRoles={['admin']}>
+                <AdminDashboard />
+              </ProtectedRoute>
+            } />
+            
+            {/* Call Center dashboard */}
             <Route path="/call-center" element={
               <ProtectedRoute allowedRoles={['callcenter']}>
                 <CallCenterDashboard />
@@ -168,7 +175,7 @@ function App() {
             <Route path="/pricing" element={<Join />} />
             <Route path="/help" element={<Contact />} />
             
-            {/* Fallback route */}
+            {/* Root path redirect (if we're in development to make it easier) */}
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Router>
