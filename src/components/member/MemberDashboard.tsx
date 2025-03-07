@@ -27,7 +27,8 @@ const MemberDashboard: React.FC = () => {
     if (!isLoading && !isAuthenticated) {
       navigate('/login');
     } else if (user) {
-      setName(user.name || user.email);
+      // Prefer user's display name over email for better personalization
+      setName(user.displayName || user.name || user.email?.split('@')[0] || '');
     }
     
     const timer = setInterval(() => {
@@ -65,7 +66,7 @@ const MemberDashboard: React.FC = () => {
   );
 
   const handlePersonalDetailsClick = () => {
-    navigate('/onboarding'); // Now redirects to the questionnaire
+    navigate('/dashboard/personal-details'); // Direct to personal-details page
   };
   
   return (

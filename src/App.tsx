@@ -1,3 +1,4 @@
+
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Index from './pages/Index';
 import Login from './pages/Login';
@@ -32,6 +33,7 @@ import DashboardHelpPage from './pages/dashboard/DashboardHelpPage';
 import DashboardProfilePage from './pages/dashboard/DashboardProfilePage';
 import DashboardChatPage from './pages/dashboard/DashboardChatPage';
 import DashboardPersonalDetailsPage from './pages/dashboard/DashboardPersonalDetailsPage';
+import DashboardMedicalInfoPage from './pages/dashboard/DashboardMedicalInfoPage';
 
 function App() {
   return (
@@ -86,6 +88,11 @@ function App() {
             <Route path="/dashboard/health/medications" element={
               <ProtectedRoute allowedRoles={['member', 'admin']}>
                 <DashboardMedicationsPage />
+              </ProtectedRoute>
+            } />
+            <Route path="/dashboard/health/info" element={
+              <ProtectedRoute allowedRoles={['member', 'admin']}>
+                <DashboardMedicalInfoPage />
               </ProtectedRoute>
             } />
             <Route path="/dashboard/emergency-contacts" element={

@@ -1,7 +1,7 @@
 
 import React from 'react';
+import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/context/LanguageContext";
-import { AI_TOPICS } from './constants';
 
 interface TopicSelectorProps {
   selectedTopic: string | null;
@@ -10,23 +10,25 @@ interface TopicSelectorProps {
 
 const TopicSelector: React.FC<TopicSelectorProps> = ({ selectedTopic, onSelectTopic }) => {
   const { language } = useLanguage();
-  const lang = language === 'en' ? 'en' : 'es';
+  
+  const topics = [
+    { id: 'health', label: language === 'en' ? 'Health Monitoring' : 'Monitoreo de Salud' },
+    { id: 'devices', label: language === 'en' ? 'Device Setup' : 'Configuración de Dispositivos' },
+    { id: 'medications', label: language === 'en' ? 'Medications' : 'Medicamentos' },
+  ];
   
   return (
     <div className="flex flex-wrap gap-2">
-      {AI_TOPICS[lang].map(topic => (
-        <button
+      {topics.map((topic) => (
+        <Button
           key={topic.id}
+          size="sm"
+          variant={selectedTopic === topic.id ? "default" : "outline"}
+          className={selectedTopic === topic.id ? "bg-guardian-500 hover:bg-guardian-600" : ""}
           onClick={() => onSelectTopic(topic.id)}
-          className={`px-3 py-1.5 text-xs rounded-full flex items-center transition-colors ${
-            selectedTopic === topic.id 
-              ? 'bg-guardian-100 text-guardian-700 border border-guardian-300' 
-              : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
-          }`}
         >
-          {React.createElement(topic.icon, { className: "h-4 w-4 mr-1.5" })}
-          <span>{topic.label}</span>
-        </button>
+          {topic.label}
+        </Button>
       ))}
     </div>
   );
