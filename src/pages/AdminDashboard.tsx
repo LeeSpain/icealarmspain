@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { ToastContainer, toast } from 'react-toastify';
 import { useNavigate, useLocation } from "react-router-dom";
@@ -10,6 +11,8 @@ import Sidebar from "@/components/admin/Sidebar";
 import SectionRenderer from "@/components/admin/dashboard/SectionRenderer";
 import AdminDashboardLoading from "@/components/admin/dashboard/AdminDashboardLoading";
 import { DashboardActivity, useActivityManager } from "@/components/admin/dashboard/ActivityManager";
+
+// Import type definitions properly
 import type { UserManagementProps } from "@/components/admin/UserManagement.d";
 import type { ClientManagementProps } from "@/components/admin/ClientManagement.d";
 import type { ClientOnboardingProps } from "@/components/admin/ClientOnboarding.d";

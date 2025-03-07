@@ -12,7 +12,7 @@ import AdminUsersManagement from "@/components/admin/AdminUsersManagement";
 import RolesManagement from "@/components/admin/RolesManagement";
 import PermissionsManagement from "@/components/admin/PermissionsManagement";
 
-// Import the proper types from their definition files properly
+// Import type definitions directly from each component's type file
 import type { UserManagementProps } from "@/components/admin/UserManagement.d";
 import type { ClientManagementProps } from "@/components/admin/ClientManagement.d";
 import type { ClientOnboardingProps } from "@/components/admin/ClientOnboarding.d";
@@ -33,7 +33,7 @@ interface SectionRendererProps {
 interface PlaceholderSectionProps {
   title: string;
   description: string;
-  onAction: (action: string) => void;
+  onAction?: (action: string) => void;
 }
 
 const SectionRenderer: React.FC<SectionRendererProps> = ({
