@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Menu, X, LogOut } from "lucide-react";
 import Logo from "./Logo";
@@ -10,14 +11,14 @@ import { useAuth } from "@/context/auth";
 const Navbar: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [logoutInProgress, setLogoutInProgress] = useState(false);
   const { t, language } = useLanguage();
   const { user, logout, isAuthenticated } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   
   console.log("Navbar component rendering, path:", location.pathname);
-  console.log("Current language:", language);
-  console.log("Available translations:", t("nav.home"), t("nav.devices"), t("nav.signup"));
+  console.log("Auth state in Navbar:", { isAuthenticated, user });
   
   useEffect(() => {
     const handleScroll = () => {
@@ -36,13 +37,23 @@ const Navbar: React.FC = () => {
   
   const handleLogout = async () => {
     try {
+      if (logoutInProgress) return;
+      
+      setLogoutInProgress(true);
+      console.log("Initiating logout process...");
+      
       await logout();
-      navigate('/');
+      console.log("Logout completed, navigating to home");
+      
+      // Close mobile menu if open
       setIsMobileMenuOpen(false);
+      
+      // Navigate to home page
+      navigate('/');
     } catch (error) {
       console.error("Error during logout:", error);
-      navigate('/login');
-      setIsMobileMenuOpen(false);
+    } finally {
+      setLogoutInProgress(false);
     }
   };
   
@@ -74,6 +85,7 @@ const Navbar: React.FC = () => {
   const loginText = language === 'en' ? "Login" : "Iniciar Sesión";
   const signupText = language === 'en' ? "Sign Up" : "Registrarse";
   const logoutText = language === 'en' ? "Logout" : "Cerrar Sesión";
+  const dashboardText = language === 'en' ? "Dashboard" : "Panel";
   
   return (
     <header 
@@ -100,12 +112,28 @@ const Navbar: React.FC = () => {
             
             {isAuthenticated ? (
               <div className="flex items-center space-x-2">
-                <span className="text-sm font-medium text-gray-700">
-                  {user?.name}
-                </span>
-                <ButtonCustom variant="ghost" size="sm" onClick={handleLogout}>
-                  <LogOut className="w-4 h-4 mr-1" />
-                  {logoutText}
+                <Link to={getDashboardLink()}>
+                  <ButtonCustom variant="ghost" size="sm">
+                    {dashboardText}
+                  </ButtonCustom>
+                </Link>
+                <ButtonCustom 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={handleLogout}
+                  disabled={logoutInProgress}
+                >
+                  {logoutInProgress ? (
+                    <>
+                      <span className="animate-pulse mr-1">⏳</span> 
+                      {language === 'en' ? "Logging out..." : "Cerrando sesión..."}
+                    </>
+                  ) : (
+                    <>
+                      <LogOut className="w-4 h-4 mr-1" />
+                      {logoutText}
+                    </>
+                  )}
                 </ButtonCustom>
               </div>
             ) : (
@@ -151,10 +179,29 @@ const Navbar: React.FC = () => {
             ))}
             <div className="pt-4 flex flex-col space-y-3">
               {isAuthenticated ? (
-                <ButtonCustom onClick={handleLogout} className="w-full">
-                  <LogOut className="w-4 h-4 mr-2" />
-                  {logoutText}
-                </ButtonCustom>
+                <>
+                  <Link to={getDashboardLink()} onClick={() => setIsMobileMenuOpen(false)}>
+                    <ButtonCustom variant="outline" size="sm" className="w-full">
+                      {dashboardText}
+                    </ButtonCustom>
+                  </Link>
+                  <ButtonCustom 
+                    onClick={handleLogout} 
+                    className="w-full"
+                    disabled={logoutInProgress}
+                  >
+                    {logoutInProgress ? (
+                      <span className="animate-pulse">
+                        {language === 'en' ? "Logging out..." : "Cerrando sesión..."}
+                      </span>
+                    ) : (
+                      <>
+                        <LogOut className="w-4 h-4 mr-2" />
+                        {logoutText}
+                      </>
+                    )}
+                  </ButtonCustom>
+                </>
               ) : (
                 <>
                   <Link to="/login" onClick={() => setIsMobileMenuOpen(false)}>

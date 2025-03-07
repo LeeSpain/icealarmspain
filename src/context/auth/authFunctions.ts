@@ -147,47 +147,42 @@ export const updateUserRole = async (userId: string, newRole: string): Promise<v
   }
 };
 
-// Logout function
+// Logout function - Improved implementation
 export const logout = async (): Promise<void> => {
   try {
     console.log('Logging out user');
     
-    // First, clean up local state regardless of session status
+    // Clean up local state first
     localStorage.removeItem('authPersistence');
     localStorage.removeItem('currentUser');
     
-    // Check if there's an active session before attempting to sign out
-    const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
-    
-    if (sessionError) {
-      console.warn('Session check error during logout:', sessionError);
-      toast.success('You have been logged out');
-      return;
-    }
-    
-    if (!sessionData.session) {
-      console.log('No active session found, cleaning up local state only');
-      toast.success('You have been logged out');
-      return;
-    }
-    
-    // Attempt to sign out if we have a session
+    // Attempt to sign out the user
     const { error } = await supabase.auth.signOut();
+    
     if (error) {
-      console.warn('Error during signOut:', error);
-      // Even with error, we still want to clean local state (already done above)
-      toast.success('You have been logged out (session may persist on server)');
+      console.error('Error during signOut:', error);
+      // Even if there's an error, we've already cleaned up local storage
+      toast.warning('Signed out locally, but server logout had an issue');
       return;
+    }
+    
+    // Check if we're really logged out by getting the session
+    const { data } = await supabase.auth.getSession();
+    
+    if (data.session) {
+      console.warn('Session still exists after logout, forcing cleanup');
+      await supabase.auth.signOut({ scope: 'global' });
     }
     
     toast.success('You have been logged out');
+    
   } catch (error) {
     console.error('Logout error:', error);
+    // Clean up local state regardless of server errors
+    localStorage.removeItem('authPersistence');
+    localStorage.removeItem('currentUser');
     
-    // Even if there's an error, we've already cleaned up the local state
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-    console.warn('Logout completed with errors:', errorMessage);
-    toast.info('You have been logged out locally');
+    toast.info('Signed out locally (server logout had an issue)');
   }
 };
 

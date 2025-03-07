@@ -28,6 +28,8 @@ export const useAuthEffects = ({ setUser, setIsLoading }: UseAuthEffectsProps) =
     const checkSession = async () => {
       try {
         console.log("Checking for existing session...");
+        setIsLoading(true);
+        
         const { data, error } = await supabase.auth.getSession();
         
         if (error) {
@@ -45,10 +47,10 @@ export const useAuthEffects = ({ setUser, setIsLoading }: UseAuthEffectsProps) =
             uid: supabaseUser.id,
             id: supabaseUser.id,
             email: supabaseUser.email,
-            name: supabaseUser.user_metadata.name || supabaseUser.email?.split('@')[0],
-            displayName: supabaseUser.user_metadata.name || supabaseUser.email?.split('@')[0],
+            name: supabaseUser.user_metadata?.name || supabaseUser.email?.split('@')[0],
+            displayName: supabaseUser.user_metadata?.name || supabaseUser.email?.split('@')[0],
             role,
-            profileCompleted: !!supabaseUser.user_metadata.name,
+            profileCompleted: !!supabaseUser.user_metadata?.name,
             language: localStorage.getItem('language') || 'en',
             lastLogin: new Date().toISOString(),
             createdAt: supabaseUser.created_at,
@@ -57,6 +59,11 @@ export const useAuthEffects = ({ setUser, setIsLoading }: UseAuthEffectsProps) =
           if (isMounted.current) {
             setUser(user);
             console.log('User authenticated from session:', user.email, 'Role:', user.role);
+          }
+        } else {
+          // No session found, ensure user is set to null
+          if (isMounted.current) {
+            setUser(null);
           }
         }
         
@@ -69,6 +76,8 @@ export const useAuthEffects = ({ setUser, setIsLoading }: UseAuthEffectsProps) =
         if (isMounted.current) {
           authChecked.current = true;
           setIsLoading(false);
+          // Ensure user is null when there's an error
+          setUser(null);
         }
       }
     };
@@ -78,7 +87,7 @@ export const useAuthEffects = ({ setUser, setIsLoading }: UseAuthEffectsProps) =
     
     // Set up auth state change listener
     const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
-      console.log('Auth state changed:', event);
+      console.log('Auth state changed:', event, session ? 'Session exists' : 'No session');
       
       if (!isMounted.current) return;
       
@@ -91,45 +100,47 @@ export const useAuthEffects = ({ setUser, setIsLoading }: UseAuthEffectsProps) =
         return;
       }
       
-      if (session?.user) {
-        // User is signed in
-        const supabaseUser = session.user;
-        const role = determineUserRole(supabaseUser.email || '');
-        
-        const user: User = {
-          uid: supabaseUser.id,
-          id: supabaseUser.id,
-          email: supabaseUser.email,
-          name: supabaseUser.user_metadata.name || supabaseUser.email?.split('@')[0],
-          displayName: supabaseUser.user_metadata.name || supabaseUser.email?.split('@')[0],
-          role,
-          profileCompleted: !!supabaseUser.user_metadata.name,
-          language: localStorage.getItem('language') || 'en',
-          lastLogin: new Date().toISOString(),
-          createdAt: supabaseUser.created_at,
-        };
-        
-        if (isMounted.current) {
-          setUser(user);
-          setIsLoading(false);
-          console.log('User authenticated:', user.email, 'Role:', user.role);
+      if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
+        if (session?.user) {
+          // User is signed in
+          const supabaseUser = session.user;
+          const role = determineUserRole(supabaseUser.email || '');
+          
+          const user: User = {
+            uid: supabaseUser.id,
+            id: supabaseUser.id,
+            email: supabaseUser.email,
+            name: supabaseUser.user_metadata?.name || supabaseUser.email?.split('@')[0],
+            displayName: supabaseUser.user_metadata?.name || supabaseUser.email?.split('@')[0],
+            role,
+            profileCompleted: !!supabaseUser.user_metadata?.name,
+            language: localStorage.getItem('language') || 'en',
+            lastLogin: new Date().toISOString(),
+            createdAt: supabaseUser.created_at,
+          };
+          
+          if (isMounted.current) {
+            setUser(user);
+            setIsLoading(false);
+            console.log('User authenticated:', user.email, 'Role:', user.role);
+          }
+          
+          // Store user info in localStorage for persistence across page refreshes
+          localStorage.setItem('currentUser', JSON.stringify({
+            email: user.email,
+            role: user.role,
+            displayName: user.displayName,
+            language: user.language
+          }));
         }
-        
-        // Store user info in localStorage for persistence across page refreshes
-        localStorage.setItem('currentUser', JSON.stringify({
-          email: user.email,
-          role: user.role,
-          displayName: user.displayName,
-          language: user.language
-        }));
       } else if (event === 'SIGNED_OUT') {
         // User is signed out
+        console.log('User signed out - setting user to null');
         if (isMounted.current) {
           setUser(null);
           setIsLoading(false);
         }
         localStorage.removeItem('currentUser');
-        console.log('User signed out');
       }
       
       // Ensure loading state is completed
@@ -140,14 +151,17 @@ export const useAuthEffects = ({ setUser, setIsLoading }: UseAuthEffectsProps) =
 
     // Add a fallback to prevent infinite loading
     const fallbackTimer = setTimeout(() => {
-      if (isMounted.current) {
+      if (isMounted.current && !authChecked.current) {
         console.log("Auth check fallback timeout triggered");
         setIsLoading(false);
+        // Also ensure user is set to null if we hit the fallback timeout
+        setUser(null);
       }
-    }, 10000); // 10 second fallback
+    }, 8000); // 8 second fallback
 
     // Cleanup subscription
     return () => {
+      console.log('Cleaning up auth listener');
       authListener.subscription.unsubscribe();
       clearTimeout(fallbackTimer);
       isMounted.current = false;

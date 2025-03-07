@@ -31,8 +31,7 @@ export const useLoginPage = () => {
     user, 
     isAuthenticated, 
     isLoading, 
-    redirectTriggered,
-    provider: import.meta.env.VITE_FIREBASE_API_KEY ? "Using real Firebase auth" : "Using Supabase auth" 
+    redirectTriggered
   });
   
   // Check if there's a redirect parameter
@@ -67,10 +66,14 @@ export const useLoginPage = () => {
         });
       }
       
-      // Execute the redirect immediately instead of with timeout
+      // Execute the redirect with a slight delay to allow toast to show
       if (isMounted.current) {
-        console.log("Executing redirect now to:", redirectTo);
-        navigate(redirectTo, { replace: true });
+        setTimeout(() => {
+          if (isMounted.current) {
+            console.log("Executing redirect now to:", redirectTo);
+            navigate(redirectTo, { replace: true });
+          }
+        }, 100);
       }
     }
   }, [isAuthenticated, isLoading, user, navigate, redirectParam, redirectTriggered, language, toast]);
@@ -136,7 +139,6 @@ export const useLoginPage = () => {
           description: errorMessage,
           variant: "destructive",
         });
-        setLoginInProgress(false);
       }
       // The useEffect will handle the redirection and success toast if login succeeds
     } catch (error) {
@@ -154,6 +156,9 @@ export const useLoginPage = () => {
           description: errorMessage,
           variant: "destructive",
         });
+      }
+    } finally {
+      if (isMounted.current) {
         setLoginInProgress(false);
       }
     }
