@@ -7,7 +7,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger
-} from "@/components/ui";
+} from "@/components/ui/dropdown-menu";
 import { AlertTriangle, CheckCircle, XCircle, MoreVertical, RefreshCw, Power, Settings, AlertCircle } from "lucide-react";
 import { Device } from "./types";
 import { toast } from "react-toastify";
@@ -115,7 +115,7 @@ const DevicesTab: React.FC<DevicesTabProps> = ({
             <div className="flex items-center gap-2">
               {getStatusIcon(device.status)}
               <div>
-                <h3 className="font-medium">{device.type} - {device.model}</h3>
+                <h3 className="font-medium">{device.type || device.model} - {device.model}</h3>
                 <p className="text-sm text-muted-foreground">SN: {device.serialNumber}</p>
               </div>
             </div>
@@ -155,15 +155,15 @@ const DevicesTab: React.FC<DevicesTabProps> = ({
             </div>
             <div>
               <p className="text-sm text-gray-500">Last Connection</p>
-              <p className="text-sm">{device.lastConnection}</p>
+              <p className="text-sm">{device.lastConnection || "N/A"}</p>
             </div>
             <div>
               <p className="text-sm text-gray-500">Battery</p>
-              <p className="text-sm">{device.batteryLevel || 'N/A'}</p>
+              <p className="text-sm">{device.batteryLevel || device.batteryStatus || "N/A"}</p>
             </div>
             <div>
               <p className="text-sm text-gray-500">Firmware</p>
-              <p className="text-sm">{device.firmware || 'N/A'}</p>
+              <p className="text-sm">{device.firmware || "N/A"}</p>
             </div>
           </div>
 

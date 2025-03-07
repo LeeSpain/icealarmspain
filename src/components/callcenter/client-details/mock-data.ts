@@ -75,101 +75,149 @@ export const mockDevices: Device[] = [
   {
     id: 201,
     clientId: 101,
+    type: "Medical Alert",
     model: "IceAlarm Pro",
     serialNumber: "IAP12345678",
     activationDate: "2023-01-16",
     lastMaintenance: "2023-04-16",
     status: "active",
     location: "Main Residence",
-    batteryStatus: "85%"
+    batteryStatus: "85%",
+    batteryLevel: "85%",
+    lastConnection: "2023-05-20T14:30:00",
+    firmware: "v2.3.4",
+    alerts: []
   },
   {
     id: 202,
     clientId: 101,
+    type: "Medical Alert",
     model: "IceAlarm Pro",
     serialNumber: "IAP23456789",
     activationDate: "2023-02-05",
     lastMaintenance: "2023-04-16",
     status: "active",
     location: "Summer House",
-    batteryStatus: "92%"
+    batteryStatus: "92%",
+    batteryLevel: "92%",
+    lastConnection: "2023-05-21T09:15:00",
+    firmware: "v2.3.4",
+    alerts: []
   },
   {
     id: 203,
     clientId: 102,
+    type: "Medical Alert",
     model: "IceAlarm Standard",
     serialNumber: "IAS34567890",
     activationDate: "2023-02-21",
     lastMaintenance: "2023-04-10",
     status: "active",
     location: "Mother's Home",
-    batteryStatus: "78%"
+    batteryStatus: "78%",
+    batteryLevel: "78%",
+    lastConnection: "2023-05-22T11:45:00",
+    firmware: "v2.2.1",
+    alerts: []
   },
   {
     id: 204,
     clientId: 103,
+    type: "Medical Alert",
     model: "IceAlarm Pro",
     serialNumber: "IAP45678901",
     activationDate: "2023-03-11",
     lastMaintenance: "2023-05-01",
     status: "active",
     location: "Primary Residence",
-    batteryStatus: "95%"
+    batteryStatus: "95%",
+    batteryLevel: "95%",
+    lastConnection: "2023-05-23T08:30:00",
+    firmware: "v2.3.4",
+    alerts: []
   },
   {
     id: 205,
     clientId: 103,
+    type: "Medical Alert",
     model: "IceAlarm Standard",
     serialNumber: "IAS56789012",
     activationDate: "2023-03-12",
     lastMaintenance: "2023-05-01",
     status: "active",
     location: "Parents' Home",
-    batteryStatus: "90%"
+    batteryStatus: "90%",
+    batteryLevel: "90%",
+    lastConnection: "2023-05-22T16:20:00",
+    firmware: "v2.2.1",
+    alerts: []
   },
   {
     id: 206,
     clientId: 103,
+    type: "Medical Alert",
     model: "IceAlarm Basic",
     serialNumber: "IAB67890123",
     activationDate: "2023-03-13",
     lastMaintenance: "2023-05-01",
     status: "inactive",
     location: "Vacation Home",
-    batteryStatus: "N/A"
+    batteryStatus: "N/A",
+    batteryLevel: "N/A",
+    lastConnection: "2023-04-15T10:00:00",
+    firmware: "v2.1.0",
+    alerts: []
   },
   {
     id: 207,
     clientId: 104,
+    type: "Medical Alert",
     model: "IceAlarm Basic",
     serialNumber: "IAB78901234",
     activationDate: "2023-04-06",
     lastMaintenance: "N/A",
     status: "active",
     location: "Apartment",
-    batteryStatus: "89%"
+    batteryStatus: "89%",
+    batteryLevel: "89%",
+    lastConnection: "2023-05-23T07:15:00",
+    firmware: "v2.1.0",
+    alerts: []
   },
   {
     id: 208,
     clientId: 105,
+    type: "Medical Alert",
     model: "IceAlarm Standard",
     serialNumber: "IAS89012345",
     activationDate: "2023-05-02",
     lastMaintenance: "N/A",
     status: "active",
     location: "Home",
-    batteryStatus: "87%"
+    batteryStatus: "87%",
+    batteryLevel: "87%",
+    lastConnection: "2023-05-23T09:40:00",
+    firmware: "v2.2.1",
+    alerts: []
   },
   {
     id: 209,
     clientId: 105,
+    type: "Medical Alert",
     model: "IceAlarm Standard",
     serialNumber: "IAS90123456",
     activationDate: "2023-05-02",
     lastMaintenance: "N/A",
     status: "error",
     location: "Office",
-    batteryStatus: "65%"
+    batteryStatus: "65%",
+    batteryLevel: "65%",
+    lastConnection: "2023-05-20T13:10:00",
+    firmware: "v2.2.1",
+    alerts: [
+      "Battery level critical",
+      "Irregular connectivity patterns detected"
+    ]
   }
 ];
 

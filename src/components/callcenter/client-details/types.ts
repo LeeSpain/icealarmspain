@@ -18,12 +18,17 @@ export interface Device {
   id: number;
   clientId: number;
   model: string;
+  type: string;
   serialNumber: string;
   activationDate: string;
   lastMaintenance: string;
   status: string;
   location: string;
   batteryStatus: string;
+  batteryLevel?: string;
+  lastConnection?: string;
+  firmware?: string;
+  alerts?: string[];
 }
 
 export interface Interaction {

@@ -5,8 +5,39 @@ import { InfoField } from "@/components/medical-info/InfoField";
 import { Button } from "@/components/ui/button";
 import { toast } from "react-toastify";
 
+// Define the health data interface
+interface HealthData {
+  vitals: {
+    bloodPressure?: string;
+    heartRate?: string;
+    temperature?: string;
+    oxygenSaturation?: string;
+    glucoseLevel?: string;
+    lastUpdated?: string;
+  };
+  conditions: Array<{
+    id: number;
+    name: string;
+    status: string;
+    notes: string;
+  }>;
+  allergies: Array<{
+    id: number;
+    allergen: string;
+    severity: string;
+    reaction: string;
+  }>;
+  medications: Array<{
+    id: number;
+    name: string;
+    dosage: string;
+    frequency: string;
+    purpose: string;
+  }>;
+}
+
 // Mock health data - in a real app, this would come from your API
-const mockHealthData = {
+const mockHealthData: Record<number, HealthData> = {
   1: { // client ID
     vitals: {
       bloodPressure: "120/80",
@@ -59,7 +90,7 @@ const HealthDataTab: React.FC<HealthDataTabProps> = ({ clientId }) => {
   const [editMode, setEditMode] = useState(false);
   
   // Get client health data or default to empty structure if not found
-  const healthData = mockHealthData[clientId as keyof typeof mockHealthData] || {
+  const healthData = mockHealthData[clientId] || {
     vitals: {},
     conditions: [],
     allergies: [],
