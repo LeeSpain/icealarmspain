@@ -4,14 +4,15 @@ import {
   Home, 
   MessageCircle, 
   Ticket as TicketIcon, 
-  User, 
+  Users, 
   Settings, 
   BarChart3, 
   Calendar, 
   HardDrive, 
   Lightbulb, 
   Bell, 
-  LogOut 
+  LogOut,
+  CheckCircle
 } from "lucide-react";
 import SidebarItem from "./SidebarItem";
 
@@ -20,13 +21,15 @@ interface SidebarNavigationProps {
   setActiveSection: (section: string) => void;
   collapsed: boolean;
   onLogout?: () => void;
+  user?: any;
 }
 
 const SidebarNavigation: React.FC<SidebarNavigationProps> = ({ 
   activeSection, 
   setActiveSection, 
   collapsed, 
-  onLogout 
+  onLogout,
+  user
 }) => {
   return (
     <div className="px-3 py-2 flex flex-col h-full">
@@ -56,8 +59,8 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({
           onClick={() => setActiveSection("chat")}
         />
         <SidebarItem 
-          icon={User} 
-          label="Clients" 
+          icon={Users} 
+          label="All Clients" 
           active={activeSection === "clients"} 
           collapsed={collapsed}
           onClick={() => setActiveSection("clients")}
@@ -86,6 +89,13 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({
           active={activeSection === "schedule"} 
           collapsed={collapsed}
           onClick={() => setActiveSection("schedule")}
+        />
+        <SidebarItem 
+          icon={CheckCircle} 
+          label="System Checks" 
+          active={activeSection === "system-checks"} 
+          collapsed={collapsed}
+          onClick={() => setActiveSection("system-checks")}
         />
         
         <div className="my-2 px-4 text-xs font-semibold text-muted-foreground">
