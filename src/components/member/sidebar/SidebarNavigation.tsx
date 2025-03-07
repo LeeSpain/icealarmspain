@@ -84,7 +84,7 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({
       />
       <SidebarItem 
         icon={<Activity size={18} />} 
-        label="Health Monitor" 
+        label="Glucose Monitor" 
         active={isActive("/dashboard/devices/glucose-monitor")} 
         collapsed={collapsed}
         onClick={() => navigate("/dashboard/devices/glucose-monitor")}

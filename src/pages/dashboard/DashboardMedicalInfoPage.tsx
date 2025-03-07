@@ -22,27 +22,24 @@ const DashboardMedicalInfoPage: React.FC = () => {
 
   // Load medical data from localStorage
   useEffect(() => {
-    const profileCompleted = localStorage.getItem('profileCompleted') === 'true';
-    
-    // If profile is not completed, redirect to questionnaire
-    if (!profileCompleted) {
-      toast.info(
-        language === 'en'
-          ? 'Please complete the questionnaire to access your medical information.'
-          : 'Por favor completa el cuestionario para acceder a tu información médica.'
-      );
-      navigate("/onboarding");
-      return;
-    }
-    
     const savedData = localStorage.getItem('userQuestionnaire');
     if (savedData) {
       setMedicalData(JSON.parse(savedData));
+    } else {
+      // Display a toast message if no data is found
+      toast.info(
+        language === 'en'
+          ? 'No medical information found. Please complete the questionnaire.'
+          : 'No se encontró información médica. Por favor complete el cuestionario.'
+      );
     }
-  }, [navigate, language]);
+  }, [language]);
 
   const handleSaveChanges = () => {
     setIsLoading(true);
+    
+    // Save updated data to localStorage
+    localStorage.setItem('userQuestionnaire', JSON.stringify(medicalData));
     
     // Simulate API call
     setTimeout(() => {
@@ -58,11 +55,44 @@ const DashboardMedicalInfoPage: React.FC = () => {
 
   const handleCancelEdit = () => {
     setEditMode(false);
+    // Reload data from localStorage to discard changes
+    const savedData = localStorage.getItem('userQuestionnaire');
+    if (savedData) {
+      setMedicalData(JSON.parse(savedData));
+    }
+    
     toast.info(
       language === 'en'
         ? "Edit mode cancelled. No changes were saved."
         : "Modo de edición cancelado. No se guardaron cambios."
     );
+  };
+
+  const handleUpdate = (section: string, field: string, value: string) => {
+    if (editMode) {
+      setMedicalData((prev: any) => {
+        const updated = {...prev};
+        if (!updated.health) updated.health = {};
+        if (!updated.health[section]) updated.health[section] = field === 'conditions' || field === 'allergies' ? [] : {};
+        
+        if (Array.isArray(updated.health[section])) {
+          // Handle array updates for conditions and allergies
+          const index = parseInt(field, 10);
+          if (!isNaN(index)) {
+            updated.health[section][index] = value;
+          }
+        } else {
+          // Handle object updates for vitals
+          updated.health[section][field] = value;
+        }
+        
+        return updated;
+      });
+    }
+  };
+
+  const handleCompleteQuestionnaire = () => {
+    navigate("/onboarding");
   };
 
   return (
@@ -88,7 +118,14 @@ const DashboardMedicalInfoPage: React.FC = () => {
             </div>
             
             <div className="flex space-x-2">
-              {editMode ? (
+              {!medicalData ? (
+                <Button
+                  className="flex items-center gap-1 bg-ice-600 hover:bg-ice-700"
+                  onClick={handleCompleteQuestionnaire}
+                >
+                  {language === 'en' ? 'Complete Questionnaire' : 'Completar Cuestionario'}
+                </Button>
+              ) : editMode ? (
                 <>
                   <Button
                     variant="outline"
@@ -123,52 +160,73 @@ const DashboardMedicalInfoPage: React.FC = () => {
             </div>
           </div>
           
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="w-full bg-white border mb-6 p-0 h-auto">
-              <TabsTrigger
-                value="conditions"
-                className="flex-1 py-3 data-[state=active]:bg-ice-50 data-[state=active]:border-b-2 data-[state=active]:border-ice-600 rounded-none"
-              >
-                <Heart className="h-4 w-4 mr-2" />
-                {language === 'en' ? 'Medical Conditions' : 'Condiciones Médicas'}
-              </TabsTrigger>
-              <TabsTrigger
-                value="vitals"
-                className="flex-1 py-3 data-[state=active]:bg-ice-50 data-[state=active]:border-b-2 data-[state=active]:border-ice-600 rounded-none"
-              >
-                <Activity className="h-4 w-4 mr-2" />
-                {language === 'en' ? 'Vital Records' : 'Registros Vitales'}
-              </TabsTrigger>
-              <TabsTrigger
-                value="allergies"
-                className="flex-1 py-3 data-[state=active]:bg-ice-50 data-[state=active]:border-b-2 data-[state=active]:border-ice-600 rounded-none"
-              >
-                <PillIcon className="h-4 w-4 mr-2" />
-                {language === 'en' ? 'Allergies' : 'Alergias'}
-              </TabsTrigger>
-            </TabsList>
-            
-            <TabsContent value="conditions" className="mt-0">
-              <MedicalConditionsTab 
-                editMode={editMode} 
-                medicalData={medicalData} 
-              />
-            </TabsContent>
-            
-            <TabsContent value="vitals" className="mt-0">
-              <VitalsTab 
-                editMode={editMode} 
-                medicalData={medicalData} 
-              />
-            </TabsContent>
-            
-            <TabsContent value="allergies" className="mt-0">
-              <AllergiesTab 
-                editMode={editMode} 
-                medicalData={medicalData} 
-              />
-            </TabsContent>
-          </Tabs>
+          {!medicalData ? (
+            <Card>
+              <CardContent className="p-6 text-center">
+                <p className="text-gray-500 mb-4">
+                  {language === 'en' 
+                    ? 'No medical information found. Please complete the health questionnaire to see your data here.' 
+                    : 'No se encontró información médica. Por favor complete el cuestionario de salud para ver sus datos aquí.'}
+                </p>
+                <Button 
+                  className="bg-ice-600 hover:bg-ice-700"
+                  onClick={handleCompleteQuestionnaire}
+                >
+                  {language === 'en' ? 'Complete Questionnaire' : 'Completar Cuestionario'}
+                </Button>
+              </CardContent>
+            </Card>
+          ) : (
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+              <TabsList className="w-full bg-white border mb-6 p-0 h-auto">
+                <TabsTrigger
+                  value="conditions"
+                  className="flex-1 py-3 data-[state=active]:bg-ice-50 data-[state=active]:border-b-2 data-[state=active]:border-ice-600 rounded-none"
+                >
+                  <Heart className="h-4 w-4 mr-2" />
+                  {language === 'en' ? 'Medical Conditions' : 'Condiciones Médicas'}
+                </TabsTrigger>
+                <TabsTrigger
+                  value="vitals"
+                  className="flex-1 py-3 data-[state=active]:bg-ice-50 data-[state=active]:border-b-2 data-[state=active]:border-ice-600 rounded-none"
+                >
+                  <Activity className="h-4 w-4 mr-2" />
+                  {language === 'en' ? 'Vital Records' : 'Registros Vitales'}
+                </TabsTrigger>
+                <TabsTrigger
+                  value="allergies"
+                  className="flex-1 py-3 data-[state=active]:bg-ice-50 data-[state=active]:border-b-2 data-[state=active]:border-ice-600 rounded-none"
+                >
+                  <PillIcon className="h-4 w-4 mr-2" />
+                  {language === 'en' ? 'Allergies' : 'Alergias'}
+                </TabsTrigger>
+              </TabsList>
+              
+              <TabsContent value="conditions" className="mt-0">
+                <MedicalConditionsTab 
+                  editMode={editMode} 
+                  medicalData={medicalData}
+                  onUpdate={handleUpdate}
+                />
+              </TabsContent>
+              
+              <TabsContent value="vitals" className="mt-0">
+                <VitalsTab 
+                  editMode={editMode} 
+                  medicalData={medicalData}
+                  onUpdate={handleUpdate}
+                />
+              </TabsContent>
+              
+              <TabsContent value="allergies" className="mt-0">
+                <AllergiesTab 
+                  editMode={editMode} 
+                  medicalData={medicalData}
+                  onUpdate={handleUpdate}
+                />
+              </TabsContent>
+            </Tabs>
+          )}
         </div>
       </div>
     </div>
@@ -179,12 +237,13 @@ const DashboardMedicalInfoPage: React.FC = () => {
 interface TabProps {
   editMode: boolean;
   medicalData: any;
+  onUpdate: (section: string, field: string, value: string) => void;
 }
 
-const MedicalConditionsTab: React.FC<TabProps> = ({ editMode, medicalData }) => {
+const MedicalConditionsTab: React.FC<TabProps> = ({ editMode, medicalData, onUpdate }) => {
   const { language } = useLanguage();
   
-  if (!medicalData || !medicalData.health) {
+  if (!medicalData || !medicalData.health || !medicalData.health.conditions) {
     return <EmptyDataState type="conditions" />;
   }
   
@@ -202,6 +261,7 @@ const MedicalConditionsTab: React.FC<TabProps> = ({ editMode, medicalData }) => 
                     type="text" 
                     defaultValue={condition} 
                     className="w-full p-2 border rounded" 
+                    onChange={(e) => onUpdate('conditions', index.toString(), e.target.value)}
                   />
                 ) : (
                   <p>{condition}</p>
@@ -218,7 +278,7 @@ const MedicalConditionsTab: React.FC<TabProps> = ({ editMode, medicalData }) => 
 };
 
 // Vitals Tab
-const VitalsTab: React.FC<TabProps> = ({ editMode, medicalData }) => {
+const VitalsTab: React.FC<TabProps> = ({ editMode, medicalData, onUpdate }) => {
   const { language } = useLanguage();
   
   if (!medicalData || !medicalData.health) {
@@ -240,21 +300,25 @@ const VitalsTab: React.FC<TabProps> = ({ editMode, medicalData }) => {
             label={language === 'en' ? 'Blood Type' : 'Tipo de Sangre'}
             value={vitals.bloodType}
             editMode={editMode}
+            onChange={(value) => onUpdate('vitals', 'bloodType', value)}
           />
           <InfoField 
             label={language === 'en' ? 'Weight' : 'Peso'}
             value={vitals.weight}
             editMode={editMode}
+            onChange={(value) => onUpdate('vitals', 'weight', value)}
           />
           <InfoField 
             label={language === 'en' ? 'Height' : 'Altura'}
             value={vitals.height}
             editMode={editMode}
+            onChange={(value) => onUpdate('vitals', 'height', value)}
           />
           <InfoField 
             label={language === 'en' ? 'Blood Pressure' : 'Presión Arterial'}
             value={vitals.bloodPressure}
             editMode={editMode}
+            onChange={(value) => onUpdate('vitals', 'bloodPressure', value)}
           />
         </div>
       </CardContent>
@@ -263,10 +327,10 @@ const VitalsTab: React.FC<TabProps> = ({ editMode, medicalData }) => {
 };
 
 // Allergies Tab
-const AllergiesTab: React.FC<TabProps> = ({ editMode, medicalData }) => {
+const AllergiesTab: React.FC<TabProps> = ({ editMode, medicalData, onUpdate }) => {
   const { language } = useLanguage();
   
-  if (!medicalData || !medicalData.health) {
+  if (!medicalData || !medicalData.health || !medicalData.health.allergies) {
     return <EmptyDataState type="allergies" />;
   }
   
@@ -284,6 +348,7 @@ const AllergiesTab: React.FC<TabProps> = ({ editMode, medicalData }) => {
                     type="text" 
                     defaultValue={allergy} 
                     className="w-full p-2 border rounded" 
+                    onChange={(e) => onUpdate('allergies', index.toString(), e.target.value)}
                   />
                 ) : (
                   <p>{allergy}</p>
@@ -332,9 +397,10 @@ interface InfoFieldProps {
   label: string;
   value: string;
   editMode: boolean;
+  onChange: (value: string) => void;
 }
 
-const InfoField: React.FC<InfoFieldProps> = ({ label, value, editMode }) => {
+const InfoField: React.FC<InfoFieldProps> = ({ label, value, editMode, onChange }) => {
   return (
     <div className="space-y-1">
       <div className="text-sm font-medium text-gray-500">{label}</div>
@@ -343,6 +409,7 @@ const InfoField: React.FC<InfoFieldProps> = ({ label, value, editMode }) => {
           type="text" 
           defaultValue={value} 
           className="w-full p-2 border rounded-md" 
+          onChange={(e) => onChange(e.target.value)}
         />
       ) : (
         <div className="p-2 bg-gray-50 rounded-md border">{value}</div>
