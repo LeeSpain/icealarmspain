@@ -29,7 +29,7 @@ const AIGuardianChatTab: React.FC = () => {
       
       <div className="flex-1 overflow-y-auto p-4">
         {showWelcome ? (
-          <GuardianWelcome />
+          <GuardianWelcome onStartInteraction={() => sendMessage("Hello")} />
         ) : (
           <MessagesList messages={messages} />
         )}

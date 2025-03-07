@@ -1,69 +1,78 @@
 
-import { Activity, BellRing, PlusSquare } from "lucide-react";
-import { LucideIcon } from "lucide-react";
+import { Brain, Pill, Monitor, Activity } from "lucide-react";
 
-export interface AITopic {
-  id: string;
-  label: string;
-  icon: LucideIcon;
-}
-
-// Topics the AI can help with
-export const AI_TOPICS: Record<string, AITopic[]> = {
-  en: [
-    { id: 'health', label: 'Health Data', icon: Activity },
-    { id: 'devices', label: 'Device Setup', icon: BellRing },
-    { id: 'medications', label: 'Medications', icon: PlusSquare },
-  ],
-  es: [
-    { id: 'health', label: 'Datos de Salud', icon: Activity },
-    { id: 'devices', label: 'Configuración de Dispositivos', icon: BellRing },
-    { id: 'medications', label: 'Medicamentos', icon: PlusSquare },
-  ]
-};
-
-// Knowledge base for the AI to reference
-export const KNOWLEDGE_BASE: Record<string, Record<string, string[]>> = {
+export const KNOWLEDGE_BASE = {
   health: {
     en: [
-      "Your blood pressure readings show a stable trend over the past month.",
-      "Your glucose levels have been within the normal range during the last week.",
-      "Remember to keep track of your daily water intake.",
-      "Regular physical activity can help maintain healthy blood pressure."
+      "Your latest blood glucose reading shows stable levels. Remember to continue monitoring and log your readings regularly.",
+      "Based on your health data, I recommend scheduling your next check-up in about 4 weeks.",
+      "Your vitals look good! Keep up with your regular exercise and balanced diet for optimal health maintenance."
     ],
     es: [
-      "Sus lecturas de presión arterial muestran una tendencia estable durante el último mes.",
-      "Sus niveles de glucosa han estado dentro del rango normal durante la última semana.",
-      "Recuerde llevar un registro de su consumo diario de agua.",
-      "La actividad física regular puede ayudar a mantener una presión arterial saludable."
+      "Tu última lectura de glucosa en sangre muestra niveles estables. Recuerda seguir monitoreando y registrar tus lecturas regularmente.",
+      "Según tus datos de salud, te recomiendo programar tu próximo chequeo en aproximadamente 4 semanas.",
+      "¡Tus signos vitales se ven bien! Continúa con tu ejercicio regular y dieta equilibrada para un mantenimiento óptimo de la salud."
     ]
   },
   devices: {
     en: [
-      "To set up your SOS Pendant, press and hold the main button for 5 seconds until it flashes blue.",
-      "The Glucose Monitor needs to be calibrated once every 14 days for accurate readings.",
-      "For optimal performance, charge your devices overnight when battery is below 30%.",
-      "Place the Medical Dispenser on a flat, stable surface away from direct sunlight."
+      "To set up your SOS pendant, press and hold the button for 5 seconds until the LED flashes blue, then follow the pairing instructions in the mobile app.",
+      "For optimal performance, keep your glucose monitor within 30 feet of your mobile device when syncing data.",
+      "Remember to charge your devices at least once every 3 days for continuous monitoring and emergency protection."
     ],
     es: [
-      "Para configurar su Colgante SOS, mantenga presionado el botón principal durante 5 segundos hasta que parpadee en azul.",
-      "El Monitor de Glucosa debe calibrarse una vez cada 14 días para lecturas precisas.",
-      "Para un rendimiento óptimo, cargue sus dispositivos durante la noche cuando la batería esté por debajo del 30%.",
-      "Coloque el Dispensador Médico en una superficie plana y estable, alejada de la luz solar directa."
+      "Para configurar tu colgante SOS, mantén presionado el botón durante 5 segundos hasta que el LED parpadee en azul, luego sigue las instrucciones de emparejamiento en la aplicación móvil.",
+      "Para un rendimiento óptimo, mantén tu monitor de glucosa a menos de 10 metros de tu dispositivo móvil al sincronizar datos.",
+      "Recuerda cargar tus dispositivos al menos una vez cada 3 días para monitoreo continuo y protección de emergencia."
     ]
   },
   medications: {
     en: [
-      "Your medication schedule has been updated based on your doctor's recent recommendations.",
-      "It's important to take your medications at the same time each day for optimal effectiveness.",
-      "Store your medications in a cool, dry place away from direct sunlight.",
-      "If you experience any side effects, contact your healthcare provider immediately."
+      "Based on your schedule, you should take your blood pressure medication within the next hour.",
+      "I notice you've been consistent with your medication routine. Great job! Consistency is key for medication effectiveness.",
+      "Your medication dispenser is set up to remind you at 9am and 9pm daily. Would you like to adjust these times?"
     ],
     es: [
-      "Su horario de medicación ha sido actualizado según las recomendaciones recientes de su médico.",
-      "Es importante tomar sus medicamentos a la misma hora cada día para una efectividad óptima.",
-      "Guarde sus medicamentos en un lugar fresco y seco, alejado de la luz solar directa.",
-      "Si experimenta algún efecto secundario, contacte a su proveedor de salud inmediatamente."
+      "Según tu horario, debes tomar tu medicamento para la presión arterial dentro de la próxima hora.",
+      "Noto que has sido constante con tu rutina de medicación. ¡Buen trabajo! La consistencia es clave para la efectividad de la medicación.",
+      "Tu dispensador de medicamentos está configurado para recordarte a las 9am y 9pm diariamente. ¿Te gustaría ajustar estos horarios?"
     ]
   }
+};
+
+export const AI_TOPICS = {
+  en: [
+    {
+      id: 'health',
+      label: 'Health Monitoring',
+      icon: Activity
+    },
+    {
+      id: 'devices',
+      label: 'Device Setup',
+      icon: Monitor
+    },
+    {
+      id: 'medications',
+      label: 'Medications',
+      icon: Pill
+    }
+  ],
+  es: [
+    {
+      id: 'health',
+      label: 'Monitoreo de Salud',
+      icon: Activity
+    },
+    {
+      id: 'devices',
+      label: 'Configuración de Dispositivos',
+      icon: Monitor
+    },
+    {
+      id: 'medications',
+      label: 'Medicamentos',
+      icon: Pill
+    }
+  ]
 };

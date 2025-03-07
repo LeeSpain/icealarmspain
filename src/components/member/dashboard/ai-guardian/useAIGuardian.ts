@@ -8,10 +8,10 @@ import { KNOWLEDGE_BASE } from './constants';
 export const useAIGuardian = () => {
   const { language } = useLanguage();
   const { user } = useAuth();
-  const [isInteracting, setIsInteracting] = useState(false);
   const [messages, setMessages] = useState<Array<{text: string, type: 'guardian' | 'user'}>>([]);
-  const [input, setInput] = useState("");
   const [selectedTopic, setSelectedTopic] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [showWelcome, setShowWelcome] = useState(true);
   
   // Initialize the chat with a greeting message
   useEffect(() => {
@@ -22,46 +22,43 @@ export const useAIGuardian = () => {
     setMessages([{ text: greeting, type: 'guardian' }]);
   }, [language, user]);
 
-  const handleStartInteraction = () => {
-    setIsInteracting(true);
-    toast.info(
-      language === 'en' 
-        ? "AI Guardian activated. You can now chat with your health assistant." 
-        : "Guardian AI activado. Ahora puedes chatear con tu asistente de salud."
-    );
-  };
-  
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!input.trim()) return;
+  const sendMessage = (message: string) => {
+    if (!message.trim()) return;
     
     // Add user message
-    setMessages(prev => [...prev, {text: input, type: 'user'}]);
+    setMessages(prev => [...prev, {text: message, type: 'user'}]);
+    setIsLoading(true);
+    setShowWelcome(false);
     
     // Process user query
-    processUserQuery(input);
-    
-    setInput("");
+    setTimeout(() => {
+      processUserQuery(message);
+      setIsLoading(false);
+    }, 1000); // Simulate AI processing time
   };
   
   const processUserQuery = (query: string) => {
     const lowercaseQuery = query.toLowerCase();
-    let responseText = '';
+    let topic = null;
     
     // Determine the topic based on keywords in the query
     if (lowercaseQuery.includes('glucose') || lowercaseQuery.includes('blood') || lowercaseQuery.includes('health') || 
         lowercaseQuery.includes('glucosa') || lowercaseQuery.includes('sangre') || lowercaseQuery.includes('salud')) {
-      responseFromKnowledgeBase('health');
+      topic = 'health';
     } 
     else if (lowercaseQuery.includes('setup') || lowercaseQuery.includes('device') || lowercaseQuery.includes('monitor') || 
              lowercaseQuery.includes('pendant') || lowercaseQuery.includes('configurar') || lowercaseQuery.includes('dispositivo')) {
-      responseFromKnowledgeBase('devices');
+      topic = 'devices';
     } 
     else if (lowercaseQuery.includes('medication') || lowercaseQuery.includes('medicine') || lowercaseQuery.includes('pill') || 
              lowercaseQuery.includes('medicamento') || lowercaseQuery.includes('medicina') || lowercaseQuery.includes('pastilla')) {
-      responseFromKnowledgeBase('medications');
+      topic = 'medications';
     } 
-    else {
+    
+    if (topic) {
+      setSelectedTopic(topic);
+      responseFromKnowledgeBase(topic);
+    } else {
       // General response if no specific topic is identified
       const generalResponses = {
         en: [
@@ -77,11 +74,9 @@ export const useAIGuardian = () => {
       };
       
       const randomIndex = Math.floor(Math.random() * generalResponses[language === 'en' ? 'en' : 'es'].length);
-      responseText = generalResponses[language === 'en' ? 'en' : 'es'][randomIndex];
+      const responseText = generalResponses[language === 'en' ? 'en' : 'es'][randomIndex];
       
-      setTimeout(() => {
-        setMessages(prev => [...prev, {text: responseText, type: 'guardian'}]);
-      }, 1000);
+      setMessages(prev => [...prev, {text: responseText, type: 'guardian'}]);
     }
   };
   
@@ -90,26 +85,15 @@ export const useAIGuardian = () => {
     const randomIndex = Math.floor(Math.random() * topicResponses.length);
     const responseText = topicResponses[randomIndex];
     
-    setTimeout(() => {
-      setMessages(prev => [...prev, {text: responseText, type: 'guardian'}]);
-    }, 1000);
-    
-    setSelectedTopic(topic);
-  };
-  
-  const handleTopicSelect = (topic: string) => {
-    setSelectedTopic(topic);
-    responseFromKnowledgeBase(topic);
+    setMessages(prev => [...prev, {text: responseText, type: 'guardian'}]);
   };
 
   return {
-    isInteracting,
     messages,
-    input,
     selectedTopic,
-    handleStartInteraction,
-    handleSubmit,
-    handleTopicSelect,
-    setInput
+    setSelectedTopic,
+    sendMessage,
+    isLoading,
+    showWelcome
   };
 };

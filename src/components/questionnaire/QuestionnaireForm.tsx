@@ -55,8 +55,11 @@ const QuestionnaireForm: React.FC = () => {
     // Save to local storage for demonstration purposes
     localStorage.setItem('userQuestionnaire', JSON.stringify(formattedAnswers));
     
-    // In a real application, you would save this to your database and update the user's profile
-    // updateUserProfile(user.id, formattedAnswers)
+    // Mark user's profile as completed
+    if (user) {
+      // In a real app, you would update this in your database
+      localStorage.setItem('profileCompleted', 'true');
+    }
     
     toast.success(
       language === "en"

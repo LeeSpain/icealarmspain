@@ -18,8 +18,11 @@ const OnboardingQuestionnaire: React.FC = () => {
       navigate("/login");
     }
     
+    // Check if profile is completed
+    const profileCompleted = localStorage.getItem('profileCompleted') === 'true';
+    
     // If user has already completed profile, redirect to personal details page
-    if (user?.profileCompleted) {
+    if (profileCompleted) {
       toast.info(
         language === 'en'
           ? 'You have already completed your profile. Redirecting to personal details.'
@@ -27,7 +30,7 @@ const OnboardingQuestionnaire: React.FC = () => {
       );
       navigate("/dashboard/personal-details");
     }
-  }, [isAuthenticated, isLoading, navigate, user, language]);
+  }, [isAuthenticated, isLoading, navigate, language]);
 
   if (isLoading) {
     return (

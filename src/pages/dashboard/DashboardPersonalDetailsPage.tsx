@@ -3,14 +3,15 @@ import React, { useState, useEffect } from "react";
 import MemberSidebar from "@/components/member/MemberSidebar";
 import { useLanguage } from "@/context/LanguageContext";
 import { useAuth } from "@/context/auth";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { toast } from "react-toastify";
-import { User, Phone, MapPin, Stethoscope, Clock, Heart, PlusCircle, Edit, Save, X, PillIcon, PhoneCall } from "lucide-react";
+import { User, PillIcon, PhoneCall, Edit, Save, X, Clock } from "lucide-react";
 import PersonalDetailsTabContent from "@/components/personal-details/PersonalDetailsTabContent";
 import MedicationsTabContent from "@/components/personal-details/MedicationsTabContent";
 import EmergencyContactsTabContent from "@/components/personal-details/EmergencyContactsTabContent";
+import { useNavigate } from "react-router-dom";
 
 const DashboardPersonalDetailsPage: React.FC = () => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
@@ -19,15 +20,30 @@ const DashboardPersonalDetailsPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState("personal");
   const [editMode, setEditMode] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [questionnaireData, setQuestionnaireData] = useState(null);
+  const navigate = useNavigate();
 
   // Load questionnaire data from localStorage
   useEffect(() => {
+    const profileCompleted = localStorage.getItem('profileCompleted') === 'true';
+    
+    // If profile is not completed, redirect to questionnaire
+    if (!profileCompleted) {
+      toast.info(
+        language === 'en'
+          ? 'Please complete the questionnaire to access your personal details.'
+          : 'Por favor completa el cuestionario para acceder a tus datos personales.'
+      );
+      navigate("/onboarding-questionnaire");
+      return;
+    }
+    
     const savedData = localStorage.getItem('userQuestionnaire');
     if (savedData) {
+      setQuestionnaireData(JSON.parse(savedData));
       console.log("Loaded saved questionnaire data:", JSON.parse(savedData));
-      // In a real app, you would use this data to populate the personal details form
     }
-  }, []);
+  }, [navigate, language]);
 
   const handleSaveChanges = () => {
     setIsLoading(true);
@@ -56,6 +72,7 @@ const DashboardPersonalDetailsPage: React.FC = () => {
   return (
     <div className="flex h-screen bg-ice-50/30">
       <MemberSidebar 
+        activePage="personal-details"
         collapsed={sidebarCollapsed}
         setCollapsed={setSidebarCollapsed}
       />
@@ -136,15 +153,24 @@ const DashboardPersonalDetailsPage: React.FC = () => {
             </TabsList>
             
             <TabsContent value="personal" className="mt-0">
-              <PersonalDetailsTabContent editMode={editMode} />
+              <PersonalDetailsTabContent 
+                editMode={editMode} 
+                questionnaireData={questionnaireData} 
+              />
             </TabsContent>
             
             <TabsContent value="medications" className="mt-0">
-              <MedicationsTabContent editMode={editMode} />
+              <MedicationsTabContent 
+                editMode={editMode} 
+                questionnaireData={questionnaireData} 
+              />
             </TabsContent>
             
             <TabsContent value="emergency" className="mt-0">
-              <EmergencyContactsTabContent editMode={editMode} />
+              <EmergencyContactsTabContent 
+                editMode={editMode} 
+                questionnaireData={questionnaireData} 
+              />
             </TabsContent>
           </Tabs>
         </div>
