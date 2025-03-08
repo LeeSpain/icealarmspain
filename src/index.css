@@ -30,7 +30,7 @@ body {
   outline: 2px solid red;
 }
 
-/* Keep the rest of the custom CSS */
+/* Define CSS variables and utility classes */
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -105,8 +105,10 @@ body {
     font-family: 'Inter', sans-serif;
   }
   
+  /* Use direct CSS instead of utility class for debugging */
   body {
-    @apply bg-background text-foreground antialiased;
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
   }
 
   h1, h2, h3 {
