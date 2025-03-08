@@ -4,11 +4,13 @@ import { useAuth } from '@/context/auth';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
+  adminOnly?: boolean;
   allowedRoles?: string[];
 }
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ 
   children, 
+  adminOnly = false,
   allowedRoles = [] 
 }) => {
   const { isAuthenticated, isLoading, user } = useAuth();
@@ -26,6 +28,16 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
 
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
+  }
+
+  // Check for admin access if adminOnly is true
+  if (adminOnly && user?.role !== 'admin') {
+    // Redirect based on role
+    if (user?.role === 'callcenter') {
+      return <Navigate to="/call-center" replace />;
+    } else {
+      return <Navigate to="/dashboard" replace />;
+    }
   }
 
   // If roles are specified, check if user has required role
