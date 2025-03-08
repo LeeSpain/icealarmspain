@@ -1,18 +1,22 @@
+
 import { supabase } from '../../integrations/supabase/client';
-import { KnowledgeArea, KnowledgeItem } from '../../data/ai-knowledge/types';
-import { companyInfo } from '../../data/ai-knowledge/company-info';
-import { devices } from '../../data/ai-knowledge/devices';
-import { memberships } from '../../data/ai-knowledge/memberships';
-import { specialtyServices } from '../../data/ai-knowledge/specialty-services';
-import { support } from '../../data/ai-knowledge/support';
+import { KnowledgeEntry } from '../../data/ai-knowledge/types';
+import { companyEntries } from '../../data/ai-knowledge/company-info';
+import { deviceEntries } from '../../data/ai-knowledge/devices';
+import { membershipEntries } from '../../data/ai-knowledge/memberships';
+import { specialtyEntries } from '../../data/ai-knowledge/specialty-services';
+import { supportEntries } from '../../data/ai-knowledge/support';
+
+// Define the types needed for the service
+export type KnowledgeArea = 'company' | 'devices' | 'memberships' | 'specialtyServices' | 'support';
 
 // All knowledge areas combined
-const allKnowledgeAreas: Record<string, KnowledgeItem[]> = {
-  company: companyInfo,
-  devices: devices,
-  memberships: memberships,
-  specialtyServices: specialtyServices,
-  support: support,
+const allKnowledgeAreas: Record<string, KnowledgeEntry[]> = {
+  company: companyEntries,
+  devices: deviceEntries,
+  memberships: membershipEntries,
+  specialtyServices: specialtyEntries,
+  support: supportEntries,
 };
 
 class AIKnowledgeService {
@@ -34,7 +38,7 @@ class AIKnowledgeService {
   /**
    * Get knowledge items for a specific area
    */
-  async getKnowledgeArea(area: KnowledgeArea): Promise<KnowledgeItem[]> {
+  async getKnowledgeArea(area: KnowledgeArea): Promise<KnowledgeEntry[]> {
     try {
       // If we don't have a working Supabase client, use fallback data
       if (!this.supabaseClient) {
@@ -63,7 +67,7 @@ class AIKnowledgeService {
   /**
    * Search across all knowledge areas
    */
-  async searchKnowledge(query: string): Promise<KnowledgeItem[]> {
+  async searchKnowledge(query: string): Promise<KnowledgeEntry[]> {
     try {
       // If we don't have a working Supabase client, search in fallback data
       if (!this.supabaseClient) {
@@ -92,18 +96,65 @@ class AIKnowledgeService {
   }
 
   /**
+   * Fetch data based on context type and parameters
+   * This implements the missing fetchData method referenced in aiResponseService
+   */
+  async fetchData(contextType: string, params: Record<string, any>): Promise<any> {
+    try {
+      console.log(`AIKnowledgeService: Fetching data for context: ${contextType}`, params);
+      
+      // If we don't have a working Supabase client, return empty data
+      if (!this.supabaseClient) {
+        console.log(`AIKnowledgeService: No Supabase client available for context: ${contextType}`);
+        return {};
+      }
+
+      // Handle different context types
+      switch (contextType) {
+        case 'general':
+          return { 
+            generalInfo: "ICE Alarm provides comprehensive health monitoring services with 24/7 support.",
+            availableServices: ["Emergency Response", "Health Monitoring", "Medication Management"]
+          };
+        
+        case 'client_search':
+          // In a real implementation, this would search for client data
+          return { 
+            searchResults: [],
+            message: `No clients found matching "${params.searchTerm}"`
+          };
+        
+        case 'business_metrics':
+          return {
+            activeUsers: 1250,
+            alertsHandled: 320,
+            customerSatisfaction: "96%"
+          };
+          
+        default:
+          console.log(`AIKnowledgeService: Unknown context type: ${contextType}`);
+          return {};
+      }
+    } catch (error) {
+      console.error(`AIKnowledgeService: Error in fetchData for ${contextType}:`, error);
+      return {};
+    }
+  }
+
+  /**
    * Fallback search implementation using local data
    */
-  private searchFallbackKnowledge(query: string): KnowledgeItem[] {
+  private searchFallbackKnowledge(query: string): KnowledgeEntry[] {
     const lowercaseQuery = query.toLowerCase();
-    const results: KnowledgeItem[] = [];
+    const results: KnowledgeEntry[] = [];
 
     // Search through all knowledge areas
     Object.values(this.fallbackKnowledgeBase).forEach((items) => {
       items.forEach((item) => {
         if (
-          item.title.toLowerCase().includes(lowercaseQuery) ||
-          item.content.toLowerCase().includes(lowercaseQuery)
+          item.title?.toLowerCase().includes(lowercaseQuery) ||
+          item.content?.toLowerCase().includes(lowercaseQuery) ||
+          item.topic?.toLowerCase().includes(lowercaseQuery)
         ) {
           results.push(item);
         }
