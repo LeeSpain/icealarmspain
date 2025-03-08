@@ -1,3 +1,4 @@
+
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { Suspense } from 'react';
 import Index from './pages/Index';
@@ -47,6 +48,7 @@ function App() {
           <AuthProvider>
             <Router>
               <ToastContainer position="top-right" autoClose={5000} />
+              <ScrollToTop />
               <Routes>
                 {/* Public routes */}
                 <Route path="/" element={<Index />} />
@@ -196,7 +198,6 @@ function App() {
           </AuthProvider>
         </LanguageProvider>
       </Suspense>
-      <ScrollToTop />
     </div>
   );
 }
