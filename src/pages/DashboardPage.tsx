@@ -2,8 +2,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/auth";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import MemberSidebar from "@/components/member/MemberSidebar";
 import MemberDashboard from "@/components/member/MemberDashboard";
 
@@ -30,15 +28,6 @@ const DashboardPage: React.FC = () => {
         }
       } else {
         console.log("DashboardPage - User authenticated with correct role");
-        
-        // Check if user has completed their profile, if not, suggest completing it
-        if (user && !user.profileCompleted) {
-          toast.info(user.language === 'en' 
-            ? 'Please complete your personal details for emergency services' 
-            : 'Por favor, complete sus datos personales para servicios de emergencia',
-            { autoClose: 7000 }
-          );
-        }
       }
     }
   }, [isAuthenticated, user, isLoading, navigate]);
@@ -77,7 +66,6 @@ const DashboardPage: React.FC = () => {
       
       <div className="flex-1 overflow-auto transition-all duration-300">
         <div className="p-6 w-full">
-          <ToastContainer />
           <MemberDashboard />
         </div>
       </div>

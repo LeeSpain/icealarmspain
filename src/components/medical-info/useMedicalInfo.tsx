@@ -10,13 +10,12 @@ export const useMedicalInfo = () => {
   const { language } = useLanguage();
   const navigate = useNavigate();
 
-  // Load medical data from localStorage
+  // Load medical data from localStorage without notifications
   useEffect(() => {
     const savedData = localStorage.getItem('userQuestionnaire');
     if (savedData) {
       setMedicalData(JSON.parse(savedData));
     } else {
-      // No toast notification - removed
       console.log('No medical information found');
     }
   }, [language]);
@@ -29,7 +28,6 @@ export const useMedicalInfo = () => {
     
     // Simulate API call
     setTimeout(() => {
-      // No toast notification - removed
       console.log('Changes saved successfully');
       setIsLoading(false);
       setEditMode(false);
@@ -44,7 +42,6 @@ export const useMedicalInfo = () => {
       setMedicalData(JSON.parse(savedData));
     }
     
-    // No toast notification - removed
     console.log('Edit mode cancelled');
   };
 

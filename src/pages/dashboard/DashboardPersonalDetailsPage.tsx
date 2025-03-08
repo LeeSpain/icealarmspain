@@ -6,7 +6,6 @@ import { useAuth } from "@/context/auth";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { toast } from "react-toastify";
 import { User, PillIcon, PhoneCall, Edit, Save, X, Clock } from "lucide-react";
 import PersonalDetailsTabContent from "@/components/personal-details/PersonalDetailsTabContent";
 import MedicationsTabContent from "@/components/personal-details/MedicationsTabContent";
@@ -23,38 +22,25 @@ const DashboardPersonalDetailsPage: React.FC = () => {
   const [questionnaireData, setQuestionnaireData] = useState(null);
   const navigate = useNavigate();
 
-  // Load questionnaire data from localStorage
+  // Load questionnaire data from localStorage without showing notifications
   useEffect(() => {
-    const profileCompleted = localStorage.getItem('profileCompleted') === 'true';
-    
-    // If profile is not completed, redirect to questionnaire
-    if (!profileCompleted) {
-      toast.info(
-        language === 'en'
-          ? 'Please complete the questionnaire to access your personal details.'
-          : 'Por favor completa el cuestionario para acceder a tus datos personales.'
-      );
-      navigate("/onboarding-questionnaire");
-      return;
-    }
-    
     const savedData = localStorage.getItem('userQuestionnaire');
     if (savedData) {
       setQuestionnaireData(JSON.parse(savedData));
       console.log("Loaded saved questionnaire data:", JSON.parse(savedData));
     }
-  }, [navigate, language]);
+    
+    // Set profile as completed when user visits this page to prevent future redirects
+    if (user && !user.profileCompleted) {
+      localStorage.setItem('profileCompleted', 'true');
+    }
+  }, [navigate, language, user]);
 
   const handleSaveChanges = () => {
     setIsLoading(true);
     
     // Simulate API call
     setTimeout(() => {
-      toast.success(
-        language === 'en' 
-          ? "Your changes have been saved successfully!" 
-          : "¡Tus cambios se han guardado con éxito!"
-      );
       setIsLoading(false);
       setEditMode(false);
     }, 1000);
@@ -62,11 +48,6 @@ const DashboardPersonalDetailsPage: React.FC = () => {
 
   const handleCancelEdit = () => {
     setEditMode(false);
-    toast.info(
-      language === 'en'
-        ? "Edit mode cancelled. No changes were saved."
-        : "Modo de edición cancelado. No se guardaron cambios."
-    );
   };
 
   return (
@@ -153,10 +134,24 @@ const DashboardPersonalDetailsPage: React.FC = () => {
             </TabsList>
             
             <TabsContent value="personal" className="mt-0">
-              <PersonalDetailsTabContent 
-                editMode={editMode} 
-                questionnaireData={questionnaireData} 
-              />
+              {questionnaireData ? (
+                <PersonalDetailsTabContent 
+                  editMode={editMode} 
+                  questionnaireData={questionnaireData} 
+                />
+              ) : (
+                <Card>
+                  <CardContent className="p-6">
+                    <div className="text-center py-8">
+                      <p className="text-gray-500">
+                        {language === 'en'
+                          ? 'No personal information available yet. You can add your information by clicking the Edit button.'
+                          : 'No hay información personal disponible todavía. Puede agregar su información haciendo clic en el botón Editar.'}
+                      </p>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
             </TabsContent>
             
             <TabsContent value="medications" className="mt-0">

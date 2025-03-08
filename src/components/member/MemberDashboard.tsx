@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/auth";
@@ -21,12 +22,16 @@ const MemberDashboard: React.FC = () => {
   const navigate = useNavigate();
   const { cart, removeFromCart } = useCart();
   const [currentDate, setCurrentDate] = useState(new Date());
+  const [profileCompleted, setProfileCompleted] = useState(false);
   
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
       navigate('/login');
     } else if (user) {
       setName(user.displayName || user.name || user.email?.split('@')[0] || '');
+      // Check if profile is completed from localStorage
+      const isProfileCompleted = localStorage.getItem('profileCompleted') === 'true';
+      setProfileCompleted(isProfileCompleted);
     }
     
     const timer = setInterval(() => {
@@ -94,7 +99,7 @@ const MemberDashboard: React.FC = () => {
                   <div className="flex flex-col sm:flex-row gap-4">
                     <WeatherTile />
                     
-                    {!user.profileCompleted && (
+                    {!profileCompleted && (
                       <Button 
                         onClick={handlePersonalDetailsClick}
                         className="bg-ice-600 hover:bg-ice-700 flex items-center"

@@ -57,17 +57,14 @@ const QuestionnaireForm: React.FC = () => {
     localStorage.setItem('userQuestionnaire', JSON.stringify(formattedAnswers));
     
     // Mark user's profile as completed
-    if (user) {
-      // In a real app, you would update this in your database
-      localStorage.setItem('profileCompleted', 'true');
-    }
+    localStorage.setItem('profileCompleted', 'true');
     
     // Navigate to personal details page with the appropriate path
     setTimeout(() => {
       const targetPath = isDashboardRoute ? "/dashboard/personal-details" : "/personal-details";
       console.log("Navigating to:", targetPath, "isDashboardRoute:", isDashboardRoute);
       navigate(targetPath);
-    }, 1500);
+    }, 1000);
   };
 
   const currentQuestion = questions[currentQuestionIndex];
