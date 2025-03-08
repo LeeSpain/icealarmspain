@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/context/LanguageContext";
 import { getCategoryIcon } from "./utils";
 import { useGuardian } from "./GuardianContext";
+import { getAreaName } from "./utils/knowledgeAreaUtils";
 
 const KnowledgeAreaSelector: React.FC = () => {
   const { language } = useLanguage();
@@ -12,22 +13,6 @@ const KnowledgeAreaSelector: React.FC = () => {
   const knowledgeAreas = [
     'services', 'support', 'business', 'appointments'
   ];
-
-  // Function to get area name in selected language
-  const getAreaName = (area: string, lang: 'en' | 'es'): string => {
-    switch (area) {
-      case 'services':
-        return lang === 'en' ? 'our services' : 'nuestros servicios';
-      case 'support':
-        return lang === 'en' ? 'support and troubleshooting' : 'soporte y solución de problemas';
-      case 'business':
-        return lang === 'en' ? 'business inquiries' : 'consultas de negocio';
-      case 'appointments':
-        return lang === 'en' ? 'scheduling appointments' : 'programación de citas';
-      default:
-        return lang === 'en' ? 'general information' : 'información general';
-    }
-  };
 
   return (
     <div className="px-4 py-2 bg-guardian-50/50 border-b flex items-center gap-2 overflow-x-auto">
