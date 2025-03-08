@@ -99,13 +99,13 @@ export const GuardianProvider: React.FC<{ children: ReactNode }> = ({ children }
     let contextualData = {};
     switch (area) {
       case 'services':
-        contextualData = await aiKnowledgeService.fetchData('general');
+        contextualData = await aiKnowledgeService.fetchData('general', {});
         break;
       case 'support':
-        contextualData = await aiKnowledgeService.fetchData('client_search');
+        contextualData = await aiKnowledgeService.fetchData('client_search', {searchTerm: message});
         break;
       case 'business':
-        contextualData = await aiKnowledgeService.fetchData('business_metrics');
+        contextualData = await aiKnowledgeService.fetchData('business_metrics', {});
         break;
       case 'appointments':
         // This would connect to a scheduling system in a real implementation
