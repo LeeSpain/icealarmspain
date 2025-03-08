@@ -152,8 +152,7 @@ const Navbar: React.FC = () => {
             )}
           </div>
           
-          <div className="flex md:hidden items-center space-x-2">
-            <LanguageSwitcher />
+          <div className="flex md:hidden items-center">
             <button
               type="button"
               className="p-2 rounded-md text-gray-700"
@@ -172,6 +171,9 @@ const Navbar: React.FC = () => {
       {isMobileMenuOpen && (
         <div className="md:hidden bg-white border-t">
           <div className="container mx-auto px-4 py-4 space-y-3">
+            <div className="mb-4">
+              <LanguageSwitcher />
+            </div>
             {navLinks.map((link) => (
               <div key={link.name} className="block py-2">
                 {renderNavLink(link, () => setIsMobileMenuOpen(false))}
