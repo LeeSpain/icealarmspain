@@ -2,7 +2,7 @@
 import React from 'react';
 
 export interface PermissionsManagementProps {
-  onAction: (action: string) => void;
+  onAction?: (action: string) => void;
 }
 
 declare const PermissionsManagement: React.FC<PermissionsManagementProps>;
