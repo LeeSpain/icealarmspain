@@ -1,0 +1,48 @@
+
+@layer utilities {
+  /* Loader animation */
+  .loader {
+    @apply relative w-10 h-10;
+  }
+  
+  .loader:before, .loader:after {
+    @apply content-[''] absolute top-0 left-0 w-full h-full rounded-full;
+    animation: pulse 2s linear infinite;
+  }
+  
+  .loader:after {
+    animation-delay: -1s;
+  }
+  
+  @keyframes pulse {
+    0%, 100% {
+      transform: scale(0);
+      opacity: 1;
+    }
+    50% {
+      transform: scale(1);
+      opacity: 0;
+    }
+  }
+  
+  /* Animation utilities */
+  .animate-delay-100 {
+    animation-delay: 0.1s;
+  }
+  
+  .animate-delay-200 {
+    animation-delay: 0.2s;
+  }
+  
+  .animate-delay-300 {
+    animation-delay: 0.3s;
+  }
+  
+  .animate-delay-400 {
+    animation-delay: 0.4s;
+  }
+  
+  .animate-delay-500 {
+    animation-delay: 0.5s;
+  }
+}

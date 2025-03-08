@@ -2,7 +2,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App'
-import './index.css'
+import './styles/index.css'
 
 // Enhanced debugging
 console.log("main.tsx is being executed");

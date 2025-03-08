@@ -1,0 +1,103 @@
+
+@layer components {
+  .fancy-heading {
+    @apply font-playfair font-semibold;
+  }
+  
+  .link-underline {
+    @apply relative after:absolute after:w-full after:scale-x-0 after:h-0.5 after:bottom-0 after:left-0 after:bg-ice-500 after:transition-transform after:duration-300 hover:after:scale-x-100;
+  }
+  
+  .device-card {
+    @apply relative overflow-hidden p-6 rounded-3xl bg-white hover:shadow-device transition-all duration-300 flex flex-col items-center;
+  }
+  
+  .device-card:hover {
+    @apply translate-y-[-5px];
+  }
+  
+  .device-card::before {
+    content: '';
+    @apply absolute top-0 left-0 w-full h-1 bg-gradient-to-r;
+  }
+  
+  .device-card:nth-of-type(1)::before {
+    @apply from-ice-400 to-ice-600;
+  }
+  
+  .device-card:nth-of-type(2)::before {
+    @apply from-guardian-400 to-guardian-600;
+  }
+  
+  .device-card:nth-of-type(3)::before {
+    @apply from-ice-400 to-guardian-600;
+  }
+  
+  .feature-grid {
+    @apply grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4;
+  }
+  
+  .feature-card {
+    @apply bg-white p-4 rounded-xl shadow-subtle flex flex-col items-center text-center gap-2;
+  }
+  
+  /* Dashboard elements */
+  .dashboard-card {
+    @apply glass-panel p-4 flex flex-col transition-all duration-300 hover:shadow-glass-lg;
+  }
+  
+  .dashboard-card-header {
+    @apply flex justify-between items-center mb-2;
+  }
+  
+  .dashboard-card-title {
+    @apply text-sm font-medium text-foreground/80;
+  }
+  
+  .dashboard-card-value {
+    @apply text-2xl font-semibold;
+  }
+
+  /* Section styles */
+  .section-title {
+    @apply text-3xl md:text-4xl lg:text-5xl font-bold mb-6 text-balance;
+  }
+  
+  .section-subtitle {
+    @apply text-xl md:text-2xl font-medium mb-4 text-foreground/90 text-balance;
+  }
+  
+  .section-description {
+    @apply text-base md:text-lg text-muted-foreground mb-8 max-w-3xl mx-auto text-balance;
+  }
+
+  /* Decorative elements */
+  .decorative-dots {
+    @apply relative;
+  }
+  
+  .decorative-dots::before {
+    content: '';
+    @apply absolute w-24 h-24 -z-10 opacity-20 rounded-full;
+    background-image: radial-gradient(circle, currentColor 1px, transparent 1px);
+    background-size: 8px 8px;
+  }
+  
+  .decorative-line {
+    @apply relative;
+  }
+  
+  .decorative-line::after {
+    content: '';
+    @apply absolute h-px w-16 bg-current opacity-20;
+  }
+  
+  /* Glass effects */
+  .glass-panel {
+    @apply bg-white/90 backdrop-blur-md shadow-glass border border-white/30 rounded-2xl;
+  }
+
+  .glass-card {
+    @apply bg-white/80 backdrop-blur-sm shadow-glass-sm border border-white/50 rounded-xl transition-all duration-300 hover:shadow-glass;
+  }
+}
