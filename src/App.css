@@ -1,6 +1,6 @@
 
-/* Basic styling */
-body {
+/* Core styles that must be applied */
+html, body {
   margin: 0;
   padding: 0;
   font-family: 'Inter', sans-serif;
@@ -8,9 +8,13 @@ body {
   width: 100%;
   background-color: white !important;
   color: black !important;
+}
+
+body {
   display: block;
 }
 
+/* App container */
 .App {
   display: flex;
   flex-direction: column;
@@ -19,31 +23,44 @@ body {
   color: black;
 }
 
-/* For debugging - adds border to help see component boundaries */
-.debug-border {
-  border: 2px solid red;
-}
-
-/* Force immediate rendering */
+/* Root element styling */
 #root {
-  display: block;
-  min-height: 100vh;
-  width: 100%;
-}
-
-/* Force-fix for blank screens */
-.flex-col {
   display: flex;
   flex-direction: column;
-}
-
-.min-h-screen {
   min-height: 100vh;
+  width: 100%;
+  background-color: white;
+  color: black;
 }
 
-/* Ensure main content is visible */
+/* Main content area */
 main {
   flex: 1;
   background-color: white;
   color: black;
+  padding-top: 4rem;
+}
+
+/* Utility classes */
+.flex-col {
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.min-h-screen {
+  min-height: 100vh !important;
+}
+
+/* Debugging helpers */
+.debug-border {
+  border: 2px solid red;
+}
+
+/* Ensure visibility */
+.visible-container {
+  background-color: white !important;
+  color: black !important;
+  display: flex !important;
+  flex-direction: column !important;
+  min-height: 100vh !important;
 }

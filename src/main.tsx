@@ -23,6 +23,16 @@ const renderApp = () => {
     console.log("Root element found, rendering React app...");
     
     try {
+      // Force critical styles before rendering
+      document.body.style.backgroundColor = "white";
+      document.body.style.color = "black";
+      rootElement.style.backgroundColor = "white";
+      rootElement.style.color = "black";
+      rootElement.style.display = "flex";
+      rootElement.style.flexDirection = "column";
+      rootElement.style.minHeight = "100vh";
+      rootElement.style.width = "100%";
+      
       // Log any existing content in root before rendering
       console.log("Root content before render:", rootElement.innerHTML);
       
@@ -51,6 +61,12 @@ const renderApp = () => {
     // Try to create and append the root element as a fallback
     const newRoot = document.createElement('div');
     newRoot.id = 'root';
+    newRoot.style.backgroundColor = "white";
+    newRoot.style.color = "black";
+    newRoot.style.display = "flex";
+    newRoot.style.flexDirection = "column";
+    newRoot.style.minHeight = "100vh";
+    newRoot.style.width = "100%";
     document.body.appendChild(newRoot);
     console.log("Created new root element as fallback, attempting to render...");
     
@@ -67,9 +83,8 @@ const renderApp = () => {
   }
 }
 
-// Execute the rendering with a small delay to ensure DOM is fully loaded
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', renderApp);
-} else {
-  renderApp();
-}
+// Execute the rendering immediately without waiting
+renderApp();
+
+// Also try rendering after a short delay as a fallback
+setTimeout(renderApp, 500);

@@ -38,12 +38,12 @@ const Landing = () => {
   }, []);
   
   return (
-    <>
+    <div style={{backgroundColor: 'white', color: 'black'}}>
       <Hero />
       <DeviceShowcase />
       <Pricing />
       <ExpatInfo />
-    </>
+    </div>
   );
 };
 
@@ -55,10 +55,10 @@ function App() {
     
     // Add additional debugging
     const rootElement = document.getElementById('root');
-    console.log("Root element:", rootElement);
+    console.log("Root element in App:", rootElement);
     
     const bodyElement = document.body;
-    console.log("Body styles:", {
+    console.log("Body styles in App:", {
       backgroundColor: window.getComputedStyle(bodyElement).backgroundColor,
       color: window.getComputedStyle(bodyElement).color
     });
@@ -68,10 +68,22 @@ function App() {
     <Router>
       <LanguageProvider>
         <AuthProvider>
-          <div className="flex flex-col min-h-screen" style={{backgroundColor: 'white', color: 'black'}}>
+          <div style={{
+            display: 'flex',
+            flexDirection: 'column',
+            minHeight: '100vh',
+            backgroundColor: 'white', 
+            color: 'black',
+          }}>
             <Navbar />
             
-            <main className="flex-grow relative pt-16 md:pt-20" style={{backgroundColor: 'white', color: 'black'}}>
+            <main style={{
+              flexGrow: 1,
+              position: 'relative',
+              paddingTop: '4rem',
+              backgroundColor: 'white',
+              color: 'black',
+            }}>
               <Routes>
                 <Route path="/" element={<Landing />} />
                 <Route path="/about" element={<AboutUs />} />
