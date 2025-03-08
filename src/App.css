@@ -6,8 +6,9 @@ body {
   font-family: 'Inter', sans-serif;
   min-height: 100vh;
   width: 100%;
-  background-color: white;
-  color: black;
+  background-color: white !important;
+  color: black !important;
+  display: block;
 }
 
 .App {
@@ -21,4 +22,28 @@ body {
 /* For debugging - adds border to help see component boundaries */
 .debug-border {
   border: 2px solid red;
+}
+
+/* Force immediate rendering */
+#root {
+  display: block;
+  min-height: 100vh;
+  width: 100%;
+}
+
+/* Force-fix for blank screens */
+.flex-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.min-h-screen {
+  min-height: 100vh;
+}
+
+/* Ensure main content is visible */
+main {
+  flex: 1;
+  background-color: white;
+  color: black;
 }

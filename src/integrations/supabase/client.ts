@@ -7,11 +7,43 @@ const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIU
 
 // Debug the client creation
 console.log("Creating Supabase client with:", { 
-  supabaseUrl: supabaseUrl ? "URL exists" : "URL missing",
-  supabaseAnonKey: supabaseAnonKey ? "Key exists" : "Key missing" 
+  supabaseUrl,
+  supabaseAnonKey: supabaseAnonKey ? supabaseAnonKey.substring(0, 10) + "..." : "Key missing" 
 });
 
 // Create supabase client
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+  auth: {
+    autoRefreshToken: true,
+    persistSession: true,
+    detectSessionInUrl: true
+  }
+});
 
 console.log("Supabase client created successfully");
+
+// Test the supabase connection
+supabase.auth.onAuthStateChange((event, session) => {
+  console.log("Supabase auth event:", event, session ? "Session exists" : "No session");
+});
+
+// Export a function to test the connection
+export const testSupabaseConnection = async () => {
+  try {
+    const { data, error } = await supabase.from('test').select('*').limit(1);
+    if (error) {
+      console.error("Supabase connection test failed:", error);
+      return false;
+    }
+    console.log("Supabase connection test succeeded:", data);
+    return true;
+  } catch (error) {
+    console.error("Supabase connection test exception:", error);
+    return false;
+  }
+};
+
+// Run the test
+testSupabaseConnection()
+  .then(result => console.log("Connection test result:", result))
+  .catch(err => console.error("Connection test error:", err));

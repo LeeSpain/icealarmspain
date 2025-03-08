@@ -32,18 +32,26 @@ import HealthMetricsPage from "./pages/HealthMetricsPage";
 import MedicationsPage from "./pages/MedicationsPage";
 
 // Landing page component
-const Landing = () => (
-  <>
-    <Hero />
-    <DeviceShowcase />
-    <Pricing />
-    <ExpatInfo />
-  </>
-);
+const Landing = () => {
+  useEffect(() => {
+    console.log("Landing component rendered");
+  }, []);
+  
+  return (
+    <>
+      <Hero />
+      <DeviceShowcase />
+      <Pricing />
+      <ExpatInfo />
+    </>
+  );
+};
 
 function App() {
   useEffect(() => {
     console.log("App component mounted");
+    document.body.style.backgroundColor = "white";
+    document.body.style.color = "black";
     
     // Add additional debugging
     const rootElement = document.getElementById('root');
@@ -60,10 +68,10 @@ function App() {
     <Router>
       <LanguageProvider>
         <AuthProvider>
-          <div className="flex flex-col min-h-screen bg-white">
+          <div className="flex flex-col min-h-screen" style={{backgroundColor: 'white', color: 'black'}}>
             <Navbar />
             
-            <main className="flex-grow relative pt-16 md:pt-20 bg-white text-black">
+            <main className="flex-grow relative pt-16 md:pt-20" style={{backgroundColor: 'white', color: 'black'}}>
               <Routes>
                 <Route path="/" element={<Landing />} />
                 <Route path="/about" element={<AboutUs />} />
