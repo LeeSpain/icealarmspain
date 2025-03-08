@@ -1,3 +1,4 @@
+
 import React, { useCallback } from "react";
 
 export interface DashboardActivity {
@@ -12,8 +13,8 @@ interface ActivityManagerProps {
   onActivityAdded: (activities: DashboardActivity[]) => void;
 }
 
-// Convert to a custom hook instead of a component since it's returning a function
-export const useActivityManager = ({ activities, onActivityAdded }: ActivityManagerProps) => {
+// ActivityManager component displays recent activity and manages adding new activities
+const ActivityManager: React.FC<ActivityManagerProps> = ({ activities, onActivityAdded }) => {
   const addActivity = useCallback((type: string, description: string) => {
     const newActivity = {
       id: Date.now(),
@@ -28,12 +29,28 @@ export const useActivityManager = ({ activities, onActivityAdded }: ActivityMana
     return description;
   }, [activities, onActivityAdded]);
   
-  return { addActivity };
-};
-
-// Keeping an empty component for backwards compatibility if needed
-const ActivityManager: React.FC<ActivityManagerProps> = () => {
-  return null; // This component doesn't render anything
+  // Render the recent activities list
+  return (
+    <div className="space-y-3 max-h-64 overflow-y-auto">
+      {activities.length === 0 ? (
+        <p className="text-gray-500 text-center py-4">No recent activities</p>
+      ) : (
+        activities.map((activity) => (
+          <div key={activity.id} className="flex items-start space-x-3 p-2 border-b border-gray-100">
+            <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
+              activity.type === 'System' ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800'
+            }`}>
+              {activity.type}
+            </span>
+            <div className="flex-1">
+              <p className="text-sm text-gray-700">{activity.description}</p>
+              <p className="text-xs text-gray-500">{activity.time}</p>
+            </div>
+          </div>
+        ))
+      )}
+    </div>
+  );
 };
 
 export default ActivityManager;

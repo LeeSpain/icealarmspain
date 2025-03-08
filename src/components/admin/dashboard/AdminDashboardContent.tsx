@@ -17,38 +17,41 @@ const AdminDashboardContent: React.FC<AdminDashboardContentProps> = ({
           <h1 className="text-3xl font-bold mb-6 text-gray-800">Dashboard Overview</h1>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
-            <DashboardMetrics 
-              title="Total Revenue" 
-              value={dashboardData.totalRevenue} 
-              icon="dollar-sign"
-              color="bg-emerald-100"
-              textColor="text-emerald-700"
-              iconColor="text-emerald-500"
-            />
-            <DashboardMetrics 
-              title="Total Customers" 
-              value={dashboardData.totalCustomers} 
-              icon="users"
-              color="bg-blue-100"
-              textColor="text-blue-700"
-              iconColor="text-blue-500"
-            />
-            <DashboardMetrics 
-              title="Active Devices" 
-              value={dashboardData.activeDevices} 
-              icon="cpu"
-              color="bg-purple-100"
-              textColor="text-purple-700"
-              iconColor="text-purple-500"
-            />
-            <DashboardMetrics 
-              title="Pending Orders" 
-              value={dashboardData.pendingOrders} 
-              icon="package"
-              color="bg-amber-100"
-              textColor="text-amber-700"
-              iconColor="text-amber-500"
-            />
+            {/* Data metric cards with proper props */}
+            <div className="bg-white p-6 rounded-lg shadow-sm">
+              <h3 className="text-gray-500 text-sm font-medium mb-2">Total Revenue</h3>
+              <p className="text-3xl font-bold text-gray-800">{dashboardData.totalRevenue}</p>
+              <div className="mt-4 flex items-center text-sm">
+                <span className="text-emerald-500 font-medium">{dashboardData.monthlyGrowth}</span>
+                <span className="text-gray-500 ml-2">from last month</span>
+              </div>
+            </div>
+            
+            <div className="bg-white p-6 rounded-lg shadow-sm">
+              <h3 className="text-gray-500 text-sm font-medium mb-2">Total Customers</h3>
+              <p className="text-3xl font-bold text-gray-800">{dashboardData.totalCustomers}</p>
+              <div className="mt-4 flex items-center text-sm">
+                <span className="text-blue-500 font-medium">+12%</span>
+                <span className="text-gray-500 ml-2">from last month</span>
+              </div>
+            </div>
+            
+            <div className="bg-white p-6 rounded-lg shadow-sm">
+              <h3 className="text-gray-500 text-sm font-medium mb-2">Active Devices</h3>
+              <p className="text-3xl font-bold text-gray-800">{dashboardData.activeDevices}</p>
+              <div className="mt-4 flex items-center text-sm">
+                <span className="text-purple-500 font-medium">+8%</span>
+                <span className="text-gray-500 ml-2">from last month</span>
+              </div>
+            </div>
+            
+            <div className="bg-white p-6 rounded-lg shadow-sm">
+              <h3 className="text-gray-500 text-sm font-medium mb-2">Pending Orders</h3>
+              <p className="text-3xl font-bold text-gray-800">{dashboardData.pendingOrders}</p>
+              <div className="mt-4 flex items-center text-sm">
+                <span className="text-amber-500 font-medium">Action needed</span>
+              </div>
+            </div>
           </div>
           
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-8">
@@ -62,9 +65,17 @@ const AdminDashboardContent: React.FC<AdminDashboardContentProps> = ({
             
             <div className="bg-white p-6 rounded-lg shadow-sm">
               <h2 className="text-xl font-semibold mb-4">Recent Activity</h2>
+              {/* Using direct recentActivities array and onActivityAdded prop */}
               <ActivityManager 
                 activities={dashboardData.recentActivities || []} 
-                addActivity={addActivity}
+                onActivityAdded={(activities) => {
+                  // Handle updated activities
+                  // This is a wrapper for the addActivity function
+                  if (activities && activities.length > 0) {
+                    const latestActivity = activities[0];
+                    addActivity(latestActivity.type, latestActivity.description);
+                  }
+                }} 
               />
             </div>
           </div>
@@ -117,7 +128,10 @@ const AdminDashboardContent: React.FC<AdminDashboardContentProps> = ({
       ) : (
         <SectionRenderer 
           activeSection={activeSection}
-          onAction={addActivity}
+          onAction={(action) => {
+            // This wrapper converts the single-argument onAction to the two-argument addActivity
+            addActivity("System", action);
+          }}
         />
       )}
     </div>

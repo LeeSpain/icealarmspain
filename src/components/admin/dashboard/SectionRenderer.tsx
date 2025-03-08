@@ -15,9 +15,9 @@ import DeviceMaintenanceSchedule from "../DeviceMaintenanceSchedule";
 import DeviceInventoryManager from "../DeviceInventoryManager";
 
 interface SectionRendererProps {
-  section: string;
+  activeSection: string;
   dashboardData?: any;
-  onAction?: (action: string) => void;
+  onAction: (action: string) => void;
 }
 
 // Create type declarations for components that need onAction prop
@@ -53,14 +53,14 @@ const TypedDeviceInventoryManager = DeviceInventoryManager as React.ComponentTyp
 const TypedPlaceholderSection = PlaceholderSection as React.ComponentType<PlaceholderSectionProps>;
 
 export const SectionRenderer: React.FC<SectionRendererProps> = ({
-  section,
+  activeSection,
   dashboardData,
   onAction
 }) => {
   // Helper function to safely pass onAction prop
   const getOnActionProp = () => onAction ? { onAction } : {};
 
-  switch (section) {
+  switch (activeSection) {
     case "dashboard":
       return <DashboardMetrics data={dashboardData} />;
     
@@ -102,8 +102,8 @@ export const SectionRenderer: React.FC<SectionRendererProps> = ({
     default:
       return (
         <TypedPlaceholderSection
-          title={`${section.charAt(0).toUpperCase() + section.slice(1).replace(/-/g, ' ')}`}
-          description={`This section allows you to manage ${section.replace(/-/g, ' ')}.`}
+          title={`${activeSection.charAt(0).toUpperCase() + activeSection.slice(1).replace(/-/g, ' ')}`}
+          description={`This section allows you to manage ${activeSection.replace(/-/g, ' ')}.`}
           {...getOnActionProp()}
         />
       );
