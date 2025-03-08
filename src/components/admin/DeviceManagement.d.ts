@@ -2,7 +2,7 @@
 import React from 'react';
 
 export interface DeviceManagementProps {
-  onAction: (action: string) => void;
+  onAction?: (action: string) => void;
 }
 
 declare const DeviceManagement: React.FC<DeviceManagementProps>;

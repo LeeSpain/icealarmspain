@@ -3,7 +3,7 @@ import React from 'react';
 
 export interface InventoryManagementProps {
   section: string;
-  onAction: (action: string) => void;
+  onAction?: (action: string) => void;
 }
 
 declare const InventoryManagement: React.FC<InventoryManagementProps>;
