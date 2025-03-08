@@ -7,5 +7,4 @@ export interface InventoryManagementProps {
 }
 
 declare const InventoryManagement: React.FC<InventoryManagementProps>;
-
 export default InventoryManagement;

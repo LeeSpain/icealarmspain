@@ -49,3 +49,28 @@ export const KNOWLEDGE_BASE = {
     ]
   }
 };
+
+// Add the new topic collections
+export const healthTopics = {
+  "Glucose Levels": "health",
+  "Vital Signs": "health",
+  "Medication Schedule": "medications",
+  "Heart Rate": "health",
+  "Blood Pressure": "health"
+};
+
+export const emergencyTopics = {
+  "SOS Pendant": "devices",
+  "Emergency Contacts": "contacts",
+  "Medical Alerts": "alerts",
+  "Fall Detection": "devices",
+  "Emergency Response": "alerts"
+};
+
+export const generalTopics = {
+  "Device Setup": "devices",
+  "Account Settings": "settings",
+  "Troubleshooting": "support",
+  "Medication Reminders": "medications",
+  "General Help": "general"
+};

@@ -6,5 +6,4 @@ export interface RolesManagementProps {
 }
 
 declare const RolesManagement: React.FC<RolesManagementProps>;
-
 export default RolesManagement;

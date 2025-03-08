@@ -6,5 +6,4 @@ export interface AlertsManagementProps {
 }
 
 declare const AlertsManagement: React.FC<AlertsManagementProps>;
-
 export default AlertsManagement;

@@ -6,5 +6,4 @@ export interface ClientOnboardingProps {
 }
 
 declare const ClientOnboarding: React.FC<ClientOnboardingProps>;
-
 export default ClientOnboarding;

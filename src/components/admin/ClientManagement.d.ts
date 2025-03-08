@@ -6,5 +6,4 @@ export interface ClientManagementProps {
 }
 
 declare const ClientManagement: React.FC<ClientManagementProps>;
-
 export default ClientManagement;

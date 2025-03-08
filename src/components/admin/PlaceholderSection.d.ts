@@ -8,5 +8,4 @@ export interface PlaceholderSectionProps {
 }
 
 declare const PlaceholderSection: React.FC<PlaceholderSectionProps>;
-
 export default PlaceholderSection;

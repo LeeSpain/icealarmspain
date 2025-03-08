@@ -6,20 +6,29 @@ import { useLanguage } from "@/context/LanguageContext";
 interface TopicSelectorProps {
   selectedTopic: string | null;
   onSelectTopic: (topic: string) => void;
+  topics?: { [key: string]: string };
 }
 
-const TopicSelector: React.FC<TopicSelectorProps> = ({ selectedTopic, onSelectTopic }) => {
+const TopicSelector: React.FC<TopicSelectorProps> = ({ 
+  selectedTopic, 
+  onSelectTopic,
+  topics = {} 
+}) => {
   const { language } = useLanguage();
   
-  const topics = [
-    { id: 'health', label: language === 'en' ? 'Health Monitoring' : 'Monitoreo de Salud' },
-    { id: 'devices', label: language === 'en' ? 'Device Setup' : 'Configuración de Dispositivos' },
-    { id: 'medications', label: language === 'en' ? 'Medications' : 'Medicamentos' },
-  ];
+  const defaultTopics = {
+    'health': language === 'en' ? 'Health Monitoring' : 'Monitoreo de Salud',
+    'devices': language === 'en' ? 'Device Setup' : 'Configuración de Dispositivos',
+    'medications': language === 'en' ? 'Medications' : 'Medicamentos',
+  };
+  
+  const topicsToRender = Object.keys(topics).length > 0 ? 
+    Object.entries(topics).map(([label, id]) => ({ id, label })) :
+    Object.entries(defaultTopics).map(([id, label]) => ({ id, label }));
   
   return (
     <div className="flex flex-wrap gap-2">
-      {topics.map((topic) => (
+      {topicsToRender.map((topic) => (
         <Button
           key={topic.id}
           size="sm"
