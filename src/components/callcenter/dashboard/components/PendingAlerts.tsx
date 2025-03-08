@@ -13,34 +13,31 @@ interface PendingAlertsProps {
 
 const PendingAlerts: React.FC<PendingAlertsProps> = ({ pendingTickets }) => {
   return (
-    <Card className="lg:col-span-2">
-      <CardHeader>
-        <CardTitle className="text-lg flex items-center gap-2">
-          <AlertTriangle className="h-5 w-5 text-amber-500" />
+    <Card className="h-full shadow-md">
+      <CardHeader className="pb-2 bg-amber-50">
+        <CardTitle className="text-md flex items-center gap-2 text-amber-700">
+          <AlertTriangle className="h-5 w-5" />
           Pending Alerts
         </CardTitle>
         <CardDescription>
-          Tickets requiring immediate attention
+          Tickets requiring attention
         </CardDescription>
       </CardHeader>
-      <CardContent>
-        <div className="space-y-4">
+      <CardContent className="p-4 max-h-[320px] overflow-y-auto">
+        <div className="space-y-3">
           {pendingTickets.slice(0, 3).map(ticket => (
-            <div key={ticket.id} className="border-l-4 border-amber-500 bg-amber-50 p-4 rounded-md">
-              <div className="flex justify-between">
-                <h3 className="font-medium">{ticket.subject}</h3>
-                <Badge variant={ticket.priority === 'high' ? 'destructive' : 'outline'}>
+            <div key={ticket.id} className="border-l-4 border-amber-500 bg-amber-50 p-3 rounded-md">
+              <div className="flex justify-between items-start">
+                <h3 className="font-medium text-sm">{ticket.subject}</h3>
+                <Badge variant={ticket.priority === 'high' ? 'destructive' : 'outline'} className="ml-2">
                   {ticket.priority}
                 </Badge>
               </div>
-              <p className="text-sm text-muted-foreground mt-1">
+              <p className="text-xs text-muted-foreground mt-1">
                 Client: {ticket.clientName}
               </p>
-              <div className="flex justify-between items-center mt-3">
-                <span className="text-xs text-muted-foreground">
-                  Created: {ticket.created}
-                </span>
-                <Button size="sm">
+              <div className="flex justify-end mt-2">
+                <Button size="sm" className="h-7 text-xs">
                   View Details
                 </Button>
               </div>
@@ -58,7 +55,7 @@ const PendingAlerts: React.FC<PendingAlertsProps> = ({ pendingTickets }) => {
           )}
           
           {pendingTickets.length > 3 && (
-            <Button variant="outline" className="w-full">
+            <Button variant="outline" className="w-full mt-2 text-xs">
               View All {pendingTickets.length} Tickets
             </Button>
           )}

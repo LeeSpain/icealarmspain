@@ -57,14 +57,14 @@ const UrgentNotifications: React.FC<UrgentNotificationsProps> = ({
     medicalAlerts.length > 0;
   
   return (
-    <Card className="h-full">
-      <CardHeader className="pb-2">
-        <CardTitle className="text-md flex items-center gap-2">
-          <AlertCircle className="h-5 w-5 text-red-500" />
+    <Card className="h-full shadow-md">
+      <CardHeader className="pb-2 bg-red-50">
+        <CardTitle className="text-md flex items-center gap-2 text-red-700">
+          <AlertCircle className="h-5 w-5" />
           Urgent Notifications
         </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-4">
+      <CardContent className="space-y-3 p-4 max-h-[320px] overflow-y-auto">
         {hasUrgentNotifications ? (
           <>
             <HighPriorityTicketsSection 

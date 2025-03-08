@@ -41,12 +41,12 @@ const AgentDashboard: React.FC<AgentDashboardProps> = ({ setActiveSection }) => 
   
   return (
     <div className="space-y-6">
-      {/* Top row - Welcome Card & Stats Cards */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-1">
+      {/* Top section - Welcome Card & Stats Cards */}
+      <div className="grid grid-cols-12 gap-6">
+        <div className="col-span-12 lg:col-span-6 xl:col-span-5">
           <WelcomeCard user={user} />
         </div>
-        <div className="lg:col-span-2">
+        <div className="col-span-12 lg:col-span-6 xl:col-span-7">
           <StatsCards 
             totalCalls={totalCalls}
             avgResponseTime={avgResponseTime}
@@ -56,23 +56,17 @@ const AgentDashboard: React.FC<AgentDashboardProps> = ({ setActiveSection }) => 
         </div>
       </div>
       
-      {/* Middle row - Urgent Notifications, Pending Alerts and Activity Sidebar */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-1">
-          <UrgentNotifications 
-            notifications={getMockNotifications()} 
-            setActiveSection={setActiveSection} 
-          />
-        </div>
-        <div className="lg:col-span-1">
-          <PendingAlerts pendingTickets={pendingTickets} />
-        </div>
-        <div className="lg:col-span-1">
-          <ActivitySidebar recentCalls={recentCalls} upcomingTasks={upcomingTasks} />
-        </div>
+      {/* Middle section - Three column layout */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <UrgentNotifications 
+          notifications={getMockNotifications()} 
+          setActiveSection={setActiveSection} 
+        />
+        <PendingAlerts pendingTickets={pendingTickets} />
+        <ActivitySidebar recentCalls={recentCalls} upcomingTasks={upcomingTasks} />
       </div>
       
-      {/* Bottom row - Device Monitoring */}
+      {/* Bottom section - Device Monitoring */}
       <DeviceMonitoring />
       
       {/* Assistance Footer */}
