@@ -7,12 +7,11 @@ import './styles/index.css'
 const rootElement = document.getElementById('root');
 
 if (rootElement) {
-  // Create the root and render the app in a simpler way
-  const root = ReactDOM.createRoot(rootElement);
-  root.render(
+  // Create the root and render the app
+  ReactDOM.createRoot(rootElement).render(
     <React.StrictMode>
       <App />
-    </React.StrictMode>,
+    </React.StrictMode>
   );
 } else {
   console.error("Root element not found! Cannot render React app.");
