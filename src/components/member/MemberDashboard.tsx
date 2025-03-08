@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/auth";
@@ -65,8 +64,8 @@ const MemberDashboard: React.FC = () => {
   );
 
   const handlePersonalDetailsClick = () => {
-    console.log("Navigating to onboarding within dashboard");
-    navigate('/dashboard/onboarding');
+    console.log("Navigating to personal details within dashboard");
+    navigate('/dashboard/personal-details');
   };
   
   return (
