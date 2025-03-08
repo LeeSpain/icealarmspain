@@ -34,7 +34,7 @@ const BasicDebug = () => {
     });
     console.log("Tailwind CSS detected:", hasTailwind);
     
-    // Check root element
+    // Check CSS variables
     const rootElement = document.documentElement;
     const computedStyle = window.getComputedStyle(rootElement);
     console.log("Root CSS variables:", {
@@ -42,10 +42,18 @@ const BasicDebug = () => {
       "--foreground": computedStyle.getPropertyValue('--foreground'),
       "--border": computedStyle.getPropertyValue('--border'),
     });
+
+    // Log all CSS Custom Properties
+    const cssVars = {};
+    for (let i = 0; i < computedStyle.length; i++) {
+      const prop = computedStyle[i];
+      if (prop.startsWith('--')) {
+        cssVars[prop] = computedStyle.getPropertyValue(prop);
+      }
+    }
+    console.log("All CSS custom properties:", cssVars);
   }, []);
 
-  console.log("BasicDebug component rendering");
-  
   return (
     <div id="debug-component" className="fixed top-0 left-0 bg-red-500 text-white p-4 z-50">
       Debug Component (remove me after fixing)
