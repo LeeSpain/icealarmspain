@@ -1,4 +1,5 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { Suspense } from 'react';
 import Index from './pages/Index';
 import Login from './pages/Login';
 import Join from './pages/Join';
@@ -36,6 +37,7 @@ import DashboardMedicalInfoPage from './pages/dashboard/DashboardMedicalInfoPage
 import DeviceMaintenanceSchedule from "@/components/admin/DeviceMaintenanceSchedule";
 import DeviceMonitoringDashboard from "@/components/admin/DeviceMonitoringDashboard";
 import DeviceInventoryManager from "@/components/admin/DeviceInventoryManager";
+import ScrollToTop from "@/components/layout/ScrollToTop";
 
 function App() {
   return (

@@ -5,10 +5,15 @@ import { FileText, Settings, AlertTriangle } from 'lucide-react';
 interface PlaceholderSectionProps {
   title: string;
   description: string;
+  section?: string;
   onAction?: (action: string) => void;
 }
 
-const PlaceholderSection: React.FC<PlaceholderSectionProps> = ({ title, description, onAction }) => {
+const PlaceholderSection: React.FC<PlaceholderSectionProps> = ({ 
+  title, 
+  description, 
+  onAction 
+}) => {
   return (
     <div className="w-full h-full flex flex-col items-center justify-center p-8">
       <div className="max-w-3xl w-full bg-white rounded-lg shadow-md p-8">

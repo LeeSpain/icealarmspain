@@ -1,5 +1,6 @@
+
 import React from "react";
-import { PlaceholderSection } from "../PlaceholderSection";
+import PlaceholderSection from "../PlaceholderSection";
 import DeviceManagement from "../DeviceManagement";
 import RolesManagement from "../RolesManagement";
 import PermissionsManagement from "../PermissionsManagement";
@@ -66,7 +67,8 @@ export const SectionRenderer: React.FC<SectionRendererProps> = ({
     default:
       return (
         <PlaceholderSection
-          section={section}
+          title={`${section.charAt(0).toUpperCase() + section.slice(1).replace(/-/g, ' ')}`}
+          description={`This section allows you to manage ${section.replace(/-/g, ' ')}.`}
           onAction={onAction}
         />
       );
