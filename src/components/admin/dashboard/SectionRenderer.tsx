@@ -26,11 +26,19 @@ interface WithOnActionProps {
 }
 
 // Create interfaces for each component that needs specific props
+interface RolesManagementProps extends WithOnActionProps {}
+interface PermissionsManagementProps extends WithOnActionProps {}
 interface UserManagementProps extends WithOnActionProps {}
 interface AdminUsersManagementProps extends WithOnActionProps {}
 interface ClientManagementProps extends WithOnActionProps {}
 interface DeviceManagementProps extends WithOnActionProps {}
+interface AlertsManagementProps extends WithOnActionProps {}
+interface ClientOnboardingProps extends WithOnActionProps {}
 interface DeviceInventoryManagerProps extends WithOnActionProps {}
+interface PlaceholderSectionProps extends WithOnActionProps {
+  title: string;
+  description: string;
+}
 
 export const SectionRenderer: React.FC<SectionRendererProps> = ({
   section,
@@ -55,10 +63,10 @@ export const SectionRenderer: React.FC<SectionRendererProps> = ({
       return <ClientManagement {...getOnActionProp()} />;
       
     case "roles":
-      return <RolesManagement onAction={onAction} />;
+      return <RolesManagement {...getOnActionProp()} />;
       
     case "permissions":
-      return <PermissionsManagement onAction={onAction} />;
+      return <PermissionsManagement {...getOnActionProp()} />;
       
     // Device Management  
     case "devices":
@@ -71,10 +79,10 @@ export const SectionRenderer: React.FC<SectionRendererProps> = ({
       return <DeviceMaintenanceSchedule />;
       
     case "alerts-management":
-      return <AlertsManagement onAction={onAction} />;
+      return <AlertsManagement {...getOnActionProp()} />;
       
     case "client-onboarding":
-      return <ClientOnboarding onAction={onAction} />;
+      return <ClientOnboarding {...getOnActionProp()} />;
       
     case "device-inventory":
       return <DeviceInventoryManager {...getOnActionProp()} />;
@@ -84,7 +92,7 @@ export const SectionRenderer: React.FC<SectionRendererProps> = ({
         <PlaceholderSection
           title={`${section.charAt(0).toUpperCase() + section.slice(1).replace(/-/g, ' ')}`}
           description={`This section allows you to manage ${section.replace(/-/g, ' ')}.`}
-          onAction={onAction}
+          {...getOnActionProp()}
         />
       );
   }
