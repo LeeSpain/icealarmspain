@@ -40,46 +40,17 @@ interface PlaceholderSectionProps extends WithOnActionProps {
   description: string;
 }
 
-// Ensure these declarations match the actual component prop types
-declare module "../RolesManagement" {
-  export default function RolesManagement(props: RolesManagementProps): JSX.Element;
-}
-
-declare module "../PermissionsManagement" {
-  export default function PermissionsManagement(props: PermissionsManagementProps): JSX.Element;
-}
-
-declare module "../UserManagement" {
-  export default function UserManagement(props: UserManagementProps): JSX.Element;
-}
-
-declare module "../AdminUsersManagement" {
-  export default function AdminUsersManagement(props: AdminUsersManagementProps): JSX.Element;
-}
-
-declare module "../ClientManagement" {
-  export default function ClientManagement(props: ClientManagementProps): JSX.Element;
-}
-
-declare module "../DeviceManagement" {
-  export default function DeviceManagement(props: DeviceManagementProps): JSX.Element;
-}
-
-declare module "../AlertsManagement" {
-  export default function AlertsManagement(props: AlertsManagementProps): JSX.Element;
-}
-
-declare module "../ClientOnboarding" {
-  export default function ClientOnboarding(props: ClientOnboardingProps): JSX.Element;
-}
-
-declare module "../DeviceInventoryManager" {
-  export default function DeviceInventoryManager(props: DeviceInventoryManagerProps): JSX.Element;
-}
-
-declare module "../PlaceholderSection" {
-  export default function PlaceholderSection(props: PlaceholderSectionProps): JSX.Element;
-}
+// Type assertions for components
+const TypedRolesManagement = RolesManagement as React.ComponentType<RolesManagementProps>;
+const TypedPermissionsManagement = PermissionsManagement as React.ComponentType<PermissionsManagementProps>;
+const TypedUserManagement = UserManagement as React.ComponentType<UserManagementProps>;
+const TypedAdminUsersManagement = AdminUsersManagement as React.ComponentType<AdminUsersManagementProps>;
+const TypedClientManagement = ClientManagement as React.ComponentType<ClientManagementProps>;
+const TypedDeviceManagement = DeviceManagement as React.ComponentType<DeviceManagementProps>;
+const TypedAlertsManagement = AlertsManagement as React.ComponentType<AlertsManagementProps>;
+const TypedClientOnboarding = ClientOnboarding as React.ComponentType<ClientOnboardingProps>;
+const TypedDeviceInventoryManager = DeviceInventoryManager as React.ComponentType<DeviceInventoryManagerProps>;
+const TypedPlaceholderSection = PlaceholderSection as React.ComponentType<PlaceholderSectionProps>;
 
 export const SectionRenderer: React.FC<SectionRendererProps> = ({
   section,
@@ -95,23 +66,23 @@ export const SectionRenderer: React.FC<SectionRendererProps> = ({
     
     // User Management
     case "user-management": 
-      return <UserManagement {...getOnActionProp()} />;
+      return <TypedUserManagement {...getOnActionProp()} />;
     
     case "admin-users":
-      return <AdminUsersManagement {...getOnActionProp()} />;
+      return <TypedAdminUsersManagement {...getOnActionProp()} />;
       
     case "client-management":
-      return <ClientManagement {...getOnActionProp()} />;
+      return <TypedClientManagement {...getOnActionProp()} />;
       
     case "roles":
-      return <RolesManagement {...getOnActionProp()} />;
+      return <TypedRolesManagement {...getOnActionProp()} />;
       
     case "permissions":
-      return <PermissionsManagement {...getOnActionProp()} />;
+      return <TypedPermissionsManagement {...getOnActionProp()} />;
       
     // Device Management  
     case "devices":
-      return <DeviceManagement {...getOnActionProp()} />;
+      return <TypedDeviceManagement {...getOnActionProp()} />;
       
     case "device-monitoring":
       return <DeviceMonitoringDashboard />;
@@ -120,17 +91,17 @@ export const SectionRenderer: React.FC<SectionRendererProps> = ({
       return <DeviceMaintenanceSchedule />;
       
     case "alerts-management":
-      return <AlertsManagement {...getOnActionProp()} />;
+      return <TypedAlertsManagement {...getOnActionProp()} />;
       
     case "client-onboarding":
-      return <ClientOnboarding {...getOnActionProp()} />;
+      return <TypedClientOnboarding {...getOnActionProp()} />;
       
     case "device-inventory":
-      return <DeviceInventoryManager {...getOnActionProp()} />;
+      return <TypedDeviceInventoryManager {...getOnActionProp()} />;
       
     default:
       return (
-        <PlaceholderSection
+        <TypedPlaceholderSection
           title={`${section.charAt(0).toUpperCase() + section.slice(1).replace(/-/g, ' ')}`}
           description={`This section allows you to manage ${section.replace(/-/g, ' ')}.`}
           {...getOnActionProp()}
