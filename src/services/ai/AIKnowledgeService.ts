@@ -1,165 +1,127 @@
 
-import { supabase } from "@/integrations/supabase/client";
-import { User } from "@/context/auth/types";
+import { createClient } from '@supabase/supabase-js';
 
-// Define query types for the AI to handle
 export type AIQueryType = 
+  | 'general' 
   | 'client_search' 
-  | 'business_metrics' 
-  | 'device_status' 
+  | 'client_onboarding' 
+  | 'business_metrics'
+  | 'device_status'
   | 'user_management'
   | 'inventory'
-  | 'client_onboarding'
-  | 'alerts'
-  | 'general';
+  | 'alerts';
 
-// Context that can be provided to the AI
 export interface AIQueryContext {
-  user?: User;
+  user?: any;
   searchTerm?: string;
-  dateRange?: { start: string; end: string };
   clientId?: number;
   deviceId?: string;
   section?: string;
+  [key: string]: any;
 }
 
 class AIKnowledgeService {
-  /**
-   * Fetches relevant data based on the query type and context
-   */
-  async fetchData(queryType: AIQueryType, context: AIQueryContext = {}) {
-    console.log(`Fetching data for query type: ${queryType}`, context);
-
+  private supabase;
+  
+  constructor() {
+    this.supabase = createClient(
+      import.meta.env.VITE_SUPABASE_URL || '',
+      import.meta.env.VITE_SUPABASE_ANON_KEY || ''
+    );
+  }
+  
+  async fetchData(queryType: AIQueryType, context: AIQueryContext): Promise<any> {
+    // This is a mock implementation that simulates different data responses
+    // In a real implementation, this would call APIs or database queries
+    
+    // Simulate API latency
+    await new Promise(resolve => setTimeout(resolve, 600));
+    
     switch (queryType) {
       case 'client_search':
-        return this.fetchClientData(context.searchTerm);
+        return this.getMockClientSearchResults(context);
       case 'business_metrics':
-        return this.fetchBusinessMetrics(context.dateRange);
+        return this.getMockBusinessMetrics(context);
       case 'device_status':
-        return this.fetchDeviceStatus(context.deviceId, context.clientId);
+        return this.getMockDeviceStatus(context);
       case 'user_management':
-        return this.fetchUserData(context.searchTerm);
+        return this.getMockUserManagement(context);
       case 'inventory':
-        return this.fetchInventoryData(context.searchTerm);
-      case 'client_onboarding':
-        return this.fetchOnboardingData(context.clientId);
+        return this.getMockInventory(context);
       case 'alerts':
-        return this.fetchAlertsData(context.dateRange);
-      case 'general':
-        return this.fetchGeneralData();
+        return this.getMockAlerts(context);
       default:
-        return { message: "No specific data found for this query type" };
+        return { message: "No specific data available for this query type." };
     }
   }
-
-  // Fetches client data based on search term
-  private async fetchClientData(searchTerm?: string) {
-    if (!searchTerm) {
-      // Return summary of all clients if no search term
-      return { summary: "General client information would be returned here" };
-    }
-
-    // In a real implementation, this would query the database
-    console.log(`Searching for client with term: ${searchTerm}`);
+  
+  private getMockClientSearchResults(context: AIQueryContext) {
+    const searchTerm = context.searchTerm?.toLowerCase() || '';
     
-    // Mock data for demonstration
+    // Mock client data
+    const allClients = [
+      { id: 1, name: 'María García', status: 'active', devices: 2 },
+      { id: 2, name: 'Juan Rodríguez', status: 'active', devices: 1 },
+      { id: 3, name: 'Ana Martínez', status: 'inactive', devices: 0 },
+      { id: 4, name: 'Pedro López', status: 'active', devices: 3 },
+      { id: 5, name: 'Sofía Sánchez', status: 'pending', devices: 1 }
+    ];
+    
+    // Filter clients by search term
+    const matchingClients = searchTerm
+      ? allClients.filter(client => 
+          client.name.toLowerCase().includes(searchTerm) || 
+          client.id.toString() === searchTerm
+        )
+      : allClients;
+    
+    return { matchingClients };
+  }
+  
+  private getMockBusinessMetrics(context: AIQueryContext) {
     return {
-      matchingClients: [
-        { id: 1, name: "ABC Corporation", status: "active", devices: 12 },
-        { id: 2, name: "XYZ Enterprises", status: "pending", devices: 5 }
-      ]
+      activeClients: 78,
+      newClients: 12,
+      revenueGenerated: '€18,540',
+      activeDevices: 123,
+      alertsHandled: 45
     };
   }
-
-  // Fetches business metrics for given date range
-  private async fetchBusinessMetrics(dateRange?: { start: string; end: string }) {
-    // In a real implementation, this would aggregate data from various sources
-    console.log(`Fetching business metrics for date range:`, dateRange);
-    
-    // Mock data for demonstration
+  
+  private getMockDeviceStatus(context: AIQueryContext) {
     return {
-      activeClients: 120,
-      newClients: 15,
-      revenueGenerated: "$25,000",
-      activeDevices: 450,
-      alertsHandled: 78
+      totalDevices: 143,
+      activeDevices: 123,
+      inactiveDevices: 15,
+      maintenanceRequired: 5,
+      batteryLow: 8
     };
   }
-
-  // Fetches device status information
-  private async fetchDeviceStatus(deviceId?: string, clientId?: number) {
-    console.log(`Fetching device status for device: ${deviceId}, client: ${clientId}`);
-    
-    // Mock data for demonstration
+  
+  private getMockUserManagement(context: AIQueryContext) {
     return {
-      deviceStatus: "online",
-      batteryLevel: "85%",
-      lastConnection: "2023-08-01T14:22:10Z",
-      alerts: [
-        { type: "battery_low", timestamp: "2023-07-29T08:12:33Z" }
-      ]
+      activeUsers: 24,
+      admins: 3,
+      callCenterAgents: 12,
+      fieldTechnicians: 9
     };
   }
-
-  // Fetches user data
-  private async fetchUserData(searchTerm?: string) {
-    console.log(`Fetching user data with search term: ${searchTerm}`);
-    
-    // Mock data for demonstration
+  
+  private getMockInventory(context: AIQueryContext) {
     return {
-      users: [
-        { id: "u123", name: "John Doe", role: "admin" },
-        { id: "u456", name: "Jane Smith", role: "callcenter" }
-      ]
+      totalProducts: 15,
+      lowStock: 3,
+      pendingOrders: 8,
+      recentDeliveries: 12
     };
   }
-
-  // Fetches inventory data
-  private async fetchInventoryData(searchTerm?: string) {
-    console.log(`Fetching inventory data with search term: ${searchTerm}`);
-    
-    // Mock data for demonstration
+  
+  private getMockAlerts(context: AIQueryContext) {
     return {
-      inventory: [
-        { id: "inv123", name: "SOS Pendant", inStock: 45, onOrder: 20 },
-        { id: "inv456", name: "Glucose Monitor", inStock: 32, onOrder: 0 }
-      ]
-    };
-  }
-
-  // Fetches client onboarding data
-  private async fetchOnboardingData(clientId?: number) {
-    console.log(`Fetching onboarding data for client: ${clientId}`);
-    
-    // Mock data for demonstration
-    return {
-      onboardingStatus: "in_progress",
-      completedSteps: ["personal_info", "device_selection"],
-      pendingSteps: ["payment", "device_activation"]
-    };
-  }
-
-  // Fetches alerts data
-  private async fetchAlertsData(dateRange?: { start: string; end: string }) {
-    console.log(`Fetching alerts data for date range:`, dateRange);
-    
-    // Mock data for demonstration
-    return {
-      alerts: [
-        { id: "a123", type: "emergency", clientId: 5, status: "resolved" },
-        { id: "a456", type: "device_offline", clientId: 8, status: "pending" }
-      ]
-    };
-  }
-
-  // Fetches general company data
-  private async fetchGeneralData() {
-    // Mock data for demonstration
-    return {
-      companyName: "ICE Alarm",
-      servicesOffered: ["Emergency Response", "Health Monitoring", "Elderly Care"],
-      locations: ["Barcelona", "Madrid", "Valencia"],
-      contactEmail: "support@icealarm.com"
+      pendingAlerts: 8,
+      resolvedToday: 14,
+      criticalAlerts: 2,
+      averageResponseTime: '4.5 min'
     };
   }
 }

@@ -3,16 +3,15 @@ import React, { useState, useRef, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { Bot, Send, Brain, Search, Zap, User, Package, Bell, ClipboardList } from "lucide-react";
+import { Bot, Send, Brain, Loader2 } from "lucide-react";
 import { toast } from "react-toastify";
 import { useAuth } from "@/context/auth";
 import { useLanguage } from "@/context/LanguageContext";
-import { aiKnowledgeService, AIQueryType, AIQueryContext } from "@/services/ai/AIKnowledgeService";
+import { createClient } from "@supabase/supabase-js";
 
 interface Message {
   text: string;
   sender: 'user' | 'ai';
-  data?: any;
 }
 
 interface AdminAIAssistantProps {
@@ -29,8 +28,11 @@ const AdminAIAssistant: React.FC<AdminAIAssistantProps> = ({
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
-  const [queryType, setQueryType] = useState<AIQueryType>('general');
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const supabase = createClient(
+    import.meta.env.VITE_SUPABASE_URL || '',
+    import.meta.env.VITE_SUPABASE_ANON_KEY || ''
+  );
   
   useEffect(() => {
     // Initialize with a welcome message
@@ -50,76 +52,6 @@ const AdminAIAssistant: React.FC<AdminAIAssistantProps> = ({
     }
   }, [messages]);
 
-  // Process user query to determine the appropriate query type
-  const determineQueryType = (query: string): AIQueryType => {
-    const normalizedQuery = query.toLowerCase();
-    
-    if (normalizedQuery.includes('client') || normalizedQuery.includes('customer')) {
-      if (normalizedQuery.includes('search') || normalizedQuery.includes('find')) {
-        return 'client_search';
-      } else if (normalizedQuery.includes('onboard') || normalizedQuery.includes('new')) {
-        return 'client_onboarding';
-      }
-    }
-    
-    if (normalizedQuery.includes('metrics') || normalizedQuery.includes('stats') || 
-        normalizedQuery.includes('business') || normalizedQuery.includes('performance')) {
-      return 'business_metrics';
-    }
-    
-    if (normalizedQuery.includes('device') || normalizedQuery.includes('pendant') || 
-        normalizedQuery.includes('monitor') || normalizedQuery.includes('equipment')) {
-      return 'device_status';
-    }
-    
-    if (normalizedQuery.includes('user') || normalizedQuery.includes('admin') || 
-        normalizedQuery.includes('staff') || normalizedQuery.includes('employee')) {
-      return 'user_management';
-    }
-    
-    if (normalizedQuery.includes('inventory') || normalizedQuery.includes('stock') || 
-        normalizedQuery.includes('product')) {
-      return 'inventory';
-    }
-    
-    if (normalizedQuery.includes('alert') || normalizedQuery.includes('emergency') || 
-        normalizedQuery.includes('notification')) {
-      return 'alerts';
-    }
-    
-    return 'general';
-  };
-
-  // Extract context from the query (e.g., search terms, date ranges)
-  const extractContext = (query: string): AIQueryContext => {
-    const context: AIQueryContext = { user };
-    
-    // Extract search terms
-    const searchMatch = query.match(/(?:find|search|look for|about|named|called) (.+?)(?=\s|$|\?|\.)/i);
-    if (searchMatch && searchMatch[1]) {
-      context.searchTerm = searchMatch[1].trim();
-    }
-    
-    // Extract client ID if present
-    const clientIdMatch = query.match(/client (?:id|number|#) (\d+)/i);
-    if (clientIdMatch && clientIdMatch[1]) {
-      context.clientId = parseInt(clientIdMatch[1], 10);
-    }
-    
-    // Extract device ID if present
-    const deviceIdMatch = query.match(/device (?:id|number|#) ([a-zA-Z0-9-]+)/i);
-    if (deviceIdMatch && deviceIdMatch[1]) {
-      context.deviceId = deviceIdMatch[1];
-    }
-    
-    // Set the current section as context
-    if (currentSection) {
-      context.section = currentSection;
-    }
-    
-    return context;
-  };
-
   // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -133,11 +65,6 @@ const AdminAIAssistant: React.FC<AdminAIAssistantProps> = ({
     setInput("");
     setIsProcessing(true);
     
-    // Determine query type and extract context
-    const detectedQueryType = determineQueryType(userMessage);
-    setQueryType(detectedQueryType);
-    const context = extractContext(userMessage);
-    
     try {
       // Add a thinking message
       setMessages(prev => [...prev, { 
@@ -145,8 +72,16 @@ const AdminAIAssistant: React.FC<AdminAIAssistantProps> = ({
         sender: 'ai' 
       }]);
       
-      // Fetch relevant data
-      const data = await aiKnowledgeService.fetchData(detectedQueryType, context);
+      // Call the Supabase edge function
+      const systemMessage = `You are an administrative AI assistant for ICE Alarm España. The user's current dashboard section is: ${currentSection}. 
+      Help with business metrics, client management, device monitoring, inventory, and alerts. 
+      If you detect the user wants to navigate to a specific section, suggest it clearly.`;
+      
+      const { data, error } = await supabase.functions.invoke('admin-ai-assistant', {
+        body: { prompt: userMessage, systemMessage }
+      });
+      
+      if (error) throw error;
       
       // Replace thinking message with response
       setMessages(prev => {
@@ -154,23 +89,48 @@ const AdminAIAssistant: React.FC<AdminAIAssistantProps> = ({
         // Remove the thinking message
         newMessages.pop();
         
-        // Generate appropriate response based on query type and data
-        let responseText = generateResponse(detectedQueryType, data, language);
-        
         // Add the AI response
-        newMessages.push({ text: responseText, sender: 'ai', data });
+        newMessages.push({ text: data.response, sender: 'ai' });
         return newMessages;
       });
       
-      // If navigation action is detected and onNavigate prop is provided
-      const navigationAction = detectNavigationAction(userMessage, detectedQueryType);
-      if (navigationAction && onNavigate) {
-        onNavigate(navigationAction.section, navigationAction.params);
-        toast.info(language === 'en' 
-          ? `Navigating to ${navigationAction.section}` 
-          : `Navegando a ${navigationAction.section}`);
+      // Check for navigation intent
+      if (data.response.toLowerCase().includes('navigate to') && onNavigate) {
+        // Simple navigation detection - could be improved
+        const navigationMap: Record<string, string> = {
+          'dashboard': 'dashboard',
+          'clients': 'clients',
+          'devices': 'devices',
+          'inventory': 'inventory',
+          'users': 'admin-users',
+          'alerts': 'alerts'
+        };
+        
+        for (const [key, value] of Object.entries(navigationMap)) {
+          if (data.response.toLowerCase().includes(key.toLowerCase())) {
+            // Ask user if they want to navigate
+            toast.info(
+              language === 'en'
+                ? `Would you like to navigate to ${key}?`
+                : `¿Te gustaría navegar a ${key}?`,
+              {
+                autoClose: 5000,
+                closeButton: true,
+                position: "bottom-right",
+                onClick: () => {
+                  onNavigate(value);
+                  toast.success(
+                    language === 'en'
+                      ? `Navigated to ${key}`
+                      : `Navegado a ${key}`
+                  );
+                }
+              }
+            );
+            break;
+          }
+        }
       }
-      
     } catch (error) {
       console.error("Error processing AI query:", error);
       
@@ -195,90 +155,6 @@ const AdminAIAssistant: React.FC<AdminAIAssistantProps> = ({
         : "Error al procesar la consulta de IA");
     } finally {
       setIsProcessing(false);
-    }
-  };
-
-  // Generate response text based on query type and data
-  const generateResponse = (queryType: AIQueryType, data: any, lang: 'en' | 'es'): string => {
-    switch (queryType) {
-      case 'client_search':
-        if (data.matchingClients && data.matchingClients.length > 0) {
-          const clientList = data.matchingClients.map((c: any) => 
-            `${c.name} (ID: ${c.id}, Status: ${c.status}, Devices: ${c.devices})`).join('\n- ');
-          
-          return lang === 'en'
-            ? `I found the following clients matching your search:\n- ${clientList}\n\nWould you like more details on any of these clients?`
-            : `Encontré los siguientes clientes que coinciden con tu búsqueda:\n- ${clientList}\n\n¿Te gustaría más detalles sobre alguno de estos clientes?`;
-        } else {
-          return lang === 'en'
-            ? "I couldn't find any clients matching your search criteria. Would you like to try a different search term?"
-            : "No pude encontrar clientes que coincidan con tu criterio de búsqueda. ¿Te gustaría probar con un término diferente?";
-        }
-        
-      case 'business_metrics':
-        return lang === 'en'
-          ? `Here are the current business metrics:\n- Active Clients: ${data.activeClients}\n- New Clients: ${data.newClients}\n- Revenue Generated: ${data.revenueGenerated}\n- Active Devices: ${data.activeDevices}\n- Alerts Handled: ${data.alertsHandled}\n\nWould you like to see metrics for a specific time period?`
-          : `Aquí están las métricas actuales del negocio:\n- Clientes Activos: ${data.activeClients}\n- Nuevos Clientes: ${data.newClients}\n- Ingresos Generados: ${data.revenueGenerated}\n- Dispositivos Activos: ${data.activeDevices}\n- Alertas Gestionadas: ${data.alertsHandled}\n\n¿Te gustaría ver métricas para un período específico?`;
-        
-      // Add more case handlers for other query types
-      
-      default:
-        return lang === 'en'
-          ? "I'm here to help you manage your business. You can ask me about clients, devices, business metrics, inventory, alerts, and more."
-          : "Estoy aquí para ayudarte a gestionar tu negocio. Puedes preguntarme sobre clientes, dispositivos, métricas de negocio, inventario, alertas y más.";
-    }
-  };
-
-  // Detect if the user wants to navigate to a specific section
-  const detectNavigationAction = (query: string, queryType: AIQueryType): { section: string, params?: any } | null => {
-    const normalizedQuery = query.toLowerCase();
-    
-    // Check for navigation intent keywords
-    const hasNavigationIntent = normalizedQuery.includes('go to') || 
-                                normalizedQuery.includes('show me') || 
-                                normalizedQuery.includes('navigate to') ||
-                                normalizedQuery.includes('open');
-    
-    if (!hasNavigationIntent) return null;
-    
-    // Map query types to dashboard sections
-    switch (queryType) {
-      case 'client_search':
-        return { section: 'clients' };
-      case 'business_metrics':
-        return { section: 'dashboard' };
-      case 'device_status':
-        return { section: 'devices' };
-      case 'user_management':
-        return { section: 'admin-users' };
-      case 'inventory':
-        return { section: 'inventory' };
-      case 'client_onboarding':
-        return { section: 'client-onboarding' };
-      case 'alerts':
-        return { section: 'alerts' };
-      default:
-        return null;
-    }
-  };
-
-  // Get icon for query type
-  const getQueryTypeIcon = () => {
-    switch (queryType) {
-      case 'client_search':
-        return <Search className="h-4 w-4" />;
-      case 'business_metrics':
-        return <Zap className="h-4 w-4" />;
-      case 'device_status':
-        return <Package className="h-4 w-4" />;
-      case 'user_management':
-        return <User className="h-4 w-4" />;
-      case 'inventory':
-        return <ClipboardList className="h-4 w-4" />;
-      case 'alerts':
-        return <Bell className="h-4 w-4" />;
-      default:
-        return <Brain className="h-4 w-4" />;
     }
   };
 
@@ -311,14 +187,6 @@ const AdminAIAssistant: React.FC<AdminAIAssistantProps> = ({
                 </div>
               )}
               <p className="text-sm whitespace-pre-line">{message.text}</p>
-              {message.data && message.sender === 'ai' && (
-                <div className="mt-2 pt-2 border-t border-dashed border-ice-200 text-xs text-ice-500">
-                  <div className="flex items-center">
-                    {getQueryTypeIcon()}
-                    <span className="ml-1 capitalize">{queryType.replace('_', ' ')}</span>
-                  </div>
-                </div>
-              )}
             </div>
           </div>
         ))}
@@ -358,7 +226,11 @@ const AdminAIAssistant: React.FC<AdminAIAssistantProps> = ({
             className="bg-ice-600 hover:bg-ice-700 h-10"
             disabled={isProcessing || !input.trim()}
           >
-            <Send className="h-4 w-4" />
+            {isProcessing ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <Send className="h-4 w-4" />
+            )}
           </Button>
         </form>
       </CardFooter>

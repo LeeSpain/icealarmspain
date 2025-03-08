@@ -1,8 +1,5 @@
 
 import React from "react";
-// Remove import for ToastContainer
-// import { ToastContainer } from 'react-toastify';
-// import 'react-toastify/dist/ReactToastify.css';
 
 // Admin components
 import Sidebar from "@/components/admin/Sidebar";
@@ -47,14 +44,10 @@ const AdminDashboard: React.FC = () => {
         ? `AI Assistant navigated to ${section}` 
         : `Asistente de IA navegó a ${section}`
     );
-    
-    // Additional handling for specific parameters could go here
   };
 
   return (
     <div className="flex h-screen bg-ice-50/30">
-      {/* Remove ToastContainer */}
-      
       <Sidebar 
         activeSection={activeSection}
         setActiveSection={handleSectionChange}
