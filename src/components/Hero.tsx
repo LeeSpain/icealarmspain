@@ -1,12 +1,14 @@
 
 import React from "react";
-import { ButtonCustom } from "./ui/button-custom";
-import { ArrowRight, Shield, HeartPulse, Clock, Sparkles } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useLanguage } from "@/context/LanguageContext";
+import HeroHeader from "./hero/HeroHeader";
+import FeatureCards from "./hero/FeatureCards";
+import DashboardPreview from "./hero/DashboardPreview";
+import HeroBackground from "./hero/HeroBackground";
 
 const Hero: React.FC = () => {
-  const { language, t } = useLanguage();
+  const { language } = useLanguage();
   console.log("Hero component rendering with language:", language);
 
   // Function to handle click and scroll to top
@@ -19,148 +21,13 @@ const Hero: React.FC = () => {
       id="home" 
       className="relative pt-32 pb-24 overflow-hidden"
     >
-      {/* Enhanced Background Elements */}
-      <div className="absolute top-20 right-0 w-96 h-96 bg-gradient-radial from-ice-100/70 to-transparent rounded-full filter blur-3xl opacity-70 -z-10 animate-pulse-gentle"></div>
-      <div className="absolute bottom-0 left-20 w-72 h-72 bg-gradient-radial from-guardian-100/60 to-transparent rounded-full filter blur-3xl opacity-50 -z-10"></div>
-      <div className="absolute top-40 left-1/4 w-64 h-64 rounded-full border border-ice-200/50 -z-10 animate-float"></div>
-      <div className="absolute bottom-20 right-1/4 w-80 h-80 rounded-full border border-guardian-200/50 -z-10 animate-float" style={{ animationDelay: "2s" }}></div>
-      
-      {/* Decorative accent lines */}
-      <div className="absolute top-1/4 left-0 w-full h-px bg-gradient-to-r from-transparent via-ice-200/50 to-transparent -z-10"></div>
-      <div className="absolute top-2/3 left-0 w-full h-px bg-gradient-to-r from-transparent via-guardian-200/30 to-transparent -z-10"></div>
+      <HeroBackground />
       
       <div className="container mx-auto px-4 md:px-6">
         <div className="max-w-5xl mx-auto">
-          <div className="text-center space-y-6 animate-slide-down">
-            <div className="inline-flex items-center px-3 py-1.5 rounded-full bg-gradient-to-r from-ice-50/80 to-ice-100/80 border border-ice-200 text-ice-600 text-sm font-medium mb-6 shadow-sm backdrop-blur-sm">
-              <Shield size={16} className="mr-2" />
-              <span className="relative">
-                {language === 'en' ? 'AI-Powered Health Protection' : 'Protección de Salud con IA'}
-                <Sparkles size={14} className="absolute -top-1 -right-4 text-ice-500 animate-pulse-gentle" />
-              </span>
-            </div>
-            
-            {/* Enhanced headline with professional styling */}
-            <div className="relative mb-12">
-              {/* Decorative elements behind the headline */}
-              <div className="absolute -top-10 left-1/2 transform -translate-x-1/2 w-32 h-1 bg-gradient-to-r from-transparent via-ice-400 to-transparent rounded-full opacity-70"></div>
-              
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight font-playfair mx-auto max-w-4xl relative">
-                <span className="relative z-10 bg-gradient-to-r from-gray-900 via-ice-900 to-guardian-800 bg-clip-text text-transparent inline-block">
-                  {language === 'en' 
-                    ? 'Intelligent Health Monitoring & Emergency Response' 
-                    : 'Monitoreo Inteligente de Salud y Respuesta de Emergencia'}
-                </span>
-                
-                {/* Accent decorations */}
-                <span className="absolute -bottom-3 left-1/2 transform -translate-x-1/2 w-48 h-1 bg-gradient-to-r from-ice-400 to-guardian-600 rounded-full"></span>
-              </h1>
-              
-              {/* Decorative elements after the headline */}
-              <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 w-24 h-0.5 bg-gradient-to-r from-transparent via-guardian-300 to-transparent rounded-full opacity-60"></div>
-            </div>
-            
-            <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto backdrop-blur-sm bg-white/5 py-2 rounded-lg mt-6">
-              {language === 'en' 
-                ? 'Our AI Guardian provides 24/7 monitoring and emergency support, integrating smart devices for real-time health tracking and instant response.' 
-                : 'Nuestro Guardián de IA proporciona monitoreo 24/7 y soporte de emergencia, integrando dispositivos inteligentes para seguimiento de salud en tiempo real.'}
-            </p>
-            
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-6">
-              <Link to="/products" onClick={handleClick}>
-                <ButtonCustom size="lg" className="group relative overflow-hidden shadow-md">
-                  <span className="relative z-10 flex items-center">
-                    {language === 'en' ? 'Explore Solutions' : 'Explorar Soluciones'}
-                    <ArrowRight size={18} className="ml-2 transition-transform group-hover:translate-x-1" />
-                  </span>
-                  <span className="absolute inset-0 bg-gradient-to-r from-ice-500 to-ice-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-0"></span>
-                </ButtonCustom>
-              </Link>
-            </div>
-          </div>
-          
-          {/* Feature Highlights with enhanced styling */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-20">
-            {[
-              {
-                icon: <Shield className="w-10 h-10 text-ice-600" />,
-                title: language === 'en' ? "24/7 Protection" : "Protección 24/7",
-                description: language === 'en' 
-                  ? "Continuous monitoring with instant emergency response when you need it most."
-                  : "Monitoreo continuo con respuesta de emergencia instantánea cuando más lo necesita.",
-                delay: "animate-delay-100",
-                gradient: "from-ice-50 to-white"
-              },
-              {
-                icon: <HeartPulse className="w-10 h-10 text-guardian-600" />,
-                title: language === 'en' ? "Health Insights" : "Información de Salud",
-                description: language === 'en'
-                  ? "AI-powered analysis of your health data for personalized recommendations."
-                  : "Análisis impulsado por IA de sus datos de salud para recomendaciones personalizadas.",
-                delay: "animate-delay-200",
-                gradient: "from-guardian-50 to-white"
-              },
-              {
-                icon: <Clock className="w-10 h-10 text-ice-600" />,
-                title: language === 'en' ? "Rapid Response" : "Respuesta Rápida",
-                description: language === 'en'
-                  ? "Immediate assistance through our professional call center and AI Guardian."
-                  : "Asistencia inmediata a través de nuestro centro de llamadas profesional y Guardián de IA.",
-                delay: "animate-delay-300",
-                gradient: "from-ice-50 to-white"
-              }
-            ].map((feature, index) => (
-              <div 
-                key={index} 
-                className={`glass-panel p-6 flex flex-col items-center text-center animate-slide-up ${feature.delay} hover:translate-y-[-5px] transition-transform duration-300 relative overflow-hidden`}
-              >
-                <div className="absolute inset-0 bg-gradient-to-b ${feature.gradient} opacity-50 -z-10"></div>
-                <div className="mb-4 p-3 bg-gradient-to-br from-white to-gray-50 rounded-full shadow-subtle">
-                  {feature.icon}
-                </div>
-                <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
-                <p className="text-muted-foreground">{feature.description}</p>
-              </div>
-            ))}
-          </div>
-          
-          {/* Dashboard Preview Section */}
-          <div className="mt-24 mb-12 text-center">
-            <h2 className="text-3xl font-playfair font-bold mb-6">
-              {language === 'en' ? "Member Dashboard Preview" : "Vista Previa del Panel de Miembro"}
-            </h2>
-            <p className="text-lg text-muted-foreground max-w-3xl mx-auto mb-10">
-              {language === 'en'
-                ? "See how easily you can monitor your health data and manage your devices from our intuitive dashboard."
-                : "Vea cómo puede monitorear fácilmente sus datos de salud y administrar sus dispositivos desde nuestro panel intuitivo."}
-            </p>
-            
-            <div className="relative mx-auto max-w-5xl overflow-hidden rounded-xl shadow-xl">
-              <div className="bg-gradient-to-r from-ice-500 to-guardian-600 h-8 flex items-center px-4">
-                <div className="flex space-x-2">
-                  <div className="w-3 h-3 bg-white rounded-full"></div>
-                  <div className="w-3 h-3 bg-white rounded-full opacity-70"></div>
-                  <div className="w-3 h-3 bg-white rounded-full opacity-50"></div>
-                </div>
-              </div>
-              <img 
-                src="/lovable-uploads/dashboard-preview.png" 
-                alt="Dashboard Preview" 
-                className="w-full object-cover border-t border-gray-200"
-                style={{ height: '400px' }}
-                onError={(e) => {
-                  e.currentTarget.src = "https://placehold.co/1200x600/f8fafc/a3a3a3?text=Dashboard+Preview";
-                }}
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end justify-center pb-6">
-                <Link to="/login">
-                  <ButtonCustom size="lg" className="bg-white text-ice-700 hover:bg-ice-50">
-                    {language === 'en' ? "Try The Dashboard" : "Pruebe El Panel"}
-                  </ButtonCustom>
-                </Link>
-              </div>
-            </div>
-          </div>
+          <HeroHeader language={language} handleClick={handleClick} />
+          <FeatureCards language={language} />
+          <DashboardPreview language={language} />
         </div>
       </div>
       
