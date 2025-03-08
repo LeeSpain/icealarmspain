@@ -1,6 +1,12 @@
 
 import React, { useEffect } from 'react';
 import './App.css';
+import Navbar from "./components/Navbar";
+import Hero from "./components/Hero";
+import DeviceShowcase from "./components/DeviceShowcase";
+import Pricing from "./components/Pricing";
+import ExpatInfo from "./components/ExpatInfo";
+import Footer from "./components/Footer";
 
 function App() {
   useEffect(() => {
@@ -18,10 +24,20 @@ function App() {
   }, []);
   
   return (
-    <div className="min-h-screen w-full p-4">
-      <div className="flex items-center justify-center min-h-screen">
-        <h1 className="text-4xl font-bold">Hello World</h1>
-      </div>
+    <div className="flex flex-col min-h-screen bg-gradient-to-b from-white via-ice-50/30 to-white">
+      <Navbar />
+      
+      <main className="flex-grow relative">
+        <Hero />
+        
+        <DeviceShowcase />
+        
+        <Pricing />
+        
+        <ExpatInfo />
+      </main>
+      
+      <Footer />
     </div>
   );
 }
