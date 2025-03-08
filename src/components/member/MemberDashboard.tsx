@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/auth";
@@ -27,7 +26,6 @@ const MemberDashboard: React.FC = () => {
     if (!isLoading && !isAuthenticated) {
       navigate('/login');
     } else if (user) {
-      // Prefer user's display name over email for better personalization
       setName(user.displayName || user.name || user.email?.split('@')[0] || '');
     }
     
@@ -66,7 +64,7 @@ const MemberDashboard: React.FC = () => {
   );
 
   const handlePersonalDetailsClick = () => {
-    navigate('/dashboard/personal-details'); // Direct to personal-details page
+    navigate('/dashboard/onboarding'); // Changed from '/onboarding-questionnaire' to keep within dashboard
   };
   
   return (
