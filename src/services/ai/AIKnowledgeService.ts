@@ -1,129 +1,118 @@
+import { supabase } from '../../integrations/supabase/client';
+import { KnowledgeArea, KnowledgeItem } from '../../data/ai-knowledge/types';
+import { companyInfo } from '../../data/ai-knowledge/company-info';
+import { devices } from '../../data/ai-knowledge/devices';
+import { memberships } from '../../data/ai-knowledge/memberships';
+import { specialtyServices } from '../../data/ai-knowledge/specialty-services';
+import { support } from '../../data/ai-knowledge/support';
 
-import { createClient } from '@supabase/supabase-js';
-
-export type AIQueryType = 
-  | 'general' 
-  | 'client_search' 
-  | 'client_onboarding' 
-  | 'business_metrics'
-  | 'device_status'
-  | 'user_management'
-  | 'inventory'
-  | 'alerts';
-
-export interface AIQueryContext {
-  user?: any;
-  searchTerm?: string;
-  clientId?: number;
-  deviceId?: string;
-  section?: string;
-  [key: string]: any;
-}
+// All knowledge areas combined
+const allKnowledgeAreas: Record<string, KnowledgeItem[]> = {
+  company: companyInfo,
+  devices: devices,
+  memberships: memberships,
+  specialtyServices: specialtyServices,
+  support: support,
+};
 
 class AIKnowledgeService {
-  private supabase;
-  
+  // Fallback knowledge base in case of API errors
+  private fallbackKnowledgeBase = allKnowledgeAreas;
+  private supabaseClient;
+
   constructor() {
-    this.supabase = createClient(
-      import.meta.env.VITE_SUPABASE_URL || '',
-      import.meta.env.VITE_SUPABASE_ANON_KEY || ''
-    );
-  }
-  
-  async fetchData(queryType: AIQueryType, context: AIQueryContext): Promise<any> {
-    // This is a mock implementation that simulates different data responses
-    // In a real implementation, this would call APIs or database queries
-    
-    // Simulate API latency
-    await new Promise(resolve => setTimeout(resolve, 600));
-    
-    switch (queryType) {
-      case 'client_search':
-        return this.getMockClientSearchResults(context);
-      case 'business_metrics':
-        return this.getMockBusinessMetrics(context);
-      case 'device_status':
-        return this.getMockDeviceStatus(context);
-      case 'user_management':
-        return this.getMockUserManagement(context);
-      case 'inventory':
-        return this.getMockInventory(context);
-      case 'alerts':
-        return this.getMockAlerts(context);
-      default:
-        return { message: "No specific data available for this query type." };
+    try {
+      // Use the existing supabase client instead of creating a new one
+      this.supabaseClient = supabase;
+      console.log('AIKnowledgeService: Successfully connected to Supabase client');
+    } catch (error) {
+      console.error('AIKnowledgeService: Error initializing Supabase client, using fallback knowledge base', error);
+      this.supabaseClient = null;
     }
   }
-  
-  private getMockClientSearchResults(context: AIQueryContext) {
-    const searchTerm = context.searchTerm?.toLowerCase() || '';
-    
-    // Mock client data
-    const allClients = [
-      { id: 1, name: 'María García', status: 'active', devices: 2 },
-      { id: 2, name: 'Juan Rodríguez', status: 'active', devices: 1 },
-      { id: 3, name: 'Ana Martínez', status: 'inactive', devices: 0 },
-      { id: 4, name: 'Pedro López', status: 'active', devices: 3 },
-      { id: 5, name: 'Sofía Sánchez', status: 'pending', devices: 1 }
-    ];
-    
-    // Filter clients by search term
-    const matchingClients = searchTerm
-      ? allClients.filter(client => 
-          client.name.toLowerCase().includes(searchTerm) || 
-          client.id.toString() === searchTerm
-        )
-      : allClients;
-    
-    return { matchingClients };
+
+  /**
+   * Get knowledge items for a specific area
+   */
+  async getKnowledgeArea(area: KnowledgeArea): Promise<KnowledgeItem[]> {
+    try {
+      // If we don't have a working Supabase client, use fallback data
+      if (!this.supabaseClient) {
+        console.log(`AIKnowledgeService: Using fallback data for ${area}`);
+        return this.fallbackKnowledgeBase[area] || [];
+      }
+
+      // Otherwise try to fetch from Supabase
+      const { data, error } = await this.supabaseClient
+        .from('knowledge_base')
+        .select('*')
+        .eq('area', area);
+
+      if (error) {
+        console.error('AIKnowledgeService: Error fetching knowledge area:', error);
+        return this.fallbackKnowledgeBase[area] || [];
+      }
+
+      return data.length > 0 ? data : this.fallbackKnowledgeBase[area] || [];
+    } catch (error) {
+      console.error(`AIKnowledgeService: Error in getKnowledgeArea for ${area}:`, error);
+      return this.fallbackKnowledgeBase[area] || [];
+    }
   }
-  
-  private getMockBusinessMetrics(context: AIQueryContext) {
-    return {
-      activeClients: 78,
-      newClients: 12,
-      revenueGenerated: '€18,540',
-      activeDevices: 123,
-      alertsHandled: 45
-    };
+
+  /**
+   * Search across all knowledge areas
+   */
+  async searchKnowledge(query: string): Promise<KnowledgeItem[]> {
+    try {
+      // If we don't have a working Supabase client, search in fallback data
+      if (!this.supabaseClient) {
+        console.log(`AIKnowledgeService: Using fallback data for search: ${query}`);
+        return this.searchFallbackKnowledge(query);
+      }
+
+      // Otherwise try to search in Supabase
+      const { data, error } = await this.supabaseClient
+        .from('knowledge_base')
+        .select('*')
+        .textSearch('content', query, {
+          config: 'english',
+        });
+
+      if (error) {
+        console.error('AIKnowledgeService: Error searching knowledge:', error);
+        return this.searchFallbackKnowledge(query);
+      }
+
+      return data.length > 0 ? data : this.searchFallbackKnowledge(query);
+    } catch (error) {
+      console.error(`AIKnowledgeService: Error in searchKnowledge for ${query}:`, error);
+      return this.searchFallbackKnowledge(query);
+    }
   }
-  
-  private getMockDeviceStatus(context: AIQueryContext) {
-    return {
-      totalDevices: 143,
-      activeDevices: 123,
-      inactiveDevices: 15,
-      maintenanceRequired: 5,
-      batteryLow: 8
-    };
-  }
-  
-  private getMockUserManagement(context: AIQueryContext) {
-    return {
-      activeUsers: 24,
-      admins: 3,
-      callCenterAgents: 12,
-      fieldTechnicians: 9
-    };
-  }
-  
-  private getMockInventory(context: AIQueryContext) {
-    return {
-      totalProducts: 15,
-      lowStock: 3,
-      pendingOrders: 8,
-      recentDeliveries: 12
-    };
-  }
-  
-  private getMockAlerts(context: AIQueryContext) {
-    return {
-      pendingAlerts: 8,
-      resolvedToday: 14,
-      criticalAlerts: 2,
-      averageResponseTime: '4.5 min'
-    };
+
+  /**
+   * Fallback search implementation using local data
+   */
+  private searchFallbackKnowledge(query: string): KnowledgeItem[] {
+    const lowercaseQuery = query.toLowerCase();
+    const results: KnowledgeItem[] = [];
+
+    // Search through all knowledge areas
+    Object.values(this.fallbackKnowledgeBase).forEach((items) => {
+      items.forEach((item) => {
+        if (
+          item.title.toLowerCase().includes(lowercaseQuery) ||
+          item.content.toLowerCase().includes(lowercaseQuery)
+        ) {
+          results.push(item);
+        }
+      });
+    });
+
+    return results;
   }
 }
 
+// Singleton instance
 export const aiKnowledgeService = new AIKnowledgeService();

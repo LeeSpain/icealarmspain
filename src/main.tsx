@@ -15,6 +15,15 @@ const checkStyles = () => {
   console.log("Body color:", bodyStyles.color);
 }
 
+// Remove loading indicator when app is ready
+const removeLoadingIndicator = () => {
+  const loadingEl = document.querySelector('.loading-indicator');
+  if (loadingEl) {
+    loadingEl.remove();
+    console.log("Loading indicator removed");
+  }
+}
+
 // Safely render the app with error boundary
 const renderApp = () => {
   // Check if the root element exists
@@ -45,6 +54,9 @@ const renderApp = () => {
       console.log("React app rendered successfully");
       // Check styles after rendering
       setTimeout(checkStyles, 100);
+      
+      // Remove loading indicator after successful render
+      setTimeout(removeLoadingIndicator, 300);
     } catch (error) {
       console.error("Error rendering React app:", error);
       // Provide visual feedback for errors
@@ -77,6 +89,9 @@ const renderApp = () => {
         </React.StrictMode>,
       )
       console.log("React app rendered in fallback root");
+      
+      // Remove loading indicator after successful render
+      setTimeout(removeLoadingIndicator, 300);
     } catch (error) {
       console.error("Error rendering in fallback root:", error);
     }
@@ -87,4 +102,4 @@ const renderApp = () => {
 renderApp();
 
 // Also try rendering after a short delay as a fallback
-setTimeout(renderApp, 500);
+setTimeout(renderApp, 300);
