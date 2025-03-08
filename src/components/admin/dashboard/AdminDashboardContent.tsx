@@ -14,21 +14,15 @@ import PlaceholderSection from "@/components/admin/PlaceholderSection";
 
 // Import the type definitions
 import type { UserManagementProps } from "@/components/admin/UserManagement.d";
+import type { ClientManagementProps } from "@/components/admin/ClientManagement.d";
+import type { ClientOnboardingProps } from "@/components/admin/ClientOnboarding.d";
+import type { DeviceManagementProps } from "@/components/admin/DeviceManagement.d";
+import type { AlertsManagementProps } from "@/components/admin/AlertsManagement.d";
+import type { AdminUsersManagementProps } from "@/components/admin/AdminUsersManagement.d";
 import type { RolesManagementProps } from "@/components/admin/RolesManagement.d";
+import type { PermissionsManagementProps } from "@/components/admin/PermissionsManagement.d";
 import type { InventoryManagementProps } from "@/components/admin/InventoryManagement.d";
-
-// Define common interfaces for components that don't have explicit type definitions
-interface CommonActionProps {
-  onAction: (action: string) => void;
-}
-
-// Define combined props for components with specific props plus the common action prop
-type ClientManagementProps = CommonActionProps;
-type ClientOnboardingProps = CommonActionProps;
-type DeviceManagementProps = CommonActionProps;
-type AlertsManagementProps = CommonActionProps;
-type AdminUsersManagementProps = CommonActionProps;
-type PermissionsManagementProps = CommonActionProps;
+import type { PlaceholderSectionProps } from "@/components/admin/PlaceholderSection.d";
 
 interface AdminDashboardContentProps {
   activeSection: string;
