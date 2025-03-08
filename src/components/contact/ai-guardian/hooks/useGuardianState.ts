@@ -1,7 +1,7 @@
 
 import { useState } from "react";
 import { toast } from "@/components/ui/use-toast";
-import { MessageType, KnowledgeAreaType } from "../types";
+import { MessageType } from "../types";
 import { determineKnowledgeArea, getAreaName } from "../utils/knowledgeAreaUtils";
 import { getEnhancedResponse } from "../services/aiResponseService";
 
