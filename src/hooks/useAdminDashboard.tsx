@@ -1,7 +1,8 @@
 
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { toast } from 'react-toastify';
+// Remove toast import
+// import { toast } from 'react-toastify';
 import { useAuth } from "@/context/auth";
 import { useLanguage } from "@/context/LanguageContext";
 import { DashboardActivity } from "@/components/admin/dashboard/ActivityManager";
@@ -63,10 +64,11 @@ export const useAdminDashboard = () => {
         console.log("AdminDashboard - User authenticated with correct role");
         fetchDashboardData();
         
-        if (user) {
-          const timeOfDay = getTimeOfDay();
-          toast.success(`${timeOfDay}, ${user.displayName || user.email?.split('@')[0] || 'Admin'}! Welcome to IceAlarm España admin dashboard.`);
-        }
+        // Remove toast notification
+        // if (user) {
+        //   const timeOfDay = getTimeOfDay();
+        //   toast.success(`${timeOfDay}, ${user.displayName || user.email?.split('@')[0] || 'Admin'}! Welcome to IceAlarm España admin dashboard.`);
+        // }
       }
     }
   }, [isAuthenticated, user, navigate, isLoading]);
@@ -101,7 +103,8 @@ export const useAdminDashboard = () => {
       setDashboardData(data);
     } catch (error) {
       console.error("Error fetching dashboard data:", error);
-      toast.error("Failed to load dashboard data. Please refresh the page.");
+      // Remove toast notification
+      // toast.error("Failed to load dashboard data. Please refresh the page.");
     }
   };
 

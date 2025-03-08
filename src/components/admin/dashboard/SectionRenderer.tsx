@@ -1,84 +1,76 @@
-
 import React from "react";
-import DashboardMetrics from "@/components/admin/DashboardMetrics";
-import UserManagement from "@/components/admin/UserManagement";
-import PlaceholderSection from "@/components/admin/PlaceholderSection";
-import AlertsManagement from "@/components/admin/AlertsManagement";
-import InventoryManagement from "@/components/admin/InventoryManagement";
-import ClientManagement from "@/components/admin/ClientManagement";
-import ClientOnboarding from "@/components/admin/ClientOnboarding";
-import DeviceManagement from "@/components/admin/DeviceManagement";
-import AdminUsersManagement from "@/components/admin/AdminUsersManagement";
-import RolesManagement from "@/components/admin/RolesManagement";
-import PermissionsManagement from "@/components/admin/PermissionsManagement";
-
-// Import the type definitions
-import type { UserManagementProps } from "@/components/admin/UserManagement.d";
-import type { ClientManagementProps } from "@/components/admin/ClientManagement.d";
-import type { ClientOnboardingProps } from "@/components/admin/ClientOnboarding.d";
-import type { DeviceManagementProps } from "@/components/admin/DeviceManagement.d";
-import type { AlertsManagementProps } from "@/components/admin/AlertsManagement.d";
-import type { AdminUsersManagementProps } from "@/components/admin/AdminUsersManagement.d";
-import type { RolesManagementProps } from "@/components/admin/RolesManagement.d";
-import type { PermissionsManagementProps } from "@/components/admin/PermissionsManagement.d";
-import type { InventoryManagementProps } from "@/components/admin/InventoryManagement.d";
-import type { PlaceholderSectionProps } from "@/components/admin/PlaceholderSection.d";
+import { PlaceholderSection } from "../PlaceholderSection";
+import DeviceManagement from "../DeviceManagement";
+import RolesManagement from "../RolesManagement";
+import PermissionsManagement from "../PermissionsManagement";
+import AlertsManagement from "../AlertsManagement";
+import ClientOnboarding from "../ClientOnboarding";
+import AdminUsersManagement from "../AdminUsersManagement";
+import ClientManagement from "../ClientManagement";
+import UserManagement from "../UserManagement";
+import DashboardMetrics from "../DashboardMetrics";
+import DeviceMonitoringDashboard from "../DeviceMonitoringDashboard";
+import DeviceMaintenanceSchedule from "../DeviceMaintenanceSchedule";
+import DeviceInventoryManager from "../DeviceInventoryManager";
 
 interface SectionRendererProps {
-  activeSection: string;
+  section: string;
   dashboardData: any;
-  onActivityAdded: (type: string, description: string) => void;
+  onAction?: (action: string) => void;
 }
 
-const SectionRenderer: React.FC<SectionRendererProps> = ({
-  activeSection,
+export const SectionRenderer: React.FC<SectionRendererProps> = ({
+  section,
   dashboardData,
-  onActivityAdded
+  onAction
 }) => {
-  const addActivity = (type: string, action: string) => {
-    onActivityAdded(type, action);
-  };
-
-  const renderSection = () => {
-    switch (activeSection) {
-      case "dashboard":
-        return <DashboardMetrics dashboardMetrics={dashboardData} />;
-      case "users":
-        return <UserManagement onAction={(action: string) => { addActivity("User", action); }} />;
-      case "clients":
-        return <ClientManagement onAction={(action: string) => { addActivity("Client", action); }} />;
-      case "client-onboarding":
-        return <ClientOnboarding onAction={(action: string) => { addActivity("Client", action); }} />;
-      case "devices":
-        return <DeviceManagement onAction={(action: string) => { addActivity("Device", action); }} />;
-      case "alerts":
-        return <AlertsManagement onAction={(action: string) => { addActivity("Alert", action); }} />;
-      case "admin-users":
-        return <AdminUsersManagement onAction={(action: string) => { addActivity("Admin", action); }} />;
-      case "roles":
-        return <RolesManagement onAction={(action: string) => { addActivity("Role", action); }} />;
-      case "permissions":
-        return <PermissionsManagement onAction={(action: string) => { addActivity("Permission", action); }} />;
-      case "orders-list":
-        return <InventoryManagement 
-          section="orders-list"
-          onAction={(action: string) => { addActivity("Inventory", action); }}
-        />;
-      case "inventory":
-        return <InventoryManagement 
-          section="inventory"
-          onAction={(action: string) => { addActivity("Inventory", action); }}
-        />;
-      default:
-        return <PlaceholderSection 
-          title={activeSection.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')} 
-          description={`Manage ${activeSection.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')} section`} 
-          onAction={(action) => { addActivity(activeSection.charAt(0).toUpperCase() + activeSection.slice(1), action); }}
-        />;
-    }
-  };
-
-  return renderSection();
+  switch (section) {
+    case "dashboard":
+      return <DashboardMetrics data={dashboardData} />;
+    
+    // User Management
+    case "user-management": 
+      return <UserManagement />;
+    
+    case "admin-users":
+      return <AdminUsersManagement onAction={onAction} />;
+      
+    case "client-management":
+      return <ClientManagement onAction={onAction} />;
+      
+    case "roles":
+      return <RolesManagement onAction={onAction} />;
+      
+    case "permissions":
+      return <PermissionsManagement onAction={onAction} />;
+      
+    // Device Management  
+    case "devices":
+      return <DeviceManagement />;
+      
+    case "device-monitoring":
+      return <DeviceMonitoringDashboard />;
+      
+    case "device-maintenance":
+      return <DeviceMaintenanceSchedule />;
+      
+    case "alerts-management":
+      return <AlertsManagement onAction={onAction} />;
+      
+    case "client-onboarding":
+      return <ClientOnboarding onAction={onAction} />;
+      
+    case "device-inventory":
+      return <DeviceInventoryManager />;
+      
+    default:
+      return (
+        <PlaceholderSection
+          section={section}
+          onAction={onAction}
+        />
+      );
+  }
 };
 
 export default SectionRenderer;

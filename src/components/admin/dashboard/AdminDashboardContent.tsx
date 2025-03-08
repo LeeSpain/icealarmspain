@@ -1,79 +1,91 @@
-
 import React from "react";
-import SectionRenderer from "@/components/admin/dashboard/SectionRenderer";
-import UserManagement from "@/components/admin/UserManagement";
-import ClientManagement from "@/components/admin/ClientManagement";
-import ClientOnboarding from "@/components/admin/ClientOnboarding";
-import DeviceManagement from "@/components/admin/DeviceManagement";
-import AlertsManagement from "@/components/admin/AlertsManagement";
-import AdminUsersManagement from "@/components/admin/AdminUsersManagement";
-import RolesManagement from "@/components/admin/RolesManagement";
-import PermissionsManagement from "@/components/admin/PermissionsManagement";
-import InventoryManagement from "@/components/admin/InventoryManagement";
-import PlaceholderSection from "@/components/admin/PlaceholderSection";
-
-// Import the type definitions
-import type { UserManagementProps } from "@/components/admin/UserManagement.d";
-import type { ClientManagementProps } from "@/components/admin/ClientManagement.d";
-import type { ClientOnboardingProps } from "@/components/admin/ClientOnboarding.d";
-import type { DeviceManagementProps } from "@/components/admin/DeviceManagement.d";
-import type { AlertsManagementProps } from "@/components/admin/AlertsManagement.d";
-import type { AdminUsersManagementProps } from "@/components/admin/AdminUsersManagement.d";
-import type { RolesManagementProps } from "@/components/admin/RolesManagement.d";
-import type { PermissionsManagementProps } from "@/components/admin/PermissionsManagement.d";
-import type { InventoryManagementProps } from "@/components/admin/InventoryManagement.d";
-import type { PlaceholderSectionProps } from "@/components/admin/PlaceholderSection.d";
+import SectionRenderer from "./SectionRenderer";
+import UserManagement from "../UserManagement";
+import AdminUsersManagement from "../AdminUsersManagement";
+import DashboardMetrics from "../DashboardMetrics";
+import DeviceManagement from "../DeviceManagement";
+import RolesManagement from "../RolesManagement";
+import PermissionsManagement from "../PermissionsManagement";
+import AlertsManagement from "../AlertsManagement";
+import ClientOnboarding from "../ClientOnboarding";
+import ClientManagement from "../ClientManagement";
+import DeviceMonitoringDashboard from "../DeviceMonitoringDashboard";
+import DeviceMaintenanceSchedule from "../DeviceMaintenanceSchedule";
+import DeviceInventoryManager from "../DeviceInventoryManager";
 
 interface AdminDashboardContentProps {
   activeSection: string;
   dashboardData: any;
-  addActivity: (type: string, description: string) => void;
+  addActivity: (type: string, description: string) => string;
 }
 
-const AdminDashboardContent: React.FC<AdminDashboardContentProps> = ({
+export const AdminDashboardContent: React.FC<AdminDashboardContentProps> = ({
   activeSection,
   dashboardData,
   addActivity
 }) => {
-  switch (activeSection) {
-    case 'dashboard':
-      return (
-        <SectionRenderer 
-          activeSection="dashboard" 
-          dashboardData={dashboardData}
-          onActivityAdded={addActivity}
-        />
-      );
-    case 'users':
-      return <UserManagement onAction={(action: string) => { addActivity("User", action); }} />;
-    case 'clients':
-      return <ClientManagement onAction={(action: string) => { addActivity("Client", action); }} />;
-    case 'devices':
-      return <DeviceManagement onAction={(action: string) => { addActivity("Device", action); }} />;
-    case 'alerts':
-      return <AlertsManagement onAction={(action: string) => { addActivity("Alert", action); }} />;
-    case 'admin-users':
-      return <AdminUsersManagement onAction={(action: string) => { addActivity("Admin", action); }} />;
-    case 'roles':
-      return <RolesManagement onAction={(action: string) => { addActivity("Role", action); }} />;
-    case 'permissions':
-      return <PermissionsManagement onAction={(action: string) => { addActivity("Permission", action); }} />;
-    case 'client-onboarding':
-      return <ClientOnboarding onAction={(action: string) => { addActivity("Client", action); }} />;
-    case 'inventory':
-      return <InventoryManagement 
-        section="inventory"
-        onAction={(action: string) => { addActivity("Inventory", action); }} 
-      />;
-    default:
-      return (
-        <PlaceholderSection 
-          title={activeSection.charAt(0).toUpperCase() + activeSection.slice(1)} 
-          description={`This is the ${activeSection} section of the admin dashboard.`}
-          onAction={(action) => { addActivity(activeSection.charAt(0).toUpperCase() + activeSection.slice(1), action); }}
-        />
-      );
-  }
+  const handleAction = (action: string) => {
+    addActivity("User", `Performed action: ${action}`);
+  };
+
+  // Dynamic rendering based on activeSection
+  const renderContent = () => {
+    switch (activeSection) {
+      case "dashboard":
+        return <DashboardMetrics data={dashboardData} />;
+        
+      // User Management
+      case "user-management":
+        return <UserManagement />;
+        
+      case "admin-users":
+        return <AdminUsersManagement onAction={handleAction} />;
+        
+      case "client-management":
+        return <ClientManagement onAction={handleAction} />;
+        
+      case "roles":
+        return <RolesManagement onAction={handleAction} />;
+        
+      case "permissions":
+        return <PermissionsManagement onAction={handleAction} />;
+        
+      // Device Management
+      case "devices":
+        return <DeviceManagement />;
+        
+      case "device-monitoring":
+        return <DeviceMonitoringDashboard />;
+        
+      case "device-maintenance":
+        return <DeviceMaintenanceSchedule />;
+        
+      case "alerts-management":
+        return <AlertsManagement onAction={handleAction} />;
+        
+      case "client-onboarding":
+        return <ClientOnboarding onAction={handleAction} />;
+        
+      case "device-inventory":
+        return <DeviceInventoryManager />;
+        
+      // Default case - delegate to SectionRenderer for other sections
+      default:
+        return (
+          <SectionRenderer
+            section={activeSection}
+            dashboardData={dashboardData}
+            onAction={handleAction}
+          />
+        );
+    }
+  };
+
+  return (
+    <div>
+      {renderContent()}
+    </div>
+  );
 };
 
 export default AdminDashboardContent;

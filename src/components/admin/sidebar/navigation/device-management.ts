@@ -2,6 +2,11 @@
 import {
   Smartphone,
   Settings,
+  AlertTriangle,
+  BarChart,
+  ClipboardCheck,
+  HardDrive,
+  UserPlus
 } from 'lucide-react';
 import { NavItem } from './types';
 
@@ -22,7 +27,7 @@ export const deviceManagementItems: NavItem = {
     },
     {
       name: 'Device Monitoring',
-      icon: Smartphone,
+      icon: BarChart,
       path: '/admin/device-monitoring',
       section: 'device-monitoring',
       roles: ['admin'],
@@ -34,5 +39,26 @@ export const deviceManagementItems: NavItem = {
       section: 'device-maintenance',
       roles: ['admin'],
     },
+    {
+      name: 'Alerts Management',
+      icon: AlertTriangle,
+      path: '/admin/alerts-management',
+      section: 'alerts-management',
+      roles: ['admin'],
+    },
+    {
+      name: 'Client Onboarding',
+      icon: UserPlus,
+      path: '/admin/client-onboarding',
+      section: 'client-onboarding',
+      roles: ['admin'],
+    },
+    {
+      name: 'Inventory',
+      icon: HardDrive,
+      path: '/admin/device-inventory',
+      section: 'device-inventory',
+      roles: ['admin'],
+    }
   ]
 };

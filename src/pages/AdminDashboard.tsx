@@ -1,7 +1,8 @@
 
 import React from "react";
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+// Remove import for ToastContainer
+// import { ToastContainer } from 'react-toastify';
+// import 'react-toastify/dist/ReactToastify.css';
 
 // Admin components
 import Sidebar from "@/components/admin/Sidebar";
@@ -52,7 +53,7 @@ const AdminDashboard: React.FC = () => {
 
   return (
     <div className="flex h-screen bg-ice-50/30">
-      <ToastContainer />
+      {/* Remove ToastContainer */}
       
       <Sidebar 
         activeSection={activeSection}
