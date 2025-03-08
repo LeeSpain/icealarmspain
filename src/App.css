@@ -6,8 +6,8 @@ html, body {
   font-family: 'Inter', sans-serif;
   min-height: 100vh;
   width: 100%;
-  background-color: white !important;
-  color: black !important;
+  background-color: white;
+  color: black;
 }
 
 body {
@@ -23,44 +23,10 @@ body {
   color: black;
 }
 
-/* Root element styling */
-#root {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-  width: 100%;
-  background-color: white;
-  color: black;
-}
-
 /* Main content area */
 main {
   flex: 1;
   background-color: white;
   color: black;
   padding-top: 4rem;
-}
-
-/* Utility classes */
-.flex-col {
-  display: flex !important;
-  flex-direction: column !important;
-}
-
-.min-h-screen {
-  min-height: 100vh !important;
-}
-
-/* Debugging helpers */
-.debug-border {
-  border: 2px solid red;
-}
-
-/* Ensure visibility */
-.visible-container {
-  background-color: white !important;
-  color: black !important;
-  display: flex !important;
-  flex-direction: column !important;
-  min-height: 100vh !important;
 }

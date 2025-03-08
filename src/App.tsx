@@ -1,4 +1,5 @@
-import React, { useEffect } from 'react';
+
+import React from 'react';
 import './App.css';
 import Navbar from "./components/Navbar";
 import Hero from "./components/Hero";
@@ -32,12 +33,8 @@ import MedicationsPage from "./pages/MedicationsPage";
 
 // Landing page component
 const Landing = () => {
-  useEffect(() => {
-    console.log("Landing component rendered");
-  }, []);
-  
   return (
-    <div className="visible-container" style={{backgroundColor: 'white', color: 'black'}}>
+    <div>
       <Hero />
       <DeviceShowcase />
       <Pricing />
@@ -47,42 +44,14 @@ const Landing = () => {
 };
 
 function App() {
-  useEffect(() => {
-    console.log("App component mounted");
-    document.body.style.backgroundColor = "white";
-    document.body.style.color = "black";
-    
-    // Add additional debugging
-    const rootElement = document.getElementById('root');
-    console.log("Root element in App:", rootElement);
-    
-    const bodyElement = document.body;
-    console.log("Body styles in App:", {
-      backgroundColor: window.getComputedStyle(bodyElement).backgroundColor,
-      color: window.getComputedStyle(bodyElement).color
-    });
-  }, []);
-  
   return (
     <Router>
       <LanguageProvider>
         <AuthProvider>
-          <div className="visible-container" style={{
-            display: 'flex',
-            flexDirection: 'column',
-            minHeight: '100vh',
-            backgroundColor: 'white', 
-            color: 'black',
-          }}>
+          <div className="App">
             <Navbar />
             
-            <main className="visible-container" style={{
-              flexGrow: 1,
-              position: 'relative',
-              paddingTop: '4rem',
-              backgroundColor: 'white',
-              color: 'black',
-            }}>
+            <main>
               <Routes>
                 <Route path="/" element={<Landing />} />
                 <Route path="/about" element={<AboutUs />} />

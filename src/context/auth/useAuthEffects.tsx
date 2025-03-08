@@ -11,7 +11,6 @@ interface UseAuthEffectsProps {
 
 export const useAuthEffects = ({ setUser, setIsLoading }: UseAuthEffectsProps) => {
   const isMounted = useRef(true);
-  const authChecked = useRef(false);
 
   // Set up cleanup function to prevent memory leaks
   useEffect(() => {
@@ -24,141 +23,81 @@ export const useAuthEffects = ({ setUser, setIsLoading }: UseAuthEffectsProps) =
   useEffect(() => {
     console.log('Setting up auth state listener');
     
-    // Check if the user session exists
-    const checkSession = async () => {
-      try {
-        console.log("Checking for existing session...");
-        setIsLoading(true);
-        
-        // Set a flag to ensure we don't get stuck
-        let sessionChecked = false;
-        
-        // Set a timeout to ensure we don't get stuck in loading state
-        const timeoutId = setTimeout(() => {
-          if (!sessionChecked && isMounted.current) {
-            console.log("Session check timed out, continuing without auth");
-            if (isMounted.current) {
-              authChecked.current = true;
-              setIsLoading(false);
-              setUser(null);
-            }
-          }
-        }, 800); // Reduced timeout to 800ms to prevent getting stuck
-        
-        // Try to get the session, but don't block rendering on this
-        supabase.auth.getSession().then(({ data, error }) => {
-          sessionChecked = true;
-          clearTimeout(timeoutId);
-          
-          if (error) {
-            console.error("Session check error:", error);
-            // Don't throw the error, just log it
-          }
-          
-          console.log("Session check result:", data?.session ? "Session found" : "No session found");
-          
-          if (data?.session?.user) {
-            const supabaseUser = data.session.user;
-            const role = determineUserRole(supabaseUser.email || '');
-            
-            const user: User = {
-              uid: supabaseUser.id,
-              id: supabaseUser.id,
-              email: supabaseUser.email,
-              name: supabaseUser.user_metadata?.name || supabaseUser.email?.split('@')[0],
-              displayName: supabaseUser.user_metadata?.name || supabaseUser.email?.split('@')[0],
-              role,
-              profileCompleted: !!supabaseUser.user_metadata?.name,
-              language: localStorage.getItem('language') || 'en',
-              lastLogin: new Date().toISOString(),
-              createdAt: supabaseUser.created_at,
-            };
-            
-            if (isMounted.current) {
-              setUser(user);
-              console.log('User authenticated from session:', user.email, 'Role:', user.role);
-            }
-          } else {
-            // No session found, ensure user is set to null
-            if (isMounted.current) {
-              setUser(null);
-            }
-          }
-          
-          if (isMounted.current) {
-            authChecked.current = true;
-            setIsLoading(false);
-          }
-        }).catch(error => {
-          sessionChecked = true;
-          clearTimeout(timeoutId);
-          console.error('Error checking session:', error);
-          if (isMounted.current) {
-            authChecked.current = true;
-            setIsLoading(false);
-            setUser(null);
-          }
-        });
-      } catch (error) {
-        console.error('Error in checkSession:', error);
+    // Set loading to true initially
+    setIsLoading(true);
+    
+    // Check for existing session
+    supabase.auth.getSession().then(({ data, error }) => {
+      if (error) {
+        console.error("Session check error:", error);
         if (isMounted.current) {
-          authChecked.current = true;
           setIsLoading(false);
           setUser(null);
         }
+        return;
       }
-    };
-    
-    // Initial session check
-    checkSession();
-    
-    // Set up auth state change listener, but don't block rendering on this
-    let authListener;
-    try {
-      authListener = supabase.auth.onAuthStateChange((event, session) => {
-        console.log('Auth state changed:', event, session ? 'Session exists' : 'No session');
+      
+      if (data?.session?.user) {
+        const supabaseUser = data.session.user;
+        const role = determineUserRole(supabaseUser.email || '');
         
-        if (!isMounted.current) return;
-        
-        // Set loading to false no matter what to ensure we don't get stuck
         if (isMounted.current) {
-          setIsLoading(false);
+          setUser({
+            uid: supabaseUser.id,
+            id: supabaseUser.id,
+            email: supabaseUser.email,
+            name: supabaseUser.user_metadata?.name || supabaseUser.email?.split('@')[0],
+            displayName: supabaseUser.user_metadata?.name || supabaseUser.email?.split('@')[0],
+            role,
+            profileCompleted: !!supabaseUser.user_metadata?.name,
+            language: localStorage.getItem('language') || 'en',
+            lastLogin: new Date().toISOString(),
+            createdAt: supabaseUser.created_at,
+          });
         }
-        
-        // User is signed out
-        if (event === 'SIGNED_OUT') {
-          console.log('User signed out - setting user to null');
-          if (isMounted.current) {
-            setUser(null);
-          }
-          localStorage.removeItem('currentUser');
-        }
-      });
-    } catch (error) {
-      console.error('Error setting up auth listener:', error);
-      // Don't block rendering on this error
+      }
+      
+      if (isMounted.current) {
+        setIsLoading(false);
+      }
+    }).catch(error => {
+      console.error('Error checking session:', error);
       if (isMounted.current) {
         setIsLoading(false);
         setUser(null);
       }
-    }
-
-    // Super short fallback timeout to prevent infinite loading
-    const emergencyFallbackTimer = setTimeout(() => {
-      if (isMounted.current && !authChecked.current) {
-        console.log("Auth check emergency fallback triggered");
-        setIsLoading(false);
-        setUser(null);
+    });
+    
+    // Set up auth state change listener
+    const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
+      console.log('Auth state changed:', event);
+      
+      if (!isMounted.current) return;
+      
+      if (event === 'SIGNED_OUT') {
+        console.log('User signed out');
+        if (isMounted.current) {
+          setUser(null);
+        }
       }
-    }, 2000); // Ensure we don't get stuck longer than 2 seconds
+      
+      // Set loading to false no matter what to ensure we don't get stuck
+      if (isMounted.current) {
+        setIsLoading(false);
+      }
+    });
+
+    // Emergency timeout to prevent infinite loading
+    const timeout = setTimeout(() => {
+      if (isMounted.current) {
+        setIsLoading(false);
+      }
+    }, 1500);
 
     // Cleanup subscription
     return () => {
-      console.log('Cleaning up auth listener');
-      if (authListener) {
-        authListener.subscription.unsubscribe();
-      }
-      clearTimeout(emergencyFallbackTimer);
+      authListener.subscription.unsubscribe();
+      clearTimeout(timeout);
       isMounted.current = false;
     };
   }, [setUser, setIsLoading]);
