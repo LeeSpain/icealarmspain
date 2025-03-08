@@ -4,7 +4,6 @@ import { Helmet } from "react-helmet-async";
 import { useLanguage } from "@/context/LanguageContext";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import PageHeader from "@/components/common/PageHeader";
 import EnhancedAIGuardianSection from "@/components/contact/EnhancedAIGuardianSection";
 import ContactForm from "@/components/contact/ContactForm";
 
@@ -29,15 +28,6 @@ const Contact: React.FC = () => {
       <Navbar />
       
       <main className="min-h-screen">
-        <PageHeader 
-          title={pageTitle}
-          subtitle={
-            language === 'en' 
-              ? "We're here to help with any questions or concerns you may have."
-              : "Estamos aquí para ayudarte con cualquier pregunta o inquietud que puedas tener."
-          }
-        />
-        
         {/* AI Guardian Section - Now at the top */}
         <EnhancedAIGuardianSection />
         
