@@ -8,6 +8,7 @@ import Sidebar from "@/components/admin/Sidebar";
 import AdminDashboardLoading from "@/components/admin/dashboard/AdminDashboardLoading";
 import DashboardRedirectingState from "@/components/admin/dashboard/DashboardRedirectingState";
 import AdminDashboardContent from "@/components/admin/dashboard/AdminDashboardContent";
+import AdminAIIntegration from "@/components/admin/dashboard/AdminAIIntegration";
 
 // Custom hook
 import { useAdminDashboard } from "@/hooks/useAdminDashboard";
@@ -34,6 +35,21 @@ const AdminDashboard: React.FC = () => {
     return <DashboardRedirectingState language={language} />;
   }
 
+  // Handle navigation requested by AI
+  const handleAINavigation = (section: string, params?: any) => {
+    handleSectionChange(section);
+    
+    // Add activity for this navigation
+    addActivity(
+      "System", 
+      language === 'en' 
+        ? `AI Assistant navigated to ${section}` 
+        : `Asistente de IA navegó a ${section}`
+    );
+    
+    // Additional handling for specific parameters could go here
+  };
+
   return (
     <div className="flex h-screen bg-ice-50/30">
       <ToastContainer />
@@ -55,6 +71,12 @@ const AdminDashboard: React.FC = () => {
           />
         </div>
       </div>
+      
+      {/* AI Assistant Integration */}
+      <AdminAIIntegration 
+        activeSection={activeSection}
+        onNavigate={handleAINavigation}
+      />
     </div>
   );
 };
