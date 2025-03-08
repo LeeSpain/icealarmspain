@@ -5,10 +5,8 @@ import { useLanguage } from "@/context/LanguageContext";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import PageHeader from "@/components/common/PageHeader";
-import ContactHero from "@/components/contact/ContactHero";
-import ContactCards from "@/components/contact/ContactCards";
-import VisitUsSection from "@/components/contact/VisitUsSection";
 import EnhancedAIGuardianSection from "@/components/contact/EnhancedAIGuardianSection";
+import ContactForm from "@/components/contact/ContactForm";
 
 const Contact: React.FC = () => {
   const { language } = useLanguage();
@@ -40,15 +38,26 @@ const Contact: React.FC = () => {
           }
         />
         
-        <ContactHero />
-        
-        <div className="container mx-auto px-4 py-16">
-          <ContactCards />
-        </div>
-        
+        {/* AI Guardian Section - Now at the top */}
         <EnhancedAIGuardianSection />
         
-        <VisitUsSection />
+        {/* Email Contact Section */}
+        <div className="container mx-auto px-4 py-16">
+          <div className="text-center mb-8">
+            <h2 className="text-2xl md:text-3xl font-bold mb-3">
+              {language === 'en' ? 'Email Us' : 'Envíenos un Email'}
+            </h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              {language === 'en' 
+                ? 'Fill out the form below to send us an email. We will respond within 24 hours.' 
+                : 'Complete el formulario a continuación para enviarnos un correo electrónico. Responderemos dentro de las 24 horas.'}
+            </p>
+          </div>
+          
+          <div className="max-w-2xl mx-auto">
+            <ContactForm />
+          </div>
+        </div>
       </main>
       
       <Footer />
