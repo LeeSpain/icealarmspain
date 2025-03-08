@@ -40,8 +40,8 @@ const TicketsList: React.FC<TicketsListProps> = ({
   onCreateTicket
 }) => {
   return (
-    <Card className="h-full flex flex-col">
-      <CardHeader className="pb-3">
+    <Card className="h-full flex flex-col overflow-hidden">
+      <CardHeader className="pb-2">
         <div className="flex justify-between items-center">
           <CardTitle className="text-xl flex items-center gap-2">
             <TicketIcon className="h-5 w-5" />
@@ -56,7 +56,7 @@ const TicketsList: React.FC<TicketsListProps> = ({
         </CardDescription>
         
         {/* Search Input */}
-        <div className="relative mt-2 mb-2">
+        <div className="relative mt-2">
           <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
             placeholder="Search by client or subject..."
@@ -66,90 +66,90 @@ const TicketsList: React.FC<TicketsListProps> = ({
           />
         </div>
         
-        <div className="flex gap-2 mt-2">
-          <div className="flex gap-1">
-            <Button
-              variant={statusFilter === null ? "default" : "outline"}
-              size="sm"
-              onClick={() => setStatusFilter(null)}
-              className="h-8 text-xs"
-            >
-              All
-            </Button>
-            <Button
-              variant={statusFilter === "open" ? "default" : "outline"}
-              size="sm"
-              onClick={() => setStatusFilter("open")}
-              className="h-8 text-xs"
-            >
-              <CheckCircle2 className="h-3.5 w-3.5 mr-1" />
-              Open
-            </Button>
-            <Button
-              variant={statusFilter === "pending" ? "default" : "outline"}
-              size="sm"
-              onClick={() => setStatusFilter("pending")}
-              className="h-8 text-xs"
-            >
-              <AlertCircle className="h-3.5 w-3.5 mr-1" />
-              Pending
-            </Button>
-            <Button
-              variant={statusFilter === "closed" ? "default" : "outline"}
-              size="sm"
-              onClick={() => setStatusFilter("closed")}
-              className="h-8 text-xs"
-            >
-              <XCircle className="h-3.5 w-3.5 mr-1" />
-              Closed
-            </Button>
-          </div>
+        <div className="flex flex-wrap gap-1 mt-2">
+          <Button
+            variant={statusFilter === null ? "default" : "outline"}
+            size="sm"
+            onClick={() => setStatusFilter(null)}
+            className="h-7 text-xs"
+          >
+            All
+          </Button>
+          <Button
+            variant={statusFilter === "open" ? "default" : "outline"}
+            size="sm"
+            onClick={() => setStatusFilter("open")}
+            className="h-7 text-xs"
+          >
+            <CheckCircle2 className="h-3.5 w-3.5 mr-1" />
+            Open
+          </Button>
+          <Button
+            variant={statusFilter === "pending" ? "default" : "outline"}
+            size="sm"
+            onClick={() => setStatusFilter("pending")}
+            className="h-7 text-xs"
+          >
+            <AlertCircle className="h-3.5 w-3.5 mr-1" />
+            Pending
+          </Button>
+          <Button
+            variant={statusFilter === "closed" ? "default" : "outline"}
+            size="sm"
+            onClick={() => setStatusFilter("closed")}
+            className="h-7 text-xs"
+          >
+            <XCircle className="h-3.5 w-3.5 mr-1" />
+            Closed
+          </Button>
         </div>
       </CardHeader>
-      <CardContent className="flex-grow overflow-auto">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Client</TableHead>
-              <TableHead>Subject</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Priority</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {tickets.length > 0 ? (
-              tickets.map((ticket) => (
-                <TableRow 
-                  key={ticket.id}
-                  className={`cursor-pointer ${selectedTicketId === ticket.id ? 'bg-muted' : ''}`}
-                  onClick={() => {
-                    onTicketSelect(ticket.id);
-                    onClientSelect(ticket.clientId);
-                  }}
-                >
-                  <TableCell className="font-medium">{ticket.clientName}</TableCell>
-                  <TableCell>{ticket.subject}</TableCell>
-                  <TableCell>
-                    <span className={getStatusBadge(ticket.status)}>
-                      {ticket.status.charAt(0).toUpperCase() + ticket.status.slice(1)}
-                    </span>
-                  </TableCell>
-                  <TableCell>
-                    <span className={getPriorityBadge(ticket.priority)}>
-                      {ticket.priority.charAt(0).toUpperCase() + ticket.priority.slice(1)}
-                    </span>
+      <CardContent className="overflow-auto flex-grow p-0">
+        <div className="overflow-auto h-full">
+          <Table>
+            <TableHeader className="sticky top-0 bg-background z-10">
+              <TableRow>
+                <TableHead>Client</TableHead>
+                <TableHead>Subject</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Priority</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {tickets.length > 0 ? (
+                tickets.map((ticket) => (
+                  <TableRow 
+                    key={ticket.id}
+                    className={`cursor-pointer ${selectedTicketId === ticket.id ? 'bg-muted' : ''}`}
+                    onClick={() => {
+                      onTicketSelect(ticket.id);
+                      onClientSelect(ticket.clientId);
+                    }}
+                  >
+                    <TableCell className="font-medium">{ticket.clientName}</TableCell>
+                    <TableCell>{ticket.subject}</TableCell>
+                    <TableCell>
+                      <span className={getStatusBadge(ticket.status)}>
+                        {ticket.status.charAt(0).toUpperCase() + ticket.status.slice(1)}
+                      </span>
+                    </TableCell>
+                    <TableCell>
+                      <span className={getPriorityBadge(ticket.priority)}>
+                        {ticket.priority.charAt(0).toUpperCase() + ticket.priority.slice(1)}
+                      </span>
+                    </TableCell>
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={4} className="text-center py-4 text-muted-foreground">
+                    No tickets match your search criteria
                   </TableCell>
                 </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell colSpan={4} className="text-center py-4 text-muted-foreground">
-                  No tickets match your search criteria
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
+              )}
+            </TableBody>
+          </Table>
+        </div>
       </CardContent>
     </Card>
   );

@@ -18,13 +18,13 @@ const TicketingSystem: React.FC<TicketingSystemProps> = ({ onClientSelect }) => 
   const [selectedTicket, setSelectedTicket] = useState<number | null>(null);
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [newTicket, setNewTicket] = useState<NewTicketForm>({
-    clientId: 0, // Initialize with number 0 instead of empty string
+    clientId: 0,
     clientName: "",
     subject: "",
-    description: "", // Added to match the interface
-    message: "", // Added to match the interface
-    priority: "medium", // Use literal string type
-    category: "" // Added to match the interface
+    description: "",
+    message: "",
+    priority: "medium",
+    category: ""
   });
   
   // Filter states
@@ -81,12 +81,12 @@ const TicketingSystem: React.FC<TicketingSystemProps> = ({ onClientSelect }) => 
       clientId: typeof newTicket.clientId === 'string' ? parseInt(newTicket.clientId) || tickets.length + 100 : newTicket.clientId,
       clientName: newTicket.clientName,
       subject: newTicket.subject,
-      message: newTicket.description || "", // Use description as message if provided
+      message: newTicket.description || "",
       status: "open" as const,
       priority: newTicket.priority,
       created: new Date().toISOString(),
       lastUpdated: new Date().toISOString(),
-      category: newTicket.category || "General" // Default to General if not provided
+      category: newTicket.category || "General"
     };
     
     setTickets([...tickets, newTicketObj]);
@@ -95,7 +95,7 @@ const TicketingSystem: React.FC<TicketingSystemProps> = ({ onClientSelect }) => 
     
     // Reset form
     setNewTicket({
-      clientId: 0, // Reset to number
+      clientId: 0,
       clientName: "",
       subject: "",
       description: "",
@@ -122,11 +122,11 @@ const TicketingSystem: React.FC<TicketingSystemProps> = ({ onClientSelect }) => 
     const newNote: InternalNote = {
       id: internalNotes.length + 1,
       ticketId: ticketId,
-      createdBy: "Support Agent", // Use createdBy from the interface
+      createdBy: "Support Agent",
       content: content,
       createdAt: new Date().toISOString(),
-      agentName: "Support Agent", // Add to match component usage
-      timestamp: new Date().toISOString() // Add to match component usage
+      agentName: "Support Agent",
+      timestamp: new Date().toISOString()
     };
     
     setInternalNotes([...internalNotes, newNote]);
@@ -134,9 +134,9 @@ const TicketingSystem: React.FC<TicketingSystemProps> = ({ onClientSelect }) => 
   };
   
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-full">
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 h-[calc(100vh-180px)]">
       {/* Tickets List Panel */}
-      <div className="lg:col-span-1 h-full flex flex-col">
+      <div className="md:col-span-1 h-full flex flex-col overflow-hidden">
         <TicketsList 
           tickets={filteredTickets}
           selectedTicketId={selectedTicket}
@@ -151,7 +151,7 @@ const TicketingSystem: React.FC<TicketingSystemProps> = ({ onClientSelect }) => 
       </div>
       
       {/* Ticket Details & Conversation Panel */}
-      <div className="lg:col-span-2 h-full flex flex-col">
+      <div className="md:col-span-2 h-full flex flex-col overflow-hidden">
         {ticketDetails ? (
           <TicketDetail 
             ticket={ticketDetails}

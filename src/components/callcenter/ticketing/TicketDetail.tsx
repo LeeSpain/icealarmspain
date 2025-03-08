@@ -42,16 +42,16 @@ const TicketDetail: React.FC<TicketDetailProps> = ({
   };
 
   return (
-    <Card className="h-full flex flex-col">
+    <Card className="h-full flex flex-col overflow-hidden">
       <CardHeader className="pb-3">
-        <div className="flex justify-between">
+        <div className="flex flex-col md:flex-row md:justify-between gap-2">
           <div>
             <CardTitle className="flex items-center gap-2 text-xl">
               <MessageCircle className="h-5 w-5" />
               Ticket #{ticket.id}: {ticket.subject}
             </CardTitle>
             <CardDescription className="mt-1">
-              <div className="flex gap-4">
+              <div className="flex flex-wrap gap-2 md:gap-4">
                 <div className="flex items-center gap-1">
                   <UserCircle className="h-4 w-4" />
                   <span>{ticket.clientName}</span>
@@ -73,7 +73,7 @@ const TicketDetail: React.FC<TicketDetailProps> = ({
               </div>
             </CardDescription>
           </div>
-          <div className="flex gap-2">
+          <div className="flex gap-2 mt-2 md:mt-0">
             <Button 
               variant="outline" 
               size="sm"
@@ -95,7 +95,7 @@ const TicketDetail: React.FC<TicketDetailProps> = ({
         </div>
       </CardHeader>
       
-      <Tabs defaultValue="conversation" className="flex-grow flex flex-col">
+      <Tabs defaultValue="conversation" className="flex-grow flex flex-col overflow-hidden">
         <TabsList className="mx-6 mb-2">
           <TabsTrigger value="conversation">Conversation</TabsTrigger>
           <TabsTrigger value="internal-notes" className="flex items-center gap-1">
@@ -104,7 +104,7 @@ const TicketDetail: React.FC<TicketDetailProps> = ({
           </TabsTrigger>
         </TabsList>
         
-        <TabsContent value="conversation" className="flex-grow flex flex-col mx-0 mt-0 p-0">
+        <TabsContent value="conversation" className="flex-grow flex flex-col mx-0 mt-0 p-0 overflow-hidden">
           <CardContent className="flex-grow overflow-auto space-y-4 p-6">
             {messages.map((message) => (
               <div 
@@ -153,7 +153,7 @@ const TicketDetail: React.FC<TicketDetailProps> = ({
           </CardFooter>
         </TabsContent>
         
-        <TabsContent value="internal-notes" className="flex-grow flex flex-col mx-0 mt-0 p-0">
+        <TabsContent value="internal-notes" className="flex-grow flex flex-col mx-0 mt-0 p-0 overflow-hidden">
           <CardContent className="flex-grow overflow-auto space-y-4 p-6">
             {internalNotes && internalNotes.length > 0 ? (
               internalNotes.map((note) => (
