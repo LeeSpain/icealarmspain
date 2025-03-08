@@ -149,7 +149,7 @@ export const useAuthEffects = ({ setUser, setIsLoading }: UseAuthEffectsProps) =
       }
     });
 
-    // Add a fallback to prevent infinite loading - reduced from 8s to 5s
+    // Add a fallback to prevent infinite loading - reduced from 5s to 3s
     const fallbackTimer = setTimeout(() => {
       if (isMounted.current && !authChecked.current) {
         console.log("Auth check fallback timeout triggered");
@@ -157,7 +157,7 @@ export const useAuthEffects = ({ setUser, setIsLoading }: UseAuthEffectsProps) =
         // Also ensure user is set to null if we hit the fallback timeout
         setUser(null);
       }
-    }, 5000); // 5 second fallback instead of 8 seconds
+    }, 3000); // 3 second fallback instead of 5 seconds
 
     // Cleanup subscription
     return () => {

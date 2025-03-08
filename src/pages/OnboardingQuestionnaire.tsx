@@ -1,17 +1,19 @@
-
 import React, { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useLanguage } from "@/context/LanguageContext";
 import { useAuth } from "@/context/auth";
 import QuestionnaireLayout from "@/components/questionnaire/QuestionnaireLayout";
 import QuestionnaireForm from "@/components/questionnaire/QuestionnaireForm";
 import { QuestionnaireProvider } from "@/components/questionnaire/QuestionnaireContext";
 import { toast } from "react-toastify";
+import MemberSidebar from "@/components/member/MemberSidebar";
 
 const OnboardingQuestionnaire: React.FC = () => {
   const { isAuthenticated, isLoading, user } = useAuth();
   const { language } = useLanguage();
   const navigate = useNavigate();
+  const location = useLocation();
+  const isDashboardRoute = location.pathname.startsWith('/dashboard');
   
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
@@ -28,9 +30,10 @@ const OnboardingQuestionnaire: React.FC = () => {
           ? 'You have already completed your profile. Redirecting to personal details.'
           : 'Ya has completado tu perfil. Redirigiendo a datos personales.'
       );
-      navigate("/dashboard/personal-details");
+      
+      navigate(isDashboardRoute ? "/dashboard/personal-details" : "/dashboard/personal-details");
     }
-  }, [isAuthenticated, isLoading, navigate, language]);
+  }, [isAuthenticated, isLoading, navigate, language, isDashboardRoute]);
 
   if (isLoading) {
     return (
@@ -55,6 +58,28 @@ const OnboardingQuestionnaire: React.FC = () => {
     );
   }
 
+  // If this is accessed from the dashboard route, render with the dashboard layout
+  if (isDashboardRoute) {
+    return (
+      <div className="flex h-screen bg-ice-50/30">
+        <MemberSidebar
+          activePage="personal-details"
+          collapsed={false}
+          setCollapsed={() => {}}
+        />
+        
+        <QuestionnaireProvider>
+          <div className="flex-1 overflow-auto">
+            <div className="p-6 w-full">
+              <QuestionnaireForm />
+            </div>
+          </div>
+        </QuestionnaireProvider>
+      </div>
+    );
+  }
+
+  // Otherwise, use the standard questionnaire layout
   return (
     <QuestionnaireProvider>
       <QuestionnaireLayout>

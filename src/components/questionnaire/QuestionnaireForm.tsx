@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useQuestionnaire } from './QuestionnaireContext';
 import { questions } from './questions';
 import QuestionCard from './QuestionCard';
@@ -7,7 +8,6 @@ import ProgressIndicator from './ProgressIndicator';
 import NavigationControls from './NavigationControls';
 import MultiEntrySection from './MultiEntrySection';
 import RegularQuestionSection from './RegularQuestionSection';
-import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { useLanguage } from '@/context/LanguageContext';
 import { useAuth } from '@/context/auth';
@@ -15,7 +15,9 @@ import { useAuth } from '@/context/auth';
 const QuestionnaireForm: React.FC = () => {
   const { language } = useLanguage();
   const navigate = useNavigate();
+  const location = useLocation();
   const { user } = useAuth();
+  const isDashboardRoute = location.pathname.startsWith('/dashboard');
   
   const {
     answers,
@@ -67,9 +69,11 @@ const QuestionnaireForm: React.FC = () => {
         : "¡Cuestionario enviado con éxito! Redirigiendo a datos personales."
     );
     
-    // Navigate to personal details page
+    // Navigate to personal details page with the appropriate path
     setTimeout(() => {
-      navigate("/dashboard/personal-details");
+      const targetPath = isDashboardRoute ? "/dashboard/personal-details" : "/personal-details";
+      console.log("Navigating to:", targetPath, "isDashboardRoute:", isDashboardRoute);
+      navigate(targetPath);
     }, 1500);
   };
 

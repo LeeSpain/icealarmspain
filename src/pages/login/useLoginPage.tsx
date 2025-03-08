@@ -31,7 +31,8 @@ export const useLoginPage = () => {
     user, 
     isAuthenticated, 
     isLoading, 
-    redirectTriggered
+    redirectTriggered,
+    authTimeout
   });
   
   // Check if there's a redirect parameter
@@ -40,7 +41,7 @@ export const useLoginPage = () => {
   
   // Handle redirection after successful authentication
   useEffect(() => {
-    console.log("Login page - Auth state:", { isAuthenticated, user, isLoading, redirectTriggered });
+    console.log("Login page - Auth state:", { isAuthenticated, user, isLoading, redirectTriggered, authTimeout });
     
     // Clear any auth timeout flags when auth status changes
     if (!isLoading) {
@@ -83,7 +84,7 @@ export const useLoginPage = () => {
     window.scrollTo(0, 0);
   }, []);
   
-  // Set a timeout to prevent infinite loading state - reducing from 8 seconds to 5 seconds
+  // Set a timeout to prevent infinite loading state - reducing from 5 seconds to 3 seconds
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       if (isLoading && isMounted.current) {
@@ -94,7 +95,7 @@ export const useLoginPage = () => {
           : "El servicio de autenticación no responde. Por favor, intente iniciar sesión manualmente."
         );
       }
-    }, 5000); // 5 seconds timeout instead of 8
+    }, 3000); // 3 seconds timeout instead of 5
     
     return () => clearTimeout(timeoutId);
   }, [isLoading, language]);
