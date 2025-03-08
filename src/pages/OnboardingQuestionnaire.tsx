@@ -5,7 +5,6 @@ import { useAuth } from "@/context/auth";
 import QuestionnaireLayout from "@/components/questionnaire/QuestionnaireLayout";
 import QuestionnaireForm from "@/components/questionnaire/QuestionnaireForm";
 import { QuestionnaireProvider } from "@/components/questionnaire/QuestionnaireContext";
-import { toast } from "react-toastify";
 import MemberSidebar from "@/components/member/MemberSidebar";
 
 const OnboardingQuestionnaire: React.FC = () => {
@@ -25,12 +24,6 @@ const OnboardingQuestionnaire: React.FC = () => {
     
     // If user has already completed profile, redirect to personal details page
     if (profileCompleted) {
-      toast.info(
-        language === 'en'
-          ? 'You have already completed your profile. Redirecting to personal details.'
-          : 'Ya has completado tu perfil. Redirigiendo a datos personales.'
-      );
-      
       navigate(isDashboardRoute ? "/dashboard/personal-details" : "/dashboard/personal-details");
     }
   }, [isAuthenticated, isLoading, navigate, language, isDashboardRoute]);

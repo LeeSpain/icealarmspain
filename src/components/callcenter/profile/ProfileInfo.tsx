@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { toast } from "react-toastify";
 import { useAuth } from "@/context/auth";
 
 const ProfileInfo: React.FC = () => {
@@ -23,7 +22,7 @@ const ProfileInfo: React.FC = () => {
   
   const handleSave = () => {
     setEditMode(false);
-    toast.success("Profile information updated successfully");
+    console.log("Profile information updated successfully");
     
     // In a real application, you would save the updated profile data to the database
     // saveProfileData(user.id, profileData)

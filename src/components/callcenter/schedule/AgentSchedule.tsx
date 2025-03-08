@@ -8,7 +8,6 @@ import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { format } from "date-fns";
-import { toast } from "react-toastify";
 import ScheduleWeekView from "./ScheduleWeekView";
 import AgentsList from "./AgentsList";
 import ShiftAssignment from "./ShiftAssignment";
@@ -18,7 +17,7 @@ const AgentSchedule: React.FC = () => {
   const [selectedView, setSelectedView] = useState("week");
   
   const handleAddShift = () => {
-    toast.info("Add new shift functionality will be available soon");
+    console.log("Add new shift functionality will be available soon");
   };
   
   return (

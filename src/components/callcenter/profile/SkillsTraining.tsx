@@ -4,7 +4,6 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { toast } from "react-toastify";
 import { BookOpen, Award, Clock } from "lucide-react";
 
 const SkillsTraining: React.FC = () => {
@@ -27,7 +26,7 @@ const SkillsTraining: React.FC = () => {
   ];
   
   const handleEnrollCourse = () => {
-    toast.info("Training enrollment will be available soon");
+    console.log("Training enrollment will be available soon");
   };
   
   return (

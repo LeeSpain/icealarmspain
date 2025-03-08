@@ -1,6 +1,5 @@
 
 import React, { useState, useEffect } from "react";
-import { toast } from "react-toastify";
 import { useAuth } from "@/context/auth";
 import { UserTable } from "./UserTable";
 import { CreateUserDialog } from "./dialogs/CreateUserDialog";
@@ -43,7 +42,7 @@ const UserManagement: React.FC<UserManagementProps> = ({ onAction }) => {
   const handleCreateUser = async () => {
     try {
       if (!formData.email || !formData.displayName || !formData.password) {
-        toast.error("Please fill all the required fields");
+        console.error("Missing required fields");
         return;
       }
 
@@ -66,17 +65,16 @@ const UserManagement: React.FC<UserManagementProps> = ({ onAction }) => {
         onAction(`Created user ${formData.displayName}`);
       }
       
-      toast.success("User created successfully");
+      console.log("User created successfully");
     } catch (error) {
       console.error("Error creating user:", error);
-      toast.error("Failed to create user");
     }
   };
 
   const handleEditRole = async () => {
     try {
       if (!selectedUser || !newRole) {
-        toast.error("Please select a role");
+        console.error("Please select a role");
         return;
       }
 
@@ -90,10 +88,9 @@ const UserManagement: React.FC<UserManagementProps> = ({ onAction }) => {
         onAction(`Updated user role to ${newRole}`);
       }
       
-      toast.success("User role updated successfully");
+      console.log("User role updated successfully");
     } catch (error) {
       console.error("Error updating user role:", error);
-      toast.error("Failed to update user role");
     }
   };
 
@@ -110,10 +107,9 @@ const UserManagement: React.FC<UserManagementProps> = ({ onAction }) => {
         onAction(`Deleted user ${selectedUser.displayName || selectedUser.email}`);
       }
       
-      toast.success("User deleted successfully");
+      console.log("User deleted successfully");
     } catch (error) {
       console.error("Error deleting user:", error);
-      toast.error("Failed to delete user");
     }
   };
 

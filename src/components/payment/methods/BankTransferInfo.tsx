@@ -26,12 +26,7 @@ const BankTransferInfo: React.FC<BankTransferInfoProps> = ({ language }) => {
   const copyToClipboard = (text: string, field: string) => {
     navigator.clipboard.writeText(text).then(() => {
       setCopiedField(field);
-      toast({
-        description: language === 'en' 
-          ? `Copied ${field} to clipboard` 
-          : `${field} copiado al portapapeles`,
-        duration: 2000,
-      });
+      console.log(`${field} copied to clipboard`);
       
       setTimeout(() => setCopiedField(null), 2000);
     });

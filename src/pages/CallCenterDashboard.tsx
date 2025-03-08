@@ -1,7 +1,5 @@
 
 import React from "react";
-import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import Sidebar from "@/components/callcenter/sidebar/Sidebar";
 import LoadingState from "@/components/callcenter/dashboard/LoadingState";
 import SectionRenderer from "@/components/callcenter/dashboard/SectionRenderer";
@@ -40,7 +38,6 @@ const CallCenterDashboard: React.FC = () => {
       
       <div className="flex-1 overflow-auto transition-all duration-300">
         <div className="p-8 max-w-7xl mx-auto w-full">
-          <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} />
           <SectionRenderer 
             activeSection={activeSection} 
             selectedClient={selectedClient} 

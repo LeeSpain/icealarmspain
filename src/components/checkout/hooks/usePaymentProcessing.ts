@@ -1,6 +1,5 @@
 
 import { useState } from "react";
-import { toast } from "react-toastify";
 import { BillingInfo, CardDetails } from "../types/checkout.types";
 
 interface UsePaymentProcessingProps {
@@ -58,12 +57,10 @@ export const usePaymentProcessing = ({
       clearCart();
       window.scrollTo(0, 0);
       
-      toast.success(language === 'en' 
-        ? "Payment processed successfully!" 
-        : "¡Pago procesado con éxito!");
+      console.log("Payment processed successfully!");
     } catch (error) {
       console.error("Payment error:", error);
-      toast.error(error instanceof Error ? error.message : String(error));
+      throw error;
     } finally {
       setLoading(false);
     }

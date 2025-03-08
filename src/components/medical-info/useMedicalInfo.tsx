@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { useLanguage } from "@/context/LanguageContext";
-import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
 export const useMedicalInfo = () => {
@@ -17,12 +16,8 @@ export const useMedicalInfo = () => {
     if (savedData) {
       setMedicalData(JSON.parse(savedData));
     } else {
-      // Display a toast message if no data is found
-      toast.info(
-        language === 'en'
-          ? 'No medical information found. Please complete the questionnaire.'
-          : 'No se encontró información médica. Por favor complete el cuestionario.'
-      );
+      // No toast notification - removed
+      console.log('No medical information found');
     }
   }, [language]);
 
@@ -34,11 +29,8 @@ export const useMedicalInfo = () => {
     
     // Simulate API call
     setTimeout(() => {
-      toast.success(
-        language === 'en' 
-          ? "Your changes have been saved successfully!" 
-          : "¡Tus cambios se han guardado con éxito!"
-      );
+      // No toast notification - removed
+      console.log('Changes saved successfully');
       setIsLoading(false);
       setEditMode(false);
     }, 1000);
@@ -52,11 +44,8 @@ export const useMedicalInfo = () => {
       setMedicalData(JSON.parse(savedData));
     }
     
-    toast.info(
-      language === 'en'
-        ? "Edit mode cancelled. No changes were saved."
-        : "Modo de edición cancelado. No se guardaron cambios."
-    );
+    // No toast notification - removed
+    console.log('Edit mode cancelled');
   };
 
   const handleUpdate = (section: string, field: string, value: string) => {

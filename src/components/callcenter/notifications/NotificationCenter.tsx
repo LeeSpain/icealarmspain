@@ -9,7 +9,6 @@ import { Separator } from "@/components/ui/separator";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Notification } from "./NotificationTypes";
 import { getMockNotifications } from "./mock-notifications";
-import { toast } from "react-toastify";
 import NotificationList from "./NotificationList";
 
 const NotificationCenter: React.FC = () => {
@@ -21,19 +20,19 @@ const NotificationCenter: React.FC = () => {
   
   const handleMarkAllAsRead = () => {
     setNotifications(prev => prev.map(n => ({ ...n, read: true })));
-    toast.success("All notifications marked as read");
+    console.log("All notifications marked as read");
   };
   
   const handleMarkAsRead = (id: string) => {
     setNotifications(prev => 
       prev.map(n => n.id === id ? { ...n, read: true } : n)
     );
-    toast.success("Notification marked as read");
+    console.log("Notification marked as read");
   };
   
   const handleRemoveNotification = (id: string) => {
     setNotifications(prev => prev.filter(n => n.id !== id));
-    toast.info("Notification removed");
+    console.log("Notification removed");
   };
   
   // Filter notifications based on active tab and search query

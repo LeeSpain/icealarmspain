@@ -1,7 +1,6 @@
 import { supabase } from '../../integrations/supabase/client';
 import { User } from './types';
 import { determineUserRole } from './utils';
-import { toast } from 'react-toastify';
 
 // Login function
 export const login = async (email: string, password: string, rememberMe = false): Promise<User> => {
@@ -39,12 +38,9 @@ export const login = async (email: string, password: string, rememberMe = false)
       lastLogin: new Date().toISOString(),
     };
     
-    toast.success('Login successful!');
-    
     return user;
   } catch (error) {
     console.error('Login error:', error);
-    toast.error(`Login failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
     throw error;
   }
 };
@@ -101,12 +97,9 @@ export const signUp = async (email: string, password: string, displayName?: stri
       lastLogin: new Date().toISOString(),
     };
     
-    toast.success('Account created successfully! Please check your email for verification.');
-    
     return user;
   } catch (error) {
     console.error('Signup error:', error);
-    toast.error(`Signup failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
     throw error;
   }
 };
@@ -119,11 +112,9 @@ export const createUser = async (email: string, password: string, displayName: s
     // Use signUp with specified role
     const user = await signUp(email, password, displayName, role);
     
-    toast.success(`User ${displayName} (${role}) created successfully!`);
     return user;
   } catch (error) {
     console.error('Create user error:', error);
-    toast.error(`Failed to create user: ${error instanceof Error ? error.message : 'Unknown error'}`);
     throw error;
   }
 };
@@ -139,10 +130,8 @@ export const updateUserRole = async (userId: string, newRole: string): Promise<v
     if (error) throw error;
     
     console.log(`User ${userId} role updated to ${newRole}`);
-    toast.success(`User role updated to ${newRole}`);
   } catch (error) {
     console.error('Update role error:', error);
-    toast.error(`Role update failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
     throw error;
   }
 };
@@ -162,7 +151,6 @@ export const logout = async (): Promise<void> => {
     if (error) {
       console.error('Error during signOut:', error);
       // Even if there's an error, we've already cleaned up local storage
-      toast.warning('Signed out locally, but server logout had an issue');
       return;
     }
     
@@ -174,15 +162,11 @@ export const logout = async (): Promise<void> => {
       await supabase.auth.signOut({ scope: 'global' });
     }
     
-    toast.success('You have been logged out');
-    
   } catch (error) {
     console.error('Logout error:', error);
     // Clean up local state regardless of server errors
     localStorage.removeItem('authPersistence');
     localStorage.removeItem('currentUser');
-    
-    toast.info('Signed out locally (server logout had an issue)');
   }
 };
 
@@ -200,10 +184,8 @@ export const updateUserProfile = async (displayName: string): Promise<void> => {
     if (error) throw error;
     
     console.log('User profile updated:', displayName);
-    toast.success('Profile updated successfully');
   } catch (error) {
     console.error('Update profile error:', error);
-    toast.error(`Profile update failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
     throw error;
   }
 };
@@ -231,7 +213,6 @@ export const getAllUsers = async (): Promise<User[]> => {
     return users;
   } catch (error) {
     console.error('Get all users error:', error);
-    toast.error(`Failed to retrieve users: ${error instanceof Error ? error.message : 'Unknown error'}`);
     throw error;
   }
 };
@@ -244,10 +225,8 @@ export const deleteUser = async (userId: string): Promise<void> => {
     if (error) throw error;
     
     console.log('User deleted:', userId);
-    toast.success('User deleted successfully');
   } catch (error) {
     console.error('Delete user error:', error);
-    toast.error(`User deletion failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
     throw error;
   }
 };

@@ -7,7 +7,6 @@ import { ShoppingCart, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useCart, CartItem } from "@/components/payment/CartContext";
 import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
 
 interface CartSectionProps {
   cart: CartItem[];

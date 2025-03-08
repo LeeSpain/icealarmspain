@@ -59,14 +59,6 @@ export const useLoginPage = () => {
       const redirectTo = redirectParam || getDefaultRedirect(user.role);
       console.log("Redirecting authenticated user to:", redirectTo);
       
-      // Display success toast
-      if (isMounted.current) {
-        toast({
-          title: language === 'en' ? "Login successful!" : "¡Inicio de sesión exitoso!",
-          description: language === 'en' ? "Redirecting to your dashboard..." : "Redirigiendo a tu panel...",
-        });
-      }
-      
       // Execute the redirect with a slight delay to allow toast to show
       if (isMounted.current) {
         setTimeout(() => {
@@ -135,11 +127,7 @@ export const useLoginPage = () => {
           : "Correo o contraseña inválidos. Por favor, inténtelo de nuevo.";
         
         setLoginError(errorMessage);
-        toast({
-          title: language === 'en' ? "Login failed" : "Error de inicio de sesión",
-          description: errorMessage,
-          variant: "destructive",
-        });
+        console.log("Login failed:", errorMessage);
       }
       // The useEffect will handle the redirection and success toast if login succeeds
     } catch (error) {
@@ -152,11 +140,6 @@ export const useLoginPage = () => {
             : "Ha ocurrido un error desconocido. Por favor, inténtelo más tarde.";
         
         setLoginError(errorMessage);
-        toast({
-          title: language === 'en' ? "Login error" : "Error de inicio de sesión",
-          description: errorMessage,
-          variant: "destructive",
-        });
       }
     } finally {
       if (isMounted.current) {

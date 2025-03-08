@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { useLanguage } from "@/context/LanguageContext";
@@ -87,22 +88,12 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
           quantity: updatedCart[existingProductIndex].quantity + quantity
         };
         
-        toast({
-          title: language === 'en' ? "Cart Updated" : "Carrito Actualizado",
-          description: language === 'en' 
-            ? `Quantity increased for ${product.name}` 
-            : `Cantidad aumentada para ${product.name}`,
-        });
+        console.log(`Quantity increased for ${product.name}`);
         
         return updatedCart;
       } else {
         // Add new product to cart
-        toast({
-          title: language === 'en' ? "Added to Cart" : "Añadido al Carrito",
-          description: language === 'en' 
-            ? `${product.name} has been added to your cart` 
-            : `${product.name} ha sido añadido a tu carrito`,
-        });
+        console.log(`${product.name} has been added to your cart`);
         
         return [...currentCart, { ...product, quantity }];
       }
@@ -114,12 +105,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setCart(currentCart => {
       const productToRemove = currentCart.find(item => item.id === productId);
       if (productToRemove) {
-        toast({
-          title: language === 'en' ? "Removed from Cart" : "Eliminado del Carrito",
-          description: language === 'en' 
-            ? `${productToRemove.name} has been removed from your cart` 
-            : `${productToRemove.name} ha sido eliminado de tu carrito`,
-        });
+        console.log(`${productToRemove.name} has been removed from your cart`);
       }
       
       return currentCart.filter(item => item.id !== productId);

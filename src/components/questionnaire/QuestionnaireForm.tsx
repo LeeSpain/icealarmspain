@@ -8,7 +8,6 @@ import ProgressIndicator from './ProgressIndicator';
 import NavigationControls from './NavigationControls';
 import MultiEntrySection from './MultiEntrySection';
 import RegularQuestionSection from './RegularQuestionSection';
-import { toast } from 'react-toastify';
 import { useLanguage } from '@/context/LanguageContext';
 import { useAuth } from '@/context/auth';
 
@@ -62,12 +61,6 @@ const QuestionnaireForm: React.FC = () => {
       // In a real app, you would update this in your database
       localStorage.setItem('profileCompleted', 'true');
     }
-    
-    toast.success(
-      language === "en"
-        ? "Questionnaire submitted successfully! Redirecting to personal details."
-        : "¡Cuestionario enviado con éxito! Redirigiendo a datos personales."
-    );
     
     // Navigate to personal details page with the appropriate path
     setTimeout(() => {

@@ -6,7 +6,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { format } from "date-fns";
-import { toast } from "react-toastify";
 
 interface ShiftAssignmentProps {
   date: Date;
@@ -14,7 +13,7 @@ interface ShiftAssignmentProps {
 
 const ShiftAssignment: React.FC<ShiftAssignmentProps> = ({ date }) => {
   const handleAssignShift = () => {
-    toast.success("Shift scheduled successfully");
+    console.log("Shift scheduled successfully");
   };
 
   return (
