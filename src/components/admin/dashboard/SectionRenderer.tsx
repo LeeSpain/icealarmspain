@@ -16,28 +16,43 @@ import DeviceInventoryManager from "../DeviceInventoryManager";
 
 interface SectionRendererProps {
   section: string;
-  dashboardData: any;
+  dashboardData?: any;
   onAction?: (action: string) => void;
 }
+
+// Create type declarations for components that need onAction prop
+interface WithOnActionProps {
+  onAction?: (action: string) => void;
+}
+
+// Create interfaces for each component that needs specific props
+interface UserManagementProps extends WithOnActionProps {}
+interface AdminUsersManagementProps extends WithOnActionProps {}
+interface ClientManagementProps extends WithOnActionProps {}
+interface DeviceManagementProps extends WithOnActionProps {}
+interface DeviceInventoryManagerProps extends WithOnActionProps {}
 
 export const SectionRenderer: React.FC<SectionRendererProps> = ({
   section,
   dashboardData,
   onAction
 }) => {
+  // Helper function to safely pass onAction prop
+  const getOnActionProp = () => onAction ? { onAction } : {};
+
   switch (section) {
     case "dashboard":
       return <DashboardMetrics data={dashboardData} />;
     
     // User Management
     case "user-management": 
-      return <UserManagement />;
+      return <UserManagement {...getOnActionProp()} />;
     
     case "admin-users":
-      return <AdminUsersManagement onAction={onAction} />;
+      return <AdminUsersManagement {...getOnActionProp()} />;
       
     case "client-management":
-      return <ClientManagement onAction={onAction} />;
+      return <ClientManagement {...getOnActionProp()} />;
       
     case "roles":
       return <RolesManagement onAction={onAction} />;
@@ -47,7 +62,7 @@ export const SectionRenderer: React.FC<SectionRendererProps> = ({
       
     // Device Management  
     case "devices":
-      return <DeviceManagement />;
+      return <DeviceManagement {...getOnActionProp()} />;
       
     case "device-monitoring":
       return <DeviceMonitoringDashboard />;
@@ -62,7 +77,7 @@ export const SectionRenderer: React.FC<SectionRendererProps> = ({
       return <ClientOnboarding onAction={onAction} />;
       
     case "device-inventory":
-      return <DeviceInventoryManager />;
+      return <DeviceInventoryManager {...getOnActionProp()} />;
       
     default:
       return (
