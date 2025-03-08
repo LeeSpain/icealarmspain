@@ -7,6 +7,9 @@ import DeviceShowcase from "./components/DeviceShowcase";
 import Pricing from "./components/Pricing";
 import ExpatInfo from "./components/ExpatInfo";
 import Footer from "./components/Footer";
+import { BrowserRouter as Router } from "react-router-dom";
+import { LanguageProvider } from "./context/LanguageContext";
+import { AuthProvider } from "./context/auth";
 
 function App() {
   useEffect(() => {
@@ -24,21 +27,27 @@ function App() {
   }, []);
   
   return (
-    <div className="flex flex-col min-h-screen bg-gradient-to-b from-white via-ice-50/30 to-white">
-      <Navbar />
-      
-      <main className="flex-grow relative">
-        <Hero />
-        
-        <DeviceShowcase />
-        
-        <Pricing />
-        
-        <ExpatInfo />
-      </main>
-      
-      <Footer />
-    </div>
+    <Router>
+      <LanguageProvider>
+        <AuthProvider>
+          <div className="flex flex-col min-h-screen bg-gradient-to-b from-white via-ice-50/30 to-white">
+            <Navbar />
+            
+            <main className="flex-grow relative">
+              <Hero />
+              
+              <DeviceShowcase />
+              
+              <Pricing />
+              
+              <ExpatInfo />
+            </main>
+            
+            <Footer />
+          </div>
+        </AuthProvider>
+      </LanguageProvider>
+    </Router>
   );
 }
 
