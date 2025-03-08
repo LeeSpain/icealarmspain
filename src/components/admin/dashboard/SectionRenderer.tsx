@@ -40,6 +40,47 @@ interface PlaceholderSectionProps extends WithOnActionProps {
   description: string;
 }
 
+// Ensure these declarations match the actual component prop types
+declare module "../RolesManagement" {
+  export default function RolesManagement(props: RolesManagementProps): JSX.Element;
+}
+
+declare module "../PermissionsManagement" {
+  export default function PermissionsManagement(props: PermissionsManagementProps): JSX.Element;
+}
+
+declare module "../UserManagement" {
+  export default function UserManagement(props: UserManagementProps): JSX.Element;
+}
+
+declare module "../AdminUsersManagement" {
+  export default function AdminUsersManagement(props: AdminUsersManagementProps): JSX.Element;
+}
+
+declare module "../ClientManagement" {
+  export default function ClientManagement(props: ClientManagementProps): JSX.Element;
+}
+
+declare module "../DeviceManagement" {
+  export default function DeviceManagement(props: DeviceManagementProps): JSX.Element;
+}
+
+declare module "../AlertsManagement" {
+  export default function AlertsManagement(props: AlertsManagementProps): JSX.Element;
+}
+
+declare module "../ClientOnboarding" {
+  export default function ClientOnboarding(props: ClientOnboardingProps): JSX.Element;
+}
+
+declare module "../DeviceInventoryManager" {
+  export default function DeviceInventoryManager(props: DeviceInventoryManagerProps): JSX.Element;
+}
+
+declare module "../PlaceholderSection" {
+  export default function PlaceholderSection(props: PlaceholderSectionProps): JSX.Element;
+}
+
 export const SectionRenderer: React.FC<SectionRendererProps> = ({
   section,
   dashboardData,
