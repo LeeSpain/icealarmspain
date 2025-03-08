@@ -83,18 +83,18 @@ export const useLoginPage = () => {
     window.scrollTo(0, 0);
   }, []);
   
-  // Set a timeout to prevent infinite loading state
+  // Set a timeout to prevent infinite loading state - reducing from 8 seconds to 5 seconds
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       if (isLoading && isMounted.current) {
         console.log("Authentication check is taking too long, forcing reset");
         setAuthTimeout(true);
         setLoginError(language === 'en' 
-          ? "Authentication service is not responding. Please try again or refresh the page." 
-          : "El servicio de autenticación no responde. Por favor, inténtelo de nuevo o actualice la página."
+          ? "Authentication service is not responding. Please try signing in manually." 
+          : "El servicio de autenticación no responde. Por favor, intente iniciar sesión manualmente."
         );
       }
-    }, 8000); // 8 seconds timeout
+    }, 5000); // 5 seconds timeout instead of 8
     
     return () => clearTimeout(timeoutId);
   }, [isLoading, language]);

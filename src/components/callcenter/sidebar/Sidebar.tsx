@@ -26,7 +26,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   
   return (
     <div className={cn(
-      "h-screen bg-white border-r border-slate-200 flex flex-col transition-all duration-300 shadow-sm",
+      "h-screen bg-white border-r border-slate-200 flex flex-col transition-all duration-300 shadow-sm sticky top-0 left-0 z-10",
       collapsed ? "w-16" : "w-64"
     )}>
       <SidebarHeader 

@@ -16,11 +16,11 @@ export const LoginLoading: React.FC<LoginLoadingProps> = ({
 }) => {
   const [showRefresh, setShowRefresh] = useState(false);
   
-  // Show refresh button after 5 seconds
+  // Show refresh button after 3 seconds instead of 5
   useEffect(() => {
     const timer = setTimeout(() => {
       setShowRefresh(true);
-    }, 5000);
+    }, 3000);
     
     return () => clearTimeout(timer);
   }, []);
