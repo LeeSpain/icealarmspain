@@ -152,9 +152,10 @@ class AIKnowledgeService {
     Object.values(this.fallbackKnowledgeBase).forEach((items) => {
       items.forEach((item) => {
         if (
-          item.title?.toLowerCase().includes(lowercaseQuery) ||
-          item.content?.toLowerCase().includes(lowercaseQuery) ||
-          item.topic?.toLowerCase().includes(lowercaseQuery)
+          item.topic?.toLowerCase().includes(lowercaseQuery) ||
+          item.keywords?.some(keyword => keyword.toLowerCase().includes(lowercaseQuery)) ||
+          item.responses?.en?.some(response => response.toLowerCase().includes(lowercaseQuery)) ||
+          item.responses?.es?.some(response => response.toLowerCase().includes(lowercaseQuery))
         ) {
           results.push(item);
         }
