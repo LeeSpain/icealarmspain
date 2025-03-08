@@ -18,9 +18,9 @@ const StatsCards: React.FC<StatsCardsProps> = ({
 }) => {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-      <Card>
+      <Card className="border-l-4 border-blue-500">
         <CardHeader className="pb-2">
-          <CardTitle className="text-sm font-medium">Total Calls This Week</CardTitle>
+          <CardTitle className="text-sm font-medium text-blue-600">Total Calls</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex items-center">
@@ -33,9 +33,9 @@ const StatsCards: React.FC<StatsCardsProps> = ({
         </CardContent>
       </Card>
       
-      <Card>
+      <Card className="border-l-4 border-amber-500">
         <CardHeader className="pb-2">
-          <CardTitle className="text-sm font-medium">Avg. Response Time</CardTitle>
+          <CardTitle className="text-sm font-medium text-amber-600">Response Time</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex items-center">
@@ -48,9 +48,9 @@ const StatsCards: React.FC<StatsCardsProps> = ({
         </CardContent>
       </Card>
       
-      <Card>
+      <Card className="border-l-4 border-purple-500">
         <CardHeader className="pb-2">
-          <CardTitle className="text-sm font-medium">Open Tickets</CardTitle>
+          <CardTitle className="text-sm font-medium text-purple-600">Open Tickets</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex items-center">
@@ -63,9 +63,9 @@ const StatsCards: React.FC<StatsCardsProps> = ({
         </CardContent>
       </Card>
       
-      <Card>
+      <Card className="border-l-4 border-green-500">
         <CardHeader className="pb-2">
-          <CardTitle className="text-sm font-medium">Customer Satisfaction</CardTitle>
+          <CardTitle className="text-sm font-medium text-green-600">Satisfaction</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex items-center">

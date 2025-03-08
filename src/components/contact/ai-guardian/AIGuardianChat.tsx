@@ -7,11 +7,13 @@ import ActionButtons from "./ActionButtons";
 
 const AIGuardianChat: React.FC = () => {
   return (
-    <div className="mb-16 max-w-4xl mx-auto">
+    <div className="mb-16">
       <GuardianProvider>
-        <Header />
-        <ChatCard />
-        <ActionButtons />
+        <div className="space-y-4">
+          <Header />
+          <ChatCard />
+          <ActionButtons />
+        </div>
       </GuardianProvider>
     </div>
   );
