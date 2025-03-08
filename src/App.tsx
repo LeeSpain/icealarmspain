@@ -1,4 +1,3 @@
-
 import React, { useEffect } from 'react';
 import './App.css';
 import Navbar from "./components/Navbar";
@@ -12,7 +11,7 @@ import { LanguageProvider } from "./context/LanguageContext";
 import { AuthProvider } from "./context/auth";
 import AboutUs from "./pages/AboutUs";
 import Contact from "./pages/Contact";
-import Login from "./pages/Login";
+import Login from "./pages/login";
 import Join from "./pages/Join";
 import DashboardPage from "./pages/DashboardPage";
 import NotFound from "./pages/NotFound";
@@ -38,7 +37,7 @@ const Landing = () => {
   }, []);
   
   return (
-    <div style={{backgroundColor: 'white', color: 'black'}}>
+    <div className="visible-container" style={{backgroundColor: 'white', color: 'black'}}>
       <Hero />
       <DeviceShowcase />
       <Pricing />
@@ -68,7 +67,7 @@ function App() {
     <Router>
       <LanguageProvider>
         <AuthProvider>
-          <div style={{
+          <div className="visible-container" style={{
             display: 'flex',
             flexDirection: 'column',
             minHeight: '100vh',
@@ -77,7 +76,7 @@ function App() {
           }}>
             <Navbar />
             
-            <main style={{
+            <main className="visible-container" style={{
               flexGrow: 1,
               position: 'relative',
               paddingTop: '4rem',
@@ -99,6 +98,7 @@ function App() {
                     <DashboardPage />
                   </ProtectedRoute>
                 } />
+                
                 <Route path="/dashboard/profile" element={
                   <ProtectedRoute>
                     <ProfilePage />

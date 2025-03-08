@@ -24,7 +24,7 @@ const removeLoadingIndicator = () => {
   }
 }
 
-// Safely render the app with error boundary
+// Safely render the app with error boundary and debug information
 const renderApp = () => {
   // Check if the root element exists
   const rootElement = document.getElementById('root');
@@ -45,13 +45,16 @@ const renderApp = () => {
       // Log any existing content in root before rendering
       console.log("Root content before render:", rootElement.innerHTML);
       
-      ReactDOM.createRoot(rootElement).render(
+      // Create the root and render the app
+      const root = ReactDOM.createRoot(rootElement);
+      root.render(
         <React.StrictMode>
           <App />
         </React.StrictMode>,
-      )
+      );
       
       console.log("React app rendered successfully");
+      
       // Check styles after rendering
       setTimeout(checkStyles, 100);
       
@@ -65,11 +68,17 @@ const renderApp = () => {
           <h2>Something went wrong</h2>
           <p>${error instanceof Error ? error.message : 'Unknown error'}</p>
           <p>Please check the console for more details.</p>
+          <div style="margin-top: 20px;">
+            <button onclick="window.location.reload()" style="padding: 8px 16px; background: #dc3545; color: white; border: none; border-radius: 4px; cursor: pointer;">
+              Reload Page
+            </button>
+          </div>
         </div>
       `;
     }
   } else {
     console.error("Root element not found! Cannot render React app.");
+    
     // Try to create and append the root element as a fallback
     const newRoot = document.createElement('div');
     newRoot.id = 'root';
@@ -87,19 +96,32 @@ const renderApp = () => {
         <React.StrictMode>
           <App />
         </React.StrictMode>,
-      )
+      );
       console.log("React app rendered in fallback root");
       
       // Remove loading indicator after successful render
       setTimeout(removeLoadingIndicator, 300);
     } catch (error) {
       console.error("Error rendering in fallback root:", error);
+      document.body.innerHTML = `
+        <div style="padding: 20px; margin: 20px; background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; border-radius: 4px;">
+          <h2>Critical Error</h2>
+          <p>${error instanceof Error ? error.message : 'Unknown error'}</p>
+          <p>Please try refreshing the page or check console for details.</p>
+          <div style="margin-top: 20px;">
+            <button onclick="window.location.reload()" style="padding: 8px 16px; background: #dc3545; color: white; border: none; border-radius: 4px; cursor: pointer;">
+              Reload Page
+            </button>
+          </div>
+        </div>
+      `;
     }
   }
 }
 
-// Execute the rendering immediately without waiting
+// Execute the rendering
 renderApp();
 
 // Also try rendering after a short delay as a fallback
-setTimeout(renderApp, 300);
+// Reduced from 300ms to 150ms to make it more responsive
+setTimeout(renderApp, 150);

@@ -33,14 +33,28 @@ export const useAuthEffects = ({ setUser, setIsLoading }: UseAuthEffectsProps) =
         // Set a flag to ensure we don't get stuck
         let sessionChecked = false;
         
+        // Set a timeout to ensure we don't get stuck in loading state
+        const timeoutId = setTimeout(() => {
+          if (!sessionChecked && isMounted.current) {
+            console.log("Session check timed out, continuing without auth");
+            if (isMounted.current) {
+              authChecked.current = true;
+              setIsLoading(false);
+              setUser(null);
+            }
+          }
+        }, 800); // Reduced timeout to 800ms to prevent getting stuck
+        
         // Try to get the session, but don't block rendering on this
         supabase.auth.getSession().then(({ data, error }) => {
+          sessionChecked = true;
+          clearTimeout(timeoutId);
+          
           if (error) {
             console.error("Session check error:", error);
             // Don't throw the error, just log it
           }
           
-          sessionChecked = true;
           console.log("Session check result:", data?.session ? "Session found" : "No session found");
           
           if (data?.session?.user) {
@@ -76,25 +90,15 @@ export const useAuthEffects = ({ setUser, setIsLoading }: UseAuthEffectsProps) =
             setIsLoading(false);
           }
         }).catch(error => {
-          console.error('Error checking session:', error);
           sessionChecked = true;
+          clearTimeout(timeoutId);
+          console.error('Error checking session:', error);
           if (isMounted.current) {
             authChecked.current = true;
             setIsLoading(false);
             setUser(null);
           }
         });
-        
-        // Set a short timeout to ensure we don't get stuck
-        setTimeout(() => {
-          if (!sessionChecked && isMounted.current) {
-            console.log("Session check timed out, continuing without auth");
-            authChecked.current = true;
-            setIsLoading(false);
-            setUser(null);
-          }
-        }, 1000);
-        
       } catch (error) {
         console.error('Error in checkSession:', error);
         if (isMounted.current) {
@@ -140,13 +144,13 @@ export const useAuthEffects = ({ setUser, setIsLoading }: UseAuthEffectsProps) =
     }
 
     // Super short fallback timeout to prevent infinite loading
-    const fallbackTimer = setTimeout(() => {
-      if (isMounted.current) {
+    const emergencyFallbackTimer = setTimeout(() => {
+      if (isMounted.current && !authChecked.current) {
         console.log("Auth check emergency fallback triggered");
         setIsLoading(false);
         setUser(null);
       }
-    }, 800); // Very short timeout to ensure app renders
+    }, 2000); // Ensure we don't get stuck longer than 2 seconds
 
     // Cleanup subscription
     return () => {
@@ -154,7 +158,7 @@ export const useAuthEffects = ({ setUser, setIsLoading }: UseAuthEffectsProps) =
       if (authListener) {
         authListener.subscription.unsubscribe();
       }
-      clearTimeout(fallbackTimer);
+      clearTimeout(emergencyFallbackTimer);
       isMounted.current = false;
     };
   }, [setUser, setIsLoading]);
