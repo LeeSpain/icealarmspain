@@ -95,7 +95,7 @@ const AdminAIAssistant: React.FC<AdminAIAssistantProps> = ({
     const context: AIQueryContext = { user };
     
     // Extract search terms
-    const searchMatch = query.match(/find|search|look for|about|named|called) (.+?)(?=\s|$|\?|\.)/i);
+    const searchMatch = query.match(/(?:find|search|look for|about|named|called) (.+?)(?=\s|$|\?|\.)/i);
     if (searchMatch && searchMatch[1]) {
       context.searchTerm = searchMatch[1].trim();
     }

@@ -1,391 +1,216 @@
-import React, { useState, useEffect, useRef } from "react";
-import { useLanguage } from "@/context/LanguageContext";
-import { useAuth } from "@/context/auth";
+import React, { useState, useEffect, useRef } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
+import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { Brain, Send, MessageCircle, ArrowRight, Sparkles } from "lucide-react";
-import MessagesList from "./MessagesList";
-import TopicSelector from "./TopicSelector";
+import { Bot, Send, User, Brain, MessageSquare } from "lucide-react";
 import { toast } from "react-toastify";
-import { aiKnowledgeService } from "@/services/ai/AIKnowledgeService";
+import { useAuth } from "@/context/auth";
+import { useLanguage } from "@/context/LanguageContext";
+import MessagesList from './MessagesList';
+import TopicSelector from './TopicSelector';
+import { emergencyTopics, healthTopics, generalTopics } from './constants';
 
-interface EnhancedAIGuardianProps {
-  // Interface with existing systems
-  initialTopic?: string;
-  onNavigate?: (route: string, params?: any) => void;
-  className?: string;
+interface Message {
+  text: string;
+  sender: 'user' | 'ai';
 }
 
-const EnhancedAIGuardian: React.FC<EnhancedAIGuardianProps> = ({
-  initialTopic,
-  onNavigate,
-  className = ""
-}) => {
-  const { language } = useLanguage();
+const EnhancedAIGuardian: React.FC = () => {
   const { user } = useAuth();
-  const [messages, setMessages] = useState<Array<{text: string, type: 'guardian' | 'user'}>>([]);
+  const { language } = useLanguage();
+  const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const [selectedTopic, setSelectedTopic] = useState<string | null>(initialTopic || null);
-  const [showWelcome, setShowWelcome] = useState(true);
-  const messagesContainerRef = useRef<HTMLDivElement>(null);
-  
-  // Initial greeting
+  const [selectedTopic, setSelectedTopic] = useState<string | null>(null);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+
   useEffect(() => {
+    // Initialize with a welcome message
     if (messages.length === 0) {
-      const greeting = language === 'en' 
-        ? `Hello${user?.name ? `, ${user.name}` : ''}! I'm your AI Health Guardian. How can I assist you today?` 
-        : `¡Hola${user?.name ? `, ${user.name}` : ''}! Soy tu Guardián de Salud IA. ¿Cómo puedo ayudarte hoy?`;
-      
-      setMessages([{ text: greeting, type: 'guardian' }]);
+      const welcomeMessage = language === 'en'
+        ? `Hello${user?.name ? `, ${user.name}` : ''}! I'm your AI Guardian. I can assist you with health, emergencies, and general support. How can I help you today?`
+        : `¡Hola${user?.name ? `, ${user.name}` : ''}! Soy tu Guardián de IA. Puedo ayudarte con salud, emergencias y soporte general. ¿Cómo puedo ayudarte hoy?`;
+
+      setMessages([{ text: welcomeMessage, sender: 'ai' }]);
     }
   }, [user?.name, language, messages.length]);
-  
-  // Scroll to bottom when messages change
+
+  // Scroll to bottom when messages update
   useEffect(() => {
-    if (messagesContainerRef.current) {
-      messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
     }
   }, [messages]);
-  
-  // Handle topic selection
+
   const handleTopicSelect = (topic: string) => {
     setSelectedTopic(topic);
-    
-    // Add visual indication that topic was selected
-    setMessages(prev => [
-      ...prev, 
-      { 
-        text: language === 'en' 
-          ? `I'll help you with ${topic}.` 
-          : `Te ayudaré con ${topic}.`, 
-        type: 'guardian' 
-      }
-    ]);
-    
-    setShowWelcome(false);
   };
-  
-  // Process and send user message
-  const handleSendMessage = async () => {
-    if (!input.trim() || isLoading) return;
-    
-    const userMessage = input.trim();
-    setMessages(prev => [...prev, { text: userMessage, type: 'user' }]);
-    setInput("");
-    setIsLoading(true);
-    setShowWelcome(false);
-    
-    try {
-      // First, show "thinking" message
-      setMessages(prev => [
-        ...prev, 
-        { 
-          text: language === 'en' ? "Thinking..." : "Pensando...", 
-          type: 'guardian' 
-        }
-      ]);
-      
-      // Determine context from message and selected topic
-      const contextType = determineContextType(userMessage, selectedTopic);
-      
-      // Fetch relevant data if needed
-      let dataContext = {};
-      if (contextType !== 'general') {
-        const aiQueryType = mapContextTypeToAIQueryType(contextType);
-        dataContext = await aiKnowledgeService.fetchData(aiQueryType, { 
-          user,
-          searchTerm: userMessage
-        });
-      }
-      
-      // Generate response based on context
-      const responseText = generateResponse(contextType, userMessage, dataContext);
-      
-      // Replace "thinking" message with actual response
-      setMessages(prev => {
-        const newMessages = [...prev];
-        newMessages.pop(); // Remove "thinking" message
-        newMessages.push({ text: responseText, type: 'guardian' });
-        return newMessages;
-      });
-      
-      // Check if message contains action request (e.g., "show me my health data")
-      const actionRequest = detectActionRequest(userMessage);
-      if (actionRequest && onNavigate) {
-        setTimeout(() => {
-          // Add navigation message
-          setMessages(prev => [
-            ...prev, 
-            { 
-              text: language === 'en' 
-                ? `Let me take you to ${actionRequest.label}.` 
-                : `Déjame llevarte a ${actionRequest.label}.`, 
-              type: 'guardian' 
-            }
-          ]);
-          
-          // Perform navigation after a short delay
-          setTimeout(() => {
-            onNavigate(actionRequest.route, actionRequest.params);
-          }, 1000);
-        }, 1500);
-      }
-      
-    } catch (error) {
-      console.error("Error processing message:", error);
-      
-      // Replace "thinking" message with error message
-      setMessages(prev => {
-        const newMessages = [...prev];
-        newMessages.pop(); // Remove "thinking" message
-        newMessages.push({ 
-          text: language === 'en' 
-            ? "I'm sorry, I encountered an error. Please try again." 
-            : "Lo siento, encontré un error. Por favor, inténtalo de nuevo.", 
-          type: 'guardian' 
-        });
-        return newMessages;
-      });
-      
-      toast.error(language === 'en' 
-        ? "Error processing your request" 
-        : "Error al procesar tu solicitud");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-  
-  // Determine context type from message and selected topic
-  const determineContextType = (message: string, topic: string | null): string => {
-    const normalizedMessage = message.toLowerCase();
-    
-    // If a topic is already selected, prioritize that
-    if (topic) return topic;
-    
-    // Otherwise, try to determine from message content
-    if (normalizedMessage.includes('health') || normalizedMessage.includes('medical') || 
-        normalizedMessage.includes('salud') || normalizedMessage.includes('médico')) {
-      return 'health';
-    }
-    
-    if (normalizedMessage.includes('device') || normalizedMessage.includes('pendant') || 
-        normalizedMessage.includes('monitor') || normalizedMessage.includes('dispositivo')) {
-      return 'devices';
-    }
-    
-    if (normalizedMessage.includes('medication') || normalizedMessage.includes('medicine') || 
-        normalizedMessage.includes('pill') || normalizedMessage.includes('medicamento')) {
-      return 'medications';
-    }
-    
-    if (normalizedMessage.includes('emergency') || normalizedMessage.includes('help') || 
-        normalizedMessage.includes('emergencia') || normalizedMessage.includes('ayuda')) {
-      return 'emergency';
-    }
-    
-    return 'general';
-  };
-  
-  // Map context type to AI query type
-  const mapContextTypeToAIQueryType = (contextType: string) => {
-    switch (contextType) {
-      case 'health':
-        return 'business_metrics'; // We would create a proper health data type in production
-      case 'devices':
-        return 'device_status';
-      case 'medications':
-        return 'general'; // We would create a proper medications type in production
-      case 'emergency':
-        return 'alerts';
-      default:
-        return 'general';
-    }
-  };
-  
-  // Generate response based on context type
-  const generateResponse = (contextType: string, message: string, data: any): string => {
-    switch (contextType) {
-      case 'health':
-        return language === 'en'
-          ? "Based on your health data, your vital signs have been stable over the past week. Your last glucose reading was 120 mg/dL, which is within your target range. Would you like me to show your detailed health dashboard?"
-          : "Según tus datos de salud, tus signos vitales han estado estables durante la última semana. Tu última lectura de glucosa fue de 120 mg/dL, lo cual está dentro de tu rango objetivo. ¿Te gustaría que te mostrara tu panel de salud detallado?";
-        
-      case 'devices':
-        return language === 'en'
-          ? "Your devices are all functioning normally. The SOS Pendant battery is at 85%, and the Glucose Monitor was last synced 2 hours ago. Is there a specific device you'd like to know more about?"
-          : "Todos tus dispositivos están funcionando normalmente. La batería del Colgante SOS está al 85%, y el Monitor de Glucosa se sincronizó por última vez hace 2 horas. ¿Hay algún dispositivo específico sobre el que te gustaría saber más?";
-        
-      case 'medications':
-        return language === 'en'
-          ? "You have 3 medications scheduled for today. Your next dose is Metformin (500mg) at 2:00 PM. Would you like me to show your complete medication schedule?"
-          : "Tienes 3 medicamentos programados para hoy. Tu próxima dosis es Metformina (500mg) a las 2:00 PM. ¿Te gustaría que te mostrara tu horario completo de medicamentos?";
-        
-      case 'emergency':
-        return language === 'en'
-          ? "If you're experiencing an emergency, please press the SOS button on your pendant or use the emergency button on your dashboard. Would you like me to connect you with emergency services?"
-          : "Si estás experimentando una emergencia, por favor presiona el botón SOS en tu colgante o usa el botón de emergencia en tu panel. ¿Te gustaría que te conectara con servicios de emergencia?";
-        
-      default:
-        return language === 'en'
-          ? "I'm here to help you manage your health and wellness. You can ask me about your health data, devices, medications, or emergency services. How can I assist you today?"
-          : "Estoy aquí para ayudarte a gestionar tu salud y bienestar. Puedes preguntarme sobre tus datos de salud, dispositivos, medicamentos o servicios de emergencia. ¿Cómo puedo ayudarte hoy?";
-    }
-  };
-  
-  // Detect action requests in user messages
-  const detectActionRequest = (message: string): { route: string, params?: any, label: string } | null => {
-    const normalizedMessage = message.toLowerCase();
-    
-    // Check for navigation intent keywords
-    const hasNavigationIntent = normalizedMessage.includes('show me') || 
-                               normalizedMessage.includes('take me to') || 
-                               normalizedMessage.includes('open') ||
-                               normalizedMessage.includes('go to') ||
-                               normalizedMessage.includes('muéstrame') ||
-                               normalizedMessage.includes('llévame a') ||
-                               normalizedMessage.includes('abrir') ||
-                               normalizedMessage.includes('ir a');
-    
-    if (!hasNavigationIntent) return null;
-    
-    // Check for specific destinations
-    if (normalizedMessage.includes('health') || normalizedMessage.includes('salud')) {
-      return { route: '/dashboard/health-metrics', label: language === 'en' ? 'Health Dashboard' : 'Panel de Salud' };
-    }
-    
-    if (normalizedMessage.includes('device') || normalizedMessage.includes('dispositivo')) {
-      return { route: '/dashboard/devices', label: language === 'en' ? 'Devices Dashboard' : 'Panel de Dispositivos' };
-    }
-    
-    if (normalizedMessage.includes('medication') || normalizedMessage.includes('medicamento')) {
-      return { route: '/dashboard/medications', label: language === 'en' ? 'Medications Dashboard' : 'Panel de Medicamentos' };
-    }
-    
-    if (normalizedMessage.includes('emergency') || normalizedMessage.includes('emergencia')) {
-      return { route: '/dashboard/emergency', label: language === 'en' ? 'Emergency Services' : 'Servicios de Emergencia' };
-    }
-    
-    return null;
-  };
-  
-  // Handle form submission
-  const handleSubmit = (e: React.FormEvent) => {
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    handleSendMessage();
+
+    if (!input.trim() || isProcessing) return;
+
+    const userMessage = input.trim();
+
+    // Add user message to chat
+    setMessages(prev => [...prev, { text: userMessage, sender: 'user' }]);
+    setInput("");
+    setIsProcessing(true);
+
+    try {
+      // Simulate AI response
+      await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate delay
+
+      const aiResponse = language === 'en'
+        ? `AI response to: ${userMessage} (Topic: ${selectedTopic || 'General'})`
+        : `Respuesta de la IA a: ${userMessage} (Tema: ${selectedTopic || 'General'})`;
+
+      setMessages(prev => [...prev, { text: aiResponse, sender: 'ai' }]);
+
+    } catch (error) {
+      console.error("Error processing AI query:", error);
+      toast.error(language === 'en'
+        ? "Error processing AI query"
+        : "Error al procesar la consulta de IA");
+    } finally {
+      setIsProcessing(false);
+    }
   };
-  
+
+  const handleExpandToggle = () => {
+    setIsExpanded(prev => !prev);
+  };
+
+  const handleOpenToggle = () => {
+    setIsOpen(prev => !prev);
+
+    // Show welcome toast when opening
+    if (!isOpen) {
+      toast.info(
+        language === 'en'
+          ? "AI Guardian is ready to assist you."
+          : "AI Guardian está listo para ayudarte.",
+        {
+          autoClose: 3000,
+          position: "bottom-right",
+        }
+      );
+    }
+  };
+
+  if (!isOpen) {
+    return (
+      <Button
+        variant="default"
+        size="icon"
+        className="fixed bottom-6 right-6 rounded-full w-12 h-12 shadow-lg bg-ice-600 hover:bg-ice-700 z-50"
+        onClick={handleOpenToggle}
+      >
+        <MessageSquare className="h-5 w-5" />
+      </Button>
+    );
+  }
+
   return (
-    <Card className={`shadow-md overflow-hidden ${className}`}>
-      <CardHeader className="bg-guardian-50 py-3">
-        <CardTitle className="flex items-center text-lg font-medium">
-          <Brain className="text-guardian-500 mr-2 h-5 w-5" />
-          {language === 'en' ? 'AI Health Guardian' : 'Guardián de Salud IA'}
-        </CardTitle>
-      </CardHeader>
-      
-      <CardContent className="p-4">
-        {showWelcome ? (
-          <div className="text-center py-6">
-            <div className="inline-flex justify-center items-center w-16 h-16 rounded-full bg-guardian-100 mb-4">
-              <Sparkles className="h-8 w-8 text-guardian-500" />
+    <div
+      className={`fixed bottom-6 right-6 z-50 transition-all duration-300 ${isExpanded
+        ? 'w-[80%] h-[80%] max-w-4xl bottom-[10%] right-[10%] top-[10%]'
+        : 'w-80 h-96'
+        }`}
+    >
+      <div className="absolute top-[-40px] right-0 flex gap-2">
+        <Button
+          variant="outline"
+          size="icon"
+          className="h-8 w-8 bg-white"
+          onClick={handleExpandToggle}
+        >
+          {isExpanded ? (
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4">
+              <path fillRule="evenodd" d="M3 4.5a.75.75 0 01.75-.75h16.5a.75.75 0 010 1.5H3.75a.75.75 0 01-.75-.75zM3 12a.75.75 0 01.75-.75h16.5a.75.75 0 010 1.5H3.75a.75.75 0 01-.75-.75zM3 19.5a.75.75 0 01.75-.75h16.5a.75.75 0 010 1.5H3.75a.75.75 0 01-.75-.75z" clipRule="evenodd" />
+            </svg>
+
+
+          ) : (
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4">
+              <path fillRule="evenodd" d="M3 4.5a.75.75 0 01.75-.75h16.5a.75.75 0 010 1.5H3.75a.75.75 0 01-.75-.75zM3 12a.75.75 0 01.75-.75h16.5a.75.75 0 010 1.5H3.75a.75.75 0 01-.75-.75zM3 19.5a.75.75 0 01.75-.75h16.5a.75.75 0 010 1.5H3.75a.75.75 0 01-.75-.75z" clipRule="evenodd" />
+            </svg>
+          )}
+        </Button>
+        <Button
+          variant="outline"
+          size="icon"
+          className="h-8 w-8 bg-white"
+          onClick={handleOpenToggle}
+        >
+          <span className="sr-only">Close</span>
+          <span aria-hidden="true">&times;</span>
+        </Button>
+      </div>
+
+      <Card className="w-full h-full flex flex-col overflow-hidden shadow-md">
+        <CardHeader className="bg-gradient-to-r from-ice-50 to-ice-100 py-3">
+          <CardTitle className="flex items-center text-lg text-ice-900">
+            <Bot className="text-ice-600 mr-2 h-5 w-5" />
+            {language === 'en' ? 'AI Guardian' : 'Guardián de IA'}
+          </CardTitle>
+        </CardHeader>
+
+        <CardContent className="flex-1 overflow-y-auto p-4 space-y-3">
+          <MessagesList messages={messages} messagesEndRef={messagesEndRef} language={language} />
+
+          {isProcessing && (
+            <div className="flex justify-center my-2">
+              <div className="flex items-center space-x-1">
+                <div className="w-2 h-2 bg-ice-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                <div className="w-2 h-2 bg-ice-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
+                <div className="w-2 h-2 bg-ice-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+              </div>
             </div>
-            <h3 className="text-lg font-medium mb-2">
-              {language === 'en' ? 'AI Health Guardian' : 'Guardián de Salud IA'}
-            </h3>
-            <p className="text-sm text-muted-foreground mb-4">
-              {language === 'en' 
-                ? 'Your personal health assistant powered by AI. Get help with health monitoring, device management, and more.' 
-                : 'Tu asistente de salud personal impulsado por IA. Obtén ayuda con monitoreo de salud, gestión de dispositivos y más.'}
-            </p>
-            <Button 
-              onClick={() => setShowWelcome(false)}
-              className="bg-guardian-500 hover:bg-guardian-600"
-            >
-              {language === 'en' ? 'Start Conversation' : 'Iniciar Conversación'}
-              <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
-          </div>
-        ) : (
-          <div className="space-y-4">
-            <div 
-              className="h-48 overflow-y-auto space-y-2 bg-slate-50 p-3 rounded-md"
-              ref={messagesContainerRef}
-            >
-              {messages.map((message, idx) => (
-                <div 
-                  key={idx} 
-                  className={`p-2 rounded-lg ${
-                    message.type === 'guardian' 
-                      ? 'bg-guardian-50 border-l-4 border-guardian-500' 
-                      : 'bg-ice-50 border-l-4 border-ice-500 ml-6'
-                  }`}
-                >
-                  <div className="flex items-start gap-2">
-                    {message.type === 'guardian' && (
-                      <Brain className="h-4 w-4 mt-0.5 text-guardian-600 flex-shrink-0" />
-                    )}
-                    <p className="text-sm">
-                      {message.text}
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
-            
-            <TopicSelector 
-              selectedTopic={selectedTopic} 
-              onSelectTopic={handleTopicSelect} 
-            />
-            
-            <form onSubmit={handleSubmit} className="flex gap-2">
-              <input
-                type="text"
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                disabled={isLoading}
-                placeholder={language === 'en' ? "Type your message..." : "Escribe tu mensaje..."}
-                className="flex-1 p-2 text-sm border border-gray-300 rounded-md"
-              />
-              <Button 
-                type="submit" 
-                size="sm" 
-                className="bg-guardian-500 hover:bg-guardian-600"
-                disabled={!input.trim() || isLoading}
-              >
-                {isLoading ? (
-                  <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                ) : (
-                  <MessageSquare className="h-4 w-4" />
-                )}
-              </Button>
-            </form>
-          </div>
-        )}
-      </CardContent>
-      
-      <CardFooter className="bg-guardian-50/50 py-2 px-4 text-xs text-muted-foreground">
-        <div className="flex items-center w-full justify-between">
-          <span>
-            {language === 'en' ? 'Powered by ICE Alarm AI' : 'Desarrollado por ICE Alarm AI'}
-          </span>
-          <Button 
-            variant="link" 
-            size="sm" 
-            className="text-xs p-0 h-auto text-guardian-600"
-            onClick={() => {
-              toast.info(
-                language === 'en' 
-                  ? "You can ask about your health metrics, devices, or medications" 
-                  : "Puedes preguntar sobre tus métricas de salud, dispositivos o medicamentos"
-              );
+          )}
+        </CardContent>
+
+        <CardFooter className="border-t border-ice-100 p-3">
+          <TopicSelector
+            topics={{
+              [language === 'en' ? 'Emergency' : 'Emergencia']: emergencyTopics,
+              [language === 'en' ? 'Health' : 'Salud']: healthTopics,
+              [language === 'en' ? 'General' : 'General']: generalTopics,
             }}
-          >
-            {language === 'en' ? 'Help Topics' : 'Temas de Ayuda'}
-          </Button>
-        </div>
-      </CardFooter>
-    </Card>
+            onTopicSelect={handleTopicSelect}
+            language={language}
+          />
+          <form onSubmit={handleSubmit} className="w-full flex gap-2">
+            <Textarea
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder={language === 'en'
+                ? "Ask about health, emergencies, etc..."
+                : "Pregunta sobre salud, emergencias, etc..."}
+              className="flex-1 resize-none h-10 py-2"
+              disabled={isProcessing}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                  e.preventDefault();
+                  handleSubmit(e);
+                }
+              }}
+            />
+            <Button
+              type="submit"
+              variant="default"
+              className="bg-ice-600 hover:bg-ice-700 h-10"
+              disabled={isProcessing || !input.trim()}
+            >
+              <Send className="h-4 w-4" />
+            </Button>
+          </form>
+        </CardFooter>
+      </Card>
+    </div>
   );
 };
 
