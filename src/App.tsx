@@ -60,10 +60,10 @@ function App() {
     <Router>
       <LanguageProvider>
         <AuthProvider>
-          <div className="flex flex-col min-h-screen bg-gradient-to-b from-white via-ice-50/30 to-white">
+          <div className="flex flex-col min-h-screen bg-white">
             <Navbar />
             
-            <main className="flex-grow relative pt-16 md:pt-20">
+            <main className="flex-grow relative pt-16 md:pt-20 bg-white text-black">
               <Routes>
                 <Route path="/" element={<Landing />} />
                 <Route path="/about" element={<AboutUs />} />
