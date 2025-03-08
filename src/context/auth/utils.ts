@@ -5,11 +5,13 @@ export const determineUserRole = (email: string): string => {
   
   email = email.toLowerCase();
   
-  // Specific email-to-role mapping for test accounts
+  // Specific email-to-role mapping for accounts
   if (email === 'lwakeman@icealarm.es') {
     return 'admin';
   } else if (email === 'wakemanlee20@gmail.com') {
     return 'callcenter';
+  } else if (email === 'icealarmespana@gmail.com') {
+    return 'member';
   }
   
   // General pattern matching for other emails

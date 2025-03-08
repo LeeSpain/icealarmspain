@@ -1,3 +1,4 @@
+
 export class MockAuth {
   currentUser: any = null;
   authStateListeners: Array<(user: any | null) => void> = [];
@@ -27,6 +28,24 @@ export class MockAuth {
     // Validate email format
     if (!email.includes('@') || !email.includes('.')) {
       throw new Error("The email address is badly formatted.");
+    }
+    
+    // Check specific email accounts with the custom password
+    if ((email === "lwakeman@icealarm.es" || 
+         email === "wakemanlee20@gmail.com" || 
+         email === "icealarmespana@gmail.com") && 
+        password === "Arsenal@2025") {
+      
+      this.currentUser = {
+        uid: 'mock-uid-' + email.split('@')[0] + '-' + Date.now(),
+        email: email,
+        displayName: email.split('@')[0].charAt(0).toUpperCase() + email.split('@')[0].slice(1),
+      };
+      
+      // Notify all listeners that the auth state has changed
+      this.authStateListeners.forEach(callback => callback(this.currentUser));
+      
+      return { user: this.currentUser };
     }
     
     // Fixed admin credentials - always allow admin@icealarm.es with password admin123
