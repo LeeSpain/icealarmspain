@@ -1,10 +1,15 @@
 
-import React, { Suspense } from 'react';
+import React, { Suspense, useEffect } from 'react';
 import './App.css';
 import BasicDebug from './components/debug/BasicDebug';
 
 function App() {
+  useEffect(() => {
+    console.log("App component mounted");
+  }, []);
+
   console.log("App rendering - debugging blank screen");
+  
   return (
     <div className="App bg-white">
       <BasicDebug />
