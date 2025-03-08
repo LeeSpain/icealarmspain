@@ -1,6 +1,7 @@
 
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { Suspense } from 'react';
+import './App.css';
 import Index from './pages/Index';
 import Login from './pages/Login';
 import Join from './pages/Join';
@@ -41,9 +42,10 @@ import DeviceInventoryManager from "@/components/admin/DeviceInventoryManager";
 import ScrollToTop from "@/components/layout/ScrollToTop";
 
 function App() {
+  console.log("App rendering - debugging blank screen");
   return (
     <div className="App">
-      <Suspense fallback={<div>Loading...</div>}>
+      <Suspense fallback={<div className="flex items-center justify-center min-h-screen">Loading...</div>}>
         <LanguageProvider>
           <AuthProvider>
             <Router>

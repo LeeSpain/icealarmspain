@@ -29,12 +29,20 @@ const ThemeProviderContext = createContext<ThemeProviderState>({
 
 export function ThemeProvider({
   children,
-  defaultTheme = "system",
-  storageKey = "vite-ui-theme",
+  defaultTheme = "light",
+  storageKey = "ice-ui-theme",
   ...props
 }: ThemeProviderProps) {
   const [theme, setTheme] = useState<Theme>(
-    () => (localStorage.getItem(storageKey) as Theme) || defaultTheme
+    () => {
+      try {
+        const storedTheme = localStorage.getItem(storageKey) as Theme
+        return storedTheme || defaultTheme
+      } catch (e) {
+        console.error("Error accessing localStorage:", e)
+        return defaultTheme
+      }
+    }
   )
 
   useEffect(() => {
@@ -53,12 +61,17 @@ export function ThemeProvider({
     }
     
     root.classList.add(theme)
+    console.log(`Theme set to: ${theme}`)
   }, [theme])
   
   const value = {
     theme,
     setTheme: (theme: Theme) => {
-      localStorage.setItem(storageKey, theme)
+      try {
+        localStorage.setItem(storageKey, theme)
+      } catch (e) {
+        console.error("Error setting theme in localStorage:", e)
+      }
       setTheme(theme)
     },
   }
