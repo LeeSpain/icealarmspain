@@ -20,7 +20,6 @@ const HeroHeader: React.FC<HeroHeaderProps> = ({ language, handleClick }) => {
         </span>
       </div>
       
-      {/* Enhanced headline with consistent font styling */}
       <div className="relative mb-12">
         {/* Decorative elements behind the headline */}
         <div className="absolute -top-10 left-1/2 transform -translate-x-1/2 w-32 h-1 bg-gradient-to-r from-transparent via-ice-400 to-transparent rounded-full opacity-70"></div>
