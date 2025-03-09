@@ -2,16 +2,19 @@
 import React, { useCallback } from "react";
 import Logo from "./Logo";
 import { Facebook, Twitter, Instagram, Linkedin, Send } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Footer: React.FC = () => {
+  const navigate = useNavigate();
+
   // Function to handle click and scroll to top - memoized with useCallback
-  const handleClick = useCallback(() => {
+  const handleClick = useCallback((path: string) => {
+    navigate(path);
     window.scrollTo({
       top: 0,
       behavior: 'smooth'
     });
-  }, []);
+  }, [navigate]);
 
   return (
     <footer className="bg-white pt-16 pb-8 border-t border-gray-100">
@@ -41,19 +44,19 @@ const Footer: React.FC = () => {
           <div>
             <h3 className="font-medium text-lg mb-4">Products</h3>
             <ul className="space-y-2">
-              <li><Link to="/products" onClick={handleClick} className="text-muted-foreground hover:text-ice-600 transition-colors">All Products</Link></li>
-              <li><Link to="/devices/sos-pendant" onClick={handleClick} className="text-muted-foreground hover:text-ice-600 transition-colors">SOS Pendant</Link></li>
-              <li><Link to="/devices/medical-dispenser" onClick={handleClick} className="text-muted-foreground hover:text-ice-600 transition-colors">Medical Dispenser</Link></li>
-              <li><Link to="/devices/glucose-monitor" onClick={handleClick} className="text-muted-foreground hover:text-ice-600 transition-colors">Glucose Monitor</Link></li>
+              <li><Link to="/products" onClick={() => handleClick("/products")} className="text-muted-foreground hover:text-ice-600 transition-colors">All Products</Link></li>
+              <li><Link to="/devices/sos-pendant" onClick={() => handleClick("/devices/sos-pendant")} className="text-muted-foreground hover:text-ice-600 transition-colors">SOS Pendant</Link></li>
+              <li><Link to="/devices/medical-dispenser" onClick={() => handleClick("/devices/medical-dispenser")} className="text-muted-foreground hover:text-ice-600 transition-colors">Medical Dispenser</Link></li>
+              <li><Link to="/devices/glucose-monitor" onClick={() => handleClick("/devices/glucose-monitor")} className="text-muted-foreground hover:text-ice-600 transition-colors">Glucose Monitor</Link></li>
             </ul>
           </div>
           
           <div>
             <h3 className="font-medium text-lg mb-4">Company</h3>
             <ul className="space-y-2">
-              <li><Link to="/about" onClick={handleClick} className="text-muted-foreground hover:text-ice-600 transition-colors">About Us</Link></li>
-              <li><Link to="/join" onClick={handleClick} className="text-muted-foreground hover:text-ice-600 transition-colors">Membership</Link></li>
-              <li><Link to="/contact" onClick={handleClick} className="text-muted-foreground hover:text-ice-600 transition-colors">Contact</Link></li>
+              <li><Link to="/about" onClick={() => handleClick("/about")} className="text-muted-foreground hover:text-ice-600 transition-colors">About Us</Link></li>
+              <li><Link to="/join" onClick={() => handleClick("/join")} className="text-muted-foreground hover:text-ice-600 transition-colors">Membership</Link></li>
+              <li><Link to="/contact" onClick={() => handleClick("/contact")} className="text-muted-foreground hover:text-ice-600 transition-colors">Contact</Link></li>
             </ul>
           </div>
           
@@ -84,9 +87,9 @@ const Footer: React.FC = () => {
             &copy; {new Date().getFullYear()} ICE Alarm España. All rights reserved.
           </p>
           <div className="space-x-4">
-            <Link to="/privacy" onClick={handleClick} className="text-muted-foreground text-sm hover:text-ice-600 transition-colors">Privacy Policy</Link>
-            <Link to="/terms" onClick={handleClick} className="text-muted-foreground text-sm hover:text-ice-600 transition-colors">Terms of Service</Link>
-            <Link to="/cookie-policy" onClick={handleClick} className="text-muted-foreground text-sm hover:text-ice-600 transition-colors">Cookie Policy</Link>
+            <Link to="/privacy" onClick={() => handleClick("/privacy")} className="text-muted-foreground text-sm hover:text-ice-600 transition-colors">Privacy Policy</Link>
+            <Link to="/terms" onClick={() => handleClick("/terms")} className="text-muted-foreground text-sm hover:text-ice-600 transition-colors">Terms of Service</Link>
+            <Link to="/cookie-policy" onClick={() => handleClick("/cookie-policy")} className="text-muted-foreground text-sm hover:text-ice-600 transition-colors">Cookie Policy</Link>
           </div>
         </div>
       </div>

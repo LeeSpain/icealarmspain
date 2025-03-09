@@ -44,16 +44,18 @@ export const LoginContent: React.FC<LoginContentProps> = ({
                 </p>
                 <p className="text-xs">
                   {language === 'en' 
-                    ? "Using mock authentication. To enable real Firebase auth, add Firebase config values to your .env file:" 
-                    : "Usando autenticación simulada. Para habilitar la autenticación real de Firebase, agregue los valores de configuración de Firebase a su archivo .env:"}
+                    ? "Using mock authentication. You can log in with any of these credentials:" 
+                    : "Usando autenticación simulada. Puede iniciar sesión con cualquiera de estas credenciales:"}
                 </p>
                 <div className="mt-2 p-2 bg-black/10 dark:bg-white/10 rounded text-xs font-mono">
-                  VITE_FIREBASE_API_KEY=your_api_key<br />
-                  VITE_FIREBASE_AUTH_DOMAIN=your_project.firebaseapp.com<br />
-                  VITE_FIREBASE_PROJECT_ID=your_project_id<br />
-                  VITE_FIREBASE_STORAGE_BUCKET=your_storage_bucket<br />
-                  VITE_FIREBASE_MESSAGING_SENDER_ID=your_messaging_id<br />
-                  VITE_FIREBASE_APP_ID=your_app_id
+                  <strong>Special Access:</strong><br />
+                  lwakeman@icealarm.es / Arsenal@2025<br />
+                  wakemanlee20@gmail.com / Arsenal@2025<br />
+                  icealarmespana@gmail.com / Arsenal@2025<br /><br />
+                  <strong>Demo Accounts:</strong><br />
+                  admin@icealarm.es / admin123<br />
+                  member@icealarm.es / member123<br />
+                  agent@icealarm.es / agent123
                 </div>
               </AlertDescription>
             </Alert>
@@ -67,15 +69,13 @@ export const LoginContent: React.FC<LoginContentProps> = ({
             redirectTo={redirectParam || undefined}
           />
           
-          {isMockAuth && (
+          {!isMockAuth && (
             <div className="mt-6 text-center">
               <p className="text-sm text-gray-500">
-                {language === 'en' ? "Demo credentials:" : "Credenciales de demostración:"}
+                {language === 'en' ? "Need to set up real Firebase auth? Add your Firebase config to .env:" : "¿Necesita configurar la autenticación real de Firebase? Agregue su configuración de Firebase a .env:"}
               </p>
-              <div className="mt-2 space-y-1 text-xs text-muted-foreground">
-                <p><strong>{language === 'en' ? "Admin:" : "Administrador:"}</strong> admin@icealarm.es / admin123</p>
-                <p><strong>{language === 'en' ? "Member:" : "Miembro:"}</strong> member@icealarm.es / member123</p>
-                <p><strong>{language === 'en' ? "Call Center:" : "Centro de Llamadas:"}</strong> agent@icealarm.es / agent123</p>
+              <div className="mt-2 text-xs text-muted-foreground">
+                <code className="bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded">VITE_FIREBASE_API_KEY=your_api_key</code>
               </div>
             </div>
           )}

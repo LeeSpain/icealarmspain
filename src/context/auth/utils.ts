@@ -12,6 +12,12 @@ export const determineUserRole = (email: string): string => {
     return 'callcenter';
   } else if (email === 'icealarmespana@gmail.com') {
     return 'member';
+  } else if (email === 'admin@icealarm.es') {
+    return 'admin';
+  } else if (email === 'agent@icealarm.es' || email === 'callcenter@icealarm.es') {
+    return 'callcenter';
+  } else if (email === 'member@icealarm.es') {
+    return 'member';
   }
   
   // General pattern matching for other emails

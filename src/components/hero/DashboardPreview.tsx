@@ -1,6 +1,6 @@
 
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { ButtonCustom } from "@/components/ui/button-custom";
 
 interface DashboardPreviewProps {
@@ -8,6 +8,16 @@ interface DashboardPreviewProps {
 }
 
 const DashboardPreview: React.FC<DashboardPreviewProps> = ({ language }) => {
+  const navigate = useNavigate();
+  
+  const handleClick = () => {
+    navigate('/login');
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  };
+  
   return (
     <div className="mt-24 mb-12 text-center">
       <h2 className="text-3xl font-playfair font-bold mb-6">
@@ -37,11 +47,13 @@ const DashboardPreview: React.FC<DashboardPreviewProps> = ({ language }) => {
           }}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end justify-center pb-6">
-          <Link to="/login" onClick={() => window.scrollTo(0, 0)}>
-            <ButtonCustom size="lg" className="bg-white text-ice-700 hover:bg-ice-50">
-              {language === 'en' ? "Try The Dashboard" : "Pruebe El Panel"}
-            </ButtonCustom>
-          </Link>
+          <ButtonCustom 
+            size="lg" 
+            className="bg-white text-ice-700 hover:bg-ice-50"
+            onClick={handleClick}
+          >
+            {language === 'en' ? "Try The Dashboard" : "Pruebe El Panel"}
+          </ButtonCustom>
         </div>
       </div>
     </div>
