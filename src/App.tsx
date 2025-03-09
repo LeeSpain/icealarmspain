@@ -6,6 +6,7 @@ import Hero from "./components/Hero";
 import DeviceShowcase from "./components/DeviceShowcase";
 import Pricing from "./components/Pricing";
 import ExpatInfo from "./components/ExpatInfo";
+import Testimonials from "./components/Testimonials";
 import Footer from "./components/Footer";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { LanguageProvider } from "./context/LanguageContext";
@@ -41,6 +42,7 @@ const Landing = () => {
       <DeviceShowcase />
       <Pricing />
       <ExpatInfo />
+      <Testimonials />
     </div>
   );
 };

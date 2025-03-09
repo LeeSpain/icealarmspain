@@ -1,3 +1,4 @@
+
 import React from "react";
 import { useLanguage } from "@/context/LanguageContext";
 import { useNavigate } from "react-router-dom";
@@ -89,9 +90,13 @@ const Pricing: React.FC = () => {
   
   return (
     <section id="pricing" className="py-20 bg-gradient-to-b from-white to-ice-50">
-      <PricingHero language={language} />
-      <PricingPlans plans={plans} language={language} />
-      <PricingActions language={language} />
+      <div className="container mx-auto px-4 md:px-6">
+        <div className="max-w-5xl mx-auto">
+          <PricingHero language={language} />
+          <PricingPlans plans={plans} language={language} />
+          <PricingActions language={language} />
+        </div>
+      </div>
     </section>
   );
 };

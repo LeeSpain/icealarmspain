@@ -5,6 +5,7 @@ import HeroHeader from "./hero/HeroHeader";
 import FeatureCards from "./hero/FeatureCards";
 import DashboardPreview from "./hero/DashboardPreview";
 import HeroBackground from "./hero/HeroBackground";
+import Testimonials from "./Testimonials";
 
 const Hero: React.FC = () => {
   const { language } = useLanguage();
@@ -21,15 +22,23 @@ const Hero: React.FC = () => {
   return (
     <section 
       id="home" 
-      className="relative pt-32 pb-24 overflow-hidden"
+      className="relative pt-32 overflow-hidden"
     >
       <HeroBackground />
       
       <div className="container mx-auto px-4 md:px-6">
         <div className="max-w-5xl mx-auto">
           <HeroHeader language={language} handleClick={handleClick} />
-          <FeatureCards language={language} />
-          <DashboardPreview language={language} />
+          
+          {/* Feature Cards Section - consistent spacing */}
+          <div className="py-20">
+            <FeatureCards language={language} />
+          </div>
+          
+          {/* Dashboard Preview Section - consistent spacing */}
+          <div className="py-20">
+            <DashboardPreview language={language} />
+          </div>
         </div>
       </div>
       

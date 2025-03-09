@@ -10,7 +10,7 @@ interface DashboardPreviewComponentProps {
 
 const DashboardPreviewComponent: React.FC<DashboardPreviewComponentProps> = ({ language }) => {
   return (
-    <div className="relative mx-auto max-w-5xl rounded-xl shadow-md border border-gray-200 overflow-hidden bg-white">
+    <div className="relative mx-auto max-w-5xl rounded-xl shadow-lg border border-gray-200 overflow-hidden bg-white transition-all duration-300 hover:shadow-xl">
       <DashboardHeader language={language} />
       <DashboardContent language={language} />
       <DashboardFooter language={language} />
