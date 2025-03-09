@@ -39,15 +39,19 @@ const JoinSignup: React.FC<JoinSignupProps> = ({ language, onSuccess }) => {
                 : "Para pruebas, utilice exactamente estas credenciales:"}
             </p>
             <div className="mt-1 p-3 bg-white dark:bg-black/20 rounded text-sm font-mono border border-blue-100">
-              <div className="font-bold text-blue-700 mb-1">Special Access:</div>
+              <div className="font-bold text-blue-700 mb-1">
+                {language === 'en' ? "Use EXACTLY this to log in:" : "Use EXACTAMENTE esto para iniciar sesión:"}
+              </div>
               <div className="grid grid-cols-2 gap-x-2 mb-3">
                 <div className="font-medium">Email:</div>
-                <div>lwakeman@icealarm.es</div>
+                <div className="select-all">lwakeman@icealarm.es</div>
                 <div className="font-medium">Password:</div>
-                <div>Arsenal@2025</div>
+                <div className="select-all">Arsenal@2025</div>
               </div>
               
-              <div className="font-bold text-blue-700 mt-2 mb-1">Alternative Test Accounts:</div>
+              <div className="font-bold text-blue-700 mt-2 mb-1">
+                {language === 'en' ? "Alternative Test Accounts:" : "Cuentas de Prueba Alternativas:"}
+              </div>
               <div className="text-xs mt-1">
                 admin@icealarm.es / admin123<br />
                 member@icealarm.es / member123<br />
