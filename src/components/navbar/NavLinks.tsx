@@ -24,12 +24,19 @@ const NavLinks: React.FC<NavLinksProps> = ({ onClick }) => {
     { name: language === 'en' ? "Contact" : "Contacto", href: "/contact", isAnchor: false },
   ];
 
+  const handleClick = () => {
+    if (onClick) {
+      onClick();
+    }
+    window.scrollTo(0, 0);
+  };
+
   const renderNavLink = (link: NavLink) => {
     return (
       <Link
         to={link.href}
         className="text-sm font-medium text-gray-700 hover:text-ice-600 transition-colors link-underline"
-        onClick={onClick}
+        onClick={handleClick}
       >
         {link.name}
       </Link>
