@@ -21,12 +21,12 @@ const DeviceHero: React.FC<DeviceHeroProps> = ({ language }) => {
             <div className="inline-flex items-center px-3 py-1.5 rounded-full bg-gradient-to-r from-ice-50/80 to-ice-100/80 border border-ice-200 text-ice-600 text-sm font-medium mb-6 shadow-sm backdrop-blur-sm">
               <Shield size={16} className="mr-2" />
               <span className="relative">
-                {language === 'en' ? 'HEALTH MONITORING SOLUTIONS' : 'SOLUCIONES DE MONITOREO DE SALUD'}
+                {language === 'en' ? 'SMART HEALTH DEVICES' : 'DISPOSITIVOS INTELIGENTES DE SALUD'}
                 <Sparkles size={14} className="absolute -top-1 -right-4 text-ice-500 animate-pulse-gentle" />
               </span>
             </div>
             
-            {/* Updated headline with font styling consistent with the homepage */}
+            {/* Headline with font styling consistent with the homepage */}
             <div className="relative mb-12">
               {/* Decorative elements behind the headline */}
               <div className="absolute -top-10 left-1/2 transform -translate-x-1/2 w-32 h-1 bg-gradient-to-r from-transparent via-ice-400 to-transparent rounded-full opacity-70"></div>
@@ -34,8 +34,8 @@ const DeviceHero: React.FC<DeviceHeroProps> = ({ language }) => {
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold font-playfair leading-tight mx-auto max-w-4xl relative">
                 <span className="relative z-10 bg-gradient-to-r from-gray-900 via-ice-900 to-guardian-800 bg-clip-text text-transparent inline-block">
                   {language === 'en' 
-                    ? 'Intelligent Health Monitoring & Emergency Response' 
-                    : 'Monitoreo Inteligente de Salud y Respuesta de Emergencia'}
+                    ? 'Smart Devices For Health & Safety' 
+                    : 'Dispositivos Inteligentes Para Salud y Seguridad'}
                 </span>
                 
                 {/* Accent decorations */}
@@ -48,23 +48,23 @@ const DeviceHero: React.FC<DeviceHeroProps> = ({ language }) => {
             
             <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto backdrop-blur-sm bg-white/5 py-2 rounded-lg mt-6 font-inter">
               {language === 'en' 
-                ? 'Our AI Guardian provides 24/7 monitoring and emergency support, integrating smart devices for real-time health tracking and instant response.' 
-                : 'Nuestro Guardián de IA proporciona monitoreo 24/7 y soporte de emergencia, integrando dispositivos inteligentes para seguimiento de salud en tiempo real.'}
+                ? 'Explore our range of connected health devices designed for travelers and expats, with 24/7 monitoring and emergency support in multiple languages.' 
+                : 'Explore nuestra gama de dispositivos de salud conectados diseñados para viajeros y expatriados, con monitoreo 24/7 y soporte de emergencia en múltiples idiomas.'}
             </p>
             
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-6">
               <Link to="/join">
                 <ButtonCustom size="lg" className="group relative overflow-hidden shadow-md">
                   <span className="relative z-10 flex items-center">
-                    {language === 'en' ? 'Shop Now' : 'Comprar Ahora'}
+                    {language === 'en' ? 'View All Devices' : 'Ver Todos los Dispositivos'}
                     <ArrowRight size={18} className="ml-2 transition-transform group-hover:translate-x-1" />
                   </span>
                   <span className="absolute inset-0 bg-gradient-to-r from-ice-500 to-ice-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-0"></span>
                 </ButtonCustom>
               </Link>
-              <Link to="/demo">
+              <Link to="/contact">
                 <ButtonCustom variant="outline" size="lg" className="border-ice-200 hover:border-ice-300 shadow-sm">
-                  {language === 'en' ? 'Request Demo' : 'Solicitar Demo'}
+                  {language === 'en' ? 'Contact Sales' : 'Contactar Ventas'}
                 </ButtonCustom>
               </Link>
             </div>
