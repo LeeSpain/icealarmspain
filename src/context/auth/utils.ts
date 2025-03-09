@@ -5,6 +5,9 @@ export const determineUserRole = (email: string): string => {
   
   email = email.toLowerCase();
   
+  // Debug log for troubleshooting
+  console.log('Determining role for email:', email);
+  
   // Specific email-to-role mapping for accounts
   if (email === 'lwakeman@icealarm.es') {
     return 'admin';

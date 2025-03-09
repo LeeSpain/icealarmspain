@@ -14,6 +14,7 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
   if (!isOpen) return null;
   
   const handleClick = () => {
+    console.log("Mobile menu item clicked, closing menu and scrolling to top");
     window.scrollTo({
       top: 0,
       behavior: 'smooth'

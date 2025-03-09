@@ -11,6 +11,7 @@ const DashboardPreview: React.FC<DashboardPreviewProps> = ({ language }) => {
   const navigate = useNavigate();
   
   const handleClick = () => {
+    console.log("Dashboard preview button clicked, redirecting to login");
     navigate('/login');
     window.scrollTo({
       top: 0,

@@ -28,11 +28,21 @@ const JoinSignup: React.FC<JoinSignupProps> = ({ language, onSuccess }) => {
         <Alert className="mb-6 bg-amber-50 border border-amber-200 text-amber-800">
           <InfoIcon className="h-4 w-4 mr-2" />
           <AlertDescription>
-            <p className="text-xs">
+            <p className="text-xs mb-2">
               {language === 'en' 
                 ? "Demo Mode: Any email with a valid format and password (min 6 chars) will work" 
                 : "Modo Demo: Cualquier correo con formato válido y contraseña (mín 6 caracteres) funcionará"}
             </p>
+            <p className="text-xs font-medium">
+              {language === 'en' 
+                ? "For testing, you can also use:" 
+                : "Para pruebas, también puede usar:"}
+            </p>
+            <div className="mt-1 p-2 bg-black/10 rounded text-xs font-mono">
+              admin@icealarm.es / admin123<br />
+              member@icealarm.es / member123<br />
+              agent@icealarm.es / agent123
+            </div>
           </AlertDescription>
         </Alert>
       )}
