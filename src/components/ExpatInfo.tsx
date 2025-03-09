@@ -1,7 +1,7 @@
 
 import React from "react";
 import { useLanguage } from "@/context/LanguageContext";
-import { Globe, PhoneCall, MessageSquare, Users, ArrowRight } from "lucide-react";
+import { Globe, PhoneCall, MessageSquare, Users, ArrowRight, MapPin, Headphones } from "lucide-react";
 import { ButtonCustom } from "./ui/button-custom";
 import { Link } from "react-router-dom";
 
@@ -25,25 +25,25 @@ const ExpatInfo: React.FC = () => {
               Expat Support Services
             </h2>
             <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-              We understand the unique challenges faced by expatriates in Spain. Our bilingual support services are designed to help you maintain independence in your new home.
+              We understand the unique challenges faced by expatriates in Spain. Our bilingual support services in English and Spanish are designed to help you maintain independence in your new home.
             </p>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="bg-white rounded-xl shadow-md p-6 transform transition-all duration-300 hover:scale-105 hover:shadow-lg border border-ice-100">
               <div className="mb-4 text-ice-500">
-                <Globe size={36} />
+                <Headphones size={36} />
               </div>
-              <h3 className="text-xl font-semibold mb-2">Bilingual Assistance</h3>
-              <p className="text-muted-foreground mb-4">Our support team provides service in both English and Spanish, ensuring clear communication when you need help most.</p>
+              <h3 className="text-xl font-semibold mb-2">Translation Services</h3>
+              <p className="text-muted-foreground mb-4">Our devices provide real-time translation between English and Spanish, ensuring clear communication with local healthcare providers when you need help most.</p>
             </div>
             
             <div className="bg-white rounded-xl shadow-md p-6 transform transition-all duration-300 hover:scale-105 hover:shadow-lg border border-ice-100">
               <div className="mb-4 text-ice-500">
-                <Users size={36} />
+                <MapPin size={36} />
               </div>
-              <h3 className="text-xl font-semibold mb-2">English-Speaking Doctors</h3>
-              <p className="text-muted-foreground mb-4">Access to our network of English-speaking healthcare professionals throughout Spain to help maintain your independence.</p>
+              <h3 className="text-xl font-semibold mb-2">Location Tracking</h3>
+              <p className="text-muted-foreground mb-4">The SOS pendant provides your exact location during emergencies, allowing our team to quickly locate and send appropriate assistance to you.</p>
             </div>
             
             <div className="bg-white rounded-xl shadow-md p-6 transform transition-all duration-300 hover:scale-105 hover:shadow-lg border border-ice-100">
@@ -51,7 +51,7 @@ const ExpatInfo: React.FC = () => {
                 <PhoneCall size={36} />
               </div>
               <h3 className="text-xl font-semibold mb-2">24/7 Emergency Support</h3>
-              <p className="text-muted-foreground mb-4">Our emergency line is always available with English-speaking operators ready to assist in critical situations.</p>
+              <p className="text-muted-foreground mb-4">Our emergency line is always available with bilingual operators ready to assist in critical situations and communicate with local medical personnel.</p>
             </div>
           </div>
           
