@@ -34,8 +34,8 @@ const DeviceHero: React.FC<DeviceHeroProps> = ({ language }) => {
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold font-playfair leading-tight mx-auto max-w-4xl relative">
                 <span className="relative z-10 bg-gradient-to-r from-gray-900 via-ice-900 to-guardian-800 bg-clip-text text-transparent inline-block">
                   {language === 'en' 
-                    ? 'Advanced Protection Technology' 
-                    : 'Tecnología Avanzada de Protección'}
+                    ? 'Intelligent Health Monitoring & Emergency Response' 
+                    : 'Monitoreo Inteligente de Salud y Respuesta de Emergencia'}
                 </span>
                 
                 {/* Accent decorations */}
@@ -48,8 +48,8 @@ const DeviceHero: React.FC<DeviceHeroProps> = ({ language }) => {
             
             <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto backdrop-blur-sm bg-white/5 py-2 rounded-lg mt-6 font-inter">
               {language === 'en' 
-                ? 'Discover how our AI-powered monitoring solutions create a seamless safety network for independent living with 24/7 emergency response.' 
-                : 'Descubra cómo nuestras soluciones de monitoreo impulsadas por IA crean una red de seguridad perfecta para una vida independiente con respuesta de emergencia 24/7.'}
+                ? 'Our AI Guardian provides 24/7 monitoring and emergency support, integrating smart devices for real-time health tracking and instant response.' 
+                : 'Nuestro Guardián de IA proporciona monitoreo 24/7 y soporte de emergencia, integrando dispositivos inteligentes para seguimiento de salud en tiempo real.'}
             </p>
             
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-6">
