@@ -1,6 +1,6 @@
 
 import React from "react";
-import { Check, Headset, Phone, HeartPulse, Globe } from "lucide-react";
+import { Check, Headset, Phone, HeartPulse, Globe, ArrowRight } from "lucide-react";
 import { ButtonCustom } from "@/components/ui/button-custom";
 import { Link } from "react-router-dom";
 
