@@ -3,6 +3,7 @@ import React from "react";
 import { Shield, ArrowRight, Sparkles } from "lucide-react";
 import { ButtonCustom } from "@/components/ui/button-custom";
 import { Link } from "react-router-dom";
+import HeroBackground from "../hero/HeroBackground";
 
 interface DeviceHeroProps {
   language: string;
@@ -11,15 +12,8 @@ interface DeviceHeroProps {
 const DeviceHero: React.FC<DeviceHeroProps> = ({ language }) => {
   return (
     <section id="devices-hero" className="relative pt-32 pb-24 overflow-hidden">
-      {/* Enhanced Background Elements */}
-      <div className="absolute top-20 right-0 w-96 h-96 bg-gradient-radial from-ice-100/70 to-transparent rounded-full filter blur-3xl opacity-70 -z-10 animate-pulse-gentle"></div>
-      <div className="absolute bottom-0 left-20 w-72 h-72 bg-gradient-radial from-guardian-100/60 to-transparent rounded-full filter blur-3xl opacity-50 -z-10"></div>
-      <div className="absolute top-40 left-1/4 w-64 h-64 rounded-full border border-ice-200/50 -z-10 animate-float"></div>
-      <div className="absolute bottom-20 right-1/4 w-80 h-80 rounded-full border border-guardian-200/50 -z-10 animate-float" style={{ animationDelay: "2s" }}></div>
-      
-      {/* Decorative accent lines */}
-      <div className="absolute top-1/4 left-0 w-full h-px bg-gradient-to-r from-transparent via-ice-200/50 to-transparent -z-10"></div>
-      <div className="absolute top-2/3 left-0 w-full h-px bg-gradient-to-r from-transparent via-guardian-200/30 to-transparent -z-10"></div>
+      {/* Reuse the same background from the Hero component */}
+      <HeroBackground />
       
       <div className="container mx-auto px-4 md:px-6">
         <div className="max-w-5xl mx-auto">
@@ -32,7 +26,7 @@ const DeviceHero: React.FC<DeviceHeroProps> = ({ language }) => {
               </span>
             </div>
             
-            {/* Enhanced headline with consistent font styling */}
+            {/* Updated headline with font styling consistent with the homepage */}
             <div className="relative mb-12">
               {/* Decorative elements behind the headline */}
               <div className="absolute -top-10 left-1/2 transform -translate-x-1/2 w-32 h-1 bg-gradient-to-r from-transparent via-ice-400 to-transparent rounded-full opacity-70"></div>
