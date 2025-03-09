@@ -2,7 +2,7 @@
 import React from "react";
 import AuthForm from "@/components/AuthForm";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { InfoIcon } from "lucide-react";
+import { InfoIcon, LucideShieldCheck } from "lucide-react";
 
 interface JoinSignupProps {
   language: string;
@@ -25,23 +25,34 @@ const JoinSignup: React.FC<JoinSignupProps> = ({ language, onSuccess }) => {
       </p>
       
       {isMockAuth && (
-        <Alert className="mb-6 bg-amber-50 border border-amber-200 text-amber-800">
-          <InfoIcon className="h-4 w-4 mr-2" />
+        <Alert className="mb-6 bg-blue-50 border border-blue-200 text-blue-800">
+          <LucideShieldCheck className="h-5 w-5 mr-2 text-blue-600" />
           <AlertDescription>
+            <p className="text-sm font-medium mb-2">
+              {language === 'en' 
+                ? "Demo Mode Active" 
+                : "Modo de demostración activo"}
+            </p>
             <p className="text-xs mb-2">
               {language === 'en' 
-                ? "Demo Mode: Any email with a valid format and password (min 6 chars) will work" 
-                : "Modo Demo: Cualquier correo con formato válido y contraseña (mín 6 caracteres) funcionará"}
+                ? "For testing, please use these exact credentials:" 
+                : "Para pruebas, utilice exactamente estas credenciales:"}
             </p>
-            <p className="text-xs font-medium">
-              {language === 'en' 
-                ? "For testing, you can also use:" 
-                : "Para pruebas, también puede usar:"}
-            </p>
-            <div className="mt-1 p-2 bg-black/10 rounded text-xs font-mono">
-              admin@icealarm.es / admin123<br />
-              member@icealarm.es / member123<br />
-              agent@icealarm.es / agent123
+            <div className="mt-1 p-3 bg-white dark:bg-black/20 rounded text-sm font-mono border border-blue-100">
+              <div className="font-bold text-blue-700 mb-1">Special Access:</div>
+              <div className="grid grid-cols-2 gap-x-2 mb-3">
+                <div className="font-medium">Email:</div>
+                <div>lwakeman@icealarm.es</div>
+                <div className="font-medium">Password:</div>
+                <div>Arsenal@2025</div>
+              </div>
+              
+              <div className="font-bold text-blue-700 mt-2 mb-1">Alternative Test Accounts:</div>
+              <div className="text-xs mt-1">
+                admin@icealarm.es / admin123<br />
+                member@icealarm.es / member123<br />
+                agent@icealarm.es / agent123
+              </div>
             </div>
           </AlertDescription>
         </Alert>

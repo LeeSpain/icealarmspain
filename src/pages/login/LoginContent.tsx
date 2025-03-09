@@ -3,7 +3,7 @@ import React from "react";
 import AuthForm from "@/components/AuthForm";
 import { Card, CardContent } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { InfoIcon } from "lucide-react";
+import { InfoIcon, LucideShieldCheck } from "lucide-react";
 
 interface LoginContentProps {
   isMockAuth: boolean;
@@ -36,26 +36,32 @@ export const LoginContent: React.FC<LoginContentProps> = ({
         
         <CardContent className="p-0">
           {isMockAuth && (
-            <Alert className="mb-6 bg-amber-50 border border-amber-200 text-amber-800 dark:bg-amber-900/30 dark:border-amber-700 dark:text-amber-300">
-              <InfoIcon className="h-4 w-4 mr-2" />
+            <Alert className="mb-6 bg-blue-50 border border-blue-200 text-blue-800 dark:bg-blue-900/30 dark:border-blue-700 dark:text-blue-300">
+              <LucideShieldCheck className="h-5 w-5 mr-2 text-blue-600" />
               <AlertDescription>
                 <p className="text-sm font-medium mb-2">
                   {language === 'en' ? "Demo Mode Active" : "Modo de demostración activo"}
                 </p>
-                <p className="text-xs">
+                <div className="text-xs mb-2">
                   {language === 'en' 
-                    ? "Using mock authentication. You can log in with any of these credentials:" 
-                    : "Usando autenticación simulada. Puede iniciar sesión con cualquiera de estas credenciales:"}
-                </p>
-                <div className="mt-2 p-2 bg-black/10 dark:bg-white/10 rounded text-xs font-mono">
-                  <strong>Special Access:</strong><br />
-                  lwakeman@icealarm.es / Arsenal@2025<br />
-                  wakemanlee20@gmail.com / Arsenal@2025<br />
-                  icealarmespana@gmail.com / Arsenal@2025<br /><br />
-                  <strong>Demo Accounts:</strong><br />
-                  admin@icealarm.es / admin123<br />
-                  member@icealarm.es / member123<br />
-                  agent@icealarm.es / agent123
+                    ? "For testing, please use these exact credentials:" 
+                    : "Para pruebas, utilice exactamente estas credenciales:"}
+                </div>
+                <div className="mt-1 p-3 bg-white dark:bg-black/20 rounded text-sm font-mono border border-blue-100 dark:border-blue-800">
+                  <div className="font-bold text-blue-700 dark:text-blue-400 mb-1">Special Access:</div>
+                  <div className="grid grid-cols-2 gap-x-2 mb-3">
+                    <div className="font-medium">Email:</div>
+                    <div>lwakeman@icealarm.es</div>
+                    <div className="font-medium">Password:</div>
+                    <div>Arsenal@2025</div>
+                  </div>
+                  
+                  <div className="font-bold text-blue-700 dark:text-blue-400 mt-2 mb-1">Alternative Test Accounts:</div>
+                  <div className="text-xs mt-1">
+                    admin@icealarm.es / admin123<br />
+                    member@icealarm.es / member123<br />
+                    agent@icealarm.es / agent123
+                  </div>
                 </div>
               </AlertDescription>
             </Alert>

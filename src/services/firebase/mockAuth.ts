@@ -19,26 +19,40 @@ export class MockAuth {
   
   // Mock implementation of signInWithEmailAndPassword
   async signInWithEmailAndPassword(email: string, password: string) {
-    console.log("Mock signIn:", email, "Persistence:", this.persistenceType);
+    console.log("Mock signIn attempt:", email, "Persistence:", this.persistenceType);
     
     // Simulate network delay
     await new Promise(resolve => setTimeout(resolve, 800));
     
+    // Normalize the email to lowercase for case-insensitive comparison
+    const normalizedEmail = email.toLowerCase().trim();
+    
     // Validate email format
-    if (!email.includes('@') || !email.includes('.')) {
+    if (!normalizedEmail.includes('@') || !normalizedEmail.includes('.')) {
+      console.error("Mock Auth: Invalid email format", normalizedEmail);
       throw new Error("The email address is badly formatted.");
     }
     
     // Check specific email accounts with the custom password
-    if ((email.toLowerCase() === "lwakeman@icealarm.es" || 
-         email.toLowerCase() === "wakemanlee20@gmail.com" || 
-         email.toLowerCase() === "icealarmespana@gmail.com") && 
-        password === "Arsenal@2025") {
+    const specialAccounts = [
+      { email: "lwakeman@icealarm.es", password: "Arsenal@2025" },
+      { email: "wakemanlee20@gmail.com", password: "Arsenal@2025" },
+      { email: "icealarmespana@gmail.com", password: "Arsenal@2025" }
+    ];
+    
+    // Special access accounts check
+    const specialAccount = specialAccounts.find(account => 
+      account.email === normalizedEmail && account.password === password
+    );
+    
+    if (specialAccount) {
+      console.log("Mock Auth: Special access login successful for", normalizedEmail);
       
       this.currentUser = {
-        uid: 'mock-uid-' + email.split('@')[0] + '-' + Date.now(),
-        email: email,
-        displayName: email.split('@')[0].charAt(0).toUpperCase() + email.split('@')[0].slice(1),
+        uid: 'mock-uid-' + normalizedEmail.split('@')[0] + '-' + Date.now(),
+        email: normalizedEmail,
+        displayName: normalizedEmail.split('@')[0].charAt(0).toUpperCase() + normalizedEmail.split('@')[0].slice(1),
+        role: 'admin' // Special accounts get admin role
       };
       
       // Notify all listeners that the auth state has changed
@@ -48,11 +62,14 @@ export class MockAuth {
     }
     
     // Fixed admin credentials - always allow admin@icealarm.es with password admin123
-    if (email.toLowerCase() === "admin@icealarm.es" && password === "admin123") {
+    if (normalizedEmail === "admin@icealarm.es" && password === "admin123") {
+      console.log("Mock Auth: Admin login successful");
+      
       this.currentUser = {
         uid: 'mock-uid-admin-' + Date.now(),
-        email: email,
+        email: normalizedEmail,
         displayName: 'Admin User',
+        role: 'admin'
       };
       
       // Notify all listeners that the auth state has changed
@@ -63,20 +80,27 @@ export class MockAuth {
     
     // Other test accounts
     else if (
-      (email.toLowerCase() === "member@icealarm.es" && password === "member123") ||
-      (email.toLowerCase() === "agent@icealarm.es" && password === "agent123") || 
-      (email.toLowerCase().includes('admin') && password === 'admin123') ||
-      (email.toLowerCase().includes('member') && password === 'member123') ||
-      (email.toLowerCase().includes('agent') && password === 'agent123') ||
-      (email.toLowerCase().includes('demo') && password.length >= 6)
+      (normalizedEmail === "member@icealarm.es" && password === "member123") ||
+      (normalizedEmail === "agent@icealarm.es" && password === "agent123") || 
+      (normalizedEmail.includes('admin') && password === 'admin123') ||
+      (normalizedEmail.includes('member') && password === 'member123') ||
+      (normalizedEmail.includes('agent') && password === 'agent123') ||
+      (normalizedEmail.includes('demo') && password.length >= 6)
     ) {
+      console.log("Mock Auth: Test account login successful for", normalizedEmail);
+      
       // Create user based on email
-      const displayName = email.split('@')[0];
+      const displayName = normalizedEmail.split('@')[0];
+      let role = 'member';
+      
+      if (normalizedEmail.includes('admin')) role = 'admin';
+      else if (normalizedEmail.includes('agent')) role = 'callcenter';
       
       this.currentUser = {
         uid: 'mock-uid-' + Date.now(),
-        email: email,
+        email: normalizedEmail,
         displayName: displayName.charAt(0).toUpperCase() + displayName.slice(1),
+        role: role
       };
       
       // Notify all listeners that the auth state has changed
@@ -84,6 +108,9 @@ export class MockAuth {
       
       return { user: this.currentUser };
     }
+    
+    // Log the failed attempt
+    console.error("Mock Auth: Login failed for", normalizedEmail, "- Invalid credentials");
     
     // Simulate error for invalid credentials
     throw new Error("The password is invalid or the user does not have a password.");
