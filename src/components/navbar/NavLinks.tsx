@@ -28,7 +28,10 @@ const NavLinks: React.FC<NavLinksProps> = ({ onClick }) => {
     if (onClick) {
       onClick();
     }
-    window.scrollTo(0, 0);
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
   };
 
   const renderNavLink = (link: NavLink) => {

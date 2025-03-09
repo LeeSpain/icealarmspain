@@ -12,7 +12,10 @@ const Hero: React.FC = () => {
 
   // Function to handle click and scroll to top
   const handleClick = () => {
-    window.scrollTo(0, 0);
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
   };
 
   return (

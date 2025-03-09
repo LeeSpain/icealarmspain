@@ -8,14 +8,14 @@ export const specialtyEntries: KnowledgeEntry[] = [
     keywords: ["expat", "expatriate", "international", "foreign", "language", "expatriado", "internacional", "extranjero", "idioma"],
     responses: {
       en: [
-        "ICE Alarm specializes in serving the expatriate community in Spain with multilingual support in English, Spanish, German, French, and Dutch to overcome language barriers in healthcare.",
-        "Our expatriate services include translation of medical documents, culturally sensitive care coordination, and assistance navigating the Spanish healthcare system for both public and private options.",
-        "We understand the unique challenges faced by international residents and offer specialized support for seasonal residents, helping to maintain continuity of care even when you're traveling between countries."
+        "ICE Alarm specializes in serving the expatriate community in Spain with bilingual support in English and Spanish to overcome language barriers in healthcare.",
+        "Our expatriate services are designed to help international residents maintain their independence while living in Spain, with access to English-speaking healthcare professionals.",
+        "We understand the unique challenges faced by expatriates and offer 24/7 emergency support with English-speaking operators to ensure peace of mind in your new home."
       ],
       es: [
-        "ICE Alarm se especializa en atender a la comunidad expatriada en España con soporte multilingüe en inglés, español, alemán, francés y holandés para superar las barreras del idioma en la atención médica.",
-        "Nuestros servicios para expatriados incluyen traducción de documentos médicos, coordinación de atención culturalmente sensible y asistencia para navegar por el sistema de salud español tanto para opciones públicas como privadas.",
-        "Entendemos los desafíos únicos que enfrentan los residentes internacionales y ofrecemos apoyo especializado para residentes estacionales, ayudando a mantener la continuidad de la atención incluso cuando viaja entre países."
+        "ICE Alarm se especializa en atender a la comunidad expatriada en España con soporte bilingüe en inglés y español para superar las barreras del idioma en la atención médica.",
+        "Nuestros servicios para expatriados están diseñados para ayudar a los residentes internacionales a mantener su independencia mientras viven en España, con acceso a profesionales de la salud que hablan inglés.",
+        "Entendemos los desafíos únicos que enfrentan los expatriados y ofrecemos soporte de emergencia 24/7 con operadores que hablan inglés para garantizar tranquilidad en su nuevo hogar."
       ]
     }
   }

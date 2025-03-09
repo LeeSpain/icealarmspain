@@ -25,7 +25,7 @@ const ExpatInfo: React.FC = () => {
               Expat Support Services
             </h2>
             <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-              We understand the unique challenges faced by expatriates in Spain. Our support services are designed to provide peace of mind in your new home.
+              We understand the unique challenges faced by expatriates in Spain. Our bilingual support services are designed to help you maintain independence in your new home.
             </p>
           </div>
           
@@ -34,8 +34,8 @@ const ExpatInfo: React.FC = () => {
               <div className="mb-4 text-ice-500">
                 <Globe size={36} />
               </div>
-              <h3 className="text-xl font-semibold mb-2">Multilingual Assistance</h3>
-              <p className="text-muted-foreground mb-4">Our support team speaks your language. Get help in English, German, French, Dutch and more.</p>
+              <h3 className="text-xl font-semibold mb-2">Bilingual Assistance</h3>
+              <p className="text-muted-foreground mb-4">Our support team provides service in both English and Spanish, ensuring clear communication when you need help most.</p>
             </div>
             
             <div className="bg-white rounded-xl shadow-md p-6 transform transition-all duration-300 hover:scale-105 hover:shadow-lg border border-ice-100">
@@ -43,7 +43,7 @@ const ExpatInfo: React.FC = () => {
                 <Users size={36} />
               </div>
               <h3 className="text-xl font-semibold mb-2">English-Speaking Doctors</h3>
-              <p className="text-muted-foreground mb-4">Access to our network of English-speaking healthcare professionals throughout Spain.</p>
+              <p className="text-muted-foreground mb-4">Access to our network of English-speaking healthcare professionals throughout Spain to help maintain your independence.</p>
             </div>
             
             <div className="bg-white rounded-xl shadow-md p-6 transform transition-all duration-300 hover:scale-105 hover:shadow-lg border border-ice-100">
@@ -51,7 +51,7 @@ const ExpatInfo: React.FC = () => {
                 <PhoneCall size={36} />
               </div>
               <h3 className="text-xl font-semibold mb-2">24/7 Emergency Support</h3>
-              <p className="text-muted-foreground mb-4">Our emergency line is always available with English-speaking operators ready to assist you.</p>
+              <p className="text-muted-foreground mb-4">Our emergency line is always available with English-speaking operators ready to assist in critical situations.</p>
             </div>
           </div>
           
