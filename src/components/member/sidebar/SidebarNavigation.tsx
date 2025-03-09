@@ -11,11 +11,11 @@ import {
   PillIcon,
   MessageSquare,
   Stethoscope,
-  CalendarCheck,
-  PhoneCall,
   FileText,
+  PhoneCall,
   Heart,
-  LogOut
+  LogOut,
+  CalendarCheck
 } from "lucide-react";
 import SidebarItem from "./SidebarItem";
 
@@ -39,6 +39,11 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({
     return location.pathname === path || location.pathname.startsWith(path);
   };
   
+  const handleNavigation = (path: string) => {
+    navigate(path);
+    window.scrollTo(0, 0);
+  };
+  
   return (
     <div className="px-3 py-2 flex flex-col h-full">
       <div className="flex-grow">
@@ -50,28 +55,28 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({
           label="Dashboard" 
           active={isActive("/dashboard") && location.pathname === "/dashboard"} 
           collapsed={collapsed}
-          onClick={() => navigate("/dashboard")}
+          onClick={() => handleNavigation("/dashboard")}
         />
         <SidebarItem 
           icon={<MessageSquare size={18} />} 
           label="Chat Support" 
           active={isActive("/dashboard/chat")} 
           collapsed={collapsed}
-          onClick={() => navigate("/dashboard/chat")}
+          onClick={() => handleNavigation("/dashboard/chat")}
         />
         <SidebarItem 
           icon={<FileText size={18} />} 
           label="Personal Details" 
           active={isActive("/dashboard/personal-details")} 
           collapsed={collapsed}
-          onClick={() => navigate("/dashboard/personal-details")}
+          onClick={() => handleNavigation("/dashboard/personal-details")}
         />
         <SidebarItem 
           icon={<PhoneCall size={18} />} 
           label="Emergency Contacts" 
           active={isActive("/dashboard/emergency-contacts")} 
           collapsed={collapsed}
-          onClick={() => navigate("/dashboard/emergency-contacts")}
+          onClick={() => handleNavigation("/dashboard/emergency-contacts")}
         />
         
         <div className="my-2 px-4 text-xs font-semibold text-muted-foreground">
@@ -82,21 +87,21 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({
           label="SOS Pendant" 
           active={isActive("/dashboard/devices/sos-pendant")} 
           collapsed={collapsed}
-          onClick={() => navigate("/dashboard/devices/sos-pendant")}
+          onClick={() => handleNavigation("/dashboard/devices/sos-pendant")}
         />
         <SidebarItem 
           icon={<Activity size={18} />} 
           label="Glucose Monitor" 
           active={isActive("/dashboard/devices/glucose-monitor")} 
           collapsed={collapsed}
-          onClick={() => navigate("/dashboard/devices/glucose-monitor")}
+          onClick={() => handleNavigation("/dashboard/devices/glucose-monitor")}
         />
         <SidebarItem 
           icon={<PillIcon size={18} />} 
           label="Medical Dispenser" 
           active={isActive("/dashboard/devices/medical-dispenser")} 
           collapsed={collapsed}
-          onClick={() => navigate("/dashboard/devices/medical-dispenser")}
+          onClick={() => handleNavigation("/dashboard/devices/medical-dispenser")}
         />
         
         <div className="my-2 px-4 text-xs font-semibold text-muted-foreground">
@@ -107,21 +112,21 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({
           label="Health Metrics" 
           active={isActive("/dashboard/health/metrics")} 
           collapsed={collapsed}
-          onClick={() => navigate("/dashboard/health/metrics")}
+          onClick={() => handleNavigation("/dashboard/health/metrics")}
         />
         <SidebarItem 
           icon={<Heart size={18} />} 
           label="Medical Info" 
           active={isActive("/dashboard/health/info")} 
           collapsed={collapsed}
-          onClick={() => navigate("/dashboard/health/info")}
+          onClick={() => handleNavigation("/dashboard/health/info")}
         />
         <SidebarItem 
           icon={<CalendarCheck size={18} />} 
           label="Medications" 
           active={isActive("/dashboard/health/medications")} 
           collapsed={collapsed}
-          onClick={() => navigate("/dashboard/health/medications")}
+          onClick={() => handleNavigation("/dashboard/health/medications")}
         />
         
         <div className="my-2 px-4 text-xs font-semibold text-muted-foreground">
@@ -132,21 +137,21 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({
           label="Profile" 
           active={isActive("/dashboard/profile")} 
           collapsed={collapsed}
-          onClick={() => navigate("/dashboard/profile")}
+          onClick={() => handleNavigation("/dashboard/profile")}
         />
         <SidebarItem 
           icon={<Settings size={18} />} 
           label="Settings" 
           active={isActive("/dashboard/settings")} 
           collapsed={collapsed}
-          onClick={() => navigate("/dashboard/settings")}
+          onClick={() => handleNavigation("/dashboard/settings")}
         />
         <SidebarItem 
           icon={<HelpCircle size={18} />} 
           label="Help & Support" 
           active={isActive("/dashboard/help")} 
           collapsed={collapsed}
-          onClick={() => navigate("/dashboard/help")}
+          onClick={() => handleNavigation("/dashboard/help")}
         />
       </div>
       

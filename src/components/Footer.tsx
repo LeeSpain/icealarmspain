@@ -41,6 +41,7 @@ const Footer: React.FC = () => {
           <div>
             <h3 className="font-medium text-lg mb-4">Products</h3>
             <ul className="space-y-2">
+              <li><Link to="/products" onClick={handleClick} className="text-muted-foreground hover:text-ice-600 transition-colors">All Products</Link></li>
               <li><Link to="/devices/sos-pendant" onClick={handleClick} className="text-muted-foreground hover:text-ice-600 transition-colors">SOS Pendant</Link></li>
               <li><Link to="/devices/medical-dispenser" onClick={handleClick} className="text-muted-foreground hover:text-ice-600 transition-colors">Medical Dispenser</Link></li>
               <li><Link to="/devices/glucose-monitor" onClick={handleClick} className="text-muted-foreground hover:text-ice-600 transition-colors">Glucose Monitor</Link></li>
@@ -51,7 +52,7 @@ const Footer: React.FC = () => {
             <h3 className="font-medium text-lg mb-4">Company</h3>
             <ul className="space-y-2">
               <li><Link to="/about" onClick={handleClick} className="text-muted-foreground hover:text-ice-600 transition-colors">About Us</Link></li>
-              <li><Link to="/commercial" onClick={handleClick} className="text-muted-foreground hover:text-ice-600 transition-colors">Commercial Partners</Link></li>
+              <li><Link to="/join" onClick={handleClick} className="text-muted-foreground hover:text-ice-600 transition-colors">Membership</Link></li>
               <li><Link to="/contact" onClick={handleClick} className="text-muted-foreground hover:text-ice-600 transition-colors">Contact</Link></li>
             </ul>
           </div>
@@ -85,7 +86,7 @@ const Footer: React.FC = () => {
           <div className="space-x-4">
             <Link to="/privacy" onClick={handleClick} className="text-muted-foreground text-sm hover:text-ice-600 transition-colors">Privacy Policy</Link>
             <Link to="/terms" onClick={handleClick} className="text-muted-foreground text-sm hover:text-ice-600 transition-colors">Terms of Service</Link>
-            <Link to="/contact" onClick={handleClick} className="text-muted-foreground text-sm hover:text-ice-600 transition-colors">Cookie Policy</Link>
+            <Link to="/cookie-policy" onClick={handleClick} className="text-muted-foreground text-sm hover:text-ice-600 transition-colors">Cookie Policy</Link>
           </div>
         </div>
       </div>

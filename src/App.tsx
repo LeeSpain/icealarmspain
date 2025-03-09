@@ -30,7 +30,8 @@ import GlucoseMonitorPage from "./pages/GlucoseMonitorPage";
 import MedicalDispenserPage from "./pages/MedicalDispenserPage";
 import HealthMetricsPage from "./pages/HealthMetricsPage";
 import MedicationsPage from "./pages/MedicationsPage";
-import Checkout from "./pages/Checkout"; // Import the Checkout page
+import Checkout from "./pages/Checkout";
+import ScrollToTop from "./components/layout/ScrollToTop";
 
 // Landing page component
 const Landing = () => {
@@ -49,6 +50,7 @@ function App() {
     <Router>
       <LanguageProvider>
         <AuthProvider>
+          <ScrollToTop />
           <div className="App">
             <Navbar />
             
@@ -61,7 +63,12 @@ function App() {
                 <Route path="/join" element={<Join />} />
                 <Route path="/products" element={<DevicesPage />} />
                 <Route path="/products/:id" element={<ProductDetail />} />
-                <Route path="/checkout" element={<Checkout />} /> {/* Add checkout route */}
+                <Route path="/checkout" element={<Checkout />} />
+                
+                {/* Device routes */}
+                <Route path="/devices/sos-pendant" element={<SOSPendantPage />} />
+                <Route path="/devices/glucose-monitor" element={<GlucoseMonitorPage />} />
+                <Route path="/devices/medical-dispenser" element={<MedicalDispenserPage />} />
                 
                 {/* Protected Routes */}
                 <Route path="/dashboard" element={

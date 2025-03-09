@@ -4,7 +4,6 @@ import { X } from "lucide-react";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 import NavLinks from "./NavLinks";
 import AuthButtons from "./AuthButtons";
-import { useLanguage } from "@/context/LanguageContext";
 
 interface MobileMenuProps {
   isOpen: boolean;
@@ -12,8 +11,6 @@ interface MobileMenuProps {
 }
 
 const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
-  const { language } = useLanguage();
-  
   if (!isOpen) return null;
   
   return (
@@ -31,12 +28,8 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
         </div>
         
         {/* Mobile Navigation Links */}
-        <div className="space-y-3">
-          {Array(5).fill(0).map((_, index) => (
-            <div key={index} className="block py-2">
-              <NavLinks onClick={onClose} />
-            </div>
-          )).slice(0, 1)}
+        <div className="space-y-4">
+          <NavLinks onClick={onClose} />
         </div>
         
         {/* Mobile Auth Buttons */}

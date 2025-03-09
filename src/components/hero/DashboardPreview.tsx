@@ -37,7 +37,7 @@ const DashboardPreview: React.FC<DashboardPreviewProps> = ({ language }) => {
           }}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end justify-center pb-6">
-          <Link to="/login">
+          <Link to="/login" onClick={() => window.scrollTo(0, 0)}>
             <ButtonCustom size="lg" className="bg-white text-ice-700 hover:bg-ice-50">
               {language === 'en' ? "Try The Dashboard" : "Pruebe El Panel"}
             </ButtonCustom>
