@@ -1,4 +1,5 @@
-import React, { useEffect } from "react";
+
+import React, { useEffect, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import OrderSummary from "@/components/payment/OrderSummary";
@@ -8,36 +9,25 @@ import PaymentSuccess from "@/components/payment/PaymentSuccess";
 import CheckoutSteps from "@/components/checkout/CheckoutSteps";
 import { useCheckout } from "@/components/checkout/useCheckout";
 import { useLanguage } from "@/context/LanguageContext";
-import CardInformationSection from "@/components/payment/CardInformationSection";
-import { useLocation } from "react-router-dom";
+import { useLocation, Navigate } from "react-router-dom";
 import { useCart } from "@/components/payment/CartContext";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 
 const Checkout: React.FC = () => {
   const { language } = useLanguage();
   const location = useLocation();
   const { cart } = useCart();
+  const [redirectToHome, setRedirectToHome] = useState(false);
   
   useEffect(() => {
     console.log("Checkout page - Mounted with location state:", location.state);
-    console.log("Checkout page - Cart has items:", cart.length);
     
-    if (location.state?.orderData) {
-      console.log("Checkout page - orderData in state:", location.state.orderData);
-      console.log("Checkout page - order items:", location.state.orderData.items);
-      console.log("Checkout page - order total:", location.state.orderData.total);
-    } else {
-      console.log("Checkout page - No orderData in location state");
+    // If there's no state or orderData, and cart is empty, redirect to home
+    if (!location.state?.orderData && cart.length === 0) {
+      console.log("No order data found and cart is empty, redirecting to home");
+      setRedirectToHome(true);
     }
-    
-    const isFromPricingPage = location.state?.fromPricing === true;
-    const isFromJoinPage = location.state?.fromJoin === true;
-    const isFromCheckoutButton = location.state?.fromCheckoutButton === true;
-    
-    console.log("Checkout useEffect - Cart length:", cart.length);
-    console.log("Checkout useEffect - Location state:", location.state);
-    console.log("Checkout useEffect - isFromPricingPage:", isFromPricingPage);
-    console.log("Checkout useEffect - isFromJoinPage:", isFromJoinPage);
-    console.log("Checkout useEffect - isFromCheckoutButton:", isFromCheckoutButton);
   }, [location.state, cart.length]);
   
   const {
@@ -50,20 +40,12 @@ const Checkout: React.FC = () => {
     handlePaymentMethodSelect,
     handleCardDetailsChange,
     processPayment,
-    handleStepBack,
-    getTotalPrice
+    handleStepBack
   } = useCheckout();
-  
-  useEffect(() => {
-    console.log("Checkout component received orderData from useCheckout:", orderData);
-    console.log("OrderData has items:", orderData.items?.length || 0);
-    console.log("OrderData total:", orderData.total);
-    
-    if (orderData.items?.length > 0 && orderData.total === 0) {
-      console.warn("Warning: orderData has items but total is zero - possible calculation issue");
-      console.log("OrderData items detail:", JSON.stringify(orderData.items));
-    }
-  }, [orderData]);
+
+  if (redirectToHome) {
+    return <Navigate to="/" />;
+  }
 
   return (
     <div className="min-h-screen bg-ice-50/30 py-12">

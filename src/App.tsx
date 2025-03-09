@@ -30,6 +30,7 @@ import GlucoseMonitorPage from "./pages/GlucoseMonitorPage";
 import MedicalDispenserPage from "./pages/MedicalDispenserPage";
 import HealthMetricsPage from "./pages/HealthMetricsPage";
 import MedicationsPage from "./pages/MedicationsPage";
+import Checkout from "./pages/Checkout"; // Import the Checkout page
 
 // Landing page component
 const Landing = () => {
@@ -60,6 +61,7 @@ function App() {
                 <Route path="/join" element={<Join />} />
                 <Route path="/products" element={<DevicesPage />} />
                 <Route path="/products/:id" element={<ProductDetail />} />
+                <Route path="/checkout" element={<Checkout />} /> {/* Add checkout route */}
                 
                 {/* Protected Routes */}
                 <Route path="/dashboard" element={
