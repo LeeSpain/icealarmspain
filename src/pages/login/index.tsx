@@ -14,7 +14,6 @@ const Login: React.FC = () => {
     loginInProgress,
     loginError,
     redirectParam,
-    isMockAuth,
     authTimeout,
     handleLoginSuccess,
     language
@@ -35,7 +34,6 @@ const Login: React.FC = () => {
       <Navbar />
       <main className="flex-grow pt-28 pb-16">
         <LoginContent
-          isMockAuth={isMockAuth}
           handleLoginSuccess={handleLoginSuccess}
           loginInProgress={loginInProgress}
           loginError={loginError}
