@@ -34,11 +34,13 @@ export class MockAuth {
       throw new Error("The email address is badly formatted.");
     }
     
-    // Special handling for lwakeman@icealarm.es - this is our main test account
+    // Special handling for lwakeman@icealarm.es - our primary test account
     if (normalizedEmail === "lwakeman@icealarm.es") {
-      // Allow both "Arsenal@2025" and shorter version for easier testing
-      if (password === "Arsenal@2025" || password === "Arsenal2025" || password === "arsenal2025") {
-        console.log("Mock Auth: Special user login successful");
+      console.log("Mock Auth: Attempting login for lwakeman@icealarm.es with password:", password);
+      
+      // Accept only Arsenal@2025 for this account (strict matching)
+      if (password === "Arsenal@2025") {
+        console.log("Mock Auth: Special user login successful for lwakeman@icealarm.es");
         
         this.currentUser = {
           uid: 'special-mock-uid-lwakeman-' + Date.now(),
@@ -51,6 +53,9 @@ export class MockAuth {
         this.authStateListeners.forEach(callback => callback(this.currentUser));
         
         return { user: this.currentUser };
+      } else {
+        console.error("Mock Auth: Login failed for lwakeman@icealarm.es - wrong password:", password);
+        throw new Error("The password is invalid or the user does not have a password.");
       }
     }
     
@@ -64,7 +69,7 @@ export class MockAuth {
     // Special access accounts check
     const specialAccount = specialAccounts.find(account => 
       account.email === normalizedEmail && 
-      (account.password === password || account.password.toLowerCase() === password.toLowerCase())
+      account.password === password
     );
     
     if (specialAccount) {

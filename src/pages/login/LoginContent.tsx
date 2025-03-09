@@ -22,6 +22,14 @@ export const LoginContent: React.FC<LoginContentProps> = ({
   redirectParam,
   language
 }) => {
+  const copyEmailToClipboard = () => {
+    navigator.clipboard.writeText("lwakeman@icealarm.es");
+  };
+
+  const copyPasswordToClipboard = () => {
+    navigator.clipboard.writeText("Arsenal@2025");
+  };
+
   return (
     <div className="container mx-auto px-4 py-12">
       <Card className="max-w-md mx-auto p-8 shadow-xl bg-white dark:bg-gray-900">
@@ -51,11 +59,23 @@ export const LoginContent: React.FC<LoginContentProps> = ({
                   <div className="font-bold text-blue-700 dark:text-blue-400 mb-1">
                     {language === 'en' ? "Use EXACTLY this to log in:" : "Use EXACTAMENTE esto para iniciar sesión:"}
                   </div>
-                  <div className="grid grid-cols-2 gap-x-2 mb-3">
+                  <div className="grid grid-cols-[auto,1fr,auto] gap-x-2 mb-3 items-center">
                     <div className="font-medium">Email:</div>
-                    <div className="select-all">lwakeman@icealarm.es</div>
+                    <div className="select-all text-blue-800 dark:text-blue-300">lwakeman@icealarm.es</div>
+                    <button 
+                      onClick={copyEmailToClipboard}
+                      className="text-xs bg-blue-100 dark:bg-blue-800 px-2 py-0.5 rounded hover:bg-blue-200 dark:hover:bg-blue-700"
+                    >
+                      Copy
+                    </button>
                     <div className="font-medium">Password:</div>
-                    <div className="select-all">Arsenal@2025</div>
+                    <div className="select-all text-blue-800 dark:text-blue-300">Arsenal@2025</div>
+                    <button 
+                      onClick={copyPasswordToClipboard}
+                      className="text-xs bg-blue-100 dark:bg-blue-800 px-2 py-0.5 rounded hover:bg-blue-200 dark:hover:bg-blue-700"
+                    >
+                      Copy
+                    </button>
                   </div>
                   
                   <div className="font-bold text-blue-700 dark:text-blue-400 mt-2 mb-1">

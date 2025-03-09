@@ -13,6 +13,14 @@ const JoinSignup: React.FC<JoinSignupProps> = ({ language, onSuccess }) => {
   // Detect authentication provider
   const isMockAuth = !import.meta.env.VITE_FIREBASE_API_KEY && !import.meta.env.VITE_SUPABASE_URL;
   
+  const copyEmailToClipboard = () => {
+    navigator.clipboard.writeText("lwakeman@icealarm.es");
+  };
+
+  const copyPasswordToClipboard = () => {
+    navigator.clipboard.writeText("Arsenal@2025");
+  };
+  
   return (
     <div className="max-w-md mx-auto glass-panel p-8">
       <h1 className="text-2xl font-bold mb-6 text-center">
@@ -42,11 +50,23 @@ const JoinSignup: React.FC<JoinSignupProps> = ({ language, onSuccess }) => {
               <div className="font-bold text-blue-700 mb-1">
                 {language === 'en' ? "Use EXACTLY this to log in:" : "Use EXACTAMENTE esto para iniciar sesión:"}
               </div>
-              <div className="grid grid-cols-2 gap-x-2 mb-3">
+              <div className="grid grid-cols-[auto,1fr,auto] gap-x-2 mb-3 items-center">
                 <div className="font-medium">Email:</div>
-                <div className="select-all">lwakeman@icealarm.es</div>
+                <div className="select-all text-blue-800">lwakeman@icealarm.es</div>
+                <button 
+                  onClick={copyEmailToClipboard}
+                  className="text-xs bg-blue-100 px-2 py-0.5 rounded hover:bg-blue-200"
+                >
+                  Copy
+                </button>
                 <div className="font-medium">Password:</div>
-                <div className="select-all">Arsenal@2025</div>
+                <div className="select-all text-blue-800">Arsenal@2025</div>
+                <button 
+                  onClick={copyPasswordToClipboard}
+                  className="text-xs bg-blue-100 px-2 py-0.5 rounded hover:bg-blue-200"
+                >
+                  Copy
+                </button>
               </div>
               
               <div className="font-bold text-blue-700 mt-2 mb-1">
