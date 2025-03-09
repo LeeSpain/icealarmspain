@@ -37,7 +37,7 @@ const DeviceHero: React.FC<DeviceHeroProps> = ({ language }) => {
               {/* Decorative elements behind the headline */}
               <div className="absolute -top-10 left-1/2 transform -translate-x-1/2 w-32 h-1 bg-gradient-to-r from-transparent via-ice-400 to-transparent rounded-full opacity-70"></div>
               
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mx-auto max-w-4xl relative">
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold font-playfair leading-tight mx-auto max-w-4xl relative">
                 <span className="relative z-10 bg-gradient-to-r from-gray-900 via-ice-900 to-guardian-800 bg-clip-text text-transparent inline-block">
                   {language === 'en' 
                     ? 'Advanced Protection Technology' 
@@ -52,7 +52,7 @@ const DeviceHero: React.FC<DeviceHeroProps> = ({ language }) => {
               <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 w-24 h-0.5 bg-gradient-to-r from-transparent via-guardian-300 to-transparent rounded-full opacity-60"></div>
             </div>
             
-            <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto backdrop-blur-sm bg-white/5 py-2 rounded-lg mt-6">
+            <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto backdrop-blur-sm bg-white/5 py-2 rounded-lg mt-6 font-inter">
               {language === 'en' 
                 ? 'Discover how our AI-powered monitoring solutions create a seamless safety network for independent living with 24/7 emergency response.' 
                 : 'Descubra cómo nuestras soluciones de monitoreo impulsadas por IA crean una red de seguridad perfecta para una vida independiente con respuesta de emergencia 24/7.'}
