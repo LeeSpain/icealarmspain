@@ -34,7 +34,7 @@ const CallCenterServices: React.FC<CallCenterServicesProps> = ({ language }) => 
             <div className="w-12 h-12 rounded-full bg-ice-100 flex items-center justify-center mb-4">
               <Phone size={24} className="text-ice-600" />
             </div>
-            <h3 className="text-xl font-semibold font-inter mb-3">
+            <h3 className="text-xl font-semibold font-playfair mb-3">
               {language === 'en' ? "Emergency Response" : "Respuesta de Emergencia"}
             </h3>
             <p className="text-gray-600 mb-4 font-inter">
@@ -62,7 +62,7 @@ const CallCenterServices: React.FC<CallCenterServicesProps> = ({ language }) => 
             <div className="w-12 h-12 rounded-full bg-ice-100 flex items-center justify-center mb-4">
               <HeartPulse size={24} className="text-ice-600" />
             </div>
-            <h3 className="text-xl font-semibold font-inter mb-3">
+            <h3 className="text-xl font-semibold font-playfair mb-3">
               {language === 'en' ? "Health Monitoring" : "Monitoreo de Salud"}
             </h3>
             <p className="text-gray-600 mb-4 font-inter">
@@ -90,7 +90,7 @@ const CallCenterServices: React.FC<CallCenterServicesProps> = ({ language }) => 
             <div className="w-12 h-12 rounded-full bg-ice-100 flex items-center justify-center mb-4">
               <Globe size={24} className="text-ice-600" />
             </div>
-            <h3 className="text-xl font-semibold font-inter mb-3">
+            <h3 className="text-xl font-semibold font-playfair mb-3">
               {language === 'en' ? "Translation Services" : "Servicios de Traducción"}
             </h3>
             <p className="text-gray-600 mb-4 font-inter">

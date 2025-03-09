@@ -12,7 +12,7 @@ const DashboardPreview: React.FC<DashboardPreviewProps> = ({ language }) => {
   
   return (
     <div className="mt-24 mb-12 text-center">
-      <h2 className="text-3xl font-bold mb-6">
+      <h2 className="text-3xl font-bold mb-6 font-playfair">
         {language === 'en' ? "Member Dashboard Preview" : "Vista Previa del Panel de Miembro"}
       </h2>
       <p className="text-lg text-muted-foreground max-w-3xl mx-auto mb-10">

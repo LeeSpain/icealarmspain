@@ -88,7 +88,7 @@ const DeviceShowcase: React.FC = () => {
             <ShoppingBag size={16} className="mr-2" />
             {language === 'en' ? 'OUR PRODUCT RANGE' : 'NUESTRA GAMA DE PRODUCTOS'}
           </div>
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">
+          <h2 className="text-3xl md:text-4xl font-bold mb-4 font-playfair">
             {language === 'en' ? "Smart Health Monitoring Devices" : "Dispositivos Inteligentes de Monitoreo de Salud"}
           </h2>
           <p className="text-muted-foreground text-lg">

@@ -31,7 +31,7 @@ const DevicesGrid: React.FC<DevicesGridProps> = ({ devices, language }) => {
               
               <div className="p-6">
                 <div className="flex justify-between items-start mb-4">
-                  <h3 className="text-xl font-semibold font-inter">{device.name}</h3>
+                  <h3 className="text-xl font-semibold font-playfair">{device.name}</h3>
                   <div className="bg-ice-100 text-ice-600 text-sm px-2 py-1 rounded font-medium">
                     €{device.price.toFixed(2)}
                   </div>
