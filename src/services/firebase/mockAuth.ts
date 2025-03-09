@@ -1,4 +1,3 @@
-
 export class MockAuth {
   currentUser: any = null;
   authStateListeners: Array<(user: any | null) => void> = [];
@@ -31,9 +30,9 @@ export class MockAuth {
     }
     
     // Check specific email accounts with the custom password
-    if ((email === "lwakeman@icealarm.es" || 
-         email === "wakemanlee20@gmail.com" || 
-         email === "icealarmespana@gmail.com") && 
+    if ((email.toLowerCase() === "lwakeman@icealarm.es" || 
+         email.toLowerCase() === "wakemanlee20@gmail.com" || 
+         email.toLowerCase() === "icealarmespana@gmail.com") && 
         password === "Arsenal@2025") {
       
       this.currentUser = {
@@ -49,7 +48,7 @@ export class MockAuth {
     }
     
     // Fixed admin credentials - always allow admin@icealarm.es with password admin123
-    if (email === "admin@icealarm.es" && password === "admin123") {
+    if (email.toLowerCase() === "admin@icealarm.es" && password === "admin123") {
       this.currentUser = {
         uid: 'mock-uid-admin-' + Date.now(),
         email: email,
@@ -64,12 +63,12 @@ export class MockAuth {
     
     // Other test accounts
     else if (
-      (email === "member@icealarm.es" && password === "member123") ||
-      (email === "agent@icealarm.es" && password === "agent123") || 
-      (email.includes('admin') && password === 'admin123') ||
-      (email.includes('member') && password === 'member123') ||
-      (email.includes('agent') && password === 'agent123') ||
-      (email.includes('demo') && password.length >= 6)
+      (email.toLowerCase() === "member@icealarm.es" && password === "member123") ||
+      (email.toLowerCase() === "agent@icealarm.es" && password === "agent123") || 
+      (email.toLowerCase().includes('admin') && password === 'admin123') ||
+      (email.toLowerCase().includes('member') && password === 'member123') ||
+      (email.toLowerCase().includes('agent') && password === 'agent123') ||
+      (email.toLowerCase().includes('demo') && password.length >= 6)
     ) {
       // Create user based on email
       const displayName = email.split('@')[0];
@@ -108,7 +107,7 @@ export class MockAuth {
     }
     
     // Simulate existing user error
-    if (email === "admin@icealarm.es" || email === "member@icealarm.es" || email === "agent@icealarm.es") {
+    if (email.toLowerCase() === "admin@icealarm.es" || email.toLowerCase() === "member@icealarm.es" || email.toLowerCase() === "agent@icealarm.es") {
       throw new Error("The email address is already in use by another account.");
     }
     

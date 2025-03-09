@@ -21,7 +21,7 @@ const DashboardPreview: React.FC<DashboardPreviewProps> = ({ language }) => {
   
   return (
     <div className="mt-24 mb-12 text-center">
-      <h2 className="text-3xl font-playfair font-bold mb-6">
+      <h2 className="text-3xl font-bold mb-6">
         {language === 'en' ? "Member Dashboard Preview" : "Vista Previa del Panel de Miembro"}
       </h2>
       <p className="text-lg text-muted-foreground max-w-3xl mx-auto mb-10">
@@ -39,10 +39,10 @@ const DashboardPreview: React.FC<DashboardPreviewProps> = ({ language }) => {
           </div>
         </div>
         <img 
-          src="/lovable-uploads/dashboard-preview.png" 
+          src="/lovable-uploads/ad65a632-e7ef-4c61-a20e-7b6ff282a87a.png" 
           alt="Dashboard Preview" 
           className="w-full object-cover border-t border-gray-200"
-          style={{ height: '400px' }}
+          style={{ height: '450px' }}
           onError={(e) => {
             e.currentTarget.src = "https://placehold.co/1200x600/f8fafc/a3a3a3?text=Dashboard+Preview";
           }}
