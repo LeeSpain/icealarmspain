@@ -46,11 +46,14 @@ const Landing = () => {
   );
 };
 
+// Layout component to wrap content with Navbar and Footer
 const Layout = ({ children }: { children: React.ReactNode }) => {
   return (
     <>
       <Navbar />
-      {children}
+      <div className="pt-16 md:pt-20"> {/* Add padding top to account for fixed navbar */}
+        {children}
+      </div>
       <Footer />
     </>
   );
@@ -108,6 +111,7 @@ function App() {
                     </Layout>
                   </ProtectedRoute>
                 } />
+                
                 <Route path="/dashboard/settings" element={
                   <ProtectedRoute>
                     <Layout>

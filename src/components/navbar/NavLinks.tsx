@@ -25,6 +25,16 @@ const NavLinks: React.FC<NavLinksProps> = ({ onClick }) => {
     { name: language === 'en' ? "Contact" : "Contacto", href: "/contact", isAnchor: false },
   ];
 
+  const isActive = (path: string) => {
+    // Handle root path specially
+    if (path === "/" && location.pathname === "/") {
+      return true;
+    }
+    // For other paths, check if the current path starts with the link path
+    // but only if the path is not just "/"
+    return path !== "/" && location.pathname === path;
+  };
+
   return (
     <nav className="flex items-center space-x-1">
       {navLinks.map((link) => (
@@ -32,7 +42,7 @@ const NavLinks: React.FC<NavLinksProps> = ({ onClick }) => {
           key={link.name}
           to={link.href}
           className={`px-4 py-2 text-sm font-medium rounded-md transition-colors hover:bg-gray-100 ${
-            location.pathname === link.href 
+            isActive(link.href) 
               ? "text-ice-600 bg-ice-50" 
               : "text-gray-700 hover:text-ice-600"
           }`}
