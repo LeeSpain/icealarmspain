@@ -14,29 +14,21 @@ export const useLoginPage = () => {
   const [loginInProgress, setLoginInProgress] = useState(false);
   const [loginError, setLoginError] = useState<string | null>(null);
   const [redirectTriggered, setRedirectTriggered] = useState(false);
-  const [authTimeout, setAuthTimeout] = useState(false);
   
   const isMounted = useRef(true);
-  const redirectAttemptsRef = useRef(0);
-  const authTimeoutTimerRef = useRef<NodeJS.Timeout | null>(null);
   
   // Clear mounted flag on unmount
   useEffect(() => {
     return () => {
       isMounted.current = false;
-      if (authTimeoutTimerRef.current) {
-        clearTimeout(authTimeoutTimerRef.current);
-      }
     };
   }, []);
   
   console.log("Login page auth status:", { 
     user, 
     isAuthenticated, 
-    isLoading, 
+    isLoading,
     redirectTriggered,
-    authTimeout,
-    redirectAttempts: redirectAttemptsRef.current
   });
   
   const searchParams = new URLSearchParams(location.search);
@@ -44,21 +36,7 @@ export const useLoginPage = () => {
   
   // Handle authentication state changes
   useEffect(() => {
-    // Skip if component unmounted
     if (!isMounted.current) return;
-    
-    // Don't run any redirection if we're in an auth timeout state
-    if (authTimeout) return;
-    
-    // Limit redirect attempts to prevent loops
-    if (redirectAttemptsRef.current > 3) {
-      console.log("Too many redirect attempts, forcing timeout");
-      if (isMounted.current) {
-        setAuthTimeout(true);
-        setLoginError("Authentication process failed. Please try signing in manually.");
-      }
-      return;
-    }
     
     console.log("Login page - Auth state check:", { isAuthenticated, user, isLoading });
     
@@ -67,7 +45,6 @@ export const useLoginPage = () => {
       
       if (isMounted.current) {
         setRedirectTriggered(true);
-        redirectAttemptsRef.current++;
         
         const redirectTo = redirectParam || getDefaultRedirect(user.role);
         console.log("Redirecting authenticated user to:", redirectTo);
@@ -89,41 +66,7 @@ export const useLoginPage = () => {
         }, 300);
       }
     }
-  }, [isAuthenticated, isLoading, user, navigate, redirectParam, redirectTriggered, language, toast, authTimeout]);
-  
-  // Reset on page load
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
-  
-  // Set a timeout for auth check - VERY aggressive 500ms timeout
-  useEffect(() => {
-    // Clear any existing timeout
-    if (authTimeoutTimerRef.current) {
-      clearTimeout(authTimeoutTimerRef.current);
-    }
-    
-    authTimeoutTimerRef.current = setTimeout(() => {
-      if (isMounted.current) {
-        console.log("Authentication check timed out, forcing login form display");
-        setAuthTimeout(true);
-        
-        // Only set error if still loading
-        if (isLoading) {
-          setLoginError(language === 'en' 
-            ? "Authentication service is unavailable. Please sign in manually." 
-            : "El servicio de autenticación no está disponible. Por favor, inicie sesión manualmente."
-          );
-        }
-      }
-    }, 500); // ULTRA-aggressive timeout
-    
-    return () => {
-      if (authTimeoutTimerRef.current) {
-        clearTimeout(authTimeoutTimerRef.current);
-      }
-    };
-  }, [language, isLoading]);
+  }, [isAuthenticated, isLoading, user, navigate, redirectParam, redirectTriggered, language, toast]);
   
   const getDefaultRedirect = (role?: string) => {
     console.log("Determining redirect for role:", role);
@@ -186,7 +129,6 @@ export const useLoginPage = () => {
     loginInProgress,
     loginError,
     redirectParam,
-    authTimeout,
     handleLoginSuccess,
     language
   };

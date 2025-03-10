@@ -1,5 +1,5 @@
 
-import React, { useRef } from "react";
+import React from "react";
 import Navbar from "@/components/Navbar";
 import { LoginLoading } from "./LoginLoading";
 import { LoginContent } from "./LoginContent";
@@ -13,30 +13,18 @@ const Login: React.FC = () => {
     loginInProgress,
     loginError,
     redirectParam,
-    authTimeout,
     handleLoginSuccess,
     language
   } = useLoginPage();
-  
-  // Prevent render loop with refs
-  const renderCountRef = useRef(0);
   
   console.log("Login page rendering with state:", { 
     isLoading, 
     isAuthenticated, 
     user, 
-    authTimeout,
     loginError,
-    renderCount: renderCountRef.current++
   });
   
-  // CRITICAL: If more than 5 renders and still loading, force the login form
-  // Increased from 3 to 5 to give more time for authentication
-  const shouldForceLoginForm = renderCountRef.current > 5 && isLoading;
-  
-  // Important: Only show loading screen if we're loading AND haven't hit the timeout AND are not forcing login form
-  // This ensures users aren't stuck in a loading state
-  if (isLoading && !authTimeout && !shouldForceLoginForm) {
+  if (isLoading) {
     return <LoginLoading 
       isLoading={true} 
       isAuthenticated={isAuthenticated && !!user} 
@@ -51,7 +39,7 @@ const Login: React.FC = () => {
         <LoginContent
           handleLoginSuccess={handleLoginSuccess}
           loginInProgress={loginInProgress}
-          loginError={loginError || (shouldForceLoginForm ? "Authentication service timed out. Please sign in manually." : null)}
+          loginError={loginError}
           redirectParam={redirectParam}
           language={language}
         />
