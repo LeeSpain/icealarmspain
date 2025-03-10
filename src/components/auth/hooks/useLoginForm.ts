@@ -129,12 +129,8 @@ export const useLoginForm = ({
       } else if (onSubmit) {
         await onSubmit(formData.email, formData.password, rememberMe);
       } else {
-        // Force a hardcoded password for all test users
-        // ONLY FOR DEVELOPMENT - REMOVE IN PRODUCTION
-        const testPassword = "Arsenal@2025";
-        
-        console.log(`Using development password for login: ${testPassword}`);
-        const userData = await login(formData.email, testPassword, rememberMe);
+        // Use the provided password for login
+        const userData = await login(formData.email, formData.password, rememberMe);
         
         console.log("Login successful, redirecting user with role:", userData.role);
         

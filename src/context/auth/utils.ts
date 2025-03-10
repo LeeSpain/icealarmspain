@@ -8,31 +8,22 @@ export const determineUserRole = (email: string): string => {
   // Debug log for troubleshooting
   console.log('Determining role for email:', email);
   
-  // HARDCODED ROLES FOR DEVELOPMENT TESTING
-  // These exact mappings ensure test users always work
-  const EMAIL_ROLE_MAP: Record<string, string> = {
-    'lwakeman@icealarm.es': 'admin',
-    'wakemanlee20@gmail.com': 'callcenter',
-    'icealarmespana@gmail.com': 'member',
-    'admin@icealarm.es': 'admin',
-    'agent@icealarm.es': 'callcenter',
-    'callcenter@icealarm.es': 'callcenter',
-    'member@icealarm.es': 'member',
-  };
-  
-  // Check for exact email match first
-  if (EMAIL_ROLE_MAP[email]) {
-    console.log(`Assigning ${EMAIL_ROLE_MAP[email]} role for email: ${email}`);
-    return EMAIL_ROLE_MAP[email];
-  }
-  
-  // General pattern matching for other emails
-  if (email.includes('admin')) {
-    console.log('Assigning admin role based on email pattern (contains admin)');
+  // Map specific email domains to roles
+  if (email.endsWith('@admin.icealarm.es') || email.includes('admin')) {
+    console.log('Assigning admin role based on email domain or pattern');
     return 'admin';
-  } else if (email.includes('agent') || email.includes('callcenter') || email.includes('call-center')) {
-    console.log('Assigning callcenter role based on email pattern');
+  } else if (email.endsWith('@callcenter.icealarm.es') || 
+            email.includes('agent') || 
+            email.includes('callcenter') || 
+            email.includes('call-center')) {
+    console.log('Assigning callcenter role based on email domain or pattern');
     return 'callcenter';
+  } else if (email.endsWith('@tech.icealarm.es') || email.includes('tech')) {
+    console.log('Assigning technician role based on email domain or pattern');
+    return 'technician';
+  } else if (email.endsWith('@support.icealarm.es') || email.includes('support')) {
+    console.log('Assigning support role based on email domain or pattern');
+    return 'support';
   } else {
     console.log('Assigning default member role');
     return 'member';

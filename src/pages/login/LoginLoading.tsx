@@ -62,19 +62,10 @@ export const LoginLoading: React.FC<LoginLoadingProps> = ({
               <AlertCircle className="h-4 w-4 text-yellow-600" />
               <AlertDescription className="text-yellow-800">
                 {language === 'en' 
-                  ? 'This is taking longer than expected. You can try refreshing the page or try these test accounts:' 
-                  : 'Esto está tomando más tiempo de lo esperado. Puede intentar actualizar la página o probar estas cuentas de prueba:'}
+                  ? 'This is taking longer than expected. You can try refreshing the page.' 
+                  : 'Esto está tomando más tiempo de lo esperado. Puede intentar actualizar la página.'}
               </AlertDescription>
             </Alert>
-            
-            <div className="p-4 bg-blue-50 rounded-md text-sm">
-              <p className="font-semibold mb-2">Test Accounts (password: Arsenal@2025)</p>
-              <ul className="list-disc pl-5 space-y-1">
-                <li>Admin: admin@icealarm.es</li>
-                <li>Call Center: callcenter@icealarm.es</li>
-                <li>Member: member@icealarm.es</li>
-              </ul>
-            </div>
             
             <div className="flex gap-3 justify-center">
               <Button 
@@ -104,6 +95,8 @@ export const LoginLoading: React.FC<LoginLoadingProps> = ({
                 <p>Authenticated: {isAuthenticated ? 'true' : 'false'}</p>
                 <p>Current URL: {window.location.href}</p>
                 <p>localStorage entries: {Object.keys(localStorage).join(', ')}</p>
+                <p>Auth service: Supabase</p>
+                <p>Time: {new Date().toISOString()}</p>
               </div>
             )}
           </div>

@@ -10,7 +10,7 @@ export const login = async (email: string, password: string, rememberMe = false)
     
     // Clear any existing session data
     console.log('Clearing existing session data...');
-    await supabase.auth.signOut({ scope: 'global' });
+    await supabase.auth.signOut({ scope: 'local' });
     localStorage.removeItem('currentUser');
     localStorage.removeItem('authPersistence');
     
@@ -122,4 +122,3 @@ export const logout = async (): Promise<void> => {
     localStorage.removeItem('currentUser');
   }
 };
-
