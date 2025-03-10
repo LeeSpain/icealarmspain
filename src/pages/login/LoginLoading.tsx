@@ -20,7 +20,32 @@ export const LoginLoading: React.FC<LoginLoadingProps> = ({
   const [showDebugInfo, setShowDebugInfo] = useState(false);
   const [authStatus, setAuthStatus] = useState<string>("Checking...");
   
-  // Check Firebase auth status when component mounts
+  // Show refresh button almost immediately (after 400ms)
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowRefresh(true);
+    }, 400);
+    
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Force client-side sign out if taking too long (after 1200ms)
+  useEffect(() => {
+    const timer = setTimeout(async () => {
+      try {
+        console.log("Authentication taking too long, forcing sign out");
+        await auth.signOut();
+        localStorage.removeItem('currentUser');
+        localStorage.removeItem('authPersistence');
+      } catch (error) {
+        console.error("Error during emergency sign out:", error);
+      }
+    }, 1200);
+    
+    return () => clearTimeout(timer);
+  }, []);
+  
+  // Check Firebase auth status when component mounts (once only)
   useEffect(() => {
     const checkAuth = async () => {
       try {
@@ -36,19 +61,6 @@ export const LoginLoading: React.FC<LoginLoadingProps> = ({
     };
     
     checkAuth();
-    
-    // Check only once more after a short delay
-    const timeout = setTimeout(checkAuth, 500);
-    return () => clearTimeout(timeout);
-  }, []);
-  
-  // Show refresh button almost immediately
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setShowRefresh(true);
-    }, 500); // Even faster display of refresh option
-    
-    return () => clearTimeout(timer);
   }, []);
 
   const handleRefresh = () => {
@@ -59,21 +71,11 @@ export const LoginLoading: React.FC<LoginLoadingProps> = ({
     setShowDebugInfo(!showDebugInfo);
   };
 
-  // Force client-side sign out if stuck for more than 1.5 seconds
-  useEffect(() => {
-    const timer = setTimeout(async () => {
-      try {
-        console.log("Authentication taking too long, forcing sign out");
-        await auth.signOut();
-        localStorage.removeItem('currentUser');
-        localStorage.removeItem('authPersistence');
-      } catch (error) {
-        console.error("Error during emergency sign out:", error);
-      }
-    }, 1500);
-    
-    return () => clearTimeout(timer);
-  }, []);
+  const handleForceClear = () => {
+    localStorage.removeItem('currentUser');
+    localStorage.removeItem('authPersistence');
+    window.location.reload();
+  };
 
   return (
     <div className="flex min-h-screen items-center justify-center">
@@ -142,11 +144,7 @@ export const LoginLoading: React.FC<LoginLoadingProps> = ({
                   variant="destructive" 
                   size="sm" 
                   className="mt-2"
-                  onClick={() => {
-                    localStorage.removeItem('currentUser');
-                    localStorage.removeItem('authPersistence');
-                    window.location.reload();
-                  }}
+                  onClick={handleForceClear}
                 >
                   Force Clear Auth & Reload
                 </Button>

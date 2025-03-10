@@ -19,6 +19,7 @@ export const useLoginPage = () => {
   const isMounted = useRef(true);
   const redirectAttemptsRef = useRef(0);
   
+  // Clear mounted flag on unmount
   useEffect(() => {
     return () => {
       isMounted.current = false;
@@ -39,12 +40,15 @@ export const useLoginPage = () => {
   
   // Handle authentication state changes
   useEffect(() => {
+    // Skip if component unmounted
+    if (!isMounted.current) return;
+    
     // Don't run any redirection if we're in an auth timeout state
     if (authTimeout) return;
     
     // Limit redirect attempts to prevent loops
     if (redirectAttemptsRef.current > 5) {
-      console.error("Too many redirect attempts, forcing timeout");
+      console.log("Too many redirect attempts, forcing timeout");
       if (isMounted.current) {
         setAuthTimeout(true);
         setLoginError("Authentication process failed. Please try signing in manually.");
@@ -88,21 +92,25 @@ export const useLoginPage = () => {
     window.scrollTo(0, 0);
   }, []);
   
-  // Set a timeout for auth check - reduced to 1 second for faster feedback
+  // Set a timeout for auth check - reduced to 800ms for MUCH faster feedback
   useEffect(() => {
     const timeoutId = setTimeout(() => {
-      if (isLoading && isMounted.current) {
-        console.log("Authentication check is taking too long, forcing reset");
+      if (isMounted.current) {
+        console.log("Authentication check timed out, forcing login form display");
         setAuthTimeout(true);
-        setLoginError(language === 'en' 
-          ? "Authentication service is not responding. Please try signing in manually." 
-          : "El servicio de autenticación no responde. Por favor, intente iniciar sesión manualmente."
-        );
+        
+        // Only set error if still loading
+        if (isLoading) {
+          setLoginError(language === 'en' 
+            ? "Authentication service is slow. Please sign in manually." 
+            : "El servicio de autenticación es lento. Por favor, inicie sesión manualmente."
+          );
+        }
       }
-    }, 1000);
+    }, 800); // Reduced from 1000ms to 800ms
     
     return () => clearTimeout(timeoutId);
-  }, [isLoading, language]);
+  }, [language, isLoading]);
   
   const getDefaultRedirect = (role?: string) => {
     console.log("Determining redirect for role:", role);
@@ -161,7 +169,7 @@ export const useLoginPage = () => {
   return {
     user,
     isAuthenticated,
-    isLoading: isLoading && !authTimeout,
+    isLoading,
     loginInProgress,
     loginError,
     redirectParam,
