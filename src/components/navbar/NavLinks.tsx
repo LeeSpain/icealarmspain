@@ -1,6 +1,6 @@
 
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useLanguage } from "@/context/LanguageContext";
 
 interface NavLink {
@@ -15,6 +15,7 @@ interface NavLinksProps {
 
 const NavLinks: React.FC<NavLinksProps> = ({ onClick }) => {
   const { language } = useLanguage();
+  const navigate = useNavigate();
   
   const navLinks: NavLink[] = [
     { name: language === 'en' ? "Home" : "Inicio", href: "/", isAnchor: false },
@@ -24,33 +25,27 @@ const NavLinks: React.FC<NavLinksProps> = ({ onClick }) => {
     { name: language === 'en' ? "Contact" : "Contacto", href: "/contact", isAnchor: false },
   ];
 
-  const handleClick = () => {
+  const handleClick = (href: string) => {
     if (onClick) {
       onClick();
     }
+    navigate(href);
     window.scrollTo({
       top: 0,
       behavior: 'smooth'
     });
   };
 
-  const renderNavLink = (link: NavLink) => {
-    return (
-      <Link
-        to={link.href}
-        className="text-sm font-medium text-gray-700 hover:text-ice-600 transition-colors link-underline"
-        onClick={handleClick}
-      >
-        {link.name}
-      </Link>
-    );
-  };
-
   return (
     <>
       {navLinks.map((link) => (
         <span key={link.name}>
-          {renderNavLink(link)}
+          <button
+            onClick={() => handleClick(link.href)}
+            className="text-sm font-medium text-gray-700 hover:text-ice-600 transition-colors link-underline"
+          >
+            {link.name}
+          </button>
         </span>
       ))}
     </>
