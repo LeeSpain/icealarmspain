@@ -54,6 +54,7 @@ export const useLoginPage = () => {
       if (isMounted.current) {
         setRedirectTriggered(true);
         
+        // Determine redirect path based on role or redirectParam
         const redirectTo = redirectParam || getDefaultRedirect(user.role);
         console.log("Redirecting authenticated user to:", redirectTo);
         
@@ -84,11 +85,8 @@ export const useLoginPage = () => {
       case 'callcenter':
         return '/call-center';
       case 'member':
-        return '/dashboard';
       case 'technician':
-        return '/technician';
       case 'support':
-        return '/support';
       default:
         return '/dashboard';
     }

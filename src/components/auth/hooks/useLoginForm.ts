@@ -107,7 +107,7 @@ export const useLoginForm = ({
       } else if (onSubmit) {
         await onSubmit(formData.email, formData.password, rememberMe);
       } else {
-        console.log("Using internal login with credentials:", formData.email, "password length:", formData.password.length);
+        console.log("Using internal login with credentials:", formData.email);
         // Use the provided password for login
         const userData = await login(formData.email, formData.password, rememberMe);
         

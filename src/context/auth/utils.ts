@@ -8,7 +8,7 @@ export const determineUserRole = (email: string): string => {
   // Debug log for troubleshooting
   console.log('Determining role for email:', email);
   
-  // Support for exact email matches first - using the requested credentials
+  // Primary email matches - exactly as requested
   if (email === 'wakemanlee20@gmail.com') {
     console.log('Assigning admin role to', email);
     return 'admin';
@@ -22,7 +22,7 @@ export const determineUserRole = (email: string): string => {
     return 'member';
   }
   
-  // Legacy test accounts for backward compatibility
+  // Legacy test accounts - kept for backward compatibility
   else if (email === 'admin@icealarm.es' || 
            email === 'admin@example.com') {
     console.log('Assigning admin role to', email);
@@ -39,7 +39,7 @@ export const determineUserRole = (email: string): string => {
     return 'member';
   }
   
-  // Fallback to pattern matching for other emails
+  // Pattern matching for other emails
   if (email.endsWith('@admin.icealarm.es') || 
       email.includes('admin')) {
     console.log('Assigning admin role based on email pattern');

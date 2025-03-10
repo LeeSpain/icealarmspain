@@ -1,5 +1,5 @@
 
-import { determineUserRole } from '../utils';
+import { determineUserRole, isDevelopmentMode } from '../utils';
 import { User } from '../types';
 import { 
   signInWithEmailAndPassword, 
@@ -15,12 +15,15 @@ export const login = async (email: string, password: string, rememberMe = false)
   try {
     console.log('Starting login process for:', email);
     
-    // First, ensure we clear any existing auth state
+    // First, ensure we clear any existing auth state to prevent conflicts
     console.log('Clearing existing auth state...');
-    localStorage.clear(); // Clear all local storage to prevent any conflicts
+    // Only clear authPersistence and currentUser to avoid clearing language and other settings
+    localStorage.removeItem('currentUser');
+    localStorage.removeItem('authPersistence');
     
-    // For development/testing purposes, allow specific test accounts to bypass Firebase authentication
-    if ((process.env.NODE_ENV === 'development' || import.meta.env.DEV) && 
+    // For development/testing purposes, allow specific test accounts
+    const isDevMode = isDevelopmentMode();
+    if (isDevMode && 
         (email === 'wakemanlee20@gmail.com' || 
          email === 'icealarmespana@gmail.com' || 
          email === 'lwakeman@icealarm.es' ||
@@ -31,22 +34,25 @@ export const login = async (email: string, password: string, rememberMe = false)
       
       console.log('Using development login bypass for:', email);
       
-      // Create user object for development mode
+      // Create user object for development mode with a consistent ID
       const role = determineUserRole(email);
+      const devUserId = `dev-${email.replace(/[^a-z0-9]/gi, '-')}`;
+      
       const user: User = {
-        uid: `dev-${Date.now()}`,
-        id: `dev-${Date.now()}`,
+        uid: devUserId,
+        id: devUserId,
         email: email,
         name: email.split('@')[0],
         displayName: email.split('@')[0],
         role,
         profileCompleted: true,
-        language: 'en',
+        language: localStorage.getItem('language') || 'en',
         lastLogin: new Date().toISOString(),
         createdAt: new Date().toISOString()
       };
       
       console.log('Development login successful with role:', role);
+      console.log('User object created:', user);
       
       // Store user data
       localStorage.setItem('currentUser', JSON.stringify(user));
@@ -89,7 +95,7 @@ export const login = async (email: string, password: string, rememberMe = false)
       displayName: userCredential.user.displayName || email.split('@')[0],
       role,
       profileCompleted: !!userCredential.user.displayName,
-      language: 'en',
+      language: localStorage.getItem('language') || 'en',
       lastLogin: new Date().toISOString(),
       createdAt: userCredential.user.metadata.creationTime || new Date().toISOString()
     };
@@ -138,14 +144,16 @@ export const logout = async (): Promise<void> => {
     console.log('Logging out user');
     
     // Clean up local state first
-    localStorage.clear(); // Clear all localStorage to prevent any conflicts
+    localStorage.removeItem('currentUser');
+    localStorage.removeItem('authPersistence');
     
     // Sign out from Firebase
     await signOut(auth);
   } catch (error) {
     console.error('Logout error:', error);
     // Clean up local state regardless of server errors
-    localStorage.clear();
+    localStorage.removeItem('currentUser');
+    localStorage.removeItem('authPersistence');
     throw error; // Re-throw the error to be handled by the caller
   }
 };

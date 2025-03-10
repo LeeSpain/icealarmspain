@@ -31,13 +31,13 @@ export const useAuthEffects = ({ setUser, setIsLoading }: UseAuthEffectsProps) =
     if (storedUser) {
       try {
         const parsedUser = JSON.parse(storedUser);
-        if (parsedUser && isMounted.current) {
+        if (parsedUser && parsedUser.uid && isMounted.current) {
           // Check if it's a development user
-          if (parsedUser.uid?.startsWith('dev-')) {
+          if (typeof parsedUser.uid === 'string' && parsedUser.uid.startsWith('dev-')) {
             console.log('Found stored development user:', parsedUser.email);
             setUser(parsedUser);
             setIsLoading(false);
-            return; // Exit early for development users
+            return; // Exit early for development users - no Firebase auth needed
           }
           console.log('Found stored user data:', parsedUser.email);
           setUser(parsedUser);
