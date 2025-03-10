@@ -1,6 +1,7 @@
 import React from 'react';
 import './App.css';
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { HelmetProvider } from "react-helmet-async";
 import { LanguageProvider } from "./context/LanguageContext";
 import { AuthProvider } from "./context/auth";
 import ScrollToTop from "./components/layout/ScrollToTop";
@@ -64,118 +65,120 @@ function App() {
   
   return (
     <Router>
-      <LanguageProvider>
-        <AuthProvider>
-          <ScrollToTop />
-          <div className="App">
-            <Routes>
-              <Route path="/" element={<Layout><Landing /></Layout>} />
-              <Route path="/about" element={<Layout><AboutUs /></Layout>} />
-              <Route path="/contact" element={<Layout><Contact /></Layout>} />
-              
-              <Route path="/login" element={<Layout><Login /></Layout>} />
-              <Route path="/join" element={<Layout><Join /></Layout>} />
-              <Route path="/products" element={<Layout><DevicesPage /></Layout>} />
-              <Route path="/products/:id" element={<Layout><ProductDetail /></Layout>} />
-              <Route path="/checkout" element={<Layout><Checkout /></Layout>} />
-              
-              <Route path="/devices/sos-pendant" element={<Layout><SOSPendantPage /></Layout>} />
-              <Route path="/devices/glucose-monitor" element={<Layout><GlucoseMonitorPage /></Layout>} />
-              <Route path="/devices/medical-dispenser" element={<Layout><MedicalDispenserPage /></Layout>} />
-              
-              <Route path="/dashboard" element={
-                <ProtectedRoute>
-                  <Layout>
-                    <DashboardPage />
-                  </Layout>
-                </ProtectedRoute>
-              } />
-              
-              <Route path="/dashboard/profile" element={
-                <ProtectedRoute>
-                  <Layout>
-                    <ProfilePage />
-                  </Layout>
-                </ProtectedRoute>
-              } />
-              
-              <Route path="/dashboard/settings" element={
-                <ProtectedRoute>
-                  <Layout>
-                    <SettingsPage />
-                  </Layout>
-                </ProtectedRoute>
-              } />
-              <Route path="/dashboard/emergency-contacts" element={
-                <ProtectedRoute>
-                  <Layout>
-                    <EmergencyContactsPage />
-                  </Layout>
-                </ProtectedRoute>
-              } />
-              <Route path="/dashboard/help" element={
-                <ProtectedRoute>
-                  <Layout>
-                    <HelpSupportPage />
-                  </Layout>
-                </ProtectedRoute>
-              } />
-              <Route path="/dashboard/devices/:type" element={
-                <ProtectedRoute>
-                  <Layout>
-                    <DeviceSettingsPage />
-                  </Layout>
-                </ProtectedRoute>
-              } />
-              <Route path="/dashboard/devices/sos-pendant" element={
-                <ProtectedRoute>
-                  <Layout>
-                    <SOSPendantPage />
-                  </Layout>
-                </ProtectedRoute>
-              } />
-              <Route path="/dashboard/devices/glucose-monitor" element={
-                <ProtectedRoute>
-                  <Layout>
-                    <GlucoseMonitorPage />
-                  </Layout>
-                </ProtectedRoute>
-              } />
-              <Route path="/dashboard/devices/medical-dispenser" element={
-                <ProtectedRoute>
-                  <Layout>
-                    <MedicalDispenserPage />
-                  </Layout>
-                </ProtectedRoute>
-              } />
-              <Route path="/dashboard/health/metrics" element={
-                <ProtectedRoute>
-                  <Layout>
-                    <HealthMetricsPage />
-                  </Layout>
-                </ProtectedRoute>
-              } />
-              <Route path="/dashboard/health/medications" element={
-                <ProtectedRoute>
-                  <Layout>
-                    <MedicationsPage />
-                  </Layout>
-                </ProtectedRoute>
-              } />
-              
-              <Route path="/admin" element={
-                <ProtectedRoute adminOnly>
-                  <Layout>
-                    <AdminDashboard />
-                  </Layout>
-                </ProtectedRoute>
-              } />
-              
-              <Route path="*" element={<Layout><NotFound /></Layout>} />
-            </Routes>
-          </div>
-        </AuthProvider>
-      </LanguageProvider>
+      <HelmetProvider>
+        <LanguageProvider>
+          <AuthProvider>
+            <ScrollToTop />
+            <div className="App">
+              <Routes>
+                <Route path="/" element={<Layout><Landing /></Layout>} />
+                <Route path="/about" element={<Layout><AboutUs /></Layout>} />
+                <Route path="/contact" element={<Layout><Contact /></Layout>} />
+                
+                <Route path="/login" element={<Layout><Login /></Layout>} />
+                <Route path="/join" element={<Layout><Join /></Layout>} />
+                <Route path="/products" element={<Layout><DevicesPage /></Layout>} />
+                <Route path="/products/:id" element={<Layout><ProductDetail /></Layout>} />
+                <Route path="/checkout" element={<Layout><Checkout /></Layout>} />
+                
+                <Route path="/devices/sos-pendant" element={<Layout><SOSPendantPage /></Layout>} />
+                <Route path="/devices/glucose-monitor" element={<Layout><GlucoseMonitorPage /></Layout>} />
+                <Route path="/devices/medical-dispenser" element={<Layout><MedicalDispenserPage /></Layout>} />
+                
+                <Route path="/dashboard" element={
+                  <ProtectedRoute>
+                    <Layout>
+                      <DashboardPage />
+                    </Layout>
+                  </ProtectedRoute>
+                } />
+                
+                <Route path="/dashboard/profile" element={
+                  <ProtectedRoute>
+                    <Layout>
+                      <ProfilePage />
+                    </Layout>
+                  </ProtectedRoute>
+                } />
+                
+                <Route path="/dashboard/settings" element={
+                  <ProtectedRoute>
+                    <Layout>
+                      <SettingsPage />
+                    </Layout>
+                  </ProtectedRoute>
+                } />
+                <Route path="/dashboard/emergency-contacts" element={
+                  <ProtectedRoute>
+                    <Layout>
+                      <EmergencyContactsPage />
+                    </Layout>
+                  </ProtectedRoute>
+                } />
+                <Route path="/dashboard/help" element={
+                  <ProtectedRoute>
+                    <Layout>
+                      <HelpSupportPage />
+                    </Layout>
+                  </ProtectedRoute>
+                } />
+                <Route path="/dashboard/devices/:type" element={
+                  <ProtectedRoute>
+                    <Layout>
+                      <DeviceSettingsPage />
+                    </Layout>
+                  </ProtectedRoute>
+                } />
+                <Route path="/dashboard/devices/sos-pendant" element={
+                  <ProtectedRoute>
+                    <Layout>
+                      <SOSPendantPage />
+                    </Layout>
+                  </ProtectedRoute>
+                } />
+                <Route path="/dashboard/devices/glucose-monitor" element={
+                  <ProtectedRoute>
+                    <Layout>
+                      <GlucoseMonitorPage />
+                    </Layout>
+                  </ProtectedRoute>
+                } />
+                <Route path="/dashboard/devices/medical-dispenser" element={
+                  <ProtectedRoute>
+                    <Layout>
+                      <MedicalDispenserPage />
+                    </Layout>
+                  </ProtectedRoute>
+                } />
+                <Route path="/dashboard/health/metrics" element={
+                  <ProtectedRoute>
+                    <Layout>
+                      <HealthMetricsPage />
+                    </Layout>
+                  </ProtectedRoute>
+                } />
+                <Route path="/dashboard/health/medications" element={
+                  <ProtectedRoute>
+                    <Layout>
+                      <MedicationsPage />
+                    </Layout>
+                  </ProtectedRoute>
+                } />
+                
+                <Route path="/admin" element={
+                  <ProtectedRoute adminOnly>
+                    <Layout>
+                      <AdminDashboard />
+                    </Layout>
+                  </ProtectedRoute>
+                } />
+                
+                <Route path="*" element={<Layout><NotFound /></Layout>} />
+              </Routes>
+            </div>
+          </AuthProvider>
+        </LanguageProvider>
+      </HelmetProvider>
     </Router>
   );
 }

@@ -27,9 +27,13 @@ const NavLinks: React.FC<NavLinksProps> = ({ onClick }) => {
     { name: language === 'en' ? "Contact" : "Contacto", href: "/contact", isAnchor: false },
   ];
 
-  // Simplified active check function
+  // Determine if a link is active
   const isActive = (path: string) => {
-    // Using exact path matching for all routes
+    // Exact match for home page
+    if (path === "/") {
+      return location.pathname === path;
+    }
+    // For other paths, check if the current path is exactly the same as the link path
     return location.pathname === path;
   };
 
