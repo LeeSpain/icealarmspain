@@ -1,6 +1,11 @@
-
 import React from 'react';
 import './App.css';
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { LanguageProvider } from "./context/LanguageContext";
+import { AuthProvider } from "./context/auth";
+import ScrollToTop from "./components/layout/ScrollToTop";
+import AboutUs from "./pages/AboutUs";
+import Contact from "./pages/Contact";
 import Navbar from "./components/Navbar";
 import Hero from "./components/Hero";
 import DeviceShowcase from "./components/DeviceShowcase";
@@ -8,11 +13,6 @@ import Pricing from "./components/Pricing";
 import ExpatInfo from "./components/ExpatInfo";
 import Testimonials from "./components/Testimonials";
 import Footer from "./components/Footer";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { LanguageProvider } from "./context/LanguageContext";
-import { AuthProvider } from "./context/auth";
-import AboutUs from "./pages/AboutUs";
-import Contact from "./pages/Contact";
 import Login from "./pages/login";
 import Join from "./pages/Join";
 import DashboardPage from "./pages/DashboardPage";
@@ -32,7 +32,6 @@ import MedicalDispenserPage from "./pages/MedicalDispenserPage";
 import HealthMetricsPage from "./pages/HealthMetricsPage";
 import MedicationsPage from "./pages/MedicationsPage";
 import Checkout from "./pages/Checkout";
-import ScrollToTop from "./components/layout/ScrollToTop";
 
 // Landing page component
 const Landing = () => {
