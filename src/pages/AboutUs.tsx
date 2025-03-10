@@ -37,8 +37,6 @@ const AboutUs: React.FC = () => {
         <SectionDivider />
         <TeamCommunity language={language} />
       </main>
-      
-      {/* Footer component is removed from here since it's already included in App.tsx */}
     </div>
   );
 };
