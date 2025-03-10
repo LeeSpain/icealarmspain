@@ -22,8 +22,11 @@ const Login: React.FC = () => {
     isAuthenticated, 
     user, 
     loginError,
+    loginInProgress
   });
   
+  // Show loading state when authentication is being checked
+  // or when login is in progress
   if (isLoading) {
     return <LoginLoading 
       isLoading={true} 

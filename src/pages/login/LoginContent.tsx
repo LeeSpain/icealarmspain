@@ -18,6 +18,8 @@ export const LoginContent: React.FC<LoginContentProps> = ({
   redirectParam,
   language
 }) => {
+  console.log("LoginContent rendering with:", { loginInProgress, loginError });
+
   return (
     <div className="container mx-auto px-4 py-12">
       <Card className="max-w-md mx-auto p-8 shadow-xl bg-white dark:bg-gray-900">

@@ -27,7 +27,7 @@ export const login = async (email: string, password: string, rememberMe = false)
     
     // For development/testing purposes, allow specific test accounts to bypass Firebase authentication
     // This is helpful for testing when Firebase might not be fully configured
-    if (process.env.NODE_ENV === 'development' && 
+    if ((process.env.NODE_ENV === 'development' || import.meta.env.DEV) && 
         (email === 'admin@icealarm.es' || email === 'callcenter@icealarm.es' || email === 'user@example.com') && 
         password === 'password123') {
       
@@ -82,7 +82,7 @@ export const login = async (email: string, password: string, rememberMe = false)
       profileCompleted: !!userCredential.user.displayName,
       language: 'en',
       lastLogin: new Date().toISOString(),
-      createdAt: userCredential.user.metadata.creationTime
+      createdAt: userCredential.user.metadata.creationTime || new Date().toISOString()
     };
     
     console.log('User object created:', user);

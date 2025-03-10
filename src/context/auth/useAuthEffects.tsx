@@ -49,14 +49,15 @@ export const useAuthEffects = ({ setUser, setIsLoading }: UseAuthEffectsProps) =
       
       if (!firebaseUser) {
         // Check if we have a development user in localStorage (for testing without Firebase)
-        const storedUser = localStorage.getItem('currentUser');
-        if (storedUser && JSON.parse(storedUser).uid?.startsWith('dev-')) {
+        const devUser = localStorage.getItem('currentUser');
+        if (devUser && JSON.parse(devUser).uid?.startsWith('dev-')) {
           console.log('Using development user from localStorage');
           // Keep the dev user active, don't clear state
         } else {
           console.log('No Firebase user, clearing user state');
           setUser(null);
         }
+        // Always set loading to false when auth state is resolved
         setIsLoading(false);
         return;
       }
@@ -84,6 +85,7 @@ export const useAuthEffects = ({ setUser, setIsLoading }: UseAuthEffectsProps) =
         localStorage.setItem('currentUser', JSON.stringify(userData));
       }
       
+      // Always set loading to false when auth state is resolved
       setIsLoading(false);
     });
 

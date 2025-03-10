@@ -29,6 +29,7 @@ export const useLoginPage = () => {
     isAuthenticated, 
     isLoading,
     redirectTriggered,
+    loginInProgress
   });
   
   const searchParams = new URLSearchParams(location.search);
@@ -38,8 +39,14 @@ export const useLoginPage = () => {
   useEffect(() => {
     if (!isMounted.current) return;
     
-    console.log("Login page - Auth state check:", { isAuthenticated, user, isLoading });
+    console.log("Login page - Auth state check:", { 
+      isAuthenticated, 
+      user, 
+      isLoading, 
+      loginInProgress 
+    });
     
+    // Only proceed if loading is complete and user is authenticated
     if (!isLoading && isAuthenticated && user && !redirectTriggered) {
       console.log("User authenticated, preparing to redirect");
       
@@ -89,24 +96,16 @@ export const useLoginPage = () => {
   const handleLoginSuccess = async (email: string, password: string, rememberMe: boolean) => {
     if (loginInProgress || !isMounted.current) return;
     
+    console.log("Starting login process with:", { email, rememberMe });
     setLoginInProgress(true);
     setLoginError(null);
     
     try {
       console.log("Attempting login with:", email, "Remember me:", rememberMe);
-      
-      // Add additional logging
-      console.log("Login credentials being passed to auth system:", {
-        email,
-        passwordLength: password.length,
-        rememberMe
-      });
-      
       await login(email, password, rememberMe);
-      
       console.log("Login function completed successfully");
       
-      // Note: We don't need to handle success case here as the auth state change
+      // Note: We don't need to manually redirect here as the auth state change
       // will trigger the redirect in the useEffect above
     } catch (error) {
       console.error("Login error:", error);
@@ -136,7 +135,7 @@ export const useLoginPage = () => {
   return {
     user,
     isAuthenticated,
-    isLoading,
+    isLoading: isLoading || loginInProgress, // Combine both loading states
     loginInProgress,
     loginError,
     redirectParam,
