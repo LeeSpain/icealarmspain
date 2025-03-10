@@ -43,10 +43,11 @@ export const useLoginPage = () => {
       isAuthenticated, 
       user, 
       isLoading, 
-      loginInProgress 
+      loginInProgress,
+      redirectTriggered
     });
     
-    // Only proceed if loading is complete, user is authenticated, and we haven't already triggered a redirect
+    // Only proceed if loading is complete, we're authenticated, and haven't redirected yet
     if (!isLoading && !loginInProgress && isAuthenticated && user && !redirectTriggered) {
       console.log("User authenticated, preparing to redirect");
       

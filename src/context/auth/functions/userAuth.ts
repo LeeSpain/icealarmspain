@@ -15,17 +15,21 @@ export const login = async (email: string, password: string, rememberMe = false)
   try {
     console.log('Starting login process for:', email);
     
+    // First, ensure we clear any existing auth state
+    console.log('Clearing existing auth state...');
+    localStorage.clear(); // Clear all local storage to prevent any conflicts
+    
     // For development/testing purposes, allow specific test accounts to bypass Firebase authentication
-    // This is helpful for testing when Firebase might not be fully configured
     if ((process.env.NODE_ENV === 'development' || import.meta.env.DEV) && 
-        (email === 'admin@icealarm.es' || email === 'callcenter@icealarm.es' || email === 'user@example.com') && 
+        (email === 'wakemanlee20@gmail.com' || 
+         email === 'icealarmespana@gmail.com' || 
+         email === 'lwakeman@icealarm.es' ||
+         email === 'admin@icealarm.es' || 
+         email === 'callcenter@icealarm.es' || 
+         email === 'user@example.com') && 
         password === 'password123') {
       
       console.log('Using development login bypass for:', email);
-      
-      // Clear any existing session data first
-      localStorage.removeItem('currentUser');
-      localStorage.removeItem('authPersistence');
       
       // Create user object for development mode
       const role = determineUserRole(email);
@@ -51,15 +55,16 @@ export const login = async (email: string, password: string, rememberMe = false)
       return user;
     }
     
-    // Clear any existing session data
-    console.log('Clearing existing session data...');
-    localStorage.removeItem('currentUser');
-    localStorage.removeItem('authPersistence');
-    
     // Set persistence based on rememberMe flag
     const persistenceType = rememberMe ? browserLocalPersistence : browserSessionPersistence;
     console.log('Setting Firebase persistence:', rememberMe ? 'local' : 'session');
-    await setPersistence(auth, persistenceType);
+    
+    try {
+      await setPersistence(auth, persistenceType);
+    } catch (error) {
+      console.error('Error setting persistence:', error);
+      // Continue anyway, this isn't critical
+    }
     
     console.log('Attempting signIn with Firebase for:', email);
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
@@ -133,16 +138,14 @@ export const logout = async (): Promise<void> => {
     console.log('Logging out user');
     
     // Clean up local state first
-    localStorage.removeItem('authPersistence');
-    localStorage.removeItem('currentUser');
+    localStorage.clear(); // Clear all localStorage to prevent any conflicts
     
     // Sign out from Firebase
     await signOut(auth);
   } catch (error) {
     console.error('Logout error:', error);
     // Clean up local state regardless of server errors
-    localStorage.removeItem('authPersistence');
-    localStorage.removeItem('currentUser');
+    localStorage.clear();
     throw error; // Re-throw the error to be handled by the caller
   }
 };

@@ -8,21 +8,32 @@ export const determineUserRole = (email: string): string => {
   // Debug log for troubleshooting
   console.log('Determining role for email:', email);
   
-  // Support for exact email matches first
-  if (email === 'icealarmespana@gmail.com' || 
-      email === 'admin@icealarm.es' ||
-      email === 'admin@example.com') {
+  // Support for exact email matches first - using the requested credentials
+  if (email === 'wakemanlee20@gmail.com') {
     console.log('Assigning admin role to', email);
     return 'admin';
   } 
-  else if (email === 'wakemanlee20@gmail.com' || 
-           email === 'callcenter@icealarm.es' ||
+  else if (email === 'icealarmespana@gmail.com') {
+    console.log('Assigning callcenter role to', email);
+    return 'callcenter';
+  } 
+  else if (email === 'lwakeman@icealarm.es') {
+    console.log('Assigning member role to', email);
+    return 'member';
+  }
+  
+  // Legacy test accounts for backward compatibility
+  else if (email === 'admin@icealarm.es' || 
+           email === 'admin@example.com') {
+    console.log('Assigning admin role to', email);
+    return 'admin';
+  } 
+  else if (email === 'callcenter@icealarm.es' ||
            email === 'callcenter@example.com') {
     console.log('Assigning callcenter role to', email);
     return 'callcenter';
   } 
-  else if (email === 'lwakeman@icealarm.es' || 
-           email === 'user@example.com' ||
+  else if (email === 'user@example.com' ||
            email === 'test@example.com') {
     console.log('Assigning member role to', email);
     return 'member';
@@ -66,17 +77,16 @@ export const isDevelopmentMode = (): boolean => {
 export const getTestCredentials = () => {
   return {
     admin: {
-      email: 'admin@icealarm.es',
+      email: 'wakemanlee20@gmail.com',
       password: 'password123'
     },
     callcenter: {
-      email: 'callcenter@icealarm.es',
+      email: 'icealarmespana@gmail.com',
       password: 'password123'
     },
     member: {
-      email: 'user@example.com',
+      email: 'lwakeman@icealarm.es',
       password: 'password123'
     }
   };
 };
-

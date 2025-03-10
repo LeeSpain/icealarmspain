@@ -1,3 +1,4 @@
+
 import { useEffect, useRef } from 'react';
 import { User } from './types';
 import { determineUserRole } from './utils';
@@ -31,39 +32,30 @@ export const useAuthEffects = ({ setUser, setIsLoading }: UseAuthEffectsProps) =
       try {
         const parsedUser = JSON.parse(storedUser);
         if (parsedUser && isMounted.current) {
+          // Check if it's a development user
+          if (parsedUser.uid?.startsWith('dev-')) {
+            console.log('Found stored development user:', parsedUser.email);
+            setUser(parsedUser);
+            setIsLoading(false);
+            return; // Exit early for development users
+          }
           console.log('Found stored user data:', parsedUser.email);
           setUser(parsedUser);
-          // We still need to listen for Firebase auth changes, but we can show the UI faster
         }
       } catch (error) {
         console.error('Error parsing stored user:', error);
         localStorage.removeItem('currentUser');
+        setUser(null);
       }
     }
     
-    // Listen for Firebase auth state changes
+    // Listen for Firebase auth state changes (only if not a development user)
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
       console.log('Firebase auth state changed:', firebaseUser?.email || 'No user');
       
       if (!isMounted.current) return;
       
       if (!firebaseUser) {
-        // Check if we have a development user in localStorage (for testing without Firebase)
-        const devUser = localStorage.getItem('currentUser');
-        if (devUser) {
-          try {
-            const parsedUser = JSON.parse(devUser);
-            if (parsedUser && parsedUser.uid?.startsWith('dev-')) {
-              console.log('Using development user from localStorage');
-              // Keep the dev user active, don't clear state
-              setIsLoading(false);
-              return;
-            }
-          } catch (error) {
-            console.error('Error parsing dev user:', error);
-          }
-        }
-        
         console.log('No Firebase user, clearing user state');
         setUser(null);
         // Always set loading to false when auth state is resolved
