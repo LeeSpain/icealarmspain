@@ -1,3 +1,4 @@
+
 import React from 'react';
 import './App.css';
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
@@ -51,7 +52,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
   return (
     <>
       <Navbar />
-      <div className="pt-16 md:pt-20"> {/* Add padding top to account for fixed navbar */}
+      <div className="pt-16 md:pt-20">
         {children}
       </div>
       <Footer />
