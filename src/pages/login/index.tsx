@@ -30,8 +30,9 @@ const Login: React.FC = () => {
     renderCount: renderCountRef.current++
   });
   
-  // CRITICAL: If more than 3 renders and still loading, force the login form
-  const shouldForceLoginForm = renderCountRef.current > 3 && isLoading;
+  // CRITICAL: If more than 5 renders and still loading, force the login form
+  // Increased from 3 to 5 to give more time for authentication
+  const shouldForceLoginForm = renderCountRef.current > 5 && isLoading;
   
   // Important: Only show loading screen if we're loading AND haven't hit the timeout AND are not forcing login form
   // This ensures users aren't stuck in a loading state

@@ -20,29 +20,11 @@ export const LoginLoading: React.FC<LoginLoadingProps> = ({
   const [showDebugInfo, setShowDebugInfo] = useState(false);
   const [authStatus, setAuthStatus] = useState<string>("Checking...");
   
-  // Show refresh button almost immediately (after 200ms)
+  // Show refresh button after 200ms
   useEffect(() => {
     const timer = setTimeout(() => {
       setShowRefresh(true);
-    }, 200); // Reduced from 400ms to 200ms
-    
-    return () => clearTimeout(timer);
-  }, []);
-
-  // Force client-side sign out if taking too long (after 800ms)
-  useEffect(() => {
-    const timer = setTimeout(async () => {
-      try {
-        console.log("Authentication taking too long, forcing sign out and reload");
-        await auth.signOut();
-        localStorage.removeItem('currentUser');
-        localStorage.removeItem('authPersistence');
-        // Force reload the page
-        window.location.reload();
-      } catch (error) {
-        console.error("Error during emergency sign out:", error);
-      }
-    }, 800); // Reduced from 1200ms to 800ms
+    }, 200);
     
     return () => clearTimeout(timer);
   }, []);
@@ -74,11 +56,11 @@ export const LoginLoading: React.FC<LoginLoadingProps> = ({
   };
 
   const handleForceClear = () => {
-    console.log("Force clearing auth data and reloading...");
+    console.log("Force clearing auth data");
     localStorage.removeItem('currentUser');
     localStorage.removeItem('authPersistence');
     auth.signOut().catch(e => console.error("Error signing out:", e));
-    window.location.reload();
+    // Remove automatic reload to stop the refresh loop
   };
 
   return (
