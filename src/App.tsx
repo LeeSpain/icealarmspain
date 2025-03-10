@@ -53,89 +53,182 @@ function App() {
         <AuthProvider>
           <ScrollToTop />
           <div className="App">
-            <Navbar />
             <main>
               <Routes>
-                <Route path="/" element={<Landing />} />
-                <Route path="/about" element={<AboutUs />} />
-                <Route path="/contact" element={<Contact />} />
-                <Route path="/login" element={<Login />} />
-                <Route path="/join" element={<Join />} />
-                <Route path="/products" element={<DevicesPage />} />
-                <Route path="/products/:id" element={<ProductDetail />} />
-                <Route path="/checkout" element={<Checkout />} />
+                <Route path="/" element={<>
+                  <Navbar />
+                  <Landing />
+                  <Footer />
+                </>} />
+                <Route path="/about" element={<>
+                  <Navbar />
+                  <AboutUs />
+                  <Footer />
+                </>} />
+                <Route path="/contact" element={<>
+                  <Navbar />
+                  <Contact />
+                  <Footer />
+                </>} />
                 
-                <Route path="/devices/sos-pendant" element={<SOSPendantPage />} />
-                <Route path="/devices/glucose-monitor" element={<GlucoseMonitorPage />} />
-                <Route path="/devices/medical-dispenser" element={<MedicalDispenserPage />} />
+                <Route path="/login" element={<>
+                  <Navbar />
+                  <Login />
+                  <Footer />
+                </>} />
+                <Route path="/join" element={<>
+                  <Navbar />
+                  <Join />
+                  <Footer />
+                </>} />
+                <Route path="/products" element={<>
+                  <Navbar />
+                  <DevicesPage />
+                  <Footer />
+                </>} />
+                <Route path="/products/:id" element={<>
+                  <Navbar />
+                  <ProductDetail />
+                  <Footer />
+                </>} />
+                <Route path="/checkout" element={<>
+                  <Navbar />
+                  <Checkout />
+                  <Footer />
+                </>} />
+                
+                <Route path="/devices/sos-pendant" element={<>
+                  <Navbar />
+                  <SOSPendantPage />
+                  <Footer />
+                </>} />
+                <Route path="/devices/glucose-monitor" element={<>
+                  <Navbar />
+                  <GlucoseMonitorPage />
+                  <Footer />
+                </>} />
+                <Route path="/devices/medical-dispenser" element={<>
+                  <Navbar />
+                  <MedicalDispenserPage />
+                  <Footer />
+                </>} />
                 
                 <Route path="/dashboard" element={
                   <ProtectedRoute>
-                    <DashboardPage />
+                    <>
+                      <Navbar />
+                      <DashboardPage />
+                      <Footer />
+                    </>
                   </ProtectedRoute>
                 } />
                 
                 <Route path="/dashboard/profile" element={
                   <ProtectedRoute>
-                    <ProfilePage />
+                    <>
+                      <Navbar />
+                      <ProfilePage />
+                      <Footer />
+                    </>
                   </ProtectedRoute>
                 } />
                 <Route path="/dashboard/settings" element={
                   <ProtectedRoute>
-                    <SettingsPage />
+                    <>
+                      <Navbar />
+                      <SettingsPage />
+                      <Footer />
+                    </>
                   </ProtectedRoute>
                 } />
                 <Route path="/dashboard/emergency-contacts" element={
                   <ProtectedRoute>
-                    <EmergencyContactsPage />
+                    <>
+                      <Navbar />
+                      <EmergencyContactsPage />
+                      <Footer />
+                    </>
                   </ProtectedRoute>
                 } />
                 <Route path="/dashboard/help" element={
                   <ProtectedRoute>
-                    <HelpSupportPage />
+                    <>
+                      <Navbar />
+                      <HelpSupportPage />
+                      <Footer />
+                    </>
                   </ProtectedRoute>
                 } />
                 <Route path="/dashboard/devices/:type" element={
                   <ProtectedRoute>
-                    <DeviceSettingsPage />
+                    <>
+                      <Navbar />
+                      <DeviceSettingsPage />
+                      <Footer />
+                    </>
                   </ProtectedRoute>
                 } />
                 <Route path="/dashboard/devices/sos-pendant" element={
                   <ProtectedRoute>
-                    <SOSPendantPage />
+                    <>
+                      <Navbar />
+                      <SOSPendantPage />
+                      <Footer />
+                    </>
                   </ProtectedRoute>
                 } />
                 <Route path="/dashboard/devices/glucose-monitor" element={
                   <ProtectedRoute>
-                    <GlucoseMonitorPage />
+                    <>
+                      <GlucoseMonitorPage />
+                      <Footer />
+                    </>
                   </ProtectedRoute>
                 } />
                 <Route path="/dashboard/devices/medical-dispenser" element={
                   <ProtectedRoute>
-                    <MedicalDispenserPage />
+                    <>
+                      <MedicalDispenserPage />
+                      <Footer />
+                    </>
                   </ProtectedRoute>
                 } />
                 <Route path="/dashboard/health/metrics" element={
                   <ProtectedRoute>
-                    <HealthMetricsPage />
+                    <>
+                      <Navbar />
+                      <HealthMetricsPage />
+                      <Footer />
+                    </>
                   </ProtectedRoute>
                 } />
                 <Route path="/dashboard/health/medications" element={
                   <ProtectedRoute>
-                    <MedicationsPage />
+                    <>
+                      <Navbar />
+                      <MedicationsPage />
+                      <Footer />
+                    </>
                   </ProtectedRoute>
                 } />
                 
                 <Route path="/admin" element={
                   <ProtectedRoute adminOnly>
-                    <AdminDashboard />
+                    <>
+                      <Navbar />
+                      <AdminDashboard />
+                      <Footer />
+                    </>
                   </ProtectedRoute>
                 } />
                 
-                <Route path="*" element={<NotFound />} />
+                <Route path="*" element={<>
+                  <Navbar />
+                  <NotFound />
+                  <Footer />
+                </>} />
               </Routes>
             </main>
-            <Footer />
           </div>
         </AuthProvider>
       </LanguageProvider>

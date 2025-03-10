@@ -1,6 +1,6 @@
 
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useLanguage } from "@/context/LanguageContext";
 
 interface NavLink {
@@ -15,6 +15,7 @@ interface NavLinksProps {
 
 const NavLinks: React.FC<NavLinksProps> = ({ onClick }) => {
   const { language } = useLanguage();
+  const location = useLocation();
   
   const navLinks: NavLink[] = [
     { name: language === 'en' ? "Home" : "Inicio", href: "/", isAnchor: false },
@@ -27,10 +28,14 @@ const NavLinks: React.FC<NavLinksProps> = ({ onClick }) => {
   return (
     <>
       {navLinks.map((link) => (
-        <span key={link.name}>
+        <span key={link.name} className="px-2">
           <Link
             to={link.href}
-            className="text-sm font-medium text-gray-700 hover:text-ice-600 transition-colors link-underline"
+            className={`text-sm font-medium transition-colors link-underline ${
+              location.pathname === link.href 
+                ? "text-ice-600" 
+                : "text-gray-700 hover:text-ice-600"
+            }`}
             onClick={onClick}
           >
             {link.name}
