@@ -60,6 +60,8 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
 };
 
 function App() {
+  console.log("App rendering");
+  
   return (
     <Router>
       <LanguageProvider>

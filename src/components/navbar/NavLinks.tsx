@@ -17,6 +17,8 @@ const NavLinks: React.FC<NavLinksProps> = ({ onClick }) => {
   const { language } = useLanguage();
   const location = useLocation();
   
+  console.log("Current path:", location.pathname);
+  
   const navLinks: NavLink[] = [
     { name: language === 'en' ? "Home" : "Inicio", href: "/", isAnchor: false },
     { name: language === 'en' ? "Devices" : "Dispositivos", href: "/products", isAnchor: false },
@@ -25,12 +27,10 @@ const NavLinks: React.FC<NavLinksProps> = ({ onClick }) => {
     { name: language === 'en' ? "Contact" : "Contacto", href: "/contact", isAnchor: false },
   ];
 
+  // Simplified active check function
   const isActive = (path: string) => {
-    if (path === "/") {
-      return location.pathname === path;
-    }
-    // Check if the current path starts with the link path
-    return location.pathname.startsWith(path);
+    // Using exact path matching for all routes
+    return location.pathname === path;
   };
 
   return (
