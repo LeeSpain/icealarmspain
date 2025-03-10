@@ -1,4 +1,3 @@
-
 import { useEffect, useRef } from 'react';
 import { User } from './types';
 import { determineUserRole } from './utils';
@@ -34,6 +33,7 @@ export const useAuthEffects = ({ setUser, setIsLoading }: UseAuthEffectsProps) =
         if (parsedUser && isMounted.current) {
           console.log('Found stored user data:', parsedUser.email);
           setUser(parsedUser);
+          // We still need to listen for Firebase auth changes, but we can show the UI faster
         }
       } catch (error) {
         console.error('Error parsing stored user:', error);
@@ -48,8 +48,15 @@ export const useAuthEffects = ({ setUser, setIsLoading }: UseAuthEffectsProps) =
       if (!isMounted.current) return;
       
       if (!firebaseUser) {
-        console.log('No Firebase user, clearing user state');
-        setUser(null);
+        // Check if we have a development user in localStorage (for testing without Firebase)
+        const storedUser = localStorage.getItem('currentUser');
+        if (storedUser && JSON.parse(storedUser).uid?.startsWith('dev-')) {
+          console.log('Using development user from localStorage');
+          // Keep the dev user active, don't clear state
+        } else {
+          console.log('No Firebase user, clearing user state');
+          setUser(null);
+        }
         setIsLoading(false);
         return;
       }

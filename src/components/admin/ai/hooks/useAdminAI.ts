@@ -4,7 +4,6 @@ import { Message } from "../types";
 import { useAuth } from "@/context/auth";
 import { useLanguage } from "@/context/LanguageContext";
 import { toast } from "react-toastify";
-import { createClient } from "@supabase/supabase-js";
 
 export const useAdminAI = (currentSection?: string, onNavigate?: (section: string, params?: any) => void) => {
   const { user } = useAuth();
@@ -12,10 +11,6 @@ export const useAdminAI = (currentSection?: string, onNavigate?: (section: strin
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
-  const supabase = createClient(
-    import.meta.env.VITE_SUPABASE_URL || '',
-    import.meta.env.VITE_SUPABASE_ANON_KEY || ''
-  );
   
   // Initialize with a welcome message
   useEffect(() => {
@@ -48,65 +43,91 @@ export const useAdminAI = (currentSection?: string, onNavigate?: (section: strin
         sender: 'ai' 
       }]);
       
-      // Call the Supabase edge function
-      const systemMessage = `You are an administrative AI assistant for ICE Alarm España. The user's current dashboard section is: ${currentSection}. 
-      Help with business metrics, client management, device monitoring, inventory, and alerts. 
-      If you detect the user wants to navigate to a specific section, suggest it clearly.`;
-      
-      const { data, error } = await supabase.functions.invoke('admin-ai-assistant', {
-        body: { prompt: userMessage, systemMessage }
-      });
-      
-      if (error) throw error;
-      
-      // Replace thinking message with response
-      setMessages(prev => {
-        const newMessages = [...prev];
-        // Remove the thinking message
-        newMessages.pop();
+      // Since we're not using Supabase anymore, we'll use a simple AI response simulation
+      // In a real app, this would be replaced with a call to a real AI service or Firebase function
+      setTimeout(() => {
+        // Generate a simple response based on the user's message
+        let aiResponse = "";
+        const lowerCaseMessage = userMessage.toLowerCase();
         
-        // Add the AI response
-        newMessages.push({ text: data.response, sender: 'ai' });
-        return newMessages;
-      });
-      
-      // Check for navigation intent
-      if (data.response.toLowerCase().includes('navigate to') && onNavigate) {
-        // Simple navigation detection - could be improved
-        const navigationMap: Record<string, string> = {
-          'dashboard': 'dashboard',
-          'clients': 'clients',
-          'devices': 'devices',
-          'inventory': 'inventory',
-          'users': 'admin-users',
-          'alerts': 'alerts'
-        };
+        if (lowerCaseMessage.includes("hello") || lowerCaseMessage.includes("hi")) {
+          aiResponse = language === 'en' 
+            ? `Hello! How can I assist you with your administrative tasks today?` 
+            : `¡Hola! ¿Cómo puedo ayudarte con tus tareas administrativas hoy?`;
+        } 
+        else if (lowerCaseMessage.includes("client") || lowerCaseMessage.includes("customer")) {
+          aiResponse = language === 'en'
+            ? `To manage clients, you can navigate to the Clients section in the sidebar. Would you like me to help you find specific client information?`
+            : `Para administrar clientes, puedes navegar a la sección de Clientes en la barra lateral. ¿Te gustaría que te ayude a encontrar información de un cliente específico?`;
+        }
+        else if (lowerCaseMessage.includes("device") || lowerCaseMessage.includes("inventory")) {
+          aiResponse = language === 'en'
+            ? `For device management and inventory, check the Devices section. You can monitor status, schedule maintenance, and check inventory levels there.`
+            : `Para la gestión de dispositivos e inventario, revisa la sección Dispositivos. Allí puedes monitorear el estado, programar mantenimiento y verificar los niveles de inventario.`;
+        }
+        else if (lowerCaseMessage.includes("dashboard") || lowerCaseMessage.includes("overview")) {
+          aiResponse = language === 'en'
+            ? `The dashboard provides an overview of key metrics, recent activities, and system status. You can access it by clicking on Dashboard in the sidebar.`
+            : `El panel principal proporciona una visión general de métricas clave, actividades recientes y estado del sistema. Puedes acceder a él haciendo clic en Panel en la barra lateral.`;
+        }
+        else {
+          aiResponse = language === 'en'
+            ? `I understand you're asking about "${userMessage}". As an administrative assistant, I can help with client management, device monitoring, inventory tracking, and business metrics. Could you please provide more details about what you need?`
+            : `Entiendo que estás preguntando sobre "${userMessage}". Como asistente administrativo, puedo ayudarte con la gestión de clientes, monitoreo de dispositivos, seguimiento de inventario y métricas de negocio. ¿Podrías proporcionar más detalles sobre lo que necesitas?`;
+        }
         
-        for (const [key, value] of Object.entries(navigationMap)) {
-          if (data.response.toLowerCase().includes(key.toLowerCase())) {
-            // Ask user if they want to navigate
-            toast.info(
-              language === 'en'
-                ? `Would you like to navigate to ${key}?`
-                : `¿Te gustaría navegar a ${key}?`,
-              {
-                autoClose: 5000,
-                closeButton: true,
-                position: "bottom-right",
-                onClick: () => {
-                  onNavigate(value);
-                  toast.success(
-                    language === 'en'
-                      ? `Navigated to ${key}`
-                      : `Navegado a ${key}`
-                  );
+        // Replace thinking message with response
+        setMessages(prev => {
+          const newMessages = [...prev];
+          // Remove the thinking message
+          newMessages.pop();
+          
+          // Add the AI response
+          newMessages.push({ text: aiResponse, sender: 'ai' });
+          return newMessages;
+        });
+        
+        // Check for navigation intent
+        if ((lowerCaseMessage.includes("go to") || lowerCaseMessage.includes("navigate to")) && onNavigate) {
+          // Simple navigation detection
+          const navigationMap: Record<string, string> = {
+            'dashboard': 'dashboard',
+            'clients': 'clients',
+            'devices': 'devices',
+            'inventory': 'inventory',
+            'users': 'admin-users',
+            'alerts': 'alerts'
+          };
+          
+          for (const [key, value] of Object.entries(navigationMap)) {
+            if (lowerCaseMessage.includes(key.toLowerCase())) {
+              // Ask user if they want to navigate
+              toast.info(
+                language === 'en'
+                  ? `Would you like to navigate to ${key}?`
+                  : `¿Te gustaría navegar a ${key}?`,
+                {
+                  autoClose: 5000,
+                  closeButton: true,
+                  position: "bottom-right",
+                  onClick: () => {
+                    onNavigate(value);
+                    toast.success(
+                      language === 'en'
+                        ? `Navigated to ${key}`
+                        : `Navegado a ${key}`
+                    );
+                  }
                 }
-              }
-            );
-            break;
+              );
+              break;
+            }
           }
         }
-      }
+        
+        setIsProcessing(false);
+      }, 1500); // Simulated response delay
+      
     } catch (error) {
       console.error("Error processing AI query:", error);
       
@@ -129,7 +150,7 @@ export const useAdminAI = (currentSection?: string, onNavigate?: (section: strin
       toast.error(language === 'en' 
         ? "Error processing AI query" 
         : "Error al procesar la consulta de IA");
-    } finally {
+      
       setIsProcessing(false);
     }
   };

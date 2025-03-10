@@ -94,7 +94,17 @@ export const useLoginPage = () => {
     
     try {
       console.log("Attempting login with:", email, "Remember me:", rememberMe);
+      
+      // Add additional logging
+      console.log("Login credentials being passed to auth system:", {
+        email,
+        passwordLength: password.length,
+        rememberMe
+      });
+      
       await login(email, password, rememberMe);
+      
+      console.log("Login function completed successfully");
       
       // Note: We don't need to handle success case here as the auth state change
       // will trigger the redirect in the useEffect above
@@ -107,6 +117,7 @@ export const useLoginPage = () => {
             ? "An unknown error occurred. Please try again later." 
             : "Ha ocurrido un error desconocido. Por favor, inténtelo más tarde.";
         
+        console.log("Setting login error:", errorMessage);
         setLoginError(errorMessage);
         
         toast({

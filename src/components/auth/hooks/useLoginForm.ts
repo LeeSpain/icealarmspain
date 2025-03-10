@@ -107,8 +107,11 @@ export const useLoginForm = ({
       } else if (onSubmit) {
         await onSubmit(formData.email, formData.password, rememberMe);
       } else {
+        console.log("Using internal login with credentials:", formData.email, "password length:", formData.password.length);
         // Use the provided password for login
         const userData = await login(formData.email, formData.password, rememberMe);
+        
+        console.log("Login successful, user data:", userData);
         
         if (rememberMe) {
           localStorage.setItem('rememberedEmail', formData.email);
@@ -127,10 +130,12 @@ export const useLoginForm = ({
         
         // Short delay to prevent immediate navigation issues
         setTimeout(() => {
-          // Redirect based on user role
+          // Redirect based on user role or specific redirect path
           if (redirectTo) {
+            console.log("Redirecting to specified path:", redirectTo);
             navigate(redirectTo);
           } else {
+            console.log("Redirecting based on role:", userData.role);
             switch (userData.role) {
               case 'admin':
                 navigate('/admin');

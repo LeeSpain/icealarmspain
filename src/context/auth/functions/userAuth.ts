@@ -25,6 +25,38 @@ export const login = async (email: string, password: string, rememberMe = false)
     console.log('Setting Firebase persistence:', rememberMe ? 'local' : 'session');
     await setPersistence(auth, persistenceType);
     
+    // For development/testing purposes, allow specific test accounts to bypass Firebase authentication
+    // This is helpful for testing when Firebase might not be fully configured
+    if (process.env.NODE_ENV === 'development' && 
+        (email === 'admin@icealarm.es' || email === 'callcenter@icealarm.es' || email === 'user@example.com') && 
+        password === 'password123') {
+      
+      console.log('Using development login bypass for:', email);
+      
+      // Create user object for development mode
+      const role = determineUserRole(email);
+      const user: User = {
+        uid: `dev-${Date.now()}`,
+        id: `dev-${Date.now()}`,
+        email: email,
+        name: email.split('@')[0],
+        displayName: email.split('@')[0],
+        role,
+        profileCompleted: true,
+        language: 'en',
+        lastLogin: new Date().toISOString(),
+        createdAt: new Date().toISOString()
+      };
+      
+      console.log('Development login successful with role:', role);
+      
+      // Store user data
+      localStorage.setItem('currentUser', JSON.stringify(user));
+      localStorage.setItem('authPersistence', rememberMe ? 'local' : 'session');
+      
+      return user;
+    }
+    
     console.log('Attempting signIn with Firebase for:', email);
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
     

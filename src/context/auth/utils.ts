@@ -56,3 +56,27 @@ export const determineUserRole = (email: string): string => {
     return 'member';
   }
 };
+
+// Helper function to check if we're in development mode
+export const isDevelopmentMode = (): boolean => {
+  return process.env.NODE_ENV === 'development' || !import.meta.env.VITE_FIREBASE_API_KEY;
+};
+
+// Function to get test credentials for testing/development
+export const getTestCredentials = () => {
+  return {
+    admin: {
+      email: 'admin@icealarm.es',
+      password: 'password123'
+    },
+    callcenter: {
+      email: 'callcenter@icealarm.es',
+      password: 'password123'
+    },
+    member: {
+      email: 'user@example.com',
+      password: 'password123'
+    }
+  };
+};
+
