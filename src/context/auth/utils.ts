@@ -8,25 +8,22 @@ export const determineUserRole = (email: string): string => {
   // Debug log for troubleshooting
   console.log('Determining role for email:', email);
   
-  // Specific email-to-role mapping for accounts
-  if (email === 'lwakeman@icealarm.es') {
-    console.log('Assigning admin role for lwakeman@icealarm.es');
-    return 'admin';
-  } else if (email === 'wakemanlee20@gmail.com') {
-    console.log('Assigning callcenter role for wakemanlee20@gmail.com');
-    return 'callcenter';
-  } else if (email === 'icealarmespana@gmail.com') {
-    console.log('Assigning member role for icealarmespana@gmail.com');
-    return 'member';
-  } else if (email === 'admin@icealarm.es') {
-    console.log('Assigning admin role for admin@icealarm.es');
-    return 'admin';
-  } else if (email === 'agent@icealarm.es' || email === 'callcenter@icealarm.es') {
-    console.log('Assigning callcenter role for agent/callcenter@icealarm.es');
-    return 'callcenter';
-  } else if (email === 'member@icealarm.es') {
-    console.log('Assigning member role for member@icealarm.es');
-    return 'member';
+  // HARDCODED ROLES FOR DEVELOPMENT TESTING
+  // These exact mappings ensure test users always work
+  const EMAIL_ROLE_MAP: Record<string, string> = {
+    'lwakeman@icealarm.es': 'admin',
+    'wakemanlee20@gmail.com': 'callcenter',
+    'icealarmespana@gmail.com': 'member',
+    'admin@icealarm.es': 'admin',
+    'agent@icealarm.es': 'callcenter',
+    'callcenter@icealarm.es': 'callcenter',
+    'member@icealarm.es': 'member',
+  };
+  
+  // Check for exact email match first
+  if (EMAIL_ROLE_MAP[email]) {
+    console.log(`Assigning ${EMAIL_ROLE_MAP[email]} role for email: ${email}`);
+    return EMAIL_ROLE_MAP[email];
   }
   
   // General pattern matching for other emails

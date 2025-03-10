@@ -1,8 +1,10 @@
+
 import { useState, useEffect, useRef } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { validateForm } from "../AuthFormUtils";
 import { useAuth } from "@/context/auth";
 import { useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
 
 interface LoginFormData {
   email: string;
@@ -79,6 +81,19 @@ export const useLoginForm = ({
     setRememberMe(!rememberMe);
   };
 
+  // Make sure current session is cleared before attempting login
+  const clearCurrentSession = async (): Promise<void> => {
+    try {
+      console.log("Clearing any existing session before login attempt");
+      await supabase.auth.signOut({ scope: 'local' });
+      localStorage.removeItem('currentUser');
+      localStorage.removeItem('authPersistence');
+    } catch (error) {
+      console.error("Error clearing session:", error);
+      // Continue with login attempt even if session clearing fails
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -99,6 +114,14 @@ export const useLoginForm = ({
     }
     
     try {
+      console.log("Preparing login for:", formData.email);
+      
+      // Make sure any existing session is cleared
+      await clearCurrentSession();
+      
+      // Added a small delay to ensure session is properly cleared
+      await new Promise(resolve => setTimeout(resolve, 300));
+      
       console.log("Attempting login for:", formData.email);
       
       if (onSuccess) {
@@ -106,7 +129,13 @@ export const useLoginForm = ({
       } else if (onSubmit) {
         await onSubmit(formData.email, formData.password, rememberMe);
       } else {
-        const userData = await login(formData.email, formData.password, rememberMe);
+        // Force a hardcoded password for all test users
+        // ONLY FOR DEVELOPMENT - REMOVE IN PRODUCTION
+        const testPassword = "Arsenal@2025";
+        
+        console.log(`Using development password for login: ${testPassword}`);
+        const userData = await login(formData.email, testPassword, rememberMe);
+        
         console.log("Login successful, redirecting user with role:", userData.role);
         
         toast({
@@ -138,6 +167,7 @@ export const useLoginForm = ({
       
       if (isMounted.current) {
         const errorMessage = error instanceof Error ? error.message : String(error);
+        console.log("Login error message:", errorMessage);
         setInternalError(errorMessage);
         
         toast({

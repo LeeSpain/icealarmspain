@@ -11,28 +11,42 @@ console.log("Creating Supabase client with:", {
   supabaseAnonKey: supabaseAnonKey ? supabaseAnonKey.substring(0, 10) + "..." : "Key missing" 
 });
 
-// Create supabase client (with error handling)
+// Create supabase client with enhanced options
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   auth: {
     autoRefreshToken: true,
     persistSession: true,
-    detectSessionInUrl: true
+    detectSessionInUrl: true,
+    storageKey: 'supabase.auth.token', // Explicit storage key
+    flowType: 'implicit' // Use implicit flow for simpler auth
   }
 });
 
 console.log("Supabase client created successfully");
 
-// Skip the connection test as it might prevent app loading
+// Add a helper function to check Supabase connectivity
 export const testSupabaseConnection = async () => {
-  console.log("Skipping Supabase connection test to prevent blocking app rendering");
-  return true;
+  try {
+    console.log("Testing Supabase connection...");
+    const { data, error } = await supabase.from('health_check').select('count').maybeSingle();
+    
+    if (error) {
+      console.error("Supabase connection test failed:", error.message);
+      return false;
+    }
+    
+    console.log("Supabase connection test successful");
+    return true;
+  } catch (e) {
+    console.error("Supabase connection test threw an error:", e);
+    return false;
+  }
 };
 
-// Add a method to check if Supabase is available without blocking
+// Helper function to check if Supabase is available without blocking
 export const isFunctional = async () => {
   try {
-    // Fast non-blocking check
-    const { error } = await supabase.from('health_check').select('count').single();
+    const { error } = await supabase.auth.getSession();
     return !error;
   } catch (e) {
     console.error("Supabase availability check failed:", e);
