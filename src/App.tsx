@@ -36,13 +36,13 @@ import Checkout from "./pages/Checkout";
 // Landing page component
 const Landing = () => {
   return (
-    <div>
+    <>
       <Hero />
       <DeviceShowcase />
       <Pricing />
       <ExpatInfo />
       <Testimonials />
-    </div>
+    </>
   );
 };
 
@@ -54,7 +54,6 @@ function App() {
           <ScrollToTop />
           <div className="App">
             <Navbar />
-            
             <main>
               <Routes>
                 <Route path="/" element={<Landing />} />
@@ -66,12 +65,10 @@ function App() {
                 <Route path="/products/:id" element={<ProductDetail />} />
                 <Route path="/checkout" element={<Checkout />} />
                 
-                {/* Device routes */}
                 <Route path="/devices/sos-pendant" element={<SOSPendantPage />} />
                 <Route path="/devices/glucose-monitor" element={<GlucoseMonitorPage />} />
                 <Route path="/devices/medical-dispenser" element={<MedicalDispenserPage />} />
                 
-                {/* Protected Routes */}
                 <Route path="/dashboard" element={
                   <ProtectedRoute>
                     <DashboardPage />
@@ -129,18 +126,15 @@ function App() {
                   </ProtectedRoute>
                 } />
                 
-                {/* Admin Routes */}
                 <Route path="/admin" element={
                   <ProtectedRoute adminOnly>
                     <AdminDashboard />
                   </ProtectedRoute>
                 } />
                 
-                {/* 404 Route */}
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </main>
-            
             <Footer />
           </div>
         </AuthProvider>
