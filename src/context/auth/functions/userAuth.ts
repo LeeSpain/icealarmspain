@@ -26,7 +26,8 @@ export const login = async (email: string, password: string, rememberMe = false)
     await setPersistence(auth, persistenceType);
     
     console.log('Attempting signIn with Firebase for:', email);
-    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    // Fixed: Only pass email and password to signInWithEmailAndPassword
+    const userCredential = await signInWithEmailAndPassword(email, password);
     
     if (!userCredential.user) {
       console.error('No user data returned from Firebase');
@@ -101,7 +102,8 @@ export const logout = async (): Promise<void> => {
     localStorage.removeItem('currentUser');
     
     // Sign out from Firebase
-    await signOut(auth);
+    // Fixed: Call signOut without arguments
+    await signOut();
   } catch (error) {
     console.error('Logout error:', error);
     // Clean up local state regardless of server errors
