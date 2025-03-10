@@ -87,14 +87,22 @@ export const useLoginForm = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log("Login form submitted with:", formData);
     
-    if (isLoading || !isMounted.current) return;
+    if (isLoading || !isMounted.current) {
+      console.log("Form submission blocked: isLoading=", isLoading);
+      return;
+    }
     
     const newErrors = validateForm(formData, "login", language);
     if (isMounted.current) {
       setErrors(newErrors);
     }
-    if (Object.keys(newErrors).length > 0) return;
+    
+    if (Object.keys(newErrors).length > 0) {
+      console.log("Validation errors:", newErrors);
+      return;
+    }
     
     if (isMounted.current) {
       setInternalError(null);
@@ -105,14 +113,16 @@ export const useLoginForm = ({
     }
     
     try {
-      console.log("Preparing login for:", formData.email);
+      console.log("Attempting login with credential:", formData.email);
       
       if (onSuccess) {
+        console.log("Using external onSuccess handler");
         await onSuccess(formData.email, formData.password, rememberMe);
       } else if (onSubmit) {
+        console.log("Using external onSubmit handler");
         await onSubmit(formData.email, formData.password, rememberMe);
       } else {
-        console.log("Using internal login with credentials:", formData.email);
+        console.log("Using internal login flow");
         // Use the provided password for login
         const userData = await login(formData.email, formData.password, rememberMe);
         
@@ -123,8 +133,6 @@ export const useLoginForm = ({
         } else {
           localStorage.removeItem('rememberedEmail');
         }
-        
-        console.log("Login successful, redirecting user with role:", userData.role);
         
         toast({
           title: language === 'en' ? "Login Successful" : "Inicio de sesión exitoso",

@@ -10,23 +10,43 @@ export const useLoginPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { toast } = useToast();
-  const { user, isAuthenticated, isLoading, login } = useAuth();
+  const { user, isAuthenticated, isLoading: authLoading, login } = useAuth();
   const [loginInProgress, setLoginInProgress] = useState(false);
   const [loginError, setLoginError] = useState<string | null>(null);
   const [redirectTriggered, setRedirectTriggered] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   
   const isMounted = useRef(true);
   
   // Clear mounted flag on unmount
   useEffect(() => {
+    // Initial auth check should be quick
+    const initialAuthCheckTimeout = setTimeout(() => {
+      if (isMounted.current && authLoading) {
+        console.log("Setting initial loading false due to timeout");
+        setIsLoading(false);
+      }
+    }, 2000);
+    
     return () => {
+      clearTimeout(initialAuthCheckTimeout);
       isMounted.current = false;
     };
   }, []);
+
+  // Update loading state based on auth loading
+  useEffect(() => {
+    console.log("Auth loading state changed:", authLoading);
+    if (!authLoading) {
+      // When auth loading ends, we can end our loading state as well
+      setIsLoading(false);
+    }
+  }, [authLoading]);
   
   console.log("Login page auth status:", { 
     user, 
     isAuthenticated, 
+    authLoading,
     isLoading,
     redirectTriggered,
     loginInProgress
@@ -42,13 +62,14 @@ export const useLoginPage = () => {
     console.log("Login page - Auth state check:", { 
       isAuthenticated, 
       user, 
-      isLoading, 
+      authLoading, 
+      isLoading,
       loginInProgress,
       redirectTriggered
     });
     
     // Only proceed if loading is complete, we're authenticated, and haven't redirected yet
-    if (!isLoading && isAuthenticated && user && !redirectTriggered) {
+    if (!authLoading && isAuthenticated && user && !redirectTriggered) {
       console.log("User authenticated, preparing to redirect");
       
       setRedirectTriggered(true);
@@ -73,7 +94,7 @@ export const useLoginPage = () => {
         }
       }, 300);
     }
-  }, [isAuthenticated, isLoading, loginInProgress, user, navigate, redirectParam, redirectTriggered, language, toast]);
+  }, [isAuthenticated, authLoading, loginInProgress, user, navigate, redirectParam, redirectTriggered, language, toast]);
   
   const getDefaultRedirect = (role?: string) => {
     console.log("Determining redirect for role:", role);
@@ -91,7 +112,10 @@ export const useLoginPage = () => {
   };
   
   const handleLoginSuccess = async (email: string, password: string, rememberMe: boolean) => {
-    if (loginInProgress || !isMounted.current) return;
+    if (loginInProgress || !isMounted.current) {
+      console.log("Login already in progress or component unmounted");
+      return;
+    }
     
     console.log("Starting login process with:", { email, rememberMe });
     setLoginInProgress(true);
@@ -132,7 +156,7 @@ export const useLoginPage = () => {
   return {
     user,
     isAuthenticated,
-    isLoading: isLoading || loginInProgress, // Combine both loading states
+    isLoading: isLoading || authLoading || loginInProgress, // Combine loading states
     loginInProgress,
     loginError,
     redirectParam,

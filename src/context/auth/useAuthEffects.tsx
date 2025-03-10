@@ -30,25 +30,30 @@ export const useAuthEffects = ({ setUser, setIsLoading }: UseAuthEffectsProps) =
     try {
       const storedUser = localStorage.getItem('currentUser');
       if (storedUser && isMounted.current) {
-        const parsedUser = JSON.parse(storedUser);
-        if (parsedUser && parsedUser.uid) {
-          // Check if it's a development user
-          if (typeof parsedUser.uid === 'string' && parsedUser.uid.startsWith('dev-')) {
-            console.log('Found stored development user:', parsedUser.email);
-            setUser(parsedUser);
-            setIsLoading(false);
-            return; // Exit early for development users - no Firebase auth needed
+        try {
+          const parsedUser = JSON.parse(storedUser);
+          if (parsedUser && parsedUser.uid) {
+            // Check if it's a development user
+            if (typeof parsedUser.uid === 'string' && parsedUser.uid.startsWith('dev-')) {
+              console.log('Found stored development user:', parsedUser.email);
+              setUser(parsedUser);
+              // Don't set loading to false yet for dev users, let the timeout handle it
+            } else {
+              console.log('Found stored user data:', parsedUser.email);
+              setUser(parsedUser);
+            }
           }
-          console.log('Found stored user data:', parsedUser.email);
-          setUser(parsedUser);
+        } catch (e) {
+          console.error('Error parsing stored user JSON:', e);
+          localStorage.removeItem('currentUser');
         }
       }
     } catch (error) {
-      console.error('Error parsing stored user:', error);
+      console.error('Error accessing localStorage:', error);
       localStorage.removeItem('currentUser');
     }
     
-    // Listen for Firebase auth state changes (only if not a development user)
+    // Listen for Firebase auth state changes
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
       console.log('Firebase auth state changed:', firebaseUser?.email || 'No user');
       
@@ -57,7 +62,7 @@ export const useAuthEffects = ({ setUser, setIsLoading }: UseAuthEffectsProps) =
       if (!firebaseUser) {
         console.log('No Firebase user, clearing user state');
         setUser(null);
-        // Always set loading to false when auth state is resolved
+        // Set loading to false when auth state is resolved
         setIsLoading(false);
         return;
       }
@@ -87,17 +92,16 @@ export const useAuthEffects = ({ setUser, setIsLoading }: UseAuthEffectsProps) =
 
     // Set a timeout to ensure loading state is not stuck forever
     const loadingTimeout = setTimeout(() => {
-      if (isMounted.current && setIsLoading) {
+      if (isMounted.current) {
         console.log('Authentication loading timeout reached - forcing loading to false');
         setIsLoading(false);
       }
-    }, 5000); // 5 second timeout as a fallback
+    }, 3000); // 3 second timeout as a fallback
 
     // Cleanup subscription and timeout
     return () => {
       clearTimeout(loadingTimeout);
       unsubscribe();
-      isMounted.current = false;
     };
   }, [setUser, setIsLoading]);
 };

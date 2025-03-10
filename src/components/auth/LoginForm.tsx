@@ -38,7 +38,7 @@ const LoginForm: React.FC<LoginFormProps> = ({
     externalLoading, 
     externalError, 
     language,
-    onSuccess, // Now this property exists in the interface
+    onSuccess,
     redirectTo
   });
 
@@ -74,6 +74,7 @@ const LoginForm: React.FC<LoginFormProps> = ({
           onRememberMeChange={handleRememberMeChange}
           isLoading={isLoading}
           language={language}
+          onSubmit={handleSubmit}
         />
       </form>
     </div>
