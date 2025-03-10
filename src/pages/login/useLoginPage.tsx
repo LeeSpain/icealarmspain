@@ -73,7 +73,7 @@ export const useLoginPage = () => {
     window.scrollTo(0, 0);
   }, []);
   
-  // Set a timeout for auth check
+  // Set a timeout for auth check - reduced to 3 seconds
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       if (isLoading && isMounted.current) {
@@ -162,7 +162,6 @@ export const useLoginPage = () => {
     loginInProgress,
     loginError,
     redirectParam,
-    isMockAuth: false,
     authTimeout,
     handleLoginSuccess,
     language

@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { Loader2, RefreshCw, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { supabase } from "@/integrations/supabase/client";
 
 interface LoginLoadingProps {
   isLoading: boolean;
@@ -17,6 +18,27 @@ export const LoginLoading: React.FC<LoginLoadingProps> = ({
 }) => {
   const [showRefresh, setShowRefresh] = useState(false);
   const [showDebugInfo, setShowDebugInfo] = useState(false);
+  const [sessionStatus, setSessionStatus] = useState<string>("Checking...");
+  
+  // Check Supabase session status when component mounts
+  useEffect(() => {
+    const checkSession = async () => {
+      try {
+        const { data, error } = await supabase.auth.getSession();
+        if (error) {
+          setSessionStatus(`Session error: ${error.message}`);
+        } else if (data.session) {
+          setSessionStatus(`Session exists for: ${data.session.user.email}`);
+        } else {
+          setSessionStatus("No active session found");
+        }
+      } catch (err) {
+        setSessionStatus(`Error checking session: ${err}`);
+      }
+    };
+    
+    checkSession();
+  }, []);
   
   // Show refresh button after 2 seconds, much faster than before
   useEffect(() => {
@@ -34,6 +56,25 @@ export const LoginLoading: React.FC<LoginLoadingProps> = ({
   const toggleDebugInfo = () => {
     setShowDebugInfo(!showDebugInfo);
   };
+
+  // Force client-side sign out if stuck for more than 10 seconds
+  useEffect(() => {
+    if (!isLoading || !showRefresh) return;
+    
+    const timer = setTimeout(async () => {
+      try {
+        console.log("Authentication taking too long, forcing sign out");
+        await supabase.auth.signOut({ scope: 'local' });
+        localStorage.removeItem('currentUser');
+        localStorage.removeItem('authPersistence');
+        window.location.reload();
+      } catch (error) {
+        console.error("Error during emergency sign out:", error);
+      }
+    }, 10000);
+    
+    return () => clearTimeout(timer);
+  }, [isLoading, showRefresh]);
 
   return (
     <div className="flex min-h-screen items-center justify-center">
@@ -91,12 +132,13 @@ export const LoginLoading: React.FC<LoginLoadingProps> = ({
             
             {showDebugInfo && (
               <div className="mt-4 p-3 bg-gray-100 rounded text-xs overflow-auto max-h-48">
-                <p>Loading: {isLoading ? 'true' : 'false'}</p>
-                <p>Authenticated: {isAuthenticated ? 'true' : 'false'}</p>
-                <p>Current URL: {window.location.href}</p>
-                <p>localStorage entries: {Object.keys(localStorage).join(', ')}</p>
-                <p>Auth service: Supabase</p>
-                <p>Time: {new Date().toISOString()}</p>
+                <p><strong>Loading:</strong> {isLoading ? 'true' : 'false'}</p>
+                <p><strong>Authenticated:</strong> {isAuthenticated ? 'true' : 'false'}</p>
+                <p><strong>Current URL:</strong> {window.location.href}</p>
+                <p><strong>localStorage entries:</strong> {Object.keys(localStorage).join(', ')}</p>
+                <p><strong>Auth service:</strong> Supabase</p>
+                <p><strong>Session status:</strong> {sessionStatus}</p>
+                <p><strong>Time:</strong> {new Date().toISOString()}</p>
               </div>
             )}
           </div>
