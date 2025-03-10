@@ -38,7 +38,7 @@ export const login = async (email: string, password: string, rememberMe = false)
     console.log('Login successful for user:', session.user.email);
     
     // Determine role from email directly
-    const role = determineUserRole(email);
+    const role = determineUserRole(session.user.email || email);
     console.log('Determined role for user:', role);
     
     // Create user object

@@ -1,7 +1,6 @@
 
 import React from "react";
 import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
 import { LoginLoading } from "./LoginLoading";
 import { LoginContent } from "./LoginContent";
 import { useLoginPage } from "./useLoginPage";
@@ -41,7 +40,7 @@ const Login: React.FC = () => {
           language={language}
         />
       </main>
-      <Footer />
+      {/* Footer has been removed from here as it's already included in LoginContent */}
     </div>
   );
 };
