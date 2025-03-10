@@ -10,16 +10,20 @@ import {
   browserSessionPersistence
 } from '../../../services/firebase/auth';
 
+// Clear all stored authentication data
+const clearAuthData = () => {
+  console.log('Clearing all auth data');
+  localStorage.removeItem('currentUser');
+  localStorage.removeItem('authPersistence');
+};
+
 // Login function
 export const login = async (email: string, password: string, rememberMe = false): Promise<User> => {
   try {
     console.log('Starting login process for:', email);
     
     // First, ensure we clear any existing auth state to prevent conflicts
-    console.log('Clearing existing auth state...');
-    // Only clear authPersistence and currentUser to avoid clearing language and other settings
-    localStorage.removeItem('currentUser');
-    localStorage.removeItem('authPersistence');
+    clearAuthData();
     
     // For development/testing purposes, allow specific test accounts
     const isDevMode = isDevelopmentMode();
@@ -144,16 +148,14 @@ export const logout = async (): Promise<void> => {
     console.log('Logging out user');
     
     // Clean up local state first
-    localStorage.removeItem('currentUser');
-    localStorage.removeItem('authPersistence');
+    clearAuthData();
     
     // Sign out from Firebase
     await signOut(auth);
   } catch (error) {
     console.error('Logout error:', error);
     // Clean up local state regardless of server errors
-    localStorage.removeItem('currentUser');
-    localStorage.removeItem('authPersistence');
+    clearAuthData();
     throw error; // Re-throw the error to be handled by the caller
   }
 };

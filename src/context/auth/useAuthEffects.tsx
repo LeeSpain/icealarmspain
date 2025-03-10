@@ -27,11 +27,11 @@ export const useAuthEffects = ({ setUser, setIsLoading }: UseAuthEffectsProps) =
     setIsLoading(true);
     
     // Try to load user from localStorage first (for faster initial load)
-    const storedUser = localStorage.getItem('currentUser');
-    if (storedUser) {
-      try {
+    try {
+      const storedUser = localStorage.getItem('currentUser');
+      if (storedUser && isMounted.current) {
         const parsedUser = JSON.parse(storedUser);
-        if (parsedUser && parsedUser.uid && isMounted.current) {
+        if (parsedUser && parsedUser.uid) {
           // Check if it's a development user
           if (typeof parsedUser.uid === 'string' && parsedUser.uid.startsWith('dev-')) {
             console.log('Found stored development user:', parsedUser.email);
@@ -42,11 +42,10 @@ export const useAuthEffects = ({ setUser, setIsLoading }: UseAuthEffectsProps) =
           console.log('Found stored user data:', parsedUser.email);
           setUser(parsedUser);
         }
-      } catch (error) {
-        console.error('Error parsing stored user:', error);
-        localStorage.removeItem('currentUser');
-        setUser(null);
       }
+    } catch (error) {
+      console.error('Error parsing stored user:', error);
+      localStorage.removeItem('currentUser');
     }
     
     // Listen for Firebase auth state changes (only if not a development user)
@@ -68,30 +67,35 @@ export const useAuthEffects = ({ setUser, setIsLoading }: UseAuthEffectsProps) =
       // Determine role from email
       const role = determineUserRole(firebaseUser.email || '');
       
-      if (isMounted.current) {
-        const userData: User = {
-          uid: firebaseUser.uid,
-          id: firebaseUser.uid,
-          email: firebaseUser.email || '',
-          name: firebaseUser.displayName || firebaseUser.email?.split('@')[0] || '',
-          displayName: firebaseUser.displayName || firebaseUser.email?.split('@')[0] || '',
-          role,
-          profileCompleted: !!firebaseUser.displayName,
-          language: localStorage.getItem('language') || 'en',
-          lastLogin: new Date().toISOString(),
-          createdAt: firebaseUser.metadata.creationTime || '',
-        };
-        
-        setUser(userData);
-        localStorage.setItem('currentUser', JSON.stringify(userData));
-      }
+      const userData: User = {
+        uid: firebaseUser.uid,
+        id: firebaseUser.uid,
+        email: firebaseUser.email || '',
+        name: firebaseUser.displayName || firebaseUser.email?.split('@')[0] || '',
+        displayName: firebaseUser.displayName || firebaseUser.email?.split('@')[0] || '',
+        role,
+        profileCompleted: !!firebaseUser.displayName,
+        language: localStorage.getItem('language') || 'en',
+        lastLogin: new Date().toISOString(),
+        createdAt: firebaseUser.metadata.creationTime || '',
+      };
       
-      // Always set loading to false when auth state is resolved
+      setUser(userData);
+      localStorage.setItem('currentUser', JSON.stringify(userData));
       setIsLoading(false);
     });
 
-    // Cleanup subscription
+    // Set a timeout to ensure loading state is not stuck forever
+    const loadingTimeout = setTimeout(() => {
+      if (isMounted.current && setIsLoading) {
+        console.log('Authentication loading timeout reached - forcing loading to false');
+        setIsLoading(false);
+      }
+    }, 5000); // 5 second timeout as a fallback
+
+    // Cleanup subscription and timeout
     return () => {
+      clearTimeout(loadingTimeout);
       unsubscribe();
       isMounted.current = false;
     };

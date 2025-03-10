@@ -48,32 +48,30 @@ export const useLoginPage = () => {
     });
     
     // Only proceed if loading is complete, we're authenticated, and haven't redirected yet
-    if (!isLoading && !loginInProgress && isAuthenticated && user && !redirectTriggered) {
+    if (!isLoading && isAuthenticated && user && !redirectTriggered) {
       console.log("User authenticated, preparing to redirect");
       
-      if (isMounted.current) {
-        setRedirectTriggered(true);
-        
-        // Determine redirect path based on role or redirectParam
-        const redirectTo = redirectParam || getDefaultRedirect(user.role);
-        console.log("Redirecting authenticated user to:", redirectTo);
-        
-        toast({
-          title: language === 'en' ? "Login Successful" : "Inicio de sesión exitoso",
-          description: language === 'en' 
-            ? `Welcome back, ${user.displayName || user.email?.split('@')[0] || 'User'}!` 
-            : `Bienvenido de nuevo, ${user.displayName || user.email?.split('@')[0] || 'Usuario'}!`,
-          duration: 3000
-        });
-        
-        // Schedule the redirect to give the toast time to appear
-        setTimeout(() => {
-          if (isMounted.current) {
-            console.log("Executing redirect now to:", redirectTo);
-            navigate(redirectTo, { replace: true });
-          }
-        }, 300);
-      }
+      setRedirectTriggered(true);
+      
+      // Determine redirect path based on role or redirectParam
+      const redirectTo = redirectParam || getDefaultRedirect(user.role);
+      console.log("Redirecting authenticated user to:", redirectTo);
+      
+      toast({
+        title: language === 'en' ? "Login Successful" : "Inicio de sesión exitoso",
+        description: language === 'en' 
+          ? `Welcome back, ${user.displayName || user.email?.split('@')[0] || 'User'}!` 
+          : `Bienvenido de nuevo, ${user.displayName || user.email?.split('@')[0] || 'Usuario'}!`,
+        duration: 3000
+      });
+      
+      // Schedule the redirect to give the toast time to appear
+      setTimeout(() => {
+        if (isMounted.current) {
+          console.log("Executing redirect now to:", redirectTo);
+          navigate(redirectTo, { replace: true });
+        }
+      }, 300);
     }
   }, [isAuthenticated, isLoading, loginInProgress, user, navigate, redirectParam, redirectTriggered, language, toast]);
   

@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useEffect } from "react";
 import Navbar from "@/components/Navbar";
 import { LoginLoading } from "./LoginLoading";
 import { LoginContent } from "./LoginContent";
@@ -24,6 +24,20 @@ const Login: React.FC = () => {
     loginError,
     loginInProgress
   });
+  
+  // Reset auth state if stuck in a strange state
+  useEffect(() => {
+    // If we're stuck in loading for too long, add a timeout to force reset
+    const forceTimeout = setTimeout(() => {
+      if (isLoading) {
+        console.log("Login page - Forcing load state reset due to timeout");
+        // Force reload the page to reset all state
+        window.location.reload();
+      }
+    }, 15000); // 15 seconds timeout
+    
+    return () => clearTimeout(forceTimeout);
+  }, [isLoading]);
   
   // Show loading state when authentication is being checked
   // or when login is in progress

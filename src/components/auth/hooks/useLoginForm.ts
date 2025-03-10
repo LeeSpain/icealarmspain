@@ -44,10 +44,15 @@ export const useLoginForm = ({
   const isLoading = externalLoading !== undefined ? externalLoading : internalLoading;
 
   useEffect(() => {
+    // Initialize with default test credentials in development
+    if (process.env.NODE_ENV === 'development' && !formData.email) {
+      setFormData(prev => ({ ...prev, email: 'admin@icealarm.es' }));
+    }
+    
     return () => {
       isMounted.current = false;
     };
-  }, []);
+  }, [formData.email]);
 
   useEffect(() => {
     if (externalError && isMounted.current) {
@@ -128,27 +133,24 @@ export const useLoginForm = ({
             : `Bienvenido de nuevo, ${userData.displayName || userData.email?.split('@')[0] || 'Usuario'}!`,
         });
         
-        // Short delay to prevent immediate navigation issues
-        setTimeout(() => {
-          // Redirect based on user role or specific redirect path
-          if (redirectTo) {
-            console.log("Redirecting to specified path:", redirectTo);
-            navigate(redirectTo);
-          } else {
-            console.log("Redirecting based on role:", userData.role);
-            switch (userData.role) {
-              case 'admin':
-                navigate('/admin');
-                break;
-              case 'callcenter':
-                navigate('/call-center');
-                break;
-              default:
-                navigate('/dashboard');
-                break;
-            }
+        // Redirect based on user role or specific redirect path
+        if (redirectTo) {
+          console.log("Redirecting to specified path:", redirectTo);
+          navigate(redirectTo, { replace: true });
+        } else {
+          console.log("Redirecting based on role:", userData.role);
+          switch (userData.role) {
+            case 'admin':
+              navigate('/admin', { replace: true });
+              break;
+            case 'callcenter':
+              navigate('/call-center', { replace: true });
+              break;
+            default:
+              navigate('/dashboard', { replace: true });
+              break;
           }
-        }, 100);
+        }
       }
     } catch (error) {
       console.error("Login error:", error);
