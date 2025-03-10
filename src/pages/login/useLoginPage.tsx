@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
@@ -34,36 +35,45 @@ export const useLoginPage = () => {
   const searchParams = new URLSearchParams(location.search);
   const redirectParam = searchParams.get('redirect');
   
+  // Handle authentication state changes
   useEffect(() => {
-    console.log("Login page - Auth state:", { isAuthenticated, user, isLoading, redirectTriggered, authTimeout });
+    console.log("Login page - Auth state check:", { isAuthenticated, user, isLoading });
     
     if (!isLoading) {
       setAuthTimeout(false);
     }
     
-    if (!isLoading && isAuthenticated && user && !redirectTriggered && isMounted.current) {
+    if (!isLoading && isAuthenticated && user && !redirectTriggered) {
       console.log("User authenticated, preparing to redirect");
       
-      setRedirectTriggered(true);
-      
-      const redirectTo = redirectParam || getDefaultRedirect(user.role);
-      console.log("Redirecting authenticated user to:", redirectTo);
-      
       if (isMounted.current) {
+        setRedirectTriggered(true);
+        
+        const redirectTo = redirectParam || getDefaultRedirect(user.role);
+        console.log("Redirecting authenticated user to:", redirectTo);
+        
+        toast({
+          title: language === 'en' ? "Login Successful" : "Inicio de sesión exitoso",
+          description: language === 'en' ? `Welcome back, ${user.displayName || user.email?.split('@')[0]}!` : `Bienvenido de nuevo, ${user.displayName || user.email?.split('@')[0]}!`,
+          duration: 3000
+        });
+        
         setTimeout(() => {
           if (isMounted.current) {
             console.log("Executing redirect now to:", redirectTo);
             navigate(redirectTo, { replace: true });
           }
-        }, 100);
+        }, 300);
       }
     }
   }, [isAuthenticated, isLoading, user, navigate, redirectParam, redirectTriggered, language, toast]);
   
+  // Reset on page load
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
   
+  // Set a timeout for auth check
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       if (isLoading && isMounted.current) {
@@ -114,6 +124,12 @@ export const useLoginPage = () => {
         
         setLoginError(errorMessage);
         console.log("Login failed:", errorMessage);
+        
+        toast({
+          title: language === 'en' ? "Login Failed" : "Error de inicio de sesión",
+          description: errorMessage,
+          variant: "destructive"
+        });
       }
     } catch (error) {
       console.error("Login error:", error);
@@ -125,6 +141,12 @@ export const useLoginPage = () => {
             : "Ha ocurrido un error desconocido. Por favor, inténtelo más tarde.";
         
         setLoginError(errorMessage);
+        
+        toast({
+          title: language === 'en' ? "Login Error" : "Error de inicio de sesión",
+          description: errorMessage,
+          variant: "destructive"
+        });
       }
     } finally {
       if (isMounted.current) {

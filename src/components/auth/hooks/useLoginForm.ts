@@ -2,7 +2,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { validateForm } from "../AuthFormUtils";
-import { useAuth } from "@/providers/AuthProvider";
+import { useAuth } from "@/context/auth";
 import { useNavigate } from "react-router-dom";
 
 interface LoginFormData {
@@ -107,18 +107,12 @@ export const useLoginForm = ({
     }
     
     try {
+      console.log("Login attempt with:", { email: formData.email, rememberMe });
+      
       if (onSuccess) {
-        const result = onSuccess(formData.email, formData.password, rememberMe);
-        
-        if (result instanceof Promise) {
-          await result;
-        }
+        await onSuccess(formData.email, formData.password, rememberMe);
       } else if (onSubmit) {
-        const result = onSubmit(formData.email, formData.password, rememberMe);
-        
-        if (result instanceof Promise) {
-          await result;
-        }
+        await onSubmit(formData.email, formData.password, rememberMe);
       } else {
         await login(formData.email, formData.password, rememberMe);
         
@@ -131,6 +125,12 @@ export const useLoginForm = ({
       if (isMounted.current) {
         const errorMessage = error instanceof Error ? error.message : String(error);
         setInternalError(errorMessage);
+        
+        toast({
+          title: language === 'en' ? "Login Failed" : "Error de inicio de sesión",
+          description: errorMessage,
+          variant: "destructive"
+        });
       }
     } finally {
       if (isMounted.current && externalLoading === undefined) {

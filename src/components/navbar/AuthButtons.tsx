@@ -5,6 +5,7 @@ import { LogOut } from "lucide-react";
 import { ButtonCustom } from "@/components/ui/button-custom";
 import { useLanguage } from "@/context/LanguageContext";
 import { useAuth } from "@/context/auth";
+import { useToast } from "@/components/ui/use-toast";
 
 interface AuthButtonsProps {
   isMobile?: boolean;
@@ -15,6 +16,7 @@ const AuthButtons: React.FC<AuthButtonsProps> = ({ isMobile = false, onClose }) 
   const { language } = useLanguage();
   const { user, logout, isAuthenticated } = useAuth();
   const navigate = useNavigate();
+  const { toast } = useToast();
   const [logoutInProgress, setLogoutInProgress] = React.useState(false);
   
   const loginText = language === 'en' ? "Login" : "Iniciar Sesión";
@@ -32,6 +34,11 @@ const AuthButtons: React.FC<AuthButtonsProps> = ({ isMobile = false, onClose }) 
       await logout();
       console.log("Logout completed, navigating to home");
       
+      toast({
+        title: language === 'en' ? "Logged Out" : "Sesión Cerrada",
+        description: language === 'en' ? "You have been successfully logged out" : "Ha cerrado sesión con éxito",
+      });
+      
       // Close mobile menu if open
       if (onClose) onClose();
       
@@ -39,6 +46,11 @@ const AuthButtons: React.FC<AuthButtonsProps> = ({ isMobile = false, onClose }) 
       navigate('/');
     } catch (error) {
       console.error("Error during logout:", error);
+      toast({
+        title: language === 'en' ? "Logout Error" : "Error al cerrar sesión",
+        description: language === 'en' ? "There was a problem logging you out. Please try again." : "Hubo un problema al cerrar la sesión. Por favor, inténtelo de nuevo.",
+        variant: "destructive",
+      });
     } finally {
       setLogoutInProgress(false);
     }
@@ -46,7 +58,23 @@ const AuthButtons: React.FC<AuthButtonsProps> = ({ isMobile = false, onClose }) 
   
   const getDashboardLink = () => {
     if (!isAuthenticated) return "/login";
-    return user?.role === 'admin' ? "/admin" : "/dashboard";
+    
+    console.log("Getting dashboard link for role:", user?.role);
+    
+    switch (user?.role) {
+      case 'admin':
+        return "/admin";
+      case 'callcenter':
+        return "/call-center";
+      case 'member':
+        return "/dashboard";
+      case 'technician':
+        return "/technician";
+      case 'support':
+        return "/support";
+      default:
+        return "/dashboard";
+    }
   };
   
   if (isAuthenticated) {

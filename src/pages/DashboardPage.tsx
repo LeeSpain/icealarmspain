@@ -4,11 +4,13 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/auth";
 import MemberSidebar from "@/components/member/MemberSidebar";
 import MemberDashboard from "@/components/member/MemberDashboard";
+import { useToast } from "@/components/ui/use-toast";
 
 const DashboardPage: React.FC = () => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const { isAuthenticated, user, isLoading } = useAuth();
   const navigate = useNavigate();
+  const { toast } = useToast();
   
   // Monitor authentication state and redirect if needed
   useEffect(() => {
@@ -18,10 +20,15 @@ const DashboardPage: React.FC = () => {
     if (!isLoading) {
       if (!isAuthenticated) {
         console.log("DashboardPage - Not authenticated, redirecting to login");
-        navigate('/login');
+        navigate('/login?redirect=/dashboard');
       } else if (user && user.role !== 'member' && user.role !== 'admin') {
         // Redirect user with incorrect role to the appropriate dashboard
         console.log("DashboardPage - Redirecting to role-specific dashboard", user.role);
+        
+        toast({
+          title: "Access Changed",
+          description: "Redirecting to your assigned dashboard",
+        });
         
         if (user.role === 'callcenter') {
           navigate('/call-center');
@@ -30,7 +37,7 @@ const DashboardPage: React.FC = () => {
         console.log("DashboardPage - User authenticated with correct role");
       }
     }
-  }, [isAuthenticated, user, isLoading, navigate]);
+  }, [isAuthenticated, user, isLoading, navigate, toast]);
   
   // Show loading state while authentication is being checked
   if (isLoading) {

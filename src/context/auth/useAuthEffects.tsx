@@ -39,10 +39,14 @@ export const useAuthEffects = ({ setUser, setIsLoading }: UseAuthEffectsProps) =
       
       if (data?.session?.user) {
         const supabaseUser = data.session.user;
-        const role = determineUserRole(supabaseUser.email || '');
+        console.log("Found existing session with user:", supabaseUser.email);
+        
+        // Extract user roles from metadata or fetch from profiles table
+        const role = supabaseUser.user_metadata?.role || determineUserRole(supabaseUser.email || '');
+        console.log("Determined user role:", role);
         
         if (isMounted.current) {
-          setUser({
+          const userData: User = {
             uid: supabaseUser.id,
             id: supabaseUser.id,
             email: supabaseUser.email,
@@ -53,8 +57,17 @@ export const useAuthEffects = ({ setUser, setIsLoading }: UseAuthEffectsProps) =
             language: localStorage.getItem('language') || 'en',
             lastLogin: new Date().toISOString(),
             createdAt: supabaseUser.created_at,
-          });
+          };
+          
+          setUser(userData);
+          console.log("User state set:", userData);
+          
+          // Store user data in localStorage for persistence
+          localStorage.setItem('currentUser', JSON.stringify(userData));
         }
+      } else {
+        console.log("No active session found");
+        localStorage.removeItem('currentUser');
       }
       
       if (isMounted.current) {
@@ -70,7 +83,7 @@ export const useAuthEffects = ({ setUser, setIsLoading }: UseAuthEffectsProps) =
     
     // Set up auth state change listener
     const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
-      console.log('Auth state changed:', event);
+      console.log('Auth state changed:', event, session?.user?.email);
       
       if (!isMounted.current) return;
       
@@ -78,6 +91,30 @@ export const useAuthEffects = ({ setUser, setIsLoading }: UseAuthEffectsProps) =
         console.log('User signed out');
         if (isMounted.current) {
           setUser(null);
+          localStorage.removeItem('currentUser');
+        }
+      } else if (event === 'SIGNED_IN' && session) {
+        const supabaseUser = session.user;
+        console.log('User signed in:', supabaseUser.email);
+        
+        const role = supabaseUser.user_metadata?.role || determineUserRole(supabaseUser.email || '');
+        
+        if (isMounted.current) {
+          const userData: User = {
+            uid: supabaseUser.id,
+            id: supabaseUser.id,
+            email: supabaseUser.email,
+            name: supabaseUser.user_metadata?.name || supabaseUser.email?.split('@')[0],
+            displayName: supabaseUser.user_metadata?.name || supabaseUser.email?.split('@')[0],
+            role,
+            profileCompleted: !!supabaseUser.user_metadata?.name,
+            language: localStorage.getItem('language') || 'en',
+            lastLogin: new Date().toISOString(),
+            createdAt: supabaseUser.created_at,
+          };
+          
+          setUser(userData);
+          localStorage.setItem('currentUser', JSON.stringify(userData));
         }
       }
       
@@ -90,9 +127,10 @@ export const useAuthEffects = ({ setUser, setIsLoading }: UseAuthEffectsProps) =
     // Emergency timeout to prevent infinite loading
     const timeout = setTimeout(() => {
       if (isMounted.current) {
+        console.log("Emergency timeout triggered to prevent infinite loading");
         setIsLoading(false);
       }
-    }, 1500);
+    }, 5000);
 
     // Cleanup subscription
     return () => {
