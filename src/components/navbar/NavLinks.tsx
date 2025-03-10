@@ -17,7 +17,7 @@ const NavLinks: React.FC<NavLinksProps> = ({ onClick }) => {
   const { language } = useLanguage();
   const location = useLocation();
   
-  console.log("Current path:", location.pathname);
+  console.log("NavLinks - Current path:", location.pathname);
   
   const navLinks: NavLink[] = [
     { name: language === 'en' ? "Home" : "Inicio", href: "/", isAnchor: false },
@@ -27,13 +27,8 @@ const NavLinks: React.FC<NavLinksProps> = ({ onClick }) => {
     { name: language === 'en' ? "Contact" : "Contacto", href: "/contact", isAnchor: false },
   ];
 
-  // Determine if a link is active
+  // Determine if a link is active - simplified logic
   const isActive = (path: string) => {
-    // Exact match for home page
-    if (path === "/") {
-      return location.pathname === path;
-    }
-    // For other paths, check if the current path is exactly the same as the link path
     return location.pathname === path;
   };
 

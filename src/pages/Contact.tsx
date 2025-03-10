@@ -2,8 +2,6 @@
 import React from "react";
 import { Helmet } from "react-helmet-async";
 import { useLanguage } from "@/context/LanguageContext";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
 import EnhancedAIGuardianSection from "@/components/contact/EnhancedAIGuardianSection";
 import ContactForm from "@/components/contact/ContactForm";
 
@@ -12,7 +10,7 @@ const Contact: React.FC = () => {
   const pageTitle = language === 'en' ? 'Contact Us' : 'Contáctanos';
   
   return (
-    <>
+    <div className="flex flex-col min-h-screen">
       <Helmet>
         <title>{`ICE Alarm - ${pageTitle}`}</title>
         <meta 
@@ -25,9 +23,7 @@ const Contact: React.FC = () => {
         />
       </Helmet>
       
-      <Navbar />
-      
-      <main className="min-h-screen pt-24 md:pt-28">
+      <main className="flex-grow">
         {/* AI Guardian Section - Now at the top */}
         <EnhancedAIGuardianSection />
         
@@ -49,9 +45,7 @@ const Contact: React.FC = () => {
           </div>
         </div>
       </main>
-      
-      <Footer />
-    </>
+    </div>
   );
 };
 

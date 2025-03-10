@@ -4,15 +4,15 @@ import { useLanguage } from "@/context/LanguageContext";
 import { Sparkles, Bot, ArrowRight, HeartHandshake } from "lucide-react";
 import { ButtonCustom } from "@/components/ui/button-custom";
 import AIGuardianChat from "./ai-guardian/AIGuardianChat";
+import HeroBackground from "../hero/HeroBackground";
 
 const EnhancedAIGuardianSection: React.FC = () => {
   const { language } = useLanguage();
   
   return (
     <section className="relative pt-32 pb-20 overflow-hidden">
-      {/* Background elements */}
-      <div className="absolute top-20 right-0 w-96 h-96 bg-gradient-radial from-ice-100/70 to-transparent rounded-full filter blur-3xl opacity-70 -z-10 animate-pulse-gentle"></div>
-      <div className="absolute bottom-0 left-20 w-72 h-72 bg-gradient-radial from-guardian-100/60 to-transparent rounded-full filter blur-3xl opacity-50 -z-10"></div>
+      {/* Use the same background as the homepage */}
+      <HeroBackground />
       
       <div className="container mx-auto px-4 md:px-6 relative z-10">
         <div className="text-center mb-12">
@@ -67,7 +67,7 @@ const EnhancedAIGuardianSection: React.FC = () => {
         </div>
       </div>
       
-      {/* Enhanced Bottom Decorative Wave */}
+      {/* Enhanced Bottom Decorative Wave - consistent with homepage */}
       <div className="absolute bottom-0 left-0 right-0 h-16 overflow-hidden">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320" className="absolute bottom-0 w-full h-auto">
           <path fill="rgba(255, 245, 235, 0.5)" fillOpacity="1" d="M0,224L48,213.3C96,203,192,181,288,181.3C384,181,480,203,576,224C672,245,768,267,864,250.7C960,235,1056,181,1152,165.3C1248,149,1344,171,1392,181.3L1440,192L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
