@@ -15,7 +15,7 @@ import { getAnalytics } from 'firebase/analytics';
 import { getFirebaseConfig } from './config';
 
 // Initialize Firebase app
-console.log('Initializing Firebase with real configuration');
+console.log('Initializing Firebase with configuration');
 const firebaseApp = initializeApp(getFirebaseConfig());
 const auth = getAuth(firebaseApp);
 let analytics;
@@ -28,12 +28,12 @@ if (typeof window !== 'undefined') {
 
 // Export actual Firebase methods
 export const signInWithEmailAndPassword = (email: string, password: string) => {
-  console.log('Signing in with Firebase authentication');
+  console.log('Signing in with Firebase authentication', email);
   return firebaseSignIn(auth, email, password);
 };
 
 export const createUserWithEmailAndPassword = (email: string, password: string) => {
-  console.log('Creating user with Firebase authentication');
+  console.log('Creating user with Firebase authentication', email);
   return firebaseCreateUser(auth, email, password);
 };
 

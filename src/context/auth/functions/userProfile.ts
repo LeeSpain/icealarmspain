@@ -1,18 +1,17 @@
 
-import { supabase } from '../../../integrations/supabase/client';
+import { auth, updateProfile } from '../../../services/firebase/auth';
 
 // Update user profile function
 export const updateUserProfile = async (displayName: string): Promise<void> => {
   try {
-    const { error } = await supabase.auth.updateUser({
-      data: { 
-        name: displayName,
-        first_name: displayName.split(' ')[0],
-        last_name: displayName.split(' ').slice(1).join(' ')
-      }
-    });
+    const currentUser = auth.currentUser;
+    if (!currentUser) {
+      throw new Error('No authenticated user found');
+    }
     
-    if (error) throw error;
+    await updateProfile(currentUser, { 
+      displayName 
+    });
     
     console.log('User profile updated:', displayName);
   } catch (error) {
@@ -20,4 +19,3 @@ export const updateUserProfile = async (displayName: string): Promise<void> => {
     throw error;
   }
 };
-

@@ -2,7 +2,7 @@
 import { useEffect, useRef } from 'react';
 import { User } from './types';
 import { determineUserRole } from './utils';
-import { supabase } from '../../integrations/supabase/client';
+import { auth, firebaseAuth } from '../../services/firebase/auth';
 
 interface UseAuthEffectsProps {
   setUser: React.Dispatch<React.SetStateAction<User | null>>;
@@ -21,148 +21,63 @@ export const useAuthEffects = ({ setUser, setIsLoading }: UseAuthEffectsProps) =
 
   // Listen for auth state changes
   useEffect(() => {
-    console.log('Setting up auth state listener');
+    console.log('Setting up Firebase auth state listener');
     
     // Set loading to true initially
     setIsLoading(true);
     
-    // Check for existing session
-    supabase.auth.getSession().then(({ data, error }) => {
-      if (error) {
-        console.error("Session check error:", error);
-        if (isMounted.current) {
-          setIsLoading(false);
-          setUser(null);
+    // Try to load user from localStorage first (for faster initial load)
+    const storedUser = localStorage.getItem('currentUser');
+    if (storedUser) {
+      try {
+        const parsedUser = JSON.parse(storedUser);
+        if (parsedUser && isMounted.current) {
+          console.log('Found stored user data:', parsedUser.email);
+          setUser(parsedUser);
         }
-        return;
+      } catch (error) {
+        console.error('Error parsing stored user:', error);
       }
-      
-      console.log("Session check result:", data);
-      
-      if (data?.session?.user) {
-        const supabaseUser = data.session.user;
-        console.log("Found existing session with user:", supabaseUser.email);
-        console.log("User metadata:", supabaseUser.user_metadata);
-        
-        // First check for role in user metadata, then fall back to email determination
-        const role = supabaseUser.user_metadata?.role || determineUserRole(supabaseUser.email || '');
-        console.log("Determined user role:", role);
-        
-        // If we determined role from email but it's not in metadata, update the metadata
-        if (!supabaseUser.user_metadata?.role) {
-          supabase.auth.updateUser({
-            data: { role }
-          }).then(({ error }) => {
-            if (error) {
-              console.error("Error updating user metadata with role:", error);
-            } else {
-              console.log("Successfully updated user metadata with role:", role);
-            }
-          });
-        }
-        
-        if (isMounted.current) {
-          const userData: User = {
-            uid: supabaseUser.id,
-            id: supabaseUser.id,
-            email: supabaseUser.email,
-            name: supabaseUser.user_metadata?.name || supabaseUser.email?.split('@')[0],
-            displayName: supabaseUser.user_metadata?.name || supabaseUser.email?.split('@')[0],
-            role,
-            profileCompleted: !!supabaseUser.user_metadata?.name,
-            language: localStorage.getItem('language') || 'en',
-            lastLogin: new Date().toISOString(),
-            createdAt: supabaseUser.created_at,
-          };
-          
-          setUser(userData);
-          console.log("User state set:", userData);
-          
-          // Store user data in localStorage for persistence
-          localStorage.setItem('currentUser', JSON.stringify(userData));
-        }
-      } else {
-        console.log("No active session found");
-        localStorage.removeItem('currentUser');
-      }
-      
-      if (isMounted.current) {
-        setIsLoading(false);
-      }
-    }).catch(error => {
-      console.error('Error checking session:', error);
-      if (isMounted.current) {
-        setIsLoading(false);
-        setUser(null);
-      }
-    });
+    }
     
-    // Set up auth state change listener
-    const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
-      console.log('Auth state changed:', event, session?.user?.email);
+    // Listen for Firebase auth state changes
+    const unsubscribe = firebaseAuth.onAuthStateChanged((firebaseUser) => {
+      console.log('Firebase auth state changed:', firebaseUser?.email || 'No user');
       
       if (!isMounted.current) return;
       
-      if (event === 'SIGNED_OUT') {
-        console.log('User signed out');
-        if (isMounted.current) {
-          setUser(null);
-          localStorage.removeItem('currentUser');
-        }
-      } else if (event === 'SIGNED_IN' && session) {
-        const supabaseUser = session.user;
-        console.log('User signed in:', supabaseUser.email);
-        console.log('User metadata:', supabaseUser.user_metadata);
-        
-        // First check for role in user metadata, then fall back to email determination
-        const role = supabaseUser.user_metadata?.role || determineUserRole(supabaseUser.email || '');
-        
-        if (isMounted.current) {
-          const userData: User = {
-            uid: supabaseUser.id,
-            id: supabaseUser.id,
-            email: supabaseUser.email,
-            name: supabaseUser.user_metadata?.name || supabaseUser.email?.split('@')[0],
-            displayName: supabaseUser.user_metadata?.name || supabaseUser.email?.split('@')[0],
-            role,
-            profileCompleted: !!supabaseUser.user_metadata?.name,
-            language: localStorage.getItem('language') || 'en',
-            lastLogin: new Date().toISOString(),
-            createdAt: supabaseUser.created_at,
-          };
-          
-          setUser(userData);
-          localStorage.setItem('currentUser', JSON.stringify(userData));
-        }
-      } else if (event === 'USER_UPDATED' && session) {
-        console.log('User profile updated');
-        
-        // Handle user updates, especially role changes
-        const supabaseUser = session.user;
-        const role = supabaseUser.user_metadata?.role || determineUserRole(supabaseUser.email || '');
-        
-        if (isMounted.current) {
-          setUser(prev => {
-            if (!prev) return null;
-            
-            const updatedUser = {
-              ...prev,
-              name: supabaseUser.user_metadata?.name || prev.name,
-              displayName: supabaseUser.user_metadata?.name || prev.displayName,
-              role,
-              profileCompleted: !!supabaseUser.user_metadata?.name,
-            };
-            
-            localStorage.setItem('currentUser', JSON.stringify(updatedUser));
-            return updatedUser;
-          });
-        }
+      if (!firebaseUser) {
+        console.log('No Firebase user, clearing user state');
+        setUser(null);
+        localStorage.removeItem('currentUser');
+        setIsLoading(false);
+        return;
       }
       
-      // Set loading to false no matter what to ensure we don't get stuck
+      console.log('Firebase user authenticated:', firebaseUser.email);
+      
+      // Determine role from email
+      const role = determineUserRole(firebaseUser.email || '');
+      
       if (isMounted.current) {
-        setIsLoading(false);
+        const userData: User = {
+          uid: firebaseUser.uid,
+          id: firebaseUser.uid,
+          email: firebaseUser.email,
+          name: firebaseUser.displayName || firebaseUser.email?.split('@')[0],
+          displayName: firebaseUser.displayName || firebaseUser.email?.split('@')[0],
+          role,
+          profileCompleted: !!firebaseUser.displayName,
+          language: localStorage.getItem('language') || 'en',
+          lastLogin: new Date().toISOString(),
+          createdAt: firebaseUser.metadata.creationTime,
+        };
+        
+        setUser(userData);
+        localStorage.setItem('currentUser', JSON.stringify(userData));
       }
+      
+      setIsLoading(false);
     });
 
     // Emergency timeout to prevent infinite loading - shortened to 5 seconds
@@ -175,7 +90,7 @@ export const useAuthEffects = ({ setUser, setIsLoading }: UseAuthEffectsProps) =
 
     // Cleanup subscription
     return () => {
-      authListener.subscription.unsubscribe();
+      unsubscribe();
       clearTimeout(timeout);
       isMounted.current = false;
     };

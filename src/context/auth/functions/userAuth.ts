@@ -1,7 +1,12 @@
 
-import { supabase } from '../../../integrations/supabase/client';
-import { User } from '../types';
 import { determineUserRole } from '../utils';
+import { User } from '../types';
+import { 
+  signInWithEmailAndPassword, 
+  signOut, 
+  setPersistence,
+  firebaseAuth
+} from '../../../services/firebase/auth';
 
 // Login function
 export const login = async (email: string, password: string, rememberMe = false): Promise<User> => {
@@ -10,50 +15,39 @@ export const login = async (email: string, password: string, rememberMe = false)
     
     // Clear any existing session data
     console.log('Clearing existing session data...');
-    await supabase.auth.signOut({ scope: 'local' });
     localStorage.removeItem('currentUser');
     localStorage.removeItem('authPersistence');
     
-    // Wait a moment to ensure session is cleared
-    await new Promise(resolve => setTimeout(resolve, 300));
+    // Set persistence based on rememberMe flag
+    console.log('Setting Firebase persistence:', rememberMe ? 'local' : 'session');
+    await setPersistence(rememberMe ? 'local' : 'session');
     
-    console.log('Attempting signIn with Supabase for:', email);
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
+    console.log('Attempting signIn with Firebase for:', email);
+    const userCredential = await signInWithEmailAndPassword(email, password);
     
-    if (error) {
-      console.error('Login error from Supabase:', error.message);
-      throw new Error(error.message);
+    if (!userCredential.user) {
+      console.error('No user data returned from Firebase');
+      throw new Error('Login failed - no user created');
     }
     
-    const session = data.session;
-    console.log('Sign in response received:', session ? 'Session exists' : 'No session');
-    
-    if (!session?.user) {
-      console.error('No session or user data returned from Supabase');
-      throw new Error('Login failed - no session created');
-    }
-    
-    console.log('Login successful for user:', session.user.email);
+    console.log('Login successful for user:', userCredential.user.email);
     
     // Determine role from email directly
-    const role = determineUserRole(session.user.email || email);
+    const role = determineUserRole(userCredential.user.email || email);
     console.log('Determined role for user:', role);
     
     // Create user object
     const user: User = {
-      uid: session.user.id,
-      id: session.user.id,
-      email: session.user.email || email,
-      name: session.user.user_metadata?.name || email.split('@')[0],
-      displayName: session.user.user_metadata?.name || email.split('@')[0],
+      uid: userCredential.user.uid,
+      id: userCredential.user.uid,
+      email: userCredential.user.email || email,
+      name: userCredential.user.displayName || email.split('@')[0],
+      displayName: userCredential.user.displayName || email.split('@')[0],
       role,
-      profileCompleted: !!session.user.user_metadata?.name,
+      profileCompleted: !!userCredential.user.displayName,
       language: 'en',
       lastLogin: new Date().toISOString(),
-      createdAt: session.user.created_at
+      createdAt: userCredential.user.metadata.creationTime
     };
     
     console.log('User object created:', user);
@@ -61,14 +55,6 @@ export const login = async (email: string, password: string, rememberMe = false)
     // Store user data
     localStorage.setItem('currentUser', JSON.stringify(user));
     localStorage.setItem('authPersistence', rememberMe ? 'local' : 'session');
-    
-    // Update user metadata with role if needed
-    if (!session.user.user_metadata?.role || session.user.user_metadata?.role !== role) {
-      console.log('Updating user metadata with role:', role);
-      await supabase.auth.updateUser({
-        data: { role }
-      });
-    }
     
     return user;
   } catch (error) {
@@ -97,8 +83,8 @@ export const logout = async (): Promise<void> => {
     localStorage.removeItem('authPersistence');
     localStorage.removeItem('currentUser');
     
-    // Force global signout
-    await supabase.auth.signOut({ scope: 'global' });
+    // Sign out from Firebase
+    await signOut();
   } catch (error) {
     console.error('Logout error:', error);
     // Clean up local state regardless of server errors

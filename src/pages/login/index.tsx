@@ -40,7 +40,7 @@ const Login: React.FC = () => {
           language={language}
         />
       </main>
-      {/* Footer has been removed from here as it's already included in LoginContent */}
+      {/* Footer is already included in LoginContent */}
     </div>
   );
 };

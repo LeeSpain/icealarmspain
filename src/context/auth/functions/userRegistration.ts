@@ -1,29 +1,25 @@
-import { supabase } from '../../../integrations/supabase/client';
 import { User } from '../types';
 import { determineUserRole } from '../utils';
+import { 
+  createUserWithEmailAndPassword, 
+  updateProfile, 
+  auth 
+} from '../../../services/firebase/auth';
 
 // Sign up function
 export const signUp = async (email: string, password: string, displayName?: string, role: string = 'member'): Promise<User> => {
   try {
     console.log('Attempting signup for:', email, 'with role:', role);
     
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: {
-          name: displayName,
-          role: role,
-          first_name: displayName?.split(' ')[0],
-          last_name: displayName?.split(' ').slice(1).join(' ')
-        }
-      }
-    });
+    const userCredential = await createUserWithEmailAndPassword(email, password);
     
-    if (error) throw error;
-    
-    if (!data.user) {
+    if (!userCredential.user) {
       throw new Error('Failed to get user after signup');
+    }
+    
+    // Update profile with displayName if provided
+    if (displayName && userCredential.user) {
+      await updateProfile(userCredential.user, { displayName });
     }
     
     // For admin-created users, we respect the specified role parameter
@@ -32,15 +28,16 @@ export const signUp = async (email: string, password: string, displayName?: stri
     console.log('Signup successful. Assigned role:', assignedRole);
     
     const user: User = {
-      uid: data.user.id,
-      id: data.user.id,
-      email: data.user.email,
-      name: displayName || data.user.email?.split('@')[0],
-      displayName: displayName || data.user.email?.split('@')[0],
+      uid: userCredential.user.uid,
+      id: userCredential.user.uid,
+      email: userCredential.user.email,
+      name: displayName || userCredential.user.email?.split('@')[0],
+      displayName: displayName || userCredential.user.email?.split('@')[0],
       role: assignedRole,
       profileCompleted: !!displayName,
       language: 'en',
       lastLogin: new Date().toISOString(),
+      createdAt: userCredential.user.metadata.creationTime
     };
     
     return user;

@@ -1,7 +1,6 @@
 
 // Firebase configuration utils
 
-// Check if we have Firebase config in environment variables
 export const hasRealFirebaseConfig = 
   import.meta.env.VITE_FIREBASE_API_KEY && 
   import.meta.env.VITE_FIREBASE_AUTH_DOMAIN;
@@ -16,12 +15,12 @@ console.log('Firebase config check:', {
 // Get Firebase configuration from environment variables
 export const getFirebaseConfig = () => {
   return {
-    apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-    authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
-    projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-    storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
-    messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-    appId: import.meta.env.VITE_FIREBASE_APP_ID,
-    measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
+    apiKey: import.meta.env.VITE_FIREBASE_API_KEY || 'AIzaSyCQjyL_ydhCYAPy9JSjzcnc2-A2roFffHE',
+    authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || 'icealarm-520f3.firebaseapp.com',
+    projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || 'icealarm-520f3',
+    storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || 'icealarm-520f3.firebasestorage.app', 
+    messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || '520286024994',
+    appId: import.meta.env.VITE_FIREBASE_APP_ID || '1:520286024994:web:d972e5b150b12d4889a17b',
+    measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID || 'G-XWNSKESY1C'
   };
 };

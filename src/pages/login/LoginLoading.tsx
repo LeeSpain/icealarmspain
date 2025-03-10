@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { Loader2, RefreshCw, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { supabase } from "@/integrations/supabase/client";
+import { auth } from "@/services/firebase/auth";
 
 interface LoginLoadingProps {
   isLoading: boolean;
@@ -18,29 +18,27 @@ export const LoginLoading: React.FC<LoginLoadingProps> = ({
 }) => {
   const [showRefresh, setShowRefresh] = useState(false);
   const [showDebugInfo, setShowDebugInfo] = useState(false);
-  const [sessionStatus, setSessionStatus] = useState<string>("Checking...");
+  const [authStatus, setAuthStatus] = useState<string>("Checking...");
   
-  // Check Supabase session status when component mounts
+  // Check Firebase auth status when component mounts
   useEffect(() => {
-    const checkSession = async () => {
+    const checkAuth = async () => {
       try {
-        const { data, error } = await supabase.auth.getSession();
-        if (error) {
-          setSessionStatus(`Session error: ${error.message}`);
-        } else if (data.session) {
-          setSessionStatus(`Session exists for: ${data.session.user.email}`);
+        const currentUser = auth.currentUser;
+        if (currentUser) {
+          setAuthStatus(`User authenticated: ${currentUser.email}`);
         } else {
-          setSessionStatus("No active session found");
+          setAuthStatus("No authenticated user found");
         }
       } catch (err) {
-        setSessionStatus(`Error checking session: ${err}`);
+        setAuthStatus(`Error checking auth: ${err}`);
       }
     };
     
-    checkSession();
+    checkAuth();
   }, []);
   
-  // Show refresh button after 2 seconds, much faster than before
+  // Show refresh button after 2 seconds
   useEffect(() => {
     const timer = setTimeout(() => {
       setShowRefresh(true);
@@ -64,7 +62,7 @@ export const LoginLoading: React.FC<LoginLoadingProps> = ({
     const timer = setTimeout(async () => {
       try {
         console.log("Authentication taking too long, forcing sign out");
-        await supabase.auth.signOut({ scope: 'local' });
+        await auth.signOut();
         localStorage.removeItem('currentUser');
         localStorage.removeItem('authPersistence');
         window.location.reload();
@@ -136,8 +134,8 @@ export const LoginLoading: React.FC<LoginLoadingProps> = ({
                 <p><strong>Authenticated:</strong> {isAuthenticated ? 'true' : 'false'}</p>
                 <p><strong>Current URL:</strong> {window.location.href}</p>
                 <p><strong>localStorage entries:</strong> {Object.keys(localStorage).join(', ')}</p>
-                <p><strong>Auth service:</strong> Supabase</p>
-                <p><strong>Session status:</strong> {sessionStatus}</p>
+                <p><strong>Auth service:</strong> Firebase</p>
+                <p><strong>Auth status:</strong> {authStatus}</p>
                 <p><strong>Time:</strong> {new Date().toISOString()}</p>
               </div>
             )}
