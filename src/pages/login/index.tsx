@@ -34,13 +34,13 @@ const Login: React.FC = () => {
         // Force reload the page to reset all state
         window.location.reload();
       }
-    }, 10000); // 10 seconds timeout
+    }, 8000); // 8 seconds timeout
     
     return () => clearTimeout(forceTimeout);
   }, [isLoading]);
   
   // Show loading state when authentication is being checked
-  // or when login is in progress
+  // but NOT when login is in progress (that shows a different loading state)
   if (isLoading && !loginInProgress) {
     return <LoginLoading 
       isLoading={true} 

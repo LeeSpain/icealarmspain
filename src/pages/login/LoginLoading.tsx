@@ -17,10 +17,10 @@ export const LoginLoading: React.FC<LoginLoadingProps> = ({
   const [showTroubleshooting, setShowTroubleshooting] = React.useState(false);
   
   React.useEffect(() => {
-    // Show troubleshooting after 8 seconds of loading
+    // Show troubleshooting after 4 seconds of loading
     const timer = setTimeout(() => {
       setShowTroubleshooting(true);
-    }, 8000);
+    }, 4000);
     
     return () => clearTimeout(timer);
   }, []);
@@ -45,14 +45,24 @@ export const LoginLoading: React.FC<LoginLoadingProps> = ({
             <p className="text-amber-600 font-medium mb-2">
               {language === 'en' ? 'Taking longer than expected?' : '¿Tardando más de lo esperado?'}
             </p>
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-gray-600 mb-3">
               {language === 'en' 
                 ? 'Try refreshing the page or clearing your browser cache.' 
                 : 'Intente actualizar la página o limpiar la caché del navegador.'}
             </p>
+            <p className="text-sm font-medium text-gray-700 mb-3">
+              {language === 'en'
+                ? 'For development testing, use:'
+                : 'Para pruebas de desarrollo, utilice:'}
+              <br />
+              <span className="block font-mono bg-gray-100 p-1 mt-1 rounded text-xs">
+                Email: admin@icealarm.es<br />
+                Password: password123
+              </span>
+            </p>
             <button 
               onClick={() => window.location.reload()}
-              className="mt-3 px-4 py-2 text-sm bg-ice-100 text-ice-700 rounded hover:bg-ice-200 transition-colors"
+              className="mt-1 px-4 py-2 text-sm bg-ice-100 text-ice-700 rounded hover:bg-ice-200 transition-colors"
             >
               {language === 'en' ? 'Refresh Page' : 'Actualizar Página'}
             </button>

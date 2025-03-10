@@ -37,7 +37,13 @@ export const useAuthEffects = ({ setUser, setIsLoading }: UseAuthEffectsProps) =
             if (typeof parsedUser.uid === 'string' && parsedUser.uid.startsWith('dev-')) {
               console.log('Found stored development user:', parsedUser.email);
               setUser(parsedUser);
-              // Don't set loading to false yet for dev users, let the timeout handle it
+              
+              // Set loading to false for dev users after a short delay
+              setTimeout(() => {
+                if (isMounted.current) {
+                  setIsLoading(false);
+                }
+              }, 500);
             } else {
               console.log('Found stored user data:', parsedUser.email);
               setUser(parsedUser);
@@ -96,7 +102,7 @@ export const useAuthEffects = ({ setUser, setIsLoading }: UseAuthEffectsProps) =
         console.log('Authentication loading timeout reached - forcing loading to false');
         setIsLoading(false);
       }
-    }, 3000); // 3 second timeout as a fallback
+    }, 2000); // 2 second timeout as a fallback
 
     // Cleanup subscription and timeout
     return () => {

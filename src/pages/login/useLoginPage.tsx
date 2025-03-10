@@ -22,7 +22,7 @@ export const useLoginPage = () => {
   useEffect(() => {
     // Initial auth check should be quick
     const initialAuthCheckTimeout = setTimeout(() => {
-      if (isMounted.current && authLoading) {
+      if (isMounted.current && isLoading) {
         console.log("Setting initial loading false due to timeout");
         setIsLoading(false);
       }
@@ -92,7 +92,7 @@ export const useLoginPage = () => {
           console.log("Executing redirect now to:", redirectTo);
           navigate(redirectTo, { replace: true });
         }
-      }, 300);
+      }, 100);
     }
   }, [isAuthenticated, authLoading, loginInProgress, user, navigate, redirectParam, redirectTriggered, language, toast]);
   
@@ -149,6 +149,7 @@ export const useLoginPage = () => {
     } finally {
       if (isMounted.current) {
         setLoginInProgress(false);
+        setIsLoading(false);
       }
     }
   };
@@ -156,7 +157,7 @@ export const useLoginPage = () => {
   return {
     user,
     isAuthenticated,
-    isLoading: isLoading || authLoading || loginInProgress, // Combine loading states
+    isLoading: isLoading || authLoading, // Don't include loginInProgress here
     loginInProgress,
     loginError,
     redirectParam,

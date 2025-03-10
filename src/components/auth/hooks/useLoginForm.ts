@@ -46,13 +46,13 @@ export const useLoginForm = ({
   useEffect(() => {
     // Initialize with default test credentials in development
     if (process.env.NODE_ENV === 'development' && !formData.email) {
-      setFormData(prev => ({ ...prev, email: 'admin@icealarm.es' }));
+      setFormData(prev => ({ ...prev, email: 'admin@icealarm.es', password: 'password123' }));
     }
     
     return () => {
       isMounted.current = false;
     };
-  }, [formData.email]);
+  }, []);
 
   useEffect(() => {
     if (externalError && isMounted.current) {

@@ -74,7 +74,6 @@ const LoginForm: React.FC<LoginFormProps> = ({
           onRememberMeChange={handleRememberMeChange}
           isLoading={isLoading}
           language={language}
-          onSubmit={handleSubmit}
         />
       </form>
     </div>
