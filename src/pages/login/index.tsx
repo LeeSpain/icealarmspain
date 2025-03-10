@@ -22,7 +22,9 @@ const Login: React.FC = () => {
     isAuthenticated, 
     user, 
     loginError,
-    loginInProgress
+    loginInProgress,
+    process: process.env.NODE_ENV,
+    devMode: !import.meta.env.VITE_FIREBASE_API_KEY
   });
   
   // Reset auth state if stuck in a strange state
@@ -34,7 +36,7 @@ const Login: React.FC = () => {
         // Force reload the page to reset all state
         window.location.reload();
       }
-    }, 8000); // 8 seconds timeout
+    }, 5000); // 5 seconds timeout (reduced from 8)
     
     return () => clearTimeout(forceTimeout);
   }, [isLoading]);

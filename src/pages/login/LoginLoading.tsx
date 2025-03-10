@@ -51,8 +51,8 @@ export const LoginLoading: React.FC<LoginLoadingProps> = ({
                 : 'Use estas credenciales de prueba:'}
             </p>
             <div className="font-mono bg-gray-100 p-3 rounded text-sm">
-              <p>Email: admin@icealarm.es</p>
-              <p>Password: password123</p>
+              <p><strong>Email:</strong> admin@icealarm.es</p>
+              <p><strong>Password:</strong> password123</p>
             </div>
             <button 
               onClick={() => window.location.reload()}

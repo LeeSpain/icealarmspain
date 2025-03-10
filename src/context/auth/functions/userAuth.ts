@@ -27,38 +27,50 @@ export const login = async (email: string, password: string, rememberMe = false)
     
     // For development/testing purposes, allow specific test accounts
     const isDevMode = isDevelopmentMode();
-    if (isDevMode && 
-        (email.toLowerCase() === 'admin@icealarm.es' || 
-         email.toLowerCase() === 'callcenter@icealarm.es' || 
-         email.toLowerCase() === 'user@example.com') && 
-        password === 'password123') {
+    
+    if (isDevMode) {
+      console.log('Development mode detected, checking for test credentials');
       
-      console.log('Using development login bypass for:', email);
+      // Normalize the email for comparison
+      const normalizedEmail = email.toLowerCase().trim();
       
-      // Create user object for development mode with a consistent ID
-      const role = determineUserRole(email);
-      const devUserId = `dev-${email.replace(/[^a-z0-9]/gi, '-')}`;
-      
-      const user: User = {
-        uid: devUserId,
-        id: devUserId,
-        email: email,
-        name: email.split('@')[0],
-        displayName: email.split('@')[0],
-        role,
-        profileCompleted: true,
-        language: localStorage.getItem('language') || 'en',
-        lastLogin: new Date().toISOString(),
-        createdAt: new Date().toISOString()
-      };
-      
-      console.log('Development login successful with role:', role);
-      
-      // Store user data
-      localStorage.setItem('currentUser', JSON.stringify(user));
-      localStorage.setItem('authPersistence', rememberMe ? 'local' : 'session');
-      
-      return user;
+      // Check if using any of our test accounts with the correct password
+      if ((normalizedEmail === 'admin@icealarm.es' || 
+           normalizedEmail === 'callcenter@icealarm.es' || 
+           normalizedEmail === 'user@example.com') && 
+          password === 'password123') {
+        
+        console.log('Using development login bypass for:', normalizedEmail);
+        
+        // Create user object for development mode with a consistent ID
+        const role = determineUserRole(normalizedEmail);
+        const devUserId = `dev-${normalizedEmail.replace(/[^a-z0-9]/gi, '-')}`;
+        
+        const user: User = {
+          uid: devUserId,
+          id: devUserId,
+          email: normalizedEmail,
+          name: normalizedEmail.split('@')[0],
+          displayName: normalizedEmail.split('@')[0],
+          role,
+          profileCompleted: true,
+          language: localStorage.getItem('language') || 'en',
+          lastLogin: new Date().toISOString(),
+          createdAt: new Date().toISOString()
+        };
+        
+        console.log('Development login successful with role:', role);
+        
+        // Store user data
+        localStorage.setItem('currentUser', JSON.stringify(user));
+        localStorage.setItem('authPersistence', rememberMe ? 'local' : 'session');
+        
+        return user;
+      } else if (isDevMode) {
+        // In dev mode but wrong credentials
+        console.error('Invalid development credentials');
+        throw new Error('Invalid email or password. In development mode, use admin@icealarm.es/password123');
+      }
     }
     
     throw new Error('Invalid email or password. In development mode, use admin@icealarm.es/password123');
