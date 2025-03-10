@@ -21,6 +21,17 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   const { toast } = useToast();
   const location = useLocation();
 
+  useEffect(() => {
+    console.log("ProtectedRoute - Current auth state:", { 
+      isAuthenticated, 
+      isLoading, 
+      user,
+      adminOnly,
+      allowedRoles,
+      path: location.pathname
+    });
+  }, [isAuthenticated, isLoading, user, adminOnly, allowedRoles, location.pathname]);
+
   // Show loading state while authentication is being verified
   if (isLoading) {
     return (
@@ -40,9 +51,11 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
     return <Navigate to={`/login?redirect=${encodeURIComponent(location.pathname)}`} replace />;
   }
 
+  console.log("User authenticated with role:", user?.role);
+  
   // Check for admin access if adminOnly is true
   if (adminOnly && user?.role !== 'admin') {
-    console.log("Admin access required but user is:", user?.role);
+    console.log("Admin access required but user role is:", user?.role);
     
     toast({
       title: "Access Denied",

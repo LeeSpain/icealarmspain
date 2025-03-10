@@ -114,10 +114,33 @@ export const useLoginForm = ({
       } else if (onSubmit) {
         await onSubmit(formData.email, formData.password, rememberMe);
       } else {
-        await login(formData.email, formData.password, rememberMe);
+        const userData = await login(formData.email, formData.password, rememberMe);
+        console.log("Login successful, user data:", userData);
         
-        if (redirectTo && isMounted.current) {
+        // Show successful login toast
+        toast({
+          title: language === 'en' ? "Login Successful" : "Inicio de sesión exitoso",
+          description: language === 'en' 
+            ? `Welcome back, ${userData.displayName || userData.email?.split('@')[0]}!` 
+            : `Bienvenido de nuevo, ${userData.displayName || userData.email?.split('@')[0]}!`,
+        });
+        
+        // Perform role-based redirection
+        if (redirectTo) {
           navigate(redirectTo);
+        } else {
+          // Redirect based on user role
+          switch (userData.role) {
+            case 'admin':
+              navigate('/admin');
+              break;
+            case 'callcenter':
+              navigate('/call-center');
+              break;
+            default:
+              navigate('/dashboard');
+              break;
+          }
         }
       }
     } catch (error) {

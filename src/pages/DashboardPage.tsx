@@ -23,14 +23,16 @@ const DashboardPage: React.FC = () => {
         navigate('/login?redirect=/dashboard');
       } else if (user && user.role !== 'member' && user.role !== 'admin') {
         // Redirect user with incorrect role to the appropriate dashboard
-        console.log("DashboardPage - Redirecting to role-specific dashboard", user.role);
+        console.log("DashboardPage - User has role:", user.role, "- redirecting to appropriate dashboard");
         
         toast({
           title: "Access Changed",
           description: "Redirecting to your assigned dashboard",
         });
         
-        if (user.role === 'callcenter') {
+        if (user.role === 'admin') {
+          navigate('/admin');
+        } else if (user.role === 'callcenter') {
           navigate('/call-center');
         }
       } else {

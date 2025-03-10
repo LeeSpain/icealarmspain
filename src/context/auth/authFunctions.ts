@@ -1,3 +1,4 @@
+
 import { supabase } from '../../integrations/supabase/client';
 import { User } from './types';
 import { determineUserRole } from './utils';
@@ -22,21 +23,39 @@ export const login = async (email: string, password: string, rememberMe = false)
       throw new Error('Failed to get user after login');
     }
     
-    // Determine role based on email
-    const role = determineUserRole(email);
-    console.log('Login successful. Determined role:', role);
+    // First check for role in user metadata, then fall back to email determination
+    const role = data.user.user_metadata?.role || determineUserRole(email);
+    console.log('Login successful. User metadata:', data.user.user_metadata);
+    console.log('Determined role:', role);
+    
+    // After successful login, update user metadata if role was determined from email
+    if (!data.user.user_metadata?.role) {
+      try {
+        await supabase.auth.updateUser({
+          data: { role }
+        });
+        console.log('Updated user metadata with role:', role);
+      } catch (updateError) {
+        console.error('Failed to update user metadata:', updateError);
+        // Continue with login even if metadata update fails
+      }
+    }
     
     const user: User = {
       uid: data.user.id,
       id: data.user.id,
       email: data.user.email,
-      name: data.user.user_metadata.name || data.user.email?.split('@')[0],
-      displayName: data.user.user_metadata.name || data.user.email?.split('@')[0],
+      name: data.user.user_metadata?.name || data.user.email?.split('@')[0],
+      displayName: data.user.user_metadata?.name || data.user.email?.split('@')[0],
       role,
-      profileCompleted: !!data.user.user_metadata.name,
+      profileCompleted: !!data.user.user_metadata?.name,
       language: 'en',
       lastLogin: new Date().toISOString(),
+      createdAt: data.user.created_at
     };
+    
+    // Store user data in localStorage for persistence
+    localStorage.setItem('currentUser', JSON.stringify(user));
     
     return user;
   } catch (error) {

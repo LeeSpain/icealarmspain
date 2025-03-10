@@ -40,10 +40,24 @@ export const useAuthEffects = ({ setUser, setIsLoading }: UseAuthEffectsProps) =
       if (data?.session?.user) {
         const supabaseUser = data.session.user;
         console.log("Found existing session with user:", supabaseUser.email);
+        console.log("User metadata:", supabaseUser.user_metadata);
         
-        // Extract user roles from metadata or fetch from profiles table
+        // First check for role in user metadata, then fall back to email determination
         const role = supabaseUser.user_metadata?.role || determineUserRole(supabaseUser.email || '');
         console.log("Determined user role:", role);
+        
+        // If we determined role from email but it's not in metadata, update the metadata
+        if (!supabaseUser.user_metadata?.role) {
+          supabase.auth.updateUser({
+            data: { role }
+          }).then(({ error }) => {
+            if (error) {
+              console.error("Error updating user metadata with role:", error);
+            } else {
+              console.log("Successfully updated user metadata with role:", role);
+            }
+          });
+        }
         
         if (isMounted.current) {
           const userData: User = {
@@ -96,7 +110,9 @@ export const useAuthEffects = ({ setUser, setIsLoading }: UseAuthEffectsProps) =
       } else if (event === 'SIGNED_IN' && session) {
         const supabaseUser = session.user;
         console.log('User signed in:', supabaseUser.email);
+        console.log('User metadata:', supabaseUser.user_metadata);
         
+        // First check for role in user metadata, then fall back to email determination
         const role = supabaseUser.user_metadata?.role || determineUserRole(supabaseUser.email || '');
         
         if (isMounted.current) {
@@ -115,6 +131,29 @@ export const useAuthEffects = ({ setUser, setIsLoading }: UseAuthEffectsProps) =
           
           setUser(userData);
           localStorage.setItem('currentUser', JSON.stringify(userData));
+        }
+      } else if (event === 'USER_UPDATED' && session) {
+        console.log('User profile updated');
+        
+        // Handle user updates, especially role changes
+        const supabaseUser = session.user;
+        const role = supabaseUser.user_metadata?.role || determineUserRole(supabaseUser.email || '');
+        
+        if (isMounted.current) {
+          setUser(prev => {
+            if (!prev) return null;
+            
+            const updatedUser = {
+              ...prev,
+              name: supabaseUser.user_metadata?.name || prev.name,
+              displayName: supabaseUser.user_metadata?.name || prev.displayName,
+              role,
+              profileCompleted: !!supabaseUser.user_metadata?.name,
+            };
+            
+            localStorage.setItem('currentUser', JSON.stringify(updatedUser));
+            return updatedUser;
+          });
         }
       }
       
