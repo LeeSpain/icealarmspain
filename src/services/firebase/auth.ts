@@ -8,7 +8,7 @@ import {
   browserLocalPersistence,
   browserSessionPersistence,
   setPersistence as firebaseSetPersistence,
-  onAuthStateChanged
+  onAuthStateChanged as firebaseOnAuthStateChanged
 } from 'firebase/auth';
 import { initializeApp } from 'firebase/app';
 import { getAnalytics } from 'firebase/analytics';
@@ -47,21 +47,17 @@ export const updateProfile = (user: any, profile: { displayName?: string, photoU
   return firebaseUpdateProfile(user, profile);
 };
 
-export const setPersistence = (persistenceType: string) => {
-  console.log('Setting persistence to:', persistenceType);
-  return firebaseSetPersistence(auth, persistenceType === 'local' ? browserLocalPersistence : browserSessionPersistence);
+export const setPersistence = (auth: any, persistenceType: any) => {
+  console.log('Setting persistence to:', persistenceType === browserLocalPersistence ? 'local' : 'session');
+  return firebaseSetPersistence(auth, persistenceType);
 };
 
-// Export Firebase auth compatibility object
-export const firebaseAuth = {
-  createUserWithEmailAndPassword: (email: string, password: string) => createUserWithEmailAndPassword(email, password),
-  signInWithEmailAndPassword: (email: string, password: string) => signInWithEmailAndPassword(email, password),
-  signOut: () => signOut(),
-  updateProfile: (user: any, profile: { displayName?: string, photoURL?: string }) => updateProfile(user, profile),
-  setPersistence: (persistenceType: string) => setPersistence(persistenceType),
+export const onAuthStateChanged = firebaseOnAuthStateChanged;
+
+// Export Firebase auth compatibility object and constants
+export { 
+  auth, 
+  analytics,
   browserLocalPersistence,
-  browserSessionPersistence,
-  onAuthStateChanged: (callback: any) => onAuthStateChanged(auth, callback)
+  browserSessionPersistence
 };
-
-export { auth, analytics };

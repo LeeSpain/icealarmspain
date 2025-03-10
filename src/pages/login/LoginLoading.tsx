@@ -36,6 +36,10 @@ export const LoginLoading: React.FC<LoginLoadingProps> = ({
     };
     
     checkAuth();
+    
+    // Check periodically
+    const interval = setInterval(checkAuth, 1000);
+    return () => clearInterval(interval);
   }, []);
   
   // Show refresh button after 2 seconds
@@ -55,7 +59,7 @@ export const LoginLoading: React.FC<LoginLoadingProps> = ({
     setShowDebugInfo(!showDebugInfo);
   };
 
-  // Force client-side sign out if stuck for more than 10 seconds
+  // Force client-side sign out if stuck for more than 5 seconds
   useEffect(() => {
     if (!isLoading || !showRefresh) return;
     
@@ -69,7 +73,7 @@ export const LoginLoading: React.FC<LoginLoadingProps> = ({
       } catch (error) {
         console.error("Error during emergency sign out:", error);
       }
-    }, 10000);
+    }, 5000);
     
     return () => clearTimeout(timer);
   }, [isLoading, showRefresh]);

@@ -2,7 +2,7 @@
 import { useEffect, useRef } from 'react';
 import { User } from './types';
 import { determineUserRole } from './utils';
-import { auth, firebaseAuth } from '../../services/firebase/auth';
+import { auth, onAuthStateChanged } from '../../services/firebase/auth';
 
 interface UseAuthEffectsProps {
   setUser: React.Dispatch<React.SetStateAction<User | null>>;
@@ -37,11 +37,12 @@ export const useAuthEffects = ({ setUser, setIsLoading }: UseAuthEffectsProps) =
         }
       } catch (error) {
         console.error('Error parsing stored user:', error);
+        localStorage.removeItem('currentUser');
       }
     }
     
     // Listen for Firebase auth state changes
-    const unsubscribe = firebaseAuth.onAuthStateChanged((firebaseUser) => {
+    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
       console.log('Firebase auth state changed:', firebaseUser?.email || 'No user');
       
       if (!isMounted.current) return;
@@ -80,13 +81,13 @@ export const useAuthEffects = ({ setUser, setIsLoading }: UseAuthEffectsProps) =
       setIsLoading(false);
     });
 
-    // Emergency timeout to prevent infinite loading - shortened to 5 seconds
+    // Emergency timeout to prevent infinite loading - shortened to 3 seconds
     const timeout = setTimeout(() => {
       if (isMounted.current && setIsLoading) {
         console.log("Emergency timeout triggered to prevent infinite loading");
         setIsLoading(false);
       }
-    }, 5000);
+    }, 3000);
 
     // Cleanup subscription
     return () => {

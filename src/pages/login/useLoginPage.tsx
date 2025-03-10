@@ -10,7 +10,7 @@ export const useLoginPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { toast } = useToast();
-  const { signIn, user, isAuthenticated, isLoading } = useAuth();
+  const { user, isAuthenticated, isLoading } = useAuth();
   const [loginInProgress, setLoginInProgress] = useState(false);
   const [loginError, setLoginError] = useState<string | null>(null);
   const [redirectTriggered, setRedirectTriggered] = useState(false);
@@ -84,7 +84,7 @@ export const useLoginPage = () => {
           : "El servicio de autenticación no responde. Por favor, intente iniciar sesión manualmente."
         );
       }
-    }, 3000);
+    }, 2000); // Reduced to 2 seconds for faster feedback
     
     return () => clearTimeout(timeoutId);
   }, [isLoading, language]);
@@ -115,22 +115,10 @@ export const useLoginPage = () => {
     
     try {
       console.log("Attempting login with:", email, "Remember me:", rememberMe);
-      const success = await signIn(email, password, rememberMe);
+      await useAuth().login(email, password, rememberMe);
       
-      if (!success && isMounted.current) {
-        const errorMessage = language === 'en' 
-          ? "Invalid email or password. Please try again." 
-          : "Correo o contraseña inválidos. Por favor, inténtelo de nuevo.";
-        
-        setLoginError(errorMessage);
-        console.log("Login failed:", errorMessage);
-        
-        toast({
-          title: language === 'en' ? "Login Failed" : "Error de inicio de sesión",
-          description: errorMessage,
-          variant: "destructive"
-        });
-      }
+      // Note: We don't need to handle success case here as the auth state change
+      // will trigger the redirect in the useEffect above
     } catch (error) {
       console.error("Login error:", error);
       if (isMounted.current) {

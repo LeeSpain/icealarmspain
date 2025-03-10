@@ -18,6 +18,13 @@ const Login: React.FC = () => {
     language
   } = useLoginPage();
   
+  console.log("Login page rendering with state:", { 
+    isLoading, 
+    isAuthenticated, 
+    user, 
+    authTimeout 
+  });
+  
   // Render loading state if authentication is being checked or user is already authenticated
   // But don't render loading if there's an auth timeout
   if ((isLoading || (isAuthenticated && user)) && !authTimeout) {
@@ -40,7 +47,6 @@ const Login: React.FC = () => {
           language={language}
         />
       </main>
-      {/* Footer is already included in LoginContent */}
     </div>
   );
 };

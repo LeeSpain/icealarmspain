@@ -110,6 +110,12 @@ export const useLoginForm = ({
         // Use the provided password for login
         const userData = await login(formData.email, formData.password, rememberMe);
         
+        if (rememberMe) {
+          localStorage.setItem('rememberedEmail', formData.email);
+        } else {
+          localStorage.removeItem('rememberedEmail');
+        }
+        
         console.log("Login successful, redirecting user with role:", userData.role);
         
         toast({

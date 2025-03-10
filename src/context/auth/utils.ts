@@ -8,22 +8,29 @@ export const determineUserRole = (email: string): string => {
   // Debug log for troubleshooting
   console.log('Determining role for email:', email);
   
-  // Support for real Supabase accounts - check exact email matches first
-  if (email === 'icealarmespana@gmail.com') {
-    console.log('Assigning admin role to icealarmespana@gmail.com');
+  // Support for exact email matches first
+  if (email === 'icealarmespana@gmail.com' || 
+      email === 'admin@icealarm.es' ||
+      email === 'admin@example.com') {
+    console.log('Assigning admin role to', email);
     return 'admin';
   } 
-  else if (email === 'wakemanlee20@gmail.com') {
-    console.log('Assigning callcenter role to wakemanlee20@gmail.com');
+  else if (email === 'wakemanlee20@gmail.com' || 
+           email === 'callcenter@icealarm.es' ||
+           email === 'callcenter@example.com') {
+    console.log('Assigning callcenter role to', email);
     return 'callcenter';
   } 
-  else if (email === 'lwakeman@icealarm.es') {
-    console.log('Assigning member role to lwakeman@icealarm.es');
+  else if (email === 'lwakeman@icealarm.es' || 
+           email === 'user@example.com' ||
+           email === 'test@example.com') {
+    console.log('Assigning member role to', email);
     return 'member';
   }
   
   // Fallback to pattern matching for other emails
-  if (email.endsWith('@admin.icealarm.es') || email.includes('admin')) {
+  if (email.endsWith('@admin.icealarm.es') || 
+      email.includes('admin')) {
     console.log('Assigning admin role based on email pattern');
     return 'admin';
   } 
@@ -34,11 +41,13 @@ export const determineUserRole = (email: string): string => {
     console.log('Assigning callcenter role based on email pattern');
     return 'callcenter';
   } 
-  else if (email.endsWith('@tech.icealarm.es') || email.includes('tech')) {
+  else if (email.endsWith('@tech.icealarm.es') || 
+           email.includes('tech')) {
     console.log('Assigning technician role based on email pattern');
     return 'technician';
   } 
-  else if (email.endsWith('@support.icealarm.es') || email.includes('support')) {
+  else if (email.endsWith('@support.icealarm.es') || 
+           email.includes('support')) {
     console.log('Assigning support role based on email pattern');
     return 'support';
   } 
