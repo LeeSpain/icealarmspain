@@ -26,23 +26,22 @@ const NavLinks: React.FC<NavLinksProps> = ({ onClick }) => {
   ];
 
   return (
-    <>
+    <nav className="flex items-center space-x-1">
       {navLinks.map((link) => (
-        <span key={link.name} className="px-2">
-          <Link
-            to={link.href}
-            className={`text-sm font-medium transition-colors link-underline ${
-              location.pathname === link.href 
-                ? "text-ice-600" 
-                : "text-gray-700 hover:text-ice-600"
-            }`}
-            onClick={onClick}
-          >
-            {link.name}
-          </Link>
-        </span>
+        <Link
+          key={link.name}
+          to={link.href}
+          className={`px-4 py-2 text-sm font-medium rounded-md transition-colors hover:bg-gray-100 ${
+            location.pathname === link.href 
+              ? "text-ice-600 bg-ice-50" 
+              : "text-gray-700 hover:text-ice-600"
+          }`}
+          onClick={onClick}
+        >
+          {link.name}
+        </Link>
       ))}
-    </>
+    </nav>
   );
 };
 
