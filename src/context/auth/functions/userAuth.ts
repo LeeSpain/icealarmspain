@@ -18,7 +18,7 @@ export const login = async (email: string, password: string, rememberMe = false)
     await new Promise(resolve => setTimeout(resolve, 300));
     
     console.log('Attempting signIn with Supabase for:', email);
-    const { data: { session }, error } = await supabase.auth.signInWithPassword({
+    const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
@@ -28,6 +28,7 @@ export const login = async (email: string, password: string, rememberMe = false)
       throw new Error(error.message);
     }
     
+    const session = data.session;
     console.log('Sign in response received:', session ? 'Session exists' : 'No session');
     
     if (!session?.user) {
@@ -64,13 +65,9 @@ export const login = async (email: string, password: string, rememberMe = false)
     // Update user metadata with role if needed
     if (!session.user.user_metadata?.role || session.user.user_metadata?.role !== role) {
       console.log('Updating user metadata with role:', role);
-      const { error: updateError } = await supabase.auth.updateUser({
+      await supabase.auth.updateUser({
         data: { role }
       });
-      
-      if (updateError) {
-        console.error('Error updating user metadata:', updateError);
-      }
     }
     
     return user;
@@ -101,20 +98,7 @@ export const logout = async (): Promise<void> => {
     localStorage.removeItem('currentUser');
     
     // Force global signout
-    const { error } = await supabase.auth.signOut({ scope: 'global' });
-    
-    if (error) {
-      console.error('Error during signOut:', error);
-    }
-    
-    // Double check if we're really logged out
-    const { data } = await supabase.auth.getSession();
-    
-    if (data.session) {
-      console.warn('Session still exists after logout, forcing cleanup');
-      await supabase.auth.signOut({ scope: 'global' });
-    }
-    
+    await supabase.auth.signOut({ scope: 'global' });
   } catch (error) {
     console.error('Logout error:', error);
     // Clean up local state regardless of server errors

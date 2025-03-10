@@ -1,9 +1,9 @@
 
 import { createClient } from '@supabase/supabase-js';
 
-// Use explicit fallback values that are guaranteed to work
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://fagrvwgaajajhvygffea.supabase.co';
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZhZ3J2d2dhYWphamh2eWdmZmVhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDEwMzA3NTUsImV4cCI6MjA1NjYwNjc1NX0.OiUF4dlIDYlWIv-7B9ry3YNAaj-0HHe4XnUIiasjuno';
+// Use the correct Supabase URL and anon key from the project
+const supabaseUrl = 'https://fagrvwgaajajhvygffea.supabase.co';
+const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZhZ3J2d2dhYWphamh2eWdmZmVhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDEwMzA3NTUsImV4cCI6MjA1NjYwNjc1NX0.OiUF4dlIDYlWIv-7B9ry3YNAaj-0HHe4XnUIiasjuno';
 
 // Debug the client creation
 console.log("Creating Supabase client with:", { 

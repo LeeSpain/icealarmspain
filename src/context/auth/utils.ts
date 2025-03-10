@@ -12,10 +12,12 @@ export const determineUserRole = (email: string): string => {
   if (email === 'icealarmespana@gmail.com') {
     console.log('Assigning admin role to icealarmespana@gmail.com');
     return 'admin';
-  } else if (email === 'wakemanlee20@gmail.com') {
+  } 
+  else if (email === 'wakemanlee20@gmail.com') {
     console.log('Assigning callcenter role to wakemanlee20@gmail.com');
     return 'callcenter';
-  } else if (email === 'lwakeman@icealarm.es') {
+  } 
+  else if (email === 'lwakeman@icealarm.es') {
     console.log('Assigning member role to lwakeman@icealarm.es');
     return 'member';
   }
@@ -24,19 +26,23 @@ export const determineUserRole = (email: string): string => {
   if (email.endsWith('@admin.icealarm.es') || email.includes('admin')) {
     console.log('Assigning admin role based on email pattern');
     return 'admin';
-  } else if (email.endsWith('@callcenter.icealarm.es') || 
-            email.includes('agent') || 
-            email.includes('callcenter') || 
-            email.includes('call-center')) {
+  } 
+  else if (email.endsWith('@callcenter.icealarm.es') || 
+           email.includes('agent') || 
+           email.includes('callcenter') || 
+           email.includes('call-center')) {
     console.log('Assigning callcenter role based on email pattern');
     return 'callcenter';
-  } else if (email.endsWith('@tech.icealarm.es') || email.includes('tech')) {
+  } 
+  else if (email.endsWith('@tech.icealarm.es') || email.includes('tech')) {
     console.log('Assigning technician role based on email pattern');
     return 'technician';
-  } else if (email.endsWith('@support.icealarm.es') || email.includes('support')) {
+  } 
+  else if (email.endsWith('@support.icealarm.es') || email.includes('support')) {
     console.log('Assigning support role based on email pattern');
     return 'support';
-  } else {
+  } 
+  else {
     console.log('Assigning default member role');
     return 'member';
   }
