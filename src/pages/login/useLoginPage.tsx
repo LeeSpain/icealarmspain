@@ -46,8 +46,8 @@ export const useLoginPage = () => {
       loginInProgress 
     });
     
-    // Only proceed if loading is complete and user is authenticated
-    if (!isLoading && isAuthenticated && user && !redirectTriggered) {
+    // Only proceed if loading is complete, user is authenticated, and we haven't already triggered a redirect
+    if (!isLoading && !loginInProgress && isAuthenticated && user && !redirectTriggered) {
       console.log("User authenticated, preparing to redirect");
       
       if (isMounted.current) {
@@ -73,7 +73,7 @@ export const useLoginPage = () => {
         }, 300);
       }
     }
-  }, [isAuthenticated, isLoading, user, navigate, redirectParam, redirectTriggered, language, toast]);
+  }, [isAuthenticated, isLoading, loginInProgress, user, navigate, redirectParam, redirectTriggered, language, toast]);
   
   const getDefaultRedirect = (role?: string) => {
     console.log("Determining redirect for role:", role);

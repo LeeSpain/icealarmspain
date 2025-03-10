@@ -15,16 +15,6 @@ export const login = async (email: string, password: string, rememberMe = false)
   try {
     console.log('Starting login process for:', email);
     
-    // Clear any existing session data
-    console.log('Clearing existing session data...');
-    localStorage.removeItem('currentUser');
-    localStorage.removeItem('authPersistence');
-    
-    // Set persistence based on rememberMe flag
-    const persistenceType = rememberMe ? browserLocalPersistence : browserSessionPersistence;
-    console.log('Setting Firebase persistence:', rememberMe ? 'local' : 'session');
-    await setPersistence(auth, persistenceType);
-    
     // For development/testing purposes, allow specific test accounts to bypass Firebase authentication
     // This is helpful for testing when Firebase might not be fully configured
     if ((process.env.NODE_ENV === 'development' || import.meta.env.DEV) && 
@@ -32,6 +22,10 @@ export const login = async (email: string, password: string, rememberMe = false)
         password === 'password123') {
       
       console.log('Using development login bypass for:', email);
+      
+      // Clear any existing session data first
+      localStorage.removeItem('currentUser');
+      localStorage.removeItem('authPersistence');
       
       // Create user object for development mode
       const role = determineUserRole(email);
@@ -56,6 +50,16 @@ export const login = async (email: string, password: string, rememberMe = false)
       
       return user;
     }
+    
+    // Clear any existing session data
+    console.log('Clearing existing session data...');
+    localStorage.removeItem('currentUser');
+    localStorage.removeItem('authPersistence');
+    
+    // Set persistence based on rememberMe flag
+    const persistenceType = rememberMe ? browserLocalPersistence : browserSessionPersistence;
+    console.log('Setting Firebase persistence:', rememberMe ? 'local' : 'session');
+    await setPersistence(auth, persistenceType);
     
     console.log('Attempting signIn with Firebase for:', email);
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
