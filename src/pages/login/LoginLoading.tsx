@@ -46,7 +46,7 @@ export const LoginLoading: React.FC<LoginLoadingProps> = ({
   useEffect(() => {
     const timer = setTimeout(() => {
       setShowRefresh(true);
-    }, 1000);
+    }, 800); // Even faster display of refresh option
     
     return () => clearTimeout(timer);
   }, []);
@@ -59,7 +59,7 @@ export const LoginLoading: React.FC<LoginLoadingProps> = ({
     setShowDebugInfo(!showDebugInfo);
   };
 
-  // Force client-side sign out if stuck for more than 3 seconds
+  // Force client-side sign out if stuck for more than 2.5 seconds
   useEffect(() => {
     if (!isLoading || !showRefresh) return;
     
@@ -72,8 +72,9 @@ export const LoginLoading: React.FC<LoginLoadingProps> = ({
         window.location.reload();
       } catch (error) {
         console.error("Error during emergency sign out:", error);
+        window.location.reload(); // Force reload anyway
       }
-    }, 3000);
+    }, 2500);
     
     return () => clearTimeout(timer);
   }, [isLoading, showRefresh]);
@@ -141,6 +142,18 @@ export const LoginLoading: React.FC<LoginLoadingProps> = ({
                 <p><strong>Auth service:</strong> Firebase</p>
                 <p><strong>Auth status:</strong> {authStatus}</p>
                 <p><strong>Time:</strong> {new Date().toISOString()}</p>
+                <Button 
+                  variant="destructive" 
+                  size="sm" 
+                  className="mt-2"
+                  onClick={() => {
+                    localStorage.removeItem('currentUser');
+                    localStorage.removeItem('authPersistence');
+                    window.location.reload();
+                  }}
+                >
+                  Force Clear Auth & Reload
+                </Button>
               </div>
             )}
           </div>

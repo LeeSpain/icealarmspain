@@ -37,6 +37,9 @@ export const useLoginPage = () => {
   
   // Handle authentication state changes
   useEffect(() => {
+    // Don't run any redirection if we're in an auth timeout state
+    if (authTimeout) return;
+    
     console.log("Login page - Auth state check:", { isAuthenticated, user, isLoading });
     
     if (!isLoading) {
@@ -54,10 +57,13 @@ export const useLoginPage = () => {
         
         toast({
           title: language === 'en' ? "Login Successful" : "Inicio de sesión exitoso",
-          description: language === 'en' ? `Welcome back, ${user.displayName || user.email?.split('@')[0] || 'User'}!` : `Bienvenido de nuevo, ${user.displayName || user.email?.split('@')[0] || 'Usuario'}!`,
+          description: language === 'en' 
+            ? `Welcome back, ${user.displayName || user.email?.split('@')[0] || 'User'}!` 
+            : `Bienvenido de nuevo, ${user.displayName || user.email?.split('@')[0] || 'Usuario'}!`,
           duration: 3000
         });
         
+        // Schedule the redirect to give the toast time to appear
         setTimeout(() => {
           if (isMounted.current) {
             console.log("Executing redirect now to:", redirectTo);
@@ -66,14 +72,14 @@ export const useLoginPage = () => {
         }, 300);
       }
     }
-  }, [isAuthenticated, isLoading, user, navigate, redirectParam, redirectTriggered, language, toast]);
+  }, [isAuthenticated, isLoading, user, navigate, redirectParam, redirectTriggered, language, toast, authTimeout]);
   
   // Reset on page load
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
   
-  // Set a timeout for auth check - reduced to 2 seconds
+  // Set a timeout for auth check - reduced to 1.5 seconds for faster feedback
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       if (isLoading && isMounted.current) {
@@ -84,7 +90,7 @@ export const useLoginPage = () => {
           : "El servicio de autenticación no responde. Por favor, intente iniciar sesión manualmente."
         );
       }
-    }, 2000); // Reduced to 2 seconds for faster feedback
+    }, 1500);
     
     return () => clearTimeout(timeoutId);
   }, [isLoading, language]);

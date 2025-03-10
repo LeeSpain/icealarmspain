@@ -80,13 +80,13 @@ export const useAuthEffects = ({ setUser, setIsLoading }: UseAuthEffectsProps) =
       setIsLoading(false);
     });
 
-    // Emergency timeout to prevent infinite loading - shortened to 2 seconds
+    // Emergency timeout to prevent infinite loading - shortened to 1.5 seconds
     const timeout = setTimeout(() => {
       if (isMounted.current && setIsLoading) {
         console.log("Emergency timeout triggered to prevent infinite loading");
         setIsLoading(false);
       }
-    }, 2000);
+    }, 1500);
 
     // Cleanup subscription
     return () => {

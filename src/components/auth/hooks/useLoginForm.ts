@@ -121,26 +121,29 @@ export const useLoginForm = ({
         toast({
           title: language === 'en' ? "Login Successful" : "Inicio de sesión exitoso",
           description: language === 'en' 
-            ? `Welcome back, ${userData.displayName}!` 
-            : `Bienvenido de nuevo, ${userData.displayName}!`,
+            ? `Welcome back, ${userData.displayName || userData.email?.split('@')[0] || 'User'}!` 
+            : `Bienvenido de nuevo, ${userData.displayName || userData.email?.split('@')[0] || 'Usuario'}!`,
         });
         
-        // Redirect based on user role
-        if (redirectTo) {
-          navigate(redirectTo);
-        } else {
-          switch (userData.role) {
-            case 'admin':
-              navigate('/admin');
-              break;
-            case 'callcenter':
-              navigate('/call-center');
-              break;
-            default:
-              navigate('/dashboard');
-              break;
+        // Short delay to prevent immediate navigation issues
+        setTimeout(() => {
+          // Redirect based on user role
+          if (redirectTo) {
+            navigate(redirectTo);
+          } else {
+            switch (userData.role) {
+              case 'admin':
+                navigate('/admin');
+                break;
+              case 'callcenter':
+                navigate('/call-center');
+                break;
+              default:
+                navigate('/dashboard');
+                break;
+            }
           }
-        }
+        }, 100);
       }
     } catch (error) {
       console.error("Login error:", error);
