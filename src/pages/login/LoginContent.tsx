@@ -2,8 +2,6 @@
 import React from "react";
 import AuthForm from "@/components/AuthForm";
 import { Card, CardContent } from "@/components/ui/card";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { InfoIcon } from "lucide-react";
 
 interface LoginContentProps {
   handleLoginSuccess: (email: string, password: string, rememberMe: boolean) => Promise<void>;

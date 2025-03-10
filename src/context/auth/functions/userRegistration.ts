@@ -11,7 +11,7 @@ export const signUp = async (email: string, password: string, displayName?: stri
   try {
     console.log('Attempting signup for:', email, 'with role:', role);
     
-    const userCredential = await createUserWithEmailAndPassword(email, password);
+    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     
     if (!userCredential.user) {
       throw new Error('Failed to get user after signup');

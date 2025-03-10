@@ -10,7 +10,7 @@ export const useLoginPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { toast } = useToast();
-  const { user, isAuthenticated, isLoading } = useAuth();
+  const { user, isAuthenticated, isLoading, login } = useAuth();
   const [loginInProgress, setLoginInProgress] = useState(false);
   const [loginError, setLoginError] = useState<string | null>(null);
   const [redirectTriggered, setRedirectTriggered] = useState(false);
@@ -94,7 +94,7 @@ export const useLoginPage = () => {
     
     try {
       console.log("Attempting login with:", email, "Remember me:", rememberMe);
-      await useAuth().login(email, password, rememberMe);
+      await login(email, password, rememberMe);
       
       // Note: We don't need to handle success case here as the auth state change
       // will trigger the redirect in the useEffect above
