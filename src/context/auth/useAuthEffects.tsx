@@ -50,7 +50,6 @@ export const useAuthEffects = ({ setUser, setIsLoading }: UseAuthEffectsProps) =
       if (!firebaseUser) {
         console.log('No Firebase user, clearing user state');
         setUser(null);
-        localStorage.removeItem('currentUser');
         setIsLoading(false);
         return;
       }
@@ -64,14 +63,14 @@ export const useAuthEffects = ({ setUser, setIsLoading }: UseAuthEffectsProps) =
         const userData: User = {
           uid: firebaseUser.uid,
           id: firebaseUser.uid,
-          email: firebaseUser.email,
-          name: firebaseUser.displayName || firebaseUser.email?.split('@')[0],
-          displayName: firebaseUser.displayName || firebaseUser.email?.split('@')[0],
+          email: firebaseUser.email || '',
+          name: firebaseUser.displayName || firebaseUser.email?.split('@')[0] || '',
+          displayName: firebaseUser.displayName || firebaseUser.email?.split('@')[0] || '',
           role,
           profileCompleted: !!firebaseUser.displayName,
           language: localStorage.getItem('language') || 'en',
           lastLogin: new Date().toISOString(),
-          createdAt: firebaseUser.metadata.creationTime,
+          createdAt: firebaseUser.metadata.creationTime || '',
         };
         
         setUser(userData);
@@ -81,13 +80,13 @@ export const useAuthEffects = ({ setUser, setIsLoading }: UseAuthEffectsProps) =
       setIsLoading(false);
     });
 
-    // Emergency timeout to prevent infinite loading - shortened to 3 seconds
+    // Emergency timeout to prevent infinite loading - shortened to 2 seconds
     const timeout = setTimeout(() => {
       if (isMounted.current && setIsLoading) {
         console.log("Emergency timeout triggered to prevent infinite loading");
         setIsLoading(false);
       }
-    }, 3000);
+    }, 2000);
 
     // Cleanup subscription
     return () => {

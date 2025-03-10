@@ -54,7 +54,7 @@ export const useLoginPage = () => {
         
         toast({
           title: language === 'en' ? "Login Successful" : "Inicio de sesión exitoso",
-          description: language === 'en' ? `Welcome back, ${user.displayName || user.email?.split('@')[0]}!` : `Bienvenido de nuevo, ${user.displayName || user.email?.split('@')[0]}!`,
+          description: language === 'en' ? `Welcome back, ${user.displayName || user.email?.split('@')[0] || 'User'}!` : `Bienvenido de nuevo, ${user.displayName || user.email?.split('@')[0] || 'Usuario'}!`,
           duration: 3000
         });
         
@@ -73,7 +73,7 @@ export const useLoginPage = () => {
     window.scrollTo(0, 0);
   }, []);
   
-  // Set a timeout for auth check - reduced to 3 seconds
+  // Set a timeout for auth check - reduced to 2 seconds
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       if (isLoading && isMounted.current) {
