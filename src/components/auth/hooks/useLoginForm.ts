@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { validateForm } from "../AuthFormUtils";
@@ -43,7 +42,6 @@ export const useLoginForm = ({
   
   const isLoading = externalLoading !== undefined ? externalLoading : internalLoading;
 
-  // Set up cleanup function to prevent memory leaks
   useEffect(() => {
     return () => {
       isMounted.current = false;
@@ -100,14 +98,8 @@ export const useLoginForm = ({
       }
     }
     
-    if (rememberMe) {
-      localStorage.setItem('rememberedEmail', formData.email);
-    } else {
-      localStorage.removeItem('rememberedEmail');
-    }
-    
     try {
-      console.log("Login attempt with:", { email: formData.email, password: formData.password.substring(0, 3) + "...", rememberMe });
+      console.log("Attempting login for:", formData.email);
       
       if (onSuccess) {
         await onSuccess(formData.email, formData.password, rememberMe);
@@ -115,21 +107,19 @@ export const useLoginForm = ({
         await onSubmit(formData.email, formData.password, rememberMe);
       } else {
         const userData = await login(formData.email, formData.password, rememberMe);
-        console.log("Login successful, user data:", userData);
+        console.log("Login successful, redirecting user with role:", userData.role);
         
-        // Show successful login toast
         toast({
           title: language === 'en' ? "Login Successful" : "Inicio de sesión exitoso",
           description: language === 'en' 
-            ? `Welcome back, ${userData.displayName || userData.email?.split('@')[0]}!` 
-            : `Bienvenido de nuevo, ${userData.displayName || userData.email?.split('@')[0]}!`,
+            ? `Welcome back, ${userData.displayName}!` 
+            : `Bienvenido de nuevo, ${userData.displayName}!`,
         });
         
-        // Perform role-based redirection
+        // Redirect based on user role
         if (redirectTo) {
           navigate(redirectTo);
         } else {
-          // Redirect based on user role
           switch (userData.role) {
             case 'admin':
               navigate('/admin');
@@ -144,7 +134,8 @@ export const useLoginForm = ({
         }
       }
     } catch (error) {
-      console.error("Login error in form:", error);
+      console.error("Login error:", error);
+      
       if (isMounted.current) {
         const errorMessage = error instanceof Error ? error.message : String(error);
         setInternalError(errorMessage);

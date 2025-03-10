@@ -1,4 +1,3 @@
-
 import { supabase } from '../../integrations/supabase/client';
 import { User } from './types';
 import { determineUserRole } from './utils';
@@ -6,69 +5,55 @@ import { determineUserRole } from './utils';
 // Login function
 export const login = async (email: string, password: string, rememberMe = false): Promise<User> => {
   try {
-    console.log('Attempting login for:', email, 'Remember me:', rememberMe);
+    console.log('Starting login process for:', email);
     
-    // Set persistence type based on remember me option
-    const persistence = rememberMe ? 'local' : 'session';
-    localStorage.setItem('authPersistence', persistence);
+    // Clear any existing session data
+    await supabase.auth.signOut();
+    localStorage.removeItem('currentUser');
+    localStorage.removeItem('authPersistence');
     
-    // Detailed logging for debugging
-    console.log(`Login attempt details: Email: ${email}, Password length: ${password.length}, Remember me: ${rememberMe}`);
-    
-    const { data, error } = await supabase.auth.signInWithPassword({
+    const { data: { session }, error } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
     
     if (error) {
-      console.error('Login error from Supabase:', error);
-      throw error;
+      console.error('Login error:', error.message);
+      throw new Error(error.message);
     }
     
-    if (!data.user) {
-      console.error('No user data returned from successful login');
-      throw new Error('Failed to get user after login');
+    if (!session?.user) {
+      console.error('No session or user data returned');
+      throw new Error('Login failed - no session created');
     }
     
-    console.log('Login successful, user data:', data.user);
+    console.log('Login successful:', session.user);
     
-    // First check for role in user metadata, then fall back to email determination
-    const role = data.user.user_metadata?.role || determineUserRole(email);
-    console.log('User metadata:', data.user.user_metadata);
+    // Determine role
+    const role = determineUserRole(email);
     console.log('Determined role:', role);
     
-    // After successful login, update user metadata if role was determined from email
-    if (!data.user.user_metadata?.role) {
-      try {
-        await supabase.auth.updateUser({
-          data: { role }
-        });
-        console.log('Updated user metadata with role:', role);
-      } catch (updateError) {
-        console.error('Failed to update user metadata:', updateError);
-        // Continue with login even if metadata update fails
-      }
-    }
-    
+    // Create user object
     const user: User = {
-      uid: data.user.id,
-      id: data.user.id,
-      email: data.user.email,
-      name: data.user.user_metadata?.name || data.user.email?.split('@')[0],
-      displayName: data.user.user_metadata?.name || data.user.email?.split('@')[0],
+      uid: session.user.id,
+      id: session.user.id,
+      email: session.user.email || email,
+      name: session.user.user_metadata?.name || email.split('@')[0],
+      displayName: session.user.user_metadata?.name || email.split('@')[0],
       role,
-      profileCompleted: !!data.user.user_metadata?.name,
+      profileCompleted: !!session.user.user_metadata?.name,
       language: 'en',
       lastLogin: new Date().toISOString(),
-      createdAt: data.user.created_at
+      createdAt: session.user.created_at
     };
     
-    // Store user data in localStorage for persistence
+    // Store user data
     localStorage.setItem('currentUser', JSON.stringify(user));
+    localStorage.setItem('authPersistence', rememberMe ? 'local' : 'session');
     
     return user;
   } catch (error) {
-    console.error('Login error:', error);
+    console.error('Login process error:', error);
     throw error;
   }
 };
@@ -97,7 +82,7 @@ export const signUp = async (email: string, password: string, displayName?: stri
           name: displayName,
           role: role,
           first_name: displayName?.split(' ')[0],
-          last_name: displayName?.split(' ').slice(1).join(' '),
+          last_name: displayName?.split(' ').slice(1).join(' ')
         }
       }
     });
