@@ -34,7 +34,7 @@ const Contact: React.FC = () => {
         {/* Email Contact Section */}
         <div className="container mx-auto px-4 py-16">
           <div className="text-center mb-8">
-            <h2 className="text-2xl md:text-3xl font-bold mb-3">
+            <h2 className="text-2xl md:text-3xl font-bold mb-3 font-playfair bg-gradient-to-r from-gray-900 via-ice-900 to-guardian-800 bg-clip-text text-transparent">
               {language === 'en' ? 'Email Us' : 'Envíenos un Email'}
             </h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">

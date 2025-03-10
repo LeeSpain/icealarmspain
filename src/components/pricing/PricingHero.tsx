@@ -14,7 +14,7 @@ const PricingHero: React.FC<PricingHeroProps> = ({ language }) => {
         {language === 'en' ? 'FLEXIBLE PRICING' : 'PRECIOS FLEXIBLES'}
       </div>
       
-      <h2 className="text-3xl md:text-4xl font-bold mb-6 font-playfair">
+      <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6 font-playfair bg-gradient-to-r from-gray-900 via-ice-900 to-guardian-800 bg-clip-text text-transparent">
         {language === 'en' ? "Choose Your Protection Plan" : "Elija Su Plan de Protección"}
       </h2>
       

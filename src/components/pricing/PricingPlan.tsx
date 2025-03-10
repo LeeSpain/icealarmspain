@@ -45,7 +45,7 @@ const PricingPlan: React.FC<PricingPlanProps> = ({
       )}
       
       <div className="p-6">
-        <h3 className="text-xl font-semibold mb-2">{title}</h3>
+        <h3 className="text-xl font-bold mb-2 font-playfair">{title}</h3>
         <p className="text-muted-foreground text-sm mb-6">{description}</p>
         
         <div className="mb-6">

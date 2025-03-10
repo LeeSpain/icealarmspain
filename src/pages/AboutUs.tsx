@@ -82,7 +82,7 @@ const AboutUs: React.FC = () => {
           <div className="container mx-auto px-4 md:px-6">
             <div className="max-w-4xl mx-auto">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-                <div className="glass-panel transform transition-all duration-300 hover:translate-y-[-5px]">
+                <div className="glass-panel p-8 transform transition-all duration-300 hover:translate-y-[-5px]">
                   <div className="mb-4 text-ice-500 flex items-center">
                     <Award size={24} className="mr-2" />
                     <h2 className="text-2xl md:text-3xl font-semibold text-ice-700 font-playfair">
@@ -101,7 +101,7 @@ const AboutUs: React.FC = () => {
                   </p>
                 </div>
                 
-                <div className="glass-panel transform transition-all duration-300 hover:translate-y-[-5px]">
+                <div className="glass-panel p-8 transform transition-all duration-300 hover:translate-y-[-5px]">
                   <div className="mb-4 text-guardian-500 flex items-center">
                     <HeartHandshake size={24} className="mr-2" />
                     <h2 className="text-2xl md:text-3xl font-semibold text-guardian-700 font-playfair">
@@ -148,7 +148,7 @@ const AboutUs: React.FC = () => {
                 {/* 2018 - Foundation */}
                 <div className="relative z-10 flex flex-col md:flex-row items-center mb-16">
                   <div className="order-2 md:order-1 md:w-1/2 p-6 md:pr-12 text-right">
-                    <h3 className="text-xl font-semibold text-ice-700 mb-2">2018</h3>
+                    <h3 className="text-xl font-semibold text-ice-700 mb-2 font-playfair">2018</h3>
                     <h4 className="text-lg font-medium mb-3">
                       {language === 'en' ? 'Foundation' : 'Fundación'}
                     </h4>
@@ -169,7 +169,7 @@ const AboutUs: React.FC = () => {
                 {/* 2020 - Expansion */}
                 <div className="relative z-10 flex flex-col md:flex-row items-center mb-16">
                   <div className="order-3 md:w-1/2 p-6 md:pl-12">
-                    <h3 className="text-xl font-semibold text-guardian-700 mb-2">2020</h3>
+                    <h3 className="text-xl font-semibold text-guardian-700 mb-2 font-playfair">2020</h3>
                     <h4 className="text-lg font-medium mb-3">
                       {language === 'en' ? 'Technology Expansion' : 'Expansión Tecnológica'}
                     </h4>
@@ -190,7 +190,7 @@ const AboutUs: React.FC = () => {
                 {/* 2022 - Innovation */}
                 <div className="relative z-10 flex flex-col md:flex-row items-center">
                   <div className="order-2 md:order-1 md:w-1/2 p-6 md:pr-12 text-right">
-                    <h3 className="text-xl font-semibold text-ice-700 mb-2">2022</h3>
+                    <h3 className="text-xl font-semibold text-ice-700 mb-2 font-playfair">2022</h3>
                     <h4 className="text-lg font-medium mb-3">
                       {language === 'en' ? 'AI Integration' : 'Integración de IA'}
                     </h4>
@@ -218,7 +218,7 @@ const AboutUs: React.FC = () => {
         <section className="py-16 bg-white">
           <div className="container mx-auto px-4 md:px-6">
             <div className="max-w-4xl mx-auto">
-              <div className="glass-panel mb-16 transform transition-all duration-300 hover:translate-y-[-5px]">
+              <div className="glass-panel p-8 mb-16 transform transition-all duration-300 hover:translate-y-[-5px]">
                 <div className="mb-4 text-ice-500 flex items-center">
                   <Users size={24} className="mr-2" />
                   <h2 className="text-2xl md:text-3xl font-semibold text-ice-700 font-playfair">
@@ -237,7 +237,7 @@ const AboutUs: React.FC = () => {
                 </p>
               </div>
               
-              <div className="glass-panel relative overflow-hidden transform transition-all duration-300 hover:translate-y-[-5px]">
+              <div className="glass-panel p-8 relative overflow-hidden transform transition-all duration-300 hover:translate-y-[-5px]">
                 <div className="absolute top-0 right-0 w-32 h-32 bg-guardian-100 rounded-full -mr-16 -mt-16 opacity-60"></div>
                 <div className="absolute bottom-0 left-0 w-24 h-24 bg-ice-100 rounded-full -ml-12 -mb-12 opacity-60"></div>
                 
