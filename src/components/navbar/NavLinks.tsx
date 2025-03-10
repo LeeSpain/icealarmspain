@@ -26,7 +26,11 @@ const NavLinks: React.FC<NavLinksProps> = ({ onClick }) => {
   ];
 
   const isActive = (path: string) => {
-    return location.pathname === path;
+    if (path === "/") {
+      return location.pathname === path;
+    }
+    // Check if the current path starts with the link path
+    return location.pathname.startsWith(path);
   };
 
   return (
