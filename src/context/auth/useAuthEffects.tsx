@@ -37,6 +37,8 @@ export const useAuthEffects = ({ setUser, setIsLoading }: UseAuthEffectsProps) =
         return;
       }
       
+      console.log("Session check result:", data);
+      
       if (data?.session?.user) {
         const supabaseUser = data.session.user;
         console.log("Found existing session with user:", supabaseUser.email);

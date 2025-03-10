@@ -107,7 +107,7 @@ export const useLoginForm = ({
     }
     
     try {
-      console.log("Login attempt with:", { email: formData.email, rememberMe });
+      console.log("Login attempt with:", { email: formData.email, password: formData.password.substring(0, 3) + "...", rememberMe });
       
       if (onSuccess) {
         await onSuccess(formData.email, formData.password, rememberMe);

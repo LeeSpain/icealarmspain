@@ -12,20 +12,29 @@ export const login = async (email: string, password: string, rememberMe = false)
     const persistence = rememberMe ? 'local' : 'session';
     localStorage.setItem('authPersistence', persistence);
     
+    // Detailed logging for debugging
+    console.log(`Login attempt details: Email: ${email}, Password length: ${password.length}, Remember me: ${rememberMe}`);
+    
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
     
-    if (error) throw error;
+    if (error) {
+      console.error('Login error from Supabase:', error);
+      throw error;
+    }
     
     if (!data.user) {
+      console.error('No user data returned from successful login');
       throw new Error('Failed to get user after login');
     }
     
+    console.log('Login successful, user data:', data.user);
+    
     // First check for role in user metadata, then fall back to email determination
     const role = data.user.user_metadata?.role || determineUserRole(email);
-    console.log('Login successful. User metadata:', data.user.user_metadata);
+    console.log('User metadata:', data.user.user_metadata);
     console.log('Determined role:', role);
     
     // After successful login, update user metadata if role was determined from email

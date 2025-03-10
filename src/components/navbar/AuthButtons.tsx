@@ -42,6 +42,10 @@ const AuthButtons: React.FC<AuthButtonsProps> = ({ isMobile = false, onClose }) 
       // Close mobile menu if open
       if (onClose) onClose();
       
+      // Clear localStorage
+      localStorage.removeItem('currentUser');
+      localStorage.removeItem('authPersistence');
+      
       // Navigate to home page
       navigate('/');
     } catch (error) {
