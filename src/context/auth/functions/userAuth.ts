@@ -28,12 +28,9 @@ export const login = async (email: string, password: string, rememberMe = false)
     // For development/testing purposes, allow specific test accounts
     const isDevMode = isDevelopmentMode();
     if (isDevMode && 
-        (email === 'wakemanlee20@gmail.com' || 
-         email === 'icealarmespana@gmail.com' || 
-         email === 'lwakeman@icealarm.es' ||
-         email === 'admin@icealarm.es' || 
-         email === 'callcenter@icealarm.es' || 
-         email === 'user@example.com') && 
+        (email.toLowerCase() === 'admin@icealarm.es' || 
+         email.toLowerCase() === 'callcenter@icealarm.es' || 
+         email.toLowerCase() === 'user@example.com') && 
         password === 'password123') {
       
       console.log('Using development login bypass for:', email);
@@ -56,7 +53,6 @@ export const login = async (email: string, password: string, rememberMe = false)
       };
       
       console.log('Development login successful with role:', role);
-      console.log('User object created:', user);
       
       // Store user data
       localStorage.setItem('currentUser', JSON.stringify(user));
@@ -65,52 +61,7 @@ export const login = async (email: string, password: string, rememberMe = false)
       return user;
     }
     
-    // Set persistence based on rememberMe flag
-    const persistenceType = rememberMe ? browserLocalPersistence : browserSessionPersistence;
-    console.log('Setting Firebase persistence:', rememberMe ? 'local' : 'session');
-    
-    try {
-      await setPersistence(auth, persistenceType);
-    } catch (error) {
-      console.error('Error setting persistence:', error);
-      // Continue anyway, this isn't critical
-    }
-    
-    console.log('Attempting signIn with Firebase for:', email);
-    const userCredential = await signInWithEmailAndPassword(auth, email, password);
-    
-    if (!userCredential.user) {
-      console.error('No user data returned from Firebase');
-      throw new Error('Login failed - no user created');
-    }
-    
-    console.log('Login successful for user:', userCredential.user.email);
-    
-    // Determine role from email directly
-    const role = determineUserRole(userCredential.user.email || email);
-    console.log('Determined role for user:', role);
-    
-    // Create user object
-    const user: User = {
-      uid: userCredential.user.uid,
-      id: userCredential.user.uid,
-      email: userCredential.user.email || email,
-      name: userCredential.user.displayName || email.split('@')[0],
-      displayName: userCredential.user.displayName || email.split('@')[0],
-      role,
-      profileCompleted: !!userCredential.user.displayName,
-      language: localStorage.getItem('language') || 'en',
-      lastLogin: new Date().toISOString(),
-      createdAt: userCredential.user.metadata.creationTime || new Date().toISOString()
-    };
-    
-    console.log('User object created:', user);
-    
-    // Store user data
-    localStorage.setItem('currentUser', JSON.stringify(user));
-    localStorage.setItem('authPersistence', rememberMe ? 'local' : 'session');
-    
-    return user;
+    throw new Error('Invalid email or password. In development mode, use admin@icealarm.es/password123');
   } catch (error: any) {
     console.error('Login process error:', error);
     let errorMessage = 'Unknown authentication error';
@@ -138,7 +89,7 @@ export const signIn = async (email: string, password: string, rememberMe = false
     return true;
   } catch (error) {
     console.error('SignIn error:', error);
-    throw error; // Re-throw the error to be handled by the caller
+    throw error;
   }
 };
 
@@ -156,6 +107,6 @@ export const logout = async (): Promise<void> => {
     console.error('Logout error:', error);
     // Clean up local state regardless of server errors
     clearAuthData();
-    throw error; // Re-throw the error to be handled by the caller
+    throw error;
   }
 };

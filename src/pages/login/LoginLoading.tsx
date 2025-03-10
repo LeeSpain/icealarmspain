@@ -17,10 +17,10 @@ export const LoginLoading: React.FC<LoginLoadingProps> = ({
   const [showTroubleshooting, setShowTroubleshooting] = React.useState(false);
   
   React.useEffect(() => {
-    // Show troubleshooting after 4 seconds of loading
+    // Show troubleshooting after 2 seconds of loading
     const timer = setTimeout(() => {
       setShowTroubleshooting(true);
-    }, 4000);
+    }, 2000);
     
     return () => clearTimeout(timer);
   }, []);
@@ -43,26 +43,20 @@ export const LoginLoading: React.FC<LoginLoadingProps> = ({
         {showTroubleshooting && (
           <div className="mt-4 border-t pt-4 text-center">
             <p className="text-amber-600 font-medium mb-2">
-              {language === 'en' ? 'Taking longer than expected?' : '¿Tardando más de lo esperado?'}
+              {language === 'en' ? 'Development Mode Login' : 'Inicio de sesión en modo desarrollo'}
             </p>
             <p className="text-sm text-gray-600 mb-3">
               {language === 'en' 
-                ? 'Try refreshing the page or clearing your browser cache.' 
-                : 'Intente actualizar la página o limpiar la caché del navegador.'}
+                ? 'Use these test credentials:' 
+                : 'Use estas credenciales de prueba:'}
             </p>
-            <p className="text-sm font-medium text-gray-700 mb-3">
-              {language === 'en'
-                ? 'For development testing, use:'
-                : 'Para pruebas de desarrollo, utilice:'}
-              <br />
-              <span className="block font-mono bg-gray-100 p-1 mt-1 rounded text-xs">
-                Email: admin@icealarm.es<br />
-                Password: password123
-              </span>
-            </p>
+            <div className="font-mono bg-gray-100 p-3 rounded text-sm">
+              <p>Email: admin@icealarm.es</p>
+              <p>Password: password123</p>
+            </div>
             <button 
               onClick={() => window.location.reload()}
-              className="mt-1 px-4 py-2 text-sm bg-ice-100 text-ice-700 rounded hover:bg-ice-200 transition-colors"
+              className="mt-4 px-4 py-2 text-sm bg-ice-100 text-ice-700 rounded hover:bg-ice-200 transition-colors"
             >
               {language === 'en' ? 'Refresh Page' : 'Actualizar Página'}
             </button>
