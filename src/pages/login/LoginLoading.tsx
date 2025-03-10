@@ -20,27 +20,29 @@ export const LoginLoading: React.FC<LoginLoadingProps> = ({
   const [showDebugInfo, setShowDebugInfo] = useState(false);
   const [authStatus, setAuthStatus] = useState<string>("Checking...");
   
-  // Show refresh button almost immediately (after 400ms)
+  // Show refresh button almost immediately (after 200ms)
   useEffect(() => {
     const timer = setTimeout(() => {
       setShowRefresh(true);
-    }, 400);
+    }, 200); // Reduced from 400ms to 200ms
     
     return () => clearTimeout(timer);
   }, []);
 
-  // Force client-side sign out if taking too long (after 1200ms)
+  // Force client-side sign out if taking too long (after 800ms)
   useEffect(() => {
     const timer = setTimeout(async () => {
       try {
-        console.log("Authentication taking too long, forcing sign out");
+        console.log("Authentication taking too long, forcing sign out and reload");
         await auth.signOut();
         localStorage.removeItem('currentUser');
         localStorage.removeItem('authPersistence');
+        // Force reload the page
+        window.location.reload();
       } catch (error) {
         console.error("Error during emergency sign out:", error);
       }
-    }, 1200);
+    }, 800); // Reduced from 1200ms to 800ms
     
     return () => clearTimeout(timer);
   }, []);
@@ -72,8 +74,10 @@ export const LoginLoading: React.FC<LoginLoadingProps> = ({
   };
 
   const handleForceClear = () => {
+    console.log("Force clearing auth data and reloading...");
     localStorage.removeItem('currentUser');
     localStorage.removeItem('authPersistence');
+    auth.signOut().catch(e => console.error("Error signing out:", e));
     window.location.reload();
   };
 
@@ -143,7 +147,7 @@ export const LoginLoading: React.FC<LoginLoadingProps> = ({
                 <Button 
                   variant="destructive" 
                   size="sm" 
-                  className="mt-2"
+                  className="mt-2 w-full"
                   onClick={handleForceClear}
                 >
                   Force Clear Auth & Reload

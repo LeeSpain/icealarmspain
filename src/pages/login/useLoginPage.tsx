@@ -18,11 +18,15 @@ export const useLoginPage = () => {
   
   const isMounted = useRef(true);
   const redirectAttemptsRef = useRef(0);
+  const authTimeoutTimerRef = useRef<NodeJS.Timeout | null>(null);
   
   // Clear mounted flag on unmount
   useEffect(() => {
     return () => {
       isMounted.current = false;
+      if (authTimeoutTimerRef.current) {
+        clearTimeout(authTimeoutTimerRef.current);
+      }
     };
   }, []);
   
@@ -47,7 +51,7 @@ export const useLoginPage = () => {
     if (authTimeout) return;
     
     // Limit redirect attempts to prevent loops
-    if (redirectAttemptsRef.current > 5) {
+    if (redirectAttemptsRef.current > 3) {
       console.log("Too many redirect attempts, forcing timeout");
       if (isMounted.current) {
         setAuthTimeout(true);
@@ -92,9 +96,14 @@ export const useLoginPage = () => {
     window.scrollTo(0, 0);
   }, []);
   
-  // Set a timeout for auth check - reduced to 800ms for MUCH faster feedback
+  // Set a timeout for auth check - VERY aggressive 500ms timeout
   useEffect(() => {
-    const timeoutId = setTimeout(() => {
+    // Clear any existing timeout
+    if (authTimeoutTimerRef.current) {
+      clearTimeout(authTimeoutTimerRef.current);
+    }
+    
+    authTimeoutTimerRef.current = setTimeout(() => {
       if (isMounted.current) {
         console.log("Authentication check timed out, forcing login form display");
         setAuthTimeout(true);
@@ -102,14 +111,18 @@ export const useLoginPage = () => {
         // Only set error if still loading
         if (isLoading) {
           setLoginError(language === 'en' 
-            ? "Authentication service is slow. Please sign in manually." 
-            : "El servicio de autenticación es lento. Por favor, inicie sesión manualmente."
+            ? "Authentication service is unavailable. Please sign in manually." 
+            : "El servicio de autenticación no está disponible. Por favor, inicie sesión manualmente."
           );
         }
       }
-    }, 800); // Reduced from 1000ms to 800ms
+    }, 500); // ULTRA-aggressive timeout
     
-    return () => clearTimeout(timeoutId);
+    return () => {
+      if (authTimeoutTimerRef.current) {
+        clearTimeout(authTimeoutTimerRef.current);
+      }
+    };
   }, [language, isLoading]);
   
   const getDefaultRedirect = (role?: string) => {

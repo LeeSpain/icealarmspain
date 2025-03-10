@@ -30,9 +30,12 @@ const Login: React.FC = () => {
     renderCount: renderCountRef.current++
   });
   
-  // Important: Only show loading screen if we're loading AND haven't hit the timeout
+  // CRITICAL: If more than 3 renders and still loading, force the login form
+  const shouldForceLoginForm = renderCountRef.current > 3 && isLoading;
+  
+  // Important: Only show loading screen if we're loading AND haven't hit the timeout AND are not forcing login form
   // This ensures users aren't stuck in a loading state
-  if (isLoading && !authTimeout) {
+  if (isLoading && !authTimeout && !shouldForceLoginForm) {
     return <LoginLoading 
       isLoading={true} 
       isAuthenticated={isAuthenticated && !!user} 
@@ -47,7 +50,7 @@ const Login: React.FC = () => {
         <LoginContent
           handleLoginSuccess={handleLoginSuccess}
           loginInProgress={loginInProgress}
-          loginError={loginError}
+          loginError={loginError || (shouldForceLoginForm ? "Authentication service timed out. Please sign in manually." : null)}
           redirectParam={redirectParam}
           language={language}
         />
