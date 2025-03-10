@@ -3,7 +3,6 @@ import React from "react";
 import { Helmet } from "react-helmet-async";
 import { useLanguage } from "@/context/LanguageContext";
 import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
 import AboutHero from "@/components/about/AboutHero";
 import MissionVision from "@/components/about/MissionVision";
 import JourneyTimeline from "@/components/about/JourneyTimeline";
@@ -39,7 +38,7 @@ const AboutUs: React.FC = () => {
         <TeamCommunity language={language} />
       </main>
       
-      <Footer />
+      {/* Footer component is removed from here since it's already included in App.tsx */}
     </div>
   );
 };

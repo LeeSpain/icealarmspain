@@ -67,10 +67,10 @@ const JourneyTimeline: React.FC<JourneyTimelineProps> = ({ language }) => {
               <div className="order-2 md:w-1/2"></div>
             </div>
 
-            {/* 2022 - Innovation */}
+            {/* 2024 - Innovation (updated from 2022) */}
             <div className="relative z-10 flex flex-col md:flex-row items-center">
               <div className="order-2 md:order-1 md:w-1/2 p-6 md:pr-12 text-right">
-                <h3 className="text-xl font-semibold text-ice-700 mb-2 font-playfair">2022</h3>
+                <h3 className="text-xl font-semibold text-ice-700 mb-2 font-playfair">2024</h3>
                 <h4 className="text-lg font-medium mb-3">
                   {language === 'en' ? 'AI Integration' : 'Integración de IA'}
                 </h4>
