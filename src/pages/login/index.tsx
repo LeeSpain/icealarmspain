@@ -1,5 +1,5 @@
 
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import Navbar from "@/components/Navbar";
 import { LoginLoading } from "./LoginLoading";
 import { LoginContent } from "./LoginContent";
@@ -18,24 +18,28 @@ const Login: React.FC = () => {
     language
   } = useLoginPage();
   
+  // Prevent render loop with refs
+  const renderCountRef = useRef(0);
+  
   console.log("Login page rendering with state:", { 
     isLoading, 
     isAuthenticated, 
     user, 
     authTimeout,
-    loginError
+    loginError,
+    renderCount: renderCountRef.current++
   });
   
-  // Force a new render if auth timeout occurs
+  // Force a new render if auth timeout occurs but only once
   useEffect(() => {
-    // This is just to ensure the component re-renders when auth times out
+    // Just a dependency to trigger re-render, no action needed
   }, [authTimeout]);
   
   // Render loading state only if:
   // 1. We're checking authentication AND
   // 2. We haven't hit the auth timeout AND
   // 3. We're already authenticated with a user
-  if ((isLoading || (isAuthenticated && user)) && !authTimeout) {
+  if (isLoading && !authTimeout) {
     return <LoginLoading 
       isLoading={isLoading} 
       isAuthenticated={!!user} 

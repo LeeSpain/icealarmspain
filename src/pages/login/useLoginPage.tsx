@@ -17,6 +17,7 @@ export const useLoginPage = () => {
   const [authTimeout, setAuthTimeout] = useState(false);
   
   const isMounted = useRef(true);
+  const redirectAttemptsRef = useRef(0);
   
   useEffect(() => {
     return () => {
@@ -29,7 +30,8 @@ export const useLoginPage = () => {
     isAuthenticated, 
     isLoading, 
     redirectTriggered,
-    authTimeout
+    authTimeout,
+    redirectAttempts: redirectAttemptsRef.current
   });
   
   const searchParams = new URLSearchParams(location.search);
@@ -40,17 +42,24 @@ export const useLoginPage = () => {
     // Don't run any redirection if we're in an auth timeout state
     if (authTimeout) return;
     
-    console.log("Login page - Auth state check:", { isAuthenticated, user, isLoading });
-    
-    if (!isLoading) {
-      setAuthTimeout(false);
+    // Limit redirect attempts to prevent loops
+    if (redirectAttemptsRef.current > 5) {
+      console.error("Too many redirect attempts, forcing timeout");
+      if (isMounted.current) {
+        setAuthTimeout(true);
+        setLoginError("Authentication process failed. Please try signing in manually.");
+      }
+      return;
     }
+    
+    console.log("Login page - Auth state check:", { isAuthenticated, user, isLoading });
     
     if (!isLoading && isAuthenticated && user && !redirectTriggered) {
       console.log("User authenticated, preparing to redirect");
       
       if (isMounted.current) {
         setRedirectTriggered(true);
+        redirectAttemptsRef.current++;
         
         const redirectTo = redirectParam || getDefaultRedirect(user.role);
         console.log("Redirecting authenticated user to:", redirectTo);
@@ -79,7 +88,7 @@ export const useLoginPage = () => {
     window.scrollTo(0, 0);
   }, []);
   
-  // Set a timeout for auth check - reduced to 1.5 seconds for faster feedback
+  // Set a timeout for auth check - reduced to 1 second for faster feedback
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       if (isLoading && isMounted.current) {
@@ -90,7 +99,7 @@ export const useLoginPage = () => {
           : "El servicio de autenticación no responde. Por favor, intente iniciar sesión manualmente."
         );
       }
-    }, 1500);
+    }, 1000);
     
     return () => clearTimeout(timeoutId);
   }, [isLoading, language]);

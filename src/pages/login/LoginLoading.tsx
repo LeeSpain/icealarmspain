@@ -37,16 +37,16 @@ export const LoginLoading: React.FC<LoginLoadingProps> = ({
     
     checkAuth();
     
-    // Check periodically
-    const interval = setInterval(checkAuth, 1000);
-    return () => clearInterval(interval);
+    // Check only once more after a short delay
+    const timeout = setTimeout(checkAuth, 500);
+    return () => clearTimeout(timeout);
   }, []);
   
   // Show refresh button almost immediately
   useEffect(() => {
     const timer = setTimeout(() => {
       setShowRefresh(true);
-    }, 800); // Even faster display of refresh option
+    }, 500); // Even faster display of refresh option
     
     return () => clearTimeout(timer);
   }, []);
@@ -59,25 +59,21 @@ export const LoginLoading: React.FC<LoginLoadingProps> = ({
     setShowDebugInfo(!showDebugInfo);
   };
 
-  // Force client-side sign out if stuck for more than 2.5 seconds
+  // Force client-side sign out if stuck for more than 1.5 seconds
   useEffect(() => {
-    if (!isLoading || !showRefresh) return;
-    
     const timer = setTimeout(async () => {
       try {
         console.log("Authentication taking too long, forcing sign out");
         await auth.signOut();
         localStorage.removeItem('currentUser');
         localStorage.removeItem('authPersistence');
-        window.location.reload();
       } catch (error) {
         console.error("Error during emergency sign out:", error);
-        window.location.reload(); // Force reload anyway
       }
-    }, 2500);
+    }, 1500);
     
     return () => clearTimeout(timer);
-  }, [isLoading, showRefresh]);
+  }, []);
 
   return (
     <div className="flex min-h-screen items-center justify-center">
@@ -106,8 +102,8 @@ export const LoginLoading: React.FC<LoginLoadingProps> = ({
               <AlertCircle className="h-4 w-4 text-yellow-600" />
               <AlertDescription className="text-yellow-800">
                 {language === 'en' 
-                  ? 'This is taking longer than expected. You can try refreshing the page.' 
-                  : 'Esto está tomando más tiempo de lo esperado. Puede intentar actualizar la página.'}
+                  ? 'This is taking longer than expected. Please refresh the page.' 
+                  : 'Esto está tomando más tiempo de lo esperado. Por favor, actualice la página.'}
               </AlertDescription>
             </Alert>
             
