@@ -13,7 +13,7 @@ export const AuthContext = createContext<AuthContextType>({
   },
   signIn: async () => {
     throw new Error('signIn not implemented');
-    return false;
+    return {} as any;
   },
   signUp: async () => {
     throw new Error('signUp not implemented');

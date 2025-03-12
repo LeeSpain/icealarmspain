@@ -2,7 +2,7 @@
 import React from 'react';
 import { FileText, Settings, AlertTriangle } from 'lucide-react';
 
-interface PlaceholderSectionProps {
+export interface PlaceholderSectionProps {
   title: string;
   description: string;
   section?: string;
@@ -12,8 +12,16 @@ interface PlaceholderSectionProps {
 const PlaceholderSection: React.FC<PlaceholderSectionProps> = ({ 
   title, 
   description, 
+  section,
   onAction 
 }) => {
+  // Trigger an action when component loads
+  React.useEffect(() => {
+    if (onAction) {
+      onAction(`Viewed ${title} section`);
+    }
+  }, [title, onAction]);
+
   return (
     <div className="w-full h-full flex flex-col items-center justify-center p-8">
       <div className="max-w-3xl w-full bg-white rounded-lg shadow-md p-8">

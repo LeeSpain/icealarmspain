@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useLoginSubmit } from "./submit/useLoginSubmit";
@@ -35,11 +36,8 @@ export const useLoginForm = ({
     clearError 
   } = useLoadingState(externalLoading);
 
-  const { rememberMe, handleRememberMe } = useRememberMe();
-  
-  const handleRememberMeChange = (checked: boolean) => {
-    handleRememberMe(formData.email, checked);
-  };
+  // Remember Me functionality
+  const { rememberMe, handleRememberMeChange } = useRememberMe();
   
   // Development credentials
   useDevCredentials(handleChange);
@@ -66,7 +64,7 @@ export const useLoginForm = ({
   // Handle form submission
   const handleSubmit = (e: React.FormEvent) => {
     console.log("Form submission triggered");
-    submitHandler(e, formData, rememberMe, handleRememberMe, internalLoading);
+    submitHandler(e, formData, rememberMe, handleRememberMeChange, internalLoading);
   };
   
   return {

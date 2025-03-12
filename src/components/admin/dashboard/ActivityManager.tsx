@@ -1,5 +1,5 @@
 
-import React, { useCallback } from "react";
+import React from "react";
 
 export interface DashboardActivity {
   id: number;
@@ -10,25 +10,11 @@ export interface DashboardActivity {
 
 interface ActivityManagerProps {
   activities: DashboardActivity[];
-  onActivityAdded: (activities: DashboardActivity[]) => void;
+  onActivityAdded?: (type: string, description: string) => void;
 }
 
 // ActivityManager component displays recent activity and manages adding new activities
 const ActivityManager: React.FC<ActivityManagerProps> = ({ activities, onActivityAdded }) => {
-  const addActivity = useCallback((type: string, description: string) => {
-    const newActivity = {
-      id: Date.now(),
-      type,
-      description,
-      time: "Just now"
-    };
-    
-    const updatedActivities = [newActivity, ...activities.slice(0, 4)];
-    onActivityAdded(updatedActivities);
-    
-    return description;
-  }, [activities, onActivityAdded]);
-  
   // Render the recent activities list
   return (
     <div className="space-y-3 max-h-64 overflow-y-auto">
