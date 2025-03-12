@@ -31,11 +31,11 @@ export const useLoginPage = () => {
 
   // Keep the rest of the functions pure
   const determineUserRole = (email: string): string => {
-    const lowerEmail = email.toLowerCase();
+    const lowerEmail = email.toLowerCase().trim();
     
-    if (lowerEmail.includes('admin')) {
+    if (lowerEmail === 'admin@icealarm.es') {
       return 'admin';
-    } else if (lowerEmail.includes('callcenter')) {
+    } else if (lowerEmail === 'callcenter@icealarm.es') {
       return 'callcenter';
     } else {
       return 'member';
@@ -74,7 +74,8 @@ export const useLoginPage = () => {
           : 'El correo electrónico y la contraseña son obligatorios');
       }
       
-      const role = determineUserRole(email);
+      // Use exact match for determining role
+      const role = determineUserRole(email.toLowerCase().trim());
       console.log("Determined role from email:", role);
       
       const userId = `dev-${email.replace(/[^a-z0-9]/gi, '-')}`;
@@ -117,9 +118,10 @@ export const useLoginPage = () => {
         
       console.log("Redirecting to:", targetUrl);
       
+      // Use a shorter delay for the redirect
       setTimeout(() => {
         navigate(targetUrl, { replace: true });
-      }, 300);
+      }, 100);
       
     } catch (error) {
       console.error("Login error:", error);

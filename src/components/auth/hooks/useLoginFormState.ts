@@ -66,11 +66,11 @@ export const useLoginFormState = ({
     return validationErrors;
   };
 
-  // Determine user role from email
+  // Determine user role from email - using exact match
   const determineRole = (email: string): string => {
-    const lowerEmail = email.toLowerCase();
-    if (lowerEmail.includes('admin')) return 'admin';
-    if (lowerEmail.includes('callcenter')) return 'callcenter';
+    const lowerEmail = email.toLowerCase().trim();
+    if (lowerEmail === 'admin@icealarm.es') return 'admin';
+    if (lowerEmail === 'callcenter@icealarm.es') return 'callcenter';
     return 'member';
   };
   
@@ -155,7 +155,7 @@ export const useLoginFormState = ({
           const targetUrl = redirectTo || getRedirectUrl(userRole);
           console.log("LoginForm: Redirecting to", targetUrl, "role:", userRole);
           navigate(targetUrl, { replace: true });
-        }, 300);
+        }, 100);
       }
     } catch (error) {
       console.error("Login error:", error);

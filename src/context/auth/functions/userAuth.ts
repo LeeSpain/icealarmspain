@@ -14,6 +14,7 @@ export const login = async (email: string, password: string, rememberMe: boolean
   }
   
   // For development mode, we'll accept any password
+  // Using exact email matching for role determination
   const role = determineUserRole(email);
   console.log('Determined role:', role);
   

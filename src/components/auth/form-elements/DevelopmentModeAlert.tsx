@@ -16,12 +16,12 @@ export const DevelopmentModeAlert: React.FC<DevelopmentModeAlertProps> = ({ lang
       </AlertTitle>
       <AlertDescription className="text-amber-700">
         {language === 'en' 
-          ? "Use these emails to access different dashboards:" 
-          : "Use estos correos para acceder a diferentes paneles:"}
+          ? "Use these exact emails to access different dashboards:" 
+          : "Use estos correos exactos para acceder a diferentes paneles:"}
         <ul className="list-disc ml-5 mt-1 text-sm">
-          <li>admin@icealarm.es - {language === 'en' ? "Admin Dashboard" : "Panel de Administrador"}</li>
-          <li>callcenter@icealarm.es - {language === 'en' ? "Call Center Dashboard" : "Panel de Centro de Llamadas"}</li>
-          <li>user@icealarm.es - {language === 'en' ? "Member Dashboard" : "Panel de Miembro"}</li>
+          <li><strong>admin@icealarm.es</strong> - {language === 'en' ? "Admin Dashboard" : "Panel de Administrador"}</li>
+          <li><strong>callcenter@icealarm.es</strong> - {language === 'en' ? "Call Center Dashboard" : "Panel de Centro de Llamadas"}</li>
+          <li><strong>user@icealarm.es</strong> - {language === 'en' ? "Member Dashboard" : "Panel de Miembro"}</li>
         </ul>
         <p className="mt-1 text-xs">
           {language === 'en' 

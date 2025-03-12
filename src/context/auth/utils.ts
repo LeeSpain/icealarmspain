@@ -8,13 +8,13 @@ export const determineUserRole = (email: string): string => {
   // Normalize email for comparison
   const normalizedEmail = email.toLowerCase().trim();
   
-  if (normalizedEmail.includes('admin')) {
+  if (normalizedEmail === 'admin@icealarm.es') {
     return 'admin';
-  } else if (normalizedEmail.includes('callcenter')) {
+  } else if (normalizedEmail === 'callcenter@icealarm.es') {
     return 'callcenter';
-  } else if (normalizedEmail.includes('technician')) {
+  } else if (normalizedEmail === 'technician@icealarm.es') {
     return 'technician';
-  } else if (normalizedEmail.includes('support')) {
+  } else if (normalizedEmail === 'support@icealarm.es') {
     return 'support';
   } else {
     return 'member';
