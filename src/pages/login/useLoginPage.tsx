@@ -153,18 +153,6 @@ export const useLoginPage = () => {
     }
   }, [isAuthenticated, navigate]);
   
-  const devModeActive = isDevelopmentMode();
-  console.log("Login page auth status:", { 
-    userEmail: user?.email,
-    userRole: user?.role,
-    isAuthenticated, 
-    authLoading,
-    isLoading,
-    redirectTriggered,
-    loginInProgress,
-    isDevMode: devModeActive
-  });
-  
   return {
     user,
     isAuthenticated,

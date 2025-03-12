@@ -88,9 +88,7 @@ export const useLoginSubmit = ({
       }
       
       // Handle "remember me" if login was successful
-      if (rememberMe) {
-        handleRememberMe();
-      }
+      handleRememberMe();
       
       // If no external handlers are provided, perform default navigation
       if (!onSubmit && !onSuccess) {

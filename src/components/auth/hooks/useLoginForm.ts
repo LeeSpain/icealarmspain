@@ -47,7 +47,7 @@ export const useLoginForm = ({
     clearError
   } = useLoadingState({ externalLoading, externalError });
 
-  // Handle "remember me" functionality with the correct types
+  // Handle "remember me" functionality
   const { handleRememberMe } = useRememberMe((email: string) => {
     setFormData(prev => ({ ...prev, email }));
   }, setRememberMe);
@@ -70,7 +70,13 @@ export const useLoginForm = ({
 
   // Form submission handler
   const handleSubmit = (e: React.FormEvent) => {
-    submitLogin(e, formData, rememberMe, () => handleRememberMe(formData.email, rememberMe), isLoading);
+    // Fixing the type issue by creating a function that doesn't take parameters
+    // but internally calls handleRememberMe with the correct parameters
+    const rememberMeCallback = () => {
+      handleRememberMe(formData.email, rememberMe);
+    };
+    
+    submitLogin(e, formData, rememberMe, rememberMeCallback, isLoading);
   };
 
   return {
