@@ -1,7 +1,6 @@
 
 import React from "react";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Label } from "@/components/ui/label";
 
 interface RememberMeProps {
   checked: boolean;
@@ -11,31 +10,27 @@ interface RememberMeProps {
 
 export const RememberMe: React.FC<RememberMeProps> = ({ 
   checked, 
-  onChange, 
-  language 
+  onChange,
+  language
 }) => {
-  const rememberMeText = language === 'en' ? "Remember me" : "Recordarme";
-  
-  const handleChange = (checked: boolean | "indeterminate") => {
-    if (typeof checked === 'boolean') {
-      onChange(checked);
-    }
+  const handleToggle = (checked: boolean) => {
+    console.log(`Remember me toggleCheck: ${checked}`);
+    onChange(checked);
   };
   
   return (
     <div className="flex items-center space-x-2">
       <Checkbox 
-        id="rememberMe" 
+        id="remember-me" 
         checked={checked} 
-        onCheckedChange={handleChange}
-        className="data-[state=checked]:bg-ice-600 data-[state=checked]:border-ice-600"
+        onCheckedChange={handleToggle}
       />
-      <Label 
-        htmlFor="rememberMe" 
-        className="text-sm font-medium text-gray-700 dark:text-gray-300 cursor-pointer"
+      <label
+        htmlFor="remember-me"
+        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
       >
-        {rememberMeText}
-      </Label>
+        {language === 'en' ? "Remember me" : "Recordar"}
+      </label>
     </div>
   );
 };
