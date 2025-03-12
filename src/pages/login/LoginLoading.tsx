@@ -13,14 +13,14 @@ export const LoginLoading: React.FC<LoginLoadingProps> = ({
   isAuthenticated, 
   language 
 }) => {
-  // If we've been loading for too long, add a "Stuck?" message
+  // Show troubleshooting more quickly
   const [showTroubleshooting, setShowTroubleshooting] = React.useState(false);
   
   React.useEffect(() => {
-    // Show troubleshooting after 1 second of loading
+    // Show troubleshooting faster - after 500ms of loading
     const timer = setTimeout(() => {
       setShowTroubleshooting(true);
-    }, 1000);
+    }, 500);
     
     return () => clearTimeout(timer);
   }, []);
@@ -72,7 +72,9 @@ export const LoginLoading: React.FC<LoginLoadingProps> = ({
             </p>
             <button 
               onClick={() => {
-                localStorage.clear();
+                // Force dev mode before clearing storage
+                localStorage.setItem('forceDevMode', 'true');
+                localStorage.removeItem('currentUser');
                 sessionStorage.clear();
                 window.location.reload();
               }}

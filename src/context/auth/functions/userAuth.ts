@@ -65,6 +65,9 @@ export const login = async (email: string, password: string, rememberMe = false)
         localStorage.setItem('currentUser', JSON.stringify(user));
         localStorage.setItem('authPersistence', rememberMe ? 'local' : 'session');
         
+        // Force development mode to be remembered
+        localStorage.setItem('forceDevMode', 'true');
+        
         return user;
       } else {
         // In dev mode but wrong credentials

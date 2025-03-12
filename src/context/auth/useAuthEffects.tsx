@@ -1,3 +1,4 @@
+
 import { useEffect, useRef } from 'react';
 import { User } from './types';
 import { determineUserRole, isDevelopmentMode } from './utils';
@@ -39,6 +40,7 @@ export const useAuthEffects = ({ setUser, setIsLoading }: UseAuthEffectsProps) =
               
               // For development users, set loading to false immediately
               setIsLoading(false);
+              return; // Skip Firebase auth check for dev users
             } else {
               console.log('Found stored user data:', parsedUser.email);
               setUser(parsedUser);
@@ -53,6 +55,13 @@ export const useAuthEffects = ({ setUser, setIsLoading }: UseAuthEffectsProps) =
     } catch (error) {
       console.error('Error accessing localStorage:', error);
       localStorage.removeItem('currentUser');
+    }
+    
+    // If we're in development mode with no stored user, skip Firebase and end loading
+    if (isDevelopmentMode() && !localStorage.getItem('currentUser')) {
+      console.log('Development mode with no stored user, skipping Firebase auth check');
+      setIsLoading(false);
+      return;
     }
     
     // Listen for Firebase auth state changes
@@ -115,7 +124,7 @@ export const useAuthEffects = ({ setUser, setIsLoading }: UseAuthEffectsProps) =
         console.log('Authentication loading timeout reached - forcing loading to false');
         setIsLoading(false);
       }
-    }, 2000); // 2 second timeout as a fallback
+    }, 1500); // 1.5 second timeout as a fallback (reduced from 2 seconds)
 
     // Cleanup subscription and timeout
     return () => {

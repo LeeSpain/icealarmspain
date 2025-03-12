@@ -70,16 +70,24 @@ export const determineUserRole = (email: string): string => {
 
 // Helper function to check if we're in development mode
 export const isDevelopmentMode = (): boolean => {
+  // Force development mode for testing
+  const forceDevMode = localStorage.getItem('forceDevMode') === 'true';
+  if (forceDevMode) {
+    console.log('Development mode forced by localStorage setting');
+    return true;
+  }
+  
   // Check if we have the Firebase API key - if not, we're in development mode
-  const noFirebaseKey = !import.meta.env.VITE_FIREBASE_API_KEY;
+  const hasFirebaseKey = !!import.meta.env.VITE_FIREBASE_API_KEY;
   
   // More verbose logging for debugging
   console.log('Development mode check:', {
-    hasFirebaseKey: !!import.meta.env.VITE_FIREBASE_API_KEY,
-    isDevMode: noFirebaseKey
+    hasFirebaseKey,
+    isDevMode: !hasFirebaseKey,
+    envMode: import.meta.env.MODE
   });
   
-  return noFirebaseKey;
+  return !hasFirebaseKey;
 };
 
 // Function to get test credentials for testing/development

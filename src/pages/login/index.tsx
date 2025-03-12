@@ -15,7 +15,8 @@ const Login: React.FC = () => {
     loginError,
     redirectParam,
     handleLoginSuccess,
-    language
+    language,
+    forceReload
   } = useLoginPage();
   
   console.log("Login page rendering with state:", { 
@@ -34,13 +35,12 @@ const Login: React.FC = () => {
     const forceTimeout = setTimeout(() => {
       if (isLoading) {
         console.log("Login page - Forcing load state reset due to timeout");
-        // Force reload the page to reset all state
-        window.location.reload();
+        forceReload();
       }
-    }, 5000); // 5 seconds timeout
+    }, 3000); // Reduced timeout to 3 seconds
     
     return () => clearTimeout(forceTimeout);
-  }, [isLoading]);
+  }, [isLoading, forceReload]);
   
   // Show loading state when authentication is being checked
   // but NOT when login is in progress (that shows a different loading state)

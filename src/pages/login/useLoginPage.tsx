@@ -27,13 +27,28 @@ export const useLoginPage = () => {
         console.log("Setting initial loading false due to timeout");
         setIsLoading(false);
       }
-    }, 1500);
+    }, 1000); // Reduced timeout from 1500ms to 1000ms
     
     return () => {
       clearTimeout(initialAuthCheckTimeout);
       isMounted.current = false;
     };
   }, []);
+
+  // Force reload function
+  const forceReload = () => {
+    console.log("Force reloading page to reset auth state");
+    localStorage.removeItem('currentUser');
+    setIsLoading(false);
+    
+    // Optional: Add a small delay before reloading the page
+    // to allow state updates to complete
+    setTimeout(() => {
+      if (isMounted.current) {
+        window.location.reload();
+      }
+    }, 100);
+  };
 
   // Update loading state based on auth loading
   useEffect(() => {
@@ -166,6 +181,7 @@ export const useLoginPage = () => {
     loginError,
     redirectParam,
     handleLoginSuccess,
-    language
+    language,
+    forceReload
   };
 };
