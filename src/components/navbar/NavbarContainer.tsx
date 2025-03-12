@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from "react";
-import { Menu, ChevronDown } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import Logo from "@/components/Logo";
 import { Link, useLocation } from "react-router-dom";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
@@ -42,6 +42,41 @@ const NavbarContainer: React.FC = () => {
     setIsMobileMenuOpen(false);
   }, [location.pathname]);
 
+  // Skip authentication for direct dashboard access
+  const handleDirectAccess = (path: string) => {
+    // Set development mode
+    localStorage.setItem('forceDevMode', 'true');
+    
+    // Set appropriate user role based on the path
+    if (path === '/admin') {
+      localStorage.setItem('userRole', 'admin');
+    } else if (path === '/call-center') {
+      localStorage.setItem('userRole', 'callcenter');
+    } else {
+      localStorage.setItem('userRole', 'member');
+    }
+    
+    // Create a minimal user object to store
+    const devUser = {
+      uid: `dev-user-${Date.now()}`,
+      id: `dev-user-${Date.now()}`,
+      email: `dev@example.com`,
+      name: 'Dev User',
+      displayName: 'Dev User',
+      role: path === '/admin' ? 'admin' : (path === '/call-center' ? 'callcenter' : 'member'),
+      status: 'active',
+      profileCompleted: true,
+      language: 'en',
+      lastLogin: new Date().toISOString(),
+      createdAt: new Date().toISOString()
+    };
+    
+    // Store the user in localStorage
+    localStorage.setItem('currentUser', JSON.stringify(devUser));
+    
+    console.log("Direct access activated for:", path);
+  };
+
   return (
     <div className="container mx-auto px-4 md:px-6 lg:px-8">
       <div className="flex items-center justify-between h-16 md:h-20">
@@ -61,13 +96,31 @@ const NavbarContainer: React.FC = () => {
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-48 bg-white">
               <DropdownMenuItem asChild>
-                <Link to="/admin" className="w-full">Admin Dashboard</Link>
+                <Link 
+                  to="/admin" 
+                  className="w-full"
+                  onClick={() => handleDirectAccess('/admin')}
+                >
+                  Admin Dashboard
+                </Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
-                <Link to="/call-center" className="w-full">Call Center</Link>
+                <Link 
+                  to="/call-center" 
+                  className="w-full"
+                  onClick={() => handleDirectAccess('/call-center')}
+                >
+                  Call Center
+                </Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
-                <Link to="/dashboard" className="w-full">Member Dashboard</Link>
+                <Link 
+                  to="/dashboard" 
+                  className="w-full"
+                  onClick={() => handleDirectAccess('/dashboard')}
+                >
+                  Member Dashboard
+                </Link>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -84,7 +137,7 @@ const NavbarContainer: React.FC = () => {
             className="p-2 rounded-md text-gray-700"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           >
-            <Menu className="w-6 h-6" />
+            {/* Menu icon has been removed here */}
           </button>
         </div>
       </div>

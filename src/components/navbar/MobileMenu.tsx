@@ -13,6 +13,44 @@ interface MobileMenuProps {
 const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
   if (!isOpen) return null;
 
+  // Skip authentication for direct dashboard access
+  const handleDirectAccess = (path: string, onClose: () => void) => {
+    // Set development mode
+    localStorage.setItem('forceDevMode', 'true');
+    
+    // Set appropriate user role based on the path
+    if (path === '/admin') {
+      localStorage.setItem('userRole', 'admin');
+    } else if (path === '/call-center') {
+      localStorage.setItem('userRole', 'callcenter');
+    } else {
+      localStorage.setItem('userRole', 'member');
+    }
+    
+    // Create a minimal user object to store
+    const devUser = {
+      uid: `dev-user-${Date.now()}`,
+      id: `dev-user-${Date.now()}`,
+      email: `dev@example.com`,
+      name: 'Dev User',
+      displayName: 'Dev User',
+      role: path === '/admin' ? 'admin' : (path === '/call-center' ? 'callcenter' : 'member'),
+      status: 'active',
+      profileCompleted: true,
+      language: 'en',
+      lastLogin: new Date().toISOString(),
+      createdAt: new Date().toISOString()
+    };
+    
+    // Store the user in localStorage
+    localStorage.setItem('currentUser', JSON.stringify(devUser));
+    
+    console.log("Direct access activated for:", path);
+    
+    // Close the menu
+    onClose();
+  };
+
   return (
     <div className="fixed inset-0 z-50 bg-white md:hidden">
       <div className="pt-20 pb-6 px-4 space-y-6">
@@ -24,21 +62,21 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
           <div className="space-y-2">
             <Link 
               to="/admin" 
-              onClick={onClose}
+              onClick={() => handleDirectAccess('/admin', onClose)}
               className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md"
             >
               Admin Dashboard
             </Link>
             <Link 
               to="/call-center" 
-              onClick={onClose}
+              onClick={() => handleDirectAccess('/call-center', onClose)}
               className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md"
             >
               Call Center
             </Link>
             <Link 
               to="/dashboard" 
-              onClick={onClose}
+              onClick={() => handleDirectAccess('/dashboard', onClose)}
               className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md"
             >
               Member Dashboard
