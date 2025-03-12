@@ -20,7 +20,7 @@ const clearAuthData = () => {
 // Login function
 export const login = async (email: string, password: string, rememberMe = false): Promise<User> => {
   try {
-    console.log('Starting login process for:', email);
+    console.log('Starting login process for:', email, 'Development mode:', isDevelopmentMode());
     
     // First, ensure we clear any existing auth state to prevent conflicts
     clearAuthData();
@@ -29,7 +29,7 @@ export const login = async (email: string, password: string, rememberMe = false)
     const isDevMode = isDevelopmentMode();
     
     if (isDevMode) {
-      console.log('Development mode detected, checking for test credentials');
+      console.log('Development mode active, checking for test credentials');
       
       // Normalize the email for comparison
       const normalizedEmail = email.toLowerCase().trim();
@@ -40,7 +40,7 @@ export const login = async (email: string, password: string, rememberMe = false)
            normalizedEmail === 'user@example.com') && 
           password === 'password123') {
         
-        console.log('Using development login bypass for:', normalizedEmail);
+        console.log('Development login successful for:', normalizedEmail);
         
         // Create user object for development mode with a consistent ID
         const role = determineUserRole(normalizedEmail);
@@ -59,24 +59,23 @@ export const login = async (email: string, password: string, rememberMe = false)
           createdAt: new Date().toISOString()
         };
         
-        console.log('Development login successful with role:', role);
+        console.log('Development user created with role:', role);
         
         // Store user data
         localStorage.setItem('currentUser', JSON.stringify(user));
         localStorage.setItem('authPersistence', rememberMe ? 'local' : 'session');
         
         return user;
-      } else if (isDevMode) {
+      } else {
         // In dev mode but wrong credentials
         console.error('Invalid development credentials');
         throw new Error('Invalid email or password. In development mode, use admin@icealarm.es/password123');
       }
     }
     
-    // If we get here, it means either:
-    // 1. We're not in dev mode
-    // 2. We're in dev mode but using credentials that don't match our test accounts
-    throw new Error('Invalid email or password. In development mode, use admin@icealarm.es/password123');
+    // If we're here, it means we're not in dev mode - add Firebase auth here if needed
+    console.error('Firebase authentication not implemented for production');
+    throw new Error('Please use development mode credentials or configure Firebase authentication');
   } catch (error: any) {
     console.error('Login process error:', error);
     let errorMessage = 'Unknown authentication error';

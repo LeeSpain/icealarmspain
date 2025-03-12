@@ -17,10 +17,10 @@ export const LoginLoading: React.FC<LoginLoadingProps> = ({
   const [showTroubleshooting, setShowTroubleshooting] = React.useState(false);
   
   React.useEffect(() => {
-    // Show troubleshooting after 2 seconds of loading
+    // Show troubleshooting after 1 second of loading
     const timer = setTimeout(() => {
       setShowTroubleshooting(true);
-    }, 2000);
+    }, 1000);
     
     return () => clearTimeout(timer);
   }, []);
@@ -47,31 +47,38 @@ export const LoginLoading: React.FC<LoginLoadingProps> = ({
             </p>
             <p className="text-sm text-gray-600 mb-3">
               {language === 'en' 
-                ? 'Use these test credentials:' 
-                : 'Use estas credenciales de prueba:'}
+                ? 'Use one of these test credentials:' 
+                : 'Use una de estas credenciales de prueba:'}
             </p>
-            <div className="font-mono bg-gray-100 p-3 rounded text-sm">
+            <div className="font-mono bg-gray-100 p-3 rounded text-sm mb-3">
+              <p className="font-semibold text-ice-700">Admin Dashboard:</p>
               <p><strong>Email:</strong> admin@icealarm.es</p>
               <p><strong>Password:</strong> password123</p>
             </div>
-            <div className="mt-3 font-mono bg-gray-100 p-3 rounded text-sm">
+            <div className="font-mono bg-gray-100 p-3 rounded text-sm mb-3">
+              <p className="font-semibold text-ice-700">Call Center Dashboard:</p>
               <p><strong>Email:</strong> callcenter@icealarm.es</p>
               <p><strong>Password:</strong> password123</p>
             </div>
-            <div className="mt-3 font-mono bg-gray-100 p-3 rounded text-sm">
+            <div className="font-mono bg-gray-100 p-3 rounded text-sm mb-3">
+              <p className="font-semibold text-ice-700">Member Dashboard:</p>
               <p><strong>Email:</strong> user@example.com</p>
               <p><strong>Password:</strong> password123</p>
             </div>
             <p className="text-xs text-gray-500 mt-2">
               {language === 'en'
-                ? 'If login fails, try clearing your browser storage and refreshing.'
-                : 'Si el inicio de sesión falla, intente limpiar el almacenamiento del navegador y actualizar.'}
+                ? 'If login fails, try clearing your browser storage and refreshing the page.'
+                : 'Si el inicio de sesión falla, intente limpiar el almacenamiento del navegador y actualizar la página.'}
             </p>
             <button 
-              onClick={() => window.location.reload()}
+              onClick={() => {
+                localStorage.clear();
+                sessionStorage.clear();
+                window.location.reload();
+              }}
               className="mt-4 px-4 py-2 text-sm bg-ice-100 text-ice-700 rounded hover:bg-ice-200 transition-colors"
             >
-              {language === 'en' ? 'Refresh Page' : 'Actualizar Página'}
+              {language === 'en' ? 'Clear Storage & Refresh' : 'Limpiar Almacenamiento y Actualizar'}
             </button>
           </div>
         )}

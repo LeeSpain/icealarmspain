@@ -4,6 +4,7 @@ import Navbar from "@/components/Navbar";
 import { LoginLoading } from "./LoginLoading";
 import { LoginContent } from "./LoginContent";
 import { useLoginPage } from "./useLoginPage";
+import { isDevelopmentMode } from "@/context/auth/utils";
 
 const Login: React.FC = () => {
   const { 
@@ -23,8 +24,8 @@ const Login: React.FC = () => {
     user, 
     loginError,
     loginInProgress,
-    process: process.env.NODE_ENV,
-    devMode: !import.meta.env.VITE_FIREBASE_API_KEY
+    isDevelopment: isDevelopmentMode(),
+    hasUser: !!localStorage.getItem('currentUser'),
   });
   
   // Reset auth state if stuck in a strange state
@@ -36,7 +37,7 @@ const Login: React.FC = () => {
         // Force reload the page to reset all state
         window.location.reload();
       }
-    }, 5000); // 5 seconds timeout (reduced from 8)
+    }, 5000); // 5 seconds timeout
     
     return () => clearTimeout(forceTimeout);
   }, [isLoading]);

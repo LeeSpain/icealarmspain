@@ -27,7 +27,7 @@ export const useLoginPage = () => {
         console.log("Setting initial loading false due to timeout");
         setIsLoading(false);
       }
-    }, 2000);
+    }, 1500);
     
     return () => {
       clearTimeout(initialAuthCheckTimeout);
@@ -45,7 +45,8 @@ export const useLoginPage = () => {
   }, [authLoading]);
   
   console.log("Login page auth status:", { 
-    user, 
+    userEmail: user?.email,
+    userRole: user?.role,
     isAuthenticated, 
     authLoading,
     isLoading,
@@ -63,15 +64,16 @@ export const useLoginPage = () => {
     
     console.log("Login page - Auth state check:", { 
       isAuthenticated, 
-      user, 
+      userEmail: user?.email,
+      userRole: user?.role,
       authLoading, 
       isLoading,
       loginInProgress,
       redirectTriggered
     });
     
-    // Only proceed if loading is complete, we're authenticated, and haven't redirected yet
-    if (!authLoading && isAuthenticated && user && !redirectTriggered) {
+    // Only proceed if we're authenticated and haven't redirected yet
+    if (isAuthenticated && user && !redirectTriggered) {
       console.log("User authenticated, preparing to redirect");
       
       setRedirectTriggered(true);
@@ -96,7 +98,7 @@ export const useLoginPage = () => {
         }
       }, 100);
     }
-  }, [isAuthenticated, authLoading, loginInProgress, user, navigate, redirectParam, redirectTriggered, language, toast]);
+  }, [isAuthenticated, authLoading, user, navigate, redirectParam, redirectTriggered, language, toast]);
   
   const getDefaultRedirect = (role?: string) => {
     console.log("Determining redirect for role:", role);
@@ -159,7 +161,7 @@ export const useLoginPage = () => {
   return {
     user,
     isAuthenticated,
-    isLoading: isLoading || authLoading, // Don't include loginInProgress here
+    isLoading: isLoading || authLoading, 
     loginInProgress,
     loginError,
     redirectParam,

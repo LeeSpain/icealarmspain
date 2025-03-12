@@ -22,7 +22,7 @@ export const determineUserRole = (email: string): string => {
     return 'member';
   }
   
-  // Legacy test accounts - kept for backward compatibility
+  // Test accounts - highest priority for development mode
   else if (email === 'admin@icealarm.es' || 
            email === 'admin@example.com') {
     console.log('Assigning admin role to', email);
@@ -70,17 +70,16 @@ export const determineUserRole = (email: string): string => {
 
 // Helper function to check if we're in development mode
 export const isDevelopmentMode = (): boolean => {
-  // Check both process.env.NODE_ENV and the Vite environment variable
-  const isDevEnv = process.env.NODE_ENV === 'development';
+  // Check if we have the Firebase API key - if not, we're in development mode
   const noFirebaseKey = !import.meta.env.VITE_FIREBASE_API_KEY;
   
-  console.log('Environment check:', {
-    processEnv: process.env.NODE_ENV,
+  // More verbose logging for debugging
+  console.log('Development mode check:', {
     hasFirebaseKey: !!import.meta.env.VITE_FIREBASE_API_KEY,
-    isDevMode: isDevEnv || noFirebaseKey
+    isDevMode: noFirebaseKey
   });
   
-  return isDevEnv || noFirebaseKey;
+  return noFirebaseKey;
 };
 
 // Function to get test credentials for testing/development
