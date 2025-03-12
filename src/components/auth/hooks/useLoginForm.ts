@@ -70,6 +70,9 @@ export const useLoginForm = ({
 
   // Form submission handler
   const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault(); // Ensure we prevent default form submission
+    console.log("Form submission initiated with:", formData);
+    
     // Create a callback function to handle the remember me functionality
     const rememberMeCallback = () => {
       if (rememberMe) {
