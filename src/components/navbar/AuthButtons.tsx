@@ -49,11 +49,8 @@ const AuthButtons: React.FC<AuthButtonsProps> = ({ isMobile = false, onClose }) 
       // Close mobile menu if open
       if (onClose) onClose();
       
-      // Short delay to allow toast to display before navigation
-      setTimeout(() => {
-        // Use window.location.href for a hard reset of the application state
-        window.location.href = '/';
-      }, 300);
+      // Use a hard reload to completely reset the application state
+      window.location.href = '/';
     } catch (error) {
       console.error("Error during logout:", error);
       toast({

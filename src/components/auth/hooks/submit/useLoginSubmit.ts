@@ -90,7 +90,7 @@ export const useLoginSubmit = ({
             : `Bienvenido de nuevo, ${userData.displayName || userData.email?.split('@')[0] || 'Usuario'}!`,
         });
         
-        // Simplified redirect logic with absolute paths
+        // FIX: Improved path handling for admin dashboard
         let targetUrl = "/dashboard";
         
         if (userData.role === 'admin') {
@@ -111,11 +111,8 @@ export const useLoginSubmit = ({
         
         console.log("Final redirect target:", targetUrl);
         
-        // Use a slight delay to ensure toast is visible before redirect
-        setTimeout(() => {
-          // Use window.location for a hard browser navigation to reset state completely
-          window.location.href = targetUrl;
-        }, 300);
+        // FIX: Force a complete page reload to ensure proper state
+        window.location.href = targetUrl;
       }
     } catch (error) {
       console.error("Login error:", error);
