@@ -1,4 +1,3 @@
-
 import React from "react";
 
 // Admin components
@@ -25,39 +24,16 @@ const AdminDashboard: React.FC = () => {
     addActivity
   } = useAdminDashboard();
 
-  // Add debugging for blank page troubleshooting
-  console.log("AdminDashboard rendering", {
-    user,
-    isAuthenticated,
-    isLoading,
-    activeSection,
-    dashboardData
-  });
-
   if (isLoading) {
     return <AdminDashboardLoading />;
   }
 
-  // Force rendering of dashboard even without authentication in dev mode
   const isDevelopment = localStorage.getItem('forceDevMode') === 'true';
   const hasStoredRole = localStorage.getItem('userRole') === 'admin';
   
   if (!isDevelopment && (!isAuthenticated || !user || user.role !== 'admin')) {
     return <DashboardRedirectingState language={language} />;
   }
-
-  // Handle navigation requested by AI
-  const handleAINavigation = (section: string, params?: any) => {
-    handleSectionChange(section);
-    
-    // Add activity for this navigation
-    addActivity(
-      "System", 
-      language === 'en' 
-        ? `AI Assistant navigated to ${section}` 
-        : `Asistente de IA navegó a ${section}`
-    );
-  };
 
   return (
     <div className="flex h-screen bg-ice-50/30">
@@ -79,10 +55,9 @@ const AdminDashboard: React.FC = () => {
         </div>
       </div>
       
-      {/* AI Assistant Integration */}
       <AdminAIIntegration 
         activeSection={activeSection}
-        onNavigate={handleAINavigation}
+        onNavigate={handleSectionChange}
       />
     </div>
   );
