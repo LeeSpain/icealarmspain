@@ -23,7 +23,7 @@ export const EmailSection: React.FC<EmailSectionProps> = ({
   return (
     <AuthInput
       id="email"
-      name={emailLabel}
+      name="email"
       type="email"
       value={value}
       onChange={onChange}

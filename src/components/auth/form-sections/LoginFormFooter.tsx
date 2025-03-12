@@ -7,15 +7,13 @@ interface LoginFormFooterProps {
   onRememberMeChange: () => void;
   isLoading: boolean;
   language: string;
-  onSubmit?: (e: React.FormEvent) => void;
 }
 
 export const LoginFormFooter: React.FC<LoginFormFooterProps> = ({
   rememberMe,
   onRememberMeChange,
   isLoading,
-  language,
-  onSubmit
+  language
 }) => {
   return (
     <div className="space-y-6">

@@ -42,7 +42,7 @@ const AuthInput: React.FC<AuthInputProps> = ({
         </div>
         <input
           id={id}
-          name={id} // Fixed: Now using the id prop directly as the name
+          name={id} // Using id as name
           type={type}
           autoComplete={autoComplete}
           value={value}

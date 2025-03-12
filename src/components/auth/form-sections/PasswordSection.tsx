@@ -17,12 +17,10 @@ export const PasswordSection: React.FC<PasswordSectionProps> = ({
   errorMessage,
   language
 }) => {
-  const passwordLabel = language === 'en' ? "Password" : "Contraseña";
-  
   return (
     <PasswordInput
       id="password"
-      name={passwordLabel}
+      name="password"
       value={value}
       onChange={onChange}
       placeholder={language === 'en' ? "••••••••" : "••••••••"}
