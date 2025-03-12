@@ -45,11 +45,17 @@ const LoginForm: React.FC<LoginFormProps> = ({
   // Check if using development mode
   const isDevelopmentMode = !import.meta.env.VITE_FIREBASE_API_KEY;
 
+  const onFormSubmit = (e: React.FormEvent) => {
+    console.log("Form submit event triggered");
+    // Call the handleSubmit from useLoginForm
+    handleSubmit(e);
+  };
+
   return (
     <div className="w-full max-w-md mx-auto">
       {isDevelopmentMode && <DevelopmentModeAlert language={language} />}
 
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form onSubmit={onFormSubmit} className="space-y-6">
         {/* Display general error message if present */}
         <LoginError error={internalError} />
         

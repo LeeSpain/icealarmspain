@@ -77,11 +77,28 @@ export const useLoginPage = () => {
       const user = await login(email, password, rememberMe);
       console.log("Login successful with role:", user.role);
       
+      // Show success toast immediately
+      toast({
+        title: language === 'en' ? "Login Successful" : "Inicio de sesión exitoso",
+        description: language === 'en' 
+          ? `Welcome, ${user.displayName || user.email?.split('@')[0] || 'User'}!` 
+          : `Bienvenido, ${user.displayName || user.email?.split('@')[0] || 'Usuario'}!`,
+        duration: 3000
+      });
+      
       // Set a flag in sessionStorage to indicate we need to redirect
       sessionStorage.setItem('shouldRedirect', 'true');
       sessionStorage.setItem('redirectTo', redirectParam || getDefaultRedirect(user.role));
       
-      // Navigation will be handled by the useEffect above
+      // Force a redirect immediately
+      const redirectTo = redirectParam || getDefaultRedirect(user.role);
+      console.log("Immediately redirecting to:", redirectTo);
+      
+      // Wait a moment to ensure state updates are completed
+      setTimeout(() => {
+        navigate(redirectTo, { replace: true });
+      }, 100);
+      
     } catch (error) {
       console.error("Login error:", error);
       

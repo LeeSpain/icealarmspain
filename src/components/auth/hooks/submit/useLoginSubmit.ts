@@ -64,6 +64,7 @@ export const useLoginSubmit = ({
 
     if (Object.keys(errors).length > 0) {
       setErrors(errors);
+      console.log("Validation errors:", errors);
       return;
     }
 
@@ -74,7 +75,7 @@ export const useLoginSubmit = ({
     setSubmitAttempted(true);
 
     try {
-      console.log("Login form submitted with:", { email, password, rememberMe });
+      console.log("Login form validated, attempting submission with:", { email, password, rememberMe });
 
       // Use external onSubmit handler if provided
       if (onSubmit) {
