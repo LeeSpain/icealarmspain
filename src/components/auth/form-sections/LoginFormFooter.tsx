@@ -32,11 +32,12 @@ export const LoginFormFooter: React.FC<LoginFormFooterProps> = ({
           </label>
         </div>
         
-        <div className="text-sm">
-          <Link to="/forgot-password" className="font-medium text-ice-600 hover:text-ice-500">
-            {language === 'en' ? "Forgot your password?" : "¿Olvidaste tu contraseña?"}
-          </Link>
-        </div>
+        <Link 
+          to="/forgot-password" 
+          className="text-sm font-medium text-ice-600 hover:text-ice-500"
+        >
+          {language === 'en' ? "Forgot your password?" : "¿Olvidaste tu contraseña?"}
+        </Link>
       </div>
       
       <div>
@@ -62,7 +63,10 @@ export const LoginFormFooter: React.FC<LoginFormFooterProps> = ({
       <div className="text-center text-sm">
         <p>
           {language === 'en' ? "Don't have an account?" : "¿No tienes una cuenta?"}{" "}
-          <Link to="/join" className="font-medium text-ice-600 hover:text-ice-500">
+          <Link 
+            to="/join" 
+            className="font-medium text-ice-600 hover:text-ice-500"
+          >
             {language === 'en' ? "Sign up here" : "Regístrate aquí"}
           </Link>
         </p>

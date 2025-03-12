@@ -153,12 +153,12 @@ const AuthButtons: React.FC<AuthButtonsProps> = ({ isMobile = false, onClose }) 
   return isMobile ? (
     // Mobile view for unauthenticated users
     <>
-      <Link to="/login" onClick={onClose}>
+      <Link to="/login" onClick={onClose} className="w-full">
         <ButtonCustom variant="outline" size="sm" className="w-full">
           {loginText}
         </ButtonCustom>
       </Link>
-      <Link to="/join" onClick={onClose}>
+      <Link to="/join" onClick={onClose} className="w-full">
         <ButtonCustom className="w-full">
           {signupText}
         </ButtonCustom>
@@ -166,18 +166,18 @@ const AuthButtons: React.FC<AuthButtonsProps> = ({ isMobile = false, onClose }) 
     </>
   ) : (
     // Desktop view for unauthenticated users
-    <>
-      <Link to="/login">
+    <div className="flex items-center gap-2">
+      <Link to="/login" className="w-full">
         <ButtonCustom variant="ghost" size="sm">
           {loginText}
         </ButtonCustom>
       </Link>
-      <Link to="/join">
+      <Link to="/join" className="w-full">
         <ButtonCustom>
           {signupText}
         </ButtonCustom>
       </Link>
-    </>
+    </div>
   );
 };
 
