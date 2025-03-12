@@ -1,27 +1,15 @@
 
 import { useEffect } from "react";
-import { isDevelopmentMode, getTestCredentials } from "@/context/auth/utils";
-
-interface LoginFormData {
-  email: string;
-  password: string;
-}
 
 export const useDevCredentials = (
-  formData: LoginFormData,
-  setFormData: (data: (prev: LoginFormData) => LoginFormData) => void
+  handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void
 ) => {
-  // Initialize with test credentials in development mode
+  // Pre-fill dev credentials on load if in development mode
   useEffect(() => {
-    const isDevMode = isDevelopmentMode();
-    if (isDevMode && !formData.email) {
-      const testCreds = getTestCredentials().admin;
-      setFormData(prev => ({ 
-        ...prev, 
-        email: testCreds.email, 
-        password: testCreds.password 
-      }));
-      console.log('Development mode detected, pre-filling admin test credentials');
+    if (localStorage.getItem('forceDevMode') === 'true') {
+      // Fill with dev credentials
+      handleChange({ target: { name: 'email', value: 'admin@icealarm.es' } } as React.ChangeEvent<HTMLInputElement>);
+      handleChange({ target: { name: 'password', value: 'password123' } } as React.ChangeEvent<HTMLInputElement>);
     }
-  }, [formData.email, setFormData]);
+  }, [handleChange]);
 };

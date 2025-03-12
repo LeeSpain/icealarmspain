@@ -1,88 +1,132 @@
 
 import { User } from '../types';
 import { determineUserRole } from '../utils';
-import { auth } from '../../../services/firebase/auth';
-import { 
-  getFirestore, 
-  collection, 
-  doc, 
-  setDoc, 
-  getDoc, 
-  getDocs,
-  updateDoc,
-  deleteDoc,
-  query,
-  where
-} from 'firebase/firestore';
-import { initializeApp } from 'firebase/app';
-import { getFirebaseConfig } from '../../../services/firebase/config';
 
-// Initialize Firebase Admin capabilities
-const app = initializeApp(getFirebaseConfig());
-const db = getFirestore(app);
-const usersCollection = collection(db, 'users');
+// Admin functions
 
-// Get all users function (admin only)
+// Create a new user (admin only)
+export const createUser = async (email: string, password: string, userData: any): Promise<User> => {
+  // This is a mock implementation for development
+  
+  // Check if the current user is an admin
+  const storedUser = localStorage.getItem('currentUser');
+  if (!storedUser) {
+    throw new Error('Not authenticated');
+  }
+  
+  const currentUser = JSON.parse(storedUser);
+  if (currentUser.role !== 'admin') {
+    throw new Error('Not authorized. Admin access required.');
+  }
+  
+  // Create a new user
+  const role = userData.role || determineUserRole(email);
+  const devUserId = `dev-${email.replace(/[^a-z0-9]/gi, '-')}`;
+  
+  const user: User = {
+    uid: devUserId,
+    id: devUserId,
+    email: email,
+    name: userData?.displayName || email.split('@')[0],
+    displayName: userData?.displayName || email.split('@')[0],
+    role,
+    profileCompleted: !!userData?.displayName,
+    language: userData?.language || 'en',
+    lastLogin: new Date().toISOString(),
+    createdAt: new Date().toISOString()
+  };
+  
+  // In a real implementation, this would save to a database
+  console.log('New user created by admin:', user);
+  
+  return user;
+};
+
+// Get all users (admin only)
 export const getAllUsers = async (): Promise<User[]> => {
-  try {
-    console.log('Fetching all users');
-    
-    // For Firebase, we'd need to use a custom collection to store user metadata
-    // This is just a basic implementation - in a real app, you'd need to sync this with auth users
-    const snapshot = await getDocs(usersCollection);
-    
-    const users: User[] = [];
-    snapshot.forEach(doc => {
-      const userData = doc.data();
-      users.push({
-        uid: doc.id,
-        id: doc.id,
-        email: userData.email,
-        name: userData.name || userData.email?.split('@')[0],
-        displayName: userData.displayName || userData.email?.split('@')[0],
-        role: userData.role || determineUserRole(userData.email || ''),
-        profileCompleted: !!userData.displayName,
-        language: userData.language || 'en',
-        lastLogin: userData.lastLogin,
-        createdAt: userData.createdAt,
-      });
-    });
-    
-    return users;
-  } catch (error) {
-    console.error('Get all users error:', error);
-    throw error;
+  // This is a mock implementation for development
+  
+  // Check if the current user is an admin
+  const storedUser = localStorage.getItem('currentUser');
+  if (!storedUser) {
+    throw new Error('Not authenticated');
   }
+  
+  const currentUser = JSON.parse(storedUser);
+  if (currentUser.role !== 'admin') {
+    throw new Error('Not authorized. Admin access required.');
+  }
+  
+  // Return mock users
+  return [
+    {
+      uid: 'dev-admin-1',
+      id: 'dev-admin-1',
+      email: 'admin@icealarm.es',
+      name: 'Admin User',
+      displayName: 'Admin User',
+      role: 'admin',
+      profileCompleted: true,
+      lastLogin: new Date().toISOString(),
+      createdAt: new Date().toISOString()
+    },
+    {
+      uid: 'dev-callcenter-1',
+      id: 'dev-callcenter-1',
+      email: 'callcenter@icealarm.es',
+      name: 'Call Center Agent',
+      displayName: 'Call Center Agent',
+      role: 'callcenter',
+      profileCompleted: true,
+      lastLogin: new Date().toISOString(),
+      createdAt: new Date().toISOString()
+    },
+    {
+      uid: 'dev-member-1',
+      id: 'dev-member-1',
+      email: 'user@example.com',
+      name: 'Regular User',
+      displayName: 'Regular User',
+      role: 'member',
+      profileCompleted: true,
+      lastLogin: new Date().toISOString(),
+      createdAt: new Date().toISOString()
+    }
+  ];
 };
 
-// Update user role function (admin only)
-export const updateUserRole = async (userId: string, newRole: string): Promise<void> => {
-  try {
-    console.log(`Updating user ${userId} role to ${newRole}`);
-    
-    const userRef = doc(usersCollection, userId);
-    await updateDoc(userRef, { role: newRole });
-    
-    console.log(`User ${userId} role updated to ${newRole}`);
-  } catch (error) {
-    console.error('Update role error:', error);
-    throw error;
+// Update user role (admin only)
+export const updateUserRole = async (userId: string, role: string): Promise<void> => {
+  // This is a mock implementation for development
+  
+  // Check if the current user is an admin
+  const storedUser = localStorage.getItem('currentUser');
+  if (!storedUser) {
+    throw new Error('Not authenticated');
   }
+  
+  const currentUser = JSON.parse(storedUser);
+  if (currentUser.role !== 'admin') {
+    throw new Error('Not authorized. Admin access required.');
+  }
+  
+  console.log(`User role updated: ${userId} to ${role}`);
 };
 
-// Delete user function (admin only)
+// Delete user (admin only)
 export const deleteUser = async (userId: string): Promise<void> => {
-  try {
-    console.log('Deleting user:', userId);
-    
-    // Note: In a real app, you would need to use Firebase Admin SDK
-    // to delete the actual auth user. This just removes the metadata.
-    const userRef = doc(usersCollection, userId);
-    await deleteDoc(userRef);
-    
-    console.log('User deleted:', userId);
-  } catch (error) {
-    console.error('Delete user error:', error);
-    throw error;
+  // This is a mock implementation for development
+  
+  // Check if the current user is an admin
+  const storedUser = localStorage.getItem('currentUser');
+  if (!storedUser) {
+    throw new Error('Not authenticated');
   }
+  
+  const currentUser = JSON.parse(storedUser);
+  if (currentUser.role !== 'admin') {
+    throw new Error('Not authorized. Admin access required.');
+  }
+  
+  console.log(`User deleted: ${userId}`);
 };

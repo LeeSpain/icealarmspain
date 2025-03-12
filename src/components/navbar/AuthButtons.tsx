@@ -51,8 +51,8 @@ const AuthButtons: React.FC<AuthButtonsProps> = ({ isMobile = false, onClose }) 
       // Close mobile menu if open
       if (onClose) onClose();
       
-      // Navigate to home page
-      navigate('/', { replace: true });
+      // Force a complete page reload to clear any memory state
+      window.location.href = '/';
     } catch (error) {
       console.error("Error during logout:", error);
       toast({
@@ -62,7 +62,7 @@ const AuthButtons: React.FC<AuthButtonsProps> = ({ isMobile = false, onClose }) 
       });
       
       // Force navigation to home page even on error
-      navigate('/', { replace: true });
+      window.location.href = '/';
     } finally {
       setLogoutInProgress(false);
     }

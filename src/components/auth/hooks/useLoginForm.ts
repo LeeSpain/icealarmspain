@@ -4,6 +4,8 @@ import { useNavigate } from "react-router-dom";
 import { useLoginSubmit } from "./submit/useLoginSubmit";
 import { useFormState } from "./form-state/useFormState";
 import { useLoadingState } from "./loading-state/useLoadingState";
+import { useRememberMe } from "./persistence/useRememberMe";
+import { useDevCredentials } from "./dev-mode/useDevCredentials";
 
 interface UseLoginFormProps {
   externalLoading?: boolean;
@@ -22,45 +24,34 @@ export const useLoginForm = ({
 }: UseLoginFormProps) => {
   const navigate = useNavigate();
   const [internalError, setInternalError] = useState<string | null>(null);
-  const [rememberMe, setRememberMe] = useState(false);
   
   // Form state management
   const { formData, errors, setErrors, handleChange } = useFormState();
   
   // Loading state management
-  const { isLoading: internalLoading, setInternalLoading } = useLoadingState();
+  const { 
+    isLoading, 
+    internalLoading, 
+    setInternalLoading, 
+    clearError 
+  } = useLoadingState(externalLoading);
   
-  // Setup remember me functionality
-  useEffect(() => {
-    const savedEmail = localStorage.getItem('rememberedEmail');
-    if (savedEmail) {
-      handleChange({ target: { name: 'email', value: savedEmail } } as React.ChangeEvent<HTMLInputElement>);
-      setRememberMe(true);
-    }
-  }, []);
-
-  // Handle remember me changes
-  const handleRememberMeChange = (checked: boolean) => {
-    setRememberMe(checked);
-  };
-
-  // Save email for next login if rememberMe is checked
-  const handleRememberMe = () => {
-    if (rememberMe) {
-      localStorage.setItem('rememberedEmail', formData.email);
-    } else {
-      localStorage.removeItem('rememberedEmail');
-    }
-  };
+  // Remember me functionality
+  const { 
+    rememberMe, 
+    handleRememberMeChange, 
+    handleRememberMe 
+  } = useRememberMe(formData, handleChange);
   
-  // Pre-fill dev credentials on load if in development mode
+  // Development credentials
+  useDevCredentials(handleChange);
+  
+  // Handle external error changes
   useEffect(() => {
-    if (localStorage.getItem('forceDevMode') === 'true') {
-      // Fill with dev credentials
-      handleChange({ target: { name: 'email', value: 'admin@icealarm.es' } } as React.ChangeEvent<HTMLInputElement>);
-      handleChange({ target: { name: 'password', value: 'password123' } } as React.ChangeEvent<HTMLInputElement>);
+    if (externalError) {
+      setInternalError(externalError);
     }
-  }, []);
+  }, [externalError]);
   
   // Form submission handling
   const { handleSubmit: submitHandler, submitAttempted } = useLoginSubmit({
@@ -79,19 +70,6 @@ export const useLoginForm = ({
     console.log("Form submission triggered");
     submitHandler(e, formData, rememberMe, handleRememberMe, internalLoading);
   };
-  
-  // Handle external error changes
-  useEffect(() => {
-    if (externalError) {
-      setInternalError(externalError);
-    }
-  }, [externalError]);
-
-  // Force dev mode for testing
-  useEffect(() => {
-    localStorage.setItem('forceDevMode', 'true');
-    console.log("Dev mode forced in useLoginForm");
-  }, []);
   
   return {
     formData,

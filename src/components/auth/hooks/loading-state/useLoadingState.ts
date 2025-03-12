@@ -1,5 +1,6 @@
 
 import { useState } from "react";
+import { UseLoadingStateProps } from "@/context/auth/types";
 
 export const useLoadingState = (externalLoading?: boolean) => {
   const [internalLoading, setInternalLoading] = useState(false);

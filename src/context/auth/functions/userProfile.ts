@@ -1,21 +1,29 @@
 
-import { auth, updateProfile } from '../../../services/firebase/auth';
+// User profile functions
 
-// Update user profile function
+// Update user profile
 export const updateUserProfile = async (displayName: string): Promise<void> => {
   try {
-    const currentUser = auth.currentUser;
-    if (!currentUser) {
-      throw new Error('No authenticated user found');
+    // Get the current user from localStorage
+    const storedUser = localStorage.getItem('currentUser');
+    if (storedUser) {
+      // Parse the user data
+      const user = JSON.parse(storedUser);
+      
+      // Update the display name
+      user.displayName = displayName;
+      user.name = displayName;
+      user.profileCompleted = true;
+      
+      // Save the updated user data back to localStorage
+      localStorage.setItem('currentUser', JSON.stringify(user));
+      
+      console.log('User profile updated successfully');
+    } else {
+      throw new Error('No user found in localStorage');
     }
-    
-    await updateProfile(currentUser, { 
-      displayName 
-    });
-    
-    console.log('User profile updated:', displayName);
   } catch (error) {
-    console.error('Update profile error:', error);
+    console.error('Error updating user profile:', error);
     throw error;
   }
 };

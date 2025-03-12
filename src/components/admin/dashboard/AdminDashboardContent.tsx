@@ -10,6 +10,13 @@ const AdminDashboardContent: React.FC<AdminDashboardContentProps> = ({
   dashboardData,
   addActivity
 }) => {
+  // Handler for actions from sub-components
+  const handleAction = (action: string) => {
+    if (addActivity) {
+      addActivity("System", action);
+    }
+  };
+
   return (
     <div className="space-y-8">
       {activeSection === 'dashboard' || activeSection === '' ? (
@@ -65,7 +72,6 @@ const AdminDashboardContent: React.FC<AdminDashboardContentProps> = ({
             
             <div className="bg-white p-6 rounded-lg shadow-sm">
               <h2 className="text-xl font-semibold mb-4">Recent Activity</h2>
-              {/* Using direct recentActivities array and onActivityAdded prop */}
               <ActivityManager 
                 activities={dashboardData.recentActivities || []} 
                 onActivityAdded={(activities) => {
@@ -128,10 +134,7 @@ const AdminDashboardContent: React.FC<AdminDashboardContentProps> = ({
       ) : (
         <SectionRenderer 
           activeSection={activeSection}
-          onAction={(action) => {
-            // This wrapper converts the single-argument onAction to the two-argument addActivity
-            addActivity("System", action);
-          }}
+          onAction={handleAction}
         />
       )}
     </div>

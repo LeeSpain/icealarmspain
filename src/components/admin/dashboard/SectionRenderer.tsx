@@ -15,31 +15,46 @@ import PlaceholderSection from '../PlaceholderSection';
 const SectionRenderer: React.FC<SectionRendererProps> = ({ activeSection, onAction }) => {
   console.log("SectionRenderer rendering section:", activeSection);
   
-  // Map of sections to their corresponding components
-  const sectionComponents: Record<string, React.ReactNode> = {
-    'device-monitoring': <DeviceMonitoringDashboard />,
-    'users': <UserManagement onAction={onAction} />,
-    'devices': <DeviceManagement onAction={onAction} />,
-    'roles': <RolesManagement onAction={onAction} />,
-    'permissions': <PermissionsManagement onAction={onAction} />,
-    'inventory': <InventoryManagement onAction={onAction} />,
-    'clients': <ClientManagement onAction={onAction} />,
-    'onboarding': <ClientOnboarding onAction={onAction} />,
-    'alerts': <AlertsManagement onAction={onAction} />,
+  // Function to handle actions if onAction is provided
+  const handleAction = (action: string) => {
+    if (onAction) {
+      onAction(action);
+    }
   };
   
-  // Return the component for the active section, or a placeholder if not found
-  return (
-    <div>
-      {sectionComponents[activeSection] || (
-        <PlaceholderSection 
-          title={`${activeSection.charAt(0).toUpperCase() + activeSection.slice(1)} Section`}
-          description={`This is a placeholder for the ${activeSection} section. It will be implemented in a future update.`}
-          onAction={onAction}
-        />
-      )}
-    </div>
-  );
+  // Map of sections to their corresponding components
+  const renderSection = () => {
+    switch (activeSection) {
+      case 'device-monitoring':
+        return <DeviceMonitoringDashboard />;
+      case 'users':
+        return <UserManagement onAction={handleAction} />;
+      case 'devices':
+        return <DeviceManagement onAction={handleAction} />;
+      case 'roles':
+        return <RolesManagement onAction={handleAction} />;
+      case 'permissions':
+        return <PermissionsManagement onAction={handleAction} />;
+      case 'inventory':
+        return <InventoryManagement onAction={handleAction} />;
+      case 'clients':
+        return <ClientManagement onAction={handleAction} />;
+      case 'onboarding':
+        return <ClientOnboarding onAction={handleAction} />;
+      case 'alerts':
+        return <AlertsManagement onAction={handleAction} />;
+      default:
+        return (
+          <PlaceholderSection 
+            title={`${activeSection.charAt(0).toUpperCase() + activeSection.slice(1)} Section`}
+            description={`This is a placeholder for the ${activeSection} section. It will be implemented in a future update.`}
+            onAction={handleAction}
+          />
+        );
+    }
+  };
+  
+  return <div>{renderSection()}</div>;
 };
 
 export default SectionRenderer;
