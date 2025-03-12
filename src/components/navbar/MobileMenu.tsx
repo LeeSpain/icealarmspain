@@ -1,9 +1,9 @@
 
-import React from "react";
-import { X } from "lucide-react";
-import LanguageSwitcher from "@/components/LanguageSwitcher";
-import NavLinks from "./NavLinks";
-import AuthButtons from "./AuthButtons";
+import React from 'react';
+import { Link } from 'react-router-dom';
+import NavLinks from './NavLinks';
+import AuthButtons from './AuthButtons';
+import LanguageSwitcher from '@/components/LanguageSwitcher';
 
 interface MobileMenuProps {
   isOpen: boolean;
@@ -12,38 +12,43 @@ interface MobileMenuProps {
 
 const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
   if (!isOpen) return null;
-  
-  const handleClick = () => {
-    console.log("Mobile menu item clicked, closing menu and scrolling to top");
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth'
-    });
-    onClose();
-  };
-  
+
   return (
-    <div className="md:hidden fixed top-[72px] left-0 right-0 bottom-0 z-50 bg-white overflow-y-auto">
-      <div className="container mx-auto px-4 py-4 space-y-3">
-        <div className="flex justify-between items-center mb-4">
+    <div className="fixed inset-0 z-50 bg-white md:hidden">
+      <div className="pt-20 pb-6 px-4 space-y-6">
+        <NavLinks onClick={onClose} />
+        
+        {/* Quick Access Section */}
+        <div className="py-4 border-t border-gray-200">
+          <h3 className="text-sm font-medium text-gray-500 mb-3">Quick Access</h3>
+          <div className="space-y-2">
+            <Link 
+              to="/admin" 
+              onClick={onClose}
+              className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md"
+            >
+              Admin Dashboard
+            </Link>
+            <Link 
+              to="/call-center" 
+              onClick={onClose}
+              className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md"
+            >
+              Call Center
+            </Link>
+            <Link 
+              to="/dashboard" 
+              onClick={onClose}
+              className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md"
+            >
+              Member Dashboard
+            </Link>
+          </div>
+        </div>
+        
+        <div className="flex flex-col space-y-4">
           <LanguageSwitcher />
-          <button
-            type="button"
-            className="p-2 rounded-md text-gray-700"
-            onClick={onClose}
-          >
-            <X className="w-6 h-6" />
-          </button>
-        </div>
-        
-        {/* Mobile Navigation Links */}
-        <div className="space-y-4">
-          <NavLinks onClick={handleClick} />
-        </div>
-        
-        {/* Mobile Auth Buttons */}
-        <div className="pt-4 flex flex-col space-y-3">
-          <AuthButtons isMobile={true} onClose={handleClick} />
+          <AuthButtons isMobile onClose={onClose} />
         </div>
       </div>
     </div>

@@ -1,12 +1,19 @@
 
 import React, { useState, useEffect } from "react";
-import { Menu } from "lucide-react";
+import { Menu, ChevronDown } from "lucide-react";
 import Logo from "@/components/Logo";
 import { Link, useLocation } from "react-router-dom";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 import NavLinks from "./NavLinks";
 import AuthButtons from "./AuthButtons";
 import MobileMenu from "./MobileMenu";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
 
 const NavbarContainer: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -38,23 +45,39 @@ const NavbarContainer: React.FC = () => {
   return (
     <div className="container mx-auto px-4 md:px-6 lg:px-8">
       <div className="flex items-center justify-between h-16 md:h-20">
-        {/* Logo */}
         <Link to="/" className="flex-shrink-0">
           <Logo />
         </Link>
         
-        {/* Desktop Navigation */}
         <div className="hidden md:flex items-center space-x-8">
           <NavLinks />
+          
+          {/* Quick Dashboard Access Dropdown */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" className="flex items-center gap-2">
+                Quick Access <ChevronDown className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-48 bg-white">
+              <DropdownMenuItem asChild>
+                <Link to="/admin" className="w-full">Admin Dashboard</Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link to="/call-center" className="w-full">Call Center</Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link to="/dashboard" className="w-full">Member Dashboard</Link>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
         
-        {/* Desktop Auth & Language */}
         <div className="hidden md:flex items-center space-x-4">
           <LanguageSwitcher />
           <AuthButtons />
         </div>
         
-        {/* Mobile Menu Toggle */}
         <div className="flex md:hidden items-center">
           <button
             type="button"
@@ -66,7 +89,6 @@ const NavbarContainer: React.FC = () => {
         </div>
       </div>
       
-      {/* Mobile Menu */}
       <MobileMenu 
         isOpen={isMobileMenuOpen} 
         onClose={() => setIsMobileMenuOpen(false)} 
