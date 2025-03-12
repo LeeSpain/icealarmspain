@@ -3,16 +3,35 @@ import { useLocation, Link } from "react-router-dom";
 import { useEffect } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { useAuth } from "@/context/auth";
 
 const NotFound = () => {
   const location = useLocation();
+  const { isAuthenticated, user } = useAuth();
+  const storedRole = localStorage.getItem('userRole');
+  const effectiveRole = user?.role || storedRole;
 
   useEffect(() => {
     console.error(
       "404 Error: User attempted to access non-existent route:",
-      location.pathname
+      location.pathname,
+      "Auth state:",
+      { isAuthenticated, userRole: effectiveRole, userId: user?.id }
     );
-  }, [location.pathname]);
+  }, [location.pathname, isAuthenticated, user, effectiveRole]);
+
+  const getDashboardLink = () => {
+    if (!isAuthenticated) return "/login";
+    
+    switch (effectiveRole) {
+      case 'admin':
+        return "/admin";
+      case 'callcenter':
+        return "/call-center";
+      default:
+        return "/dashboard";
+    }
+  };
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -24,9 +43,20 @@ const NotFound = () => {
           <p className="text-gray-500 mb-6">
             The page you are looking for ({location.pathname}) doesn't exist or has been moved.
           </p>
-          <Link to="/" className="inline-block bg-ice-600 text-white px-6 py-3 rounded-md hover:bg-ice-700 transition-colors">
-            Return to Home
-          </Link>
+          {isAuthenticated ? (
+            <div className="space-y-4">
+              <Link to={getDashboardLink()} className="inline-block bg-ice-600 text-white px-6 py-3 rounded-md hover:bg-ice-700 transition-colors">
+                Return to {effectiveRole === 'admin' ? 'Admin Dashboard' : effectiveRole === 'callcenter' ? 'Call Center' : 'Dashboard'}
+              </Link>
+              <p className="text-sm text-gray-500 mt-2">
+                Logged in as: {user?.email} ({effectiveRole})
+              </p>
+            </div>
+          ) : (
+            <Link to="/" className="inline-block bg-ice-600 text-white px-6 py-3 rounded-md hover:bg-ice-700 transition-colors">
+              Return to Home
+            </Link>
+          )}
         </div>
       </div>
       <Footer />

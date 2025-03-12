@@ -21,16 +21,22 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   const { toast } = useToast();
   const location = useLocation();
 
+  // CRITICAL FIX: Also check localStorage for role as a backup
+  const storedRole = localStorage.getItem('userRole');
+  const effectiveRole = user?.role || storedRole;
+
   useEffect(() => {
     console.log("ProtectedRoute - Current auth state:", { 
       isAuthenticated, 
       isLoading, 
       user,
+      storedRole,
+      effectiveRole,
       adminOnly,
       allowedRoles,
       path: location.pathname
     });
-  }, [isAuthenticated, isLoading, user, adminOnly, allowedRoles, location.pathname]);
+  }, [isAuthenticated, isLoading, user, adminOnly, allowedRoles, location.pathname, storedRole, effectiveRole]);
 
   // Show loading state while authentication is being verified
   if (isLoading) {
@@ -51,11 +57,11 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
     return <Navigate to={`/login?redirect=${encodeURIComponent(location.pathname)}`} replace />;
   }
 
-  console.log("User authenticated with role:", user?.role);
+  console.log("User authenticated with role:", effectiveRole);
   
   // Check for admin access if adminOnly is true
-  if (adminOnly && user?.role !== 'admin') {
-    console.log("Admin access required but user role is:", user?.role);
+  if (adminOnly && effectiveRole !== 'admin') {
+    console.log("Admin access required but user role is:", effectiveRole);
     
     toast({
       title: "Access Denied",
@@ -64,7 +70,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
     });
     
     // Redirect based on role
-    if (user?.role === 'callcenter') {
+    if (effectiveRole === 'callcenter') {
       return <Navigate to="/call-center" replace />;
     } else {
       return <Navigate to="/dashboard" replace />;
@@ -72,8 +78,8 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   }
 
   // If roles are specified, check if user has required role
-  if (allowedRoles.length > 0 && user && !allowedRoles.includes(user.role || '')) {
-    console.log("Required roles:", allowedRoles, "User role:", user.role);
+  if (allowedRoles.length > 0 && effectiveRole && !allowedRoles.includes(effectiveRole)) {
+    console.log("Required roles:", allowedRoles, "User role:", effectiveRole);
     
     toast({
       title: "Access Denied",
@@ -82,9 +88,9 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
     });
     
     // Redirect based on role
-    if (user.role === 'admin') {
+    if (effectiveRole === 'admin') {
       return <Navigate to="/admin" replace />;
-    } else if (user.role === 'callcenter') {
+    } else if (effectiveRole === 'callcenter') {
       return <Navigate to="/call-center" replace />;
     } else {
       return <Navigate to="/dashboard" replace />;
@@ -92,7 +98,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   }
 
   // If custom redirect path is provided and conditions are met, redirect
-  if (redirectPath && user) {
+  if (redirectPath) {
     console.log("Custom redirect to:", redirectPath);
     return <Navigate to={redirectPath} replace />;
   }

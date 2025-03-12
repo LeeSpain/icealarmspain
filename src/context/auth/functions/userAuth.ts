@@ -88,6 +88,9 @@ export const login = async (email: string, password: string, rememberMe = false)
       // Force development mode to be remembered
       localStorage.setItem('forceDevMode', 'true');
       
+      // CRITICAL FIX: Also add a clear indicator of which role we have
+      localStorage.setItem('userRole', role);
+      
       return user;
     } else {
       // In dev mode but wrong credentials
@@ -141,18 +144,21 @@ export const logout = async (): Promise<void> => {
       document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
     });
     
+    // Clear role information
+    localStorage.removeItem('userRole');
+    
     console.log('Logout successful, redirecting to homepage');
     
     // Force a reload to clear the app state completely
     setTimeout(() => {
-      window.location.href = '/';
+      window.location.replace('/');
     }, 100);
   } catch (error) {
     console.error('Logout error:', error);
     // Clean up local state regardless of server errors
     clearAuthData();
     // Force a refresh to clear everything
-    window.location.href = '/';
+    window.location.replace('/');
     throw error;
   }
 };

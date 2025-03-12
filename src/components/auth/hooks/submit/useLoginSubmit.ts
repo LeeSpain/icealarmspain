@@ -88,9 +88,10 @@ export const useLoginSubmit = ({
           description: language === 'en' 
             ? `Welcome back, ${userData.displayName || userData.email?.split('@')[0] || 'User'}!` 
             : `Bienvenido de nuevo, ${userData.displayName || userData.email?.split('@')[0] || 'Usuario'}!`,
+          duration: 3000,
         });
         
-        // FIX: Improved path handling for admin dashboard
+        // Critical fix: Explicitly determine the correct URL based on role
         let targetUrl = "/dashboard";
         
         if (userData.role === 'admin') {
@@ -111,8 +112,9 @@ export const useLoginSubmit = ({
         
         console.log("Final redirect target:", targetUrl);
         
-        // FIX: Force a complete page reload to ensure proper state
-        window.location.href = targetUrl;
+        // CRITICAL FIX: Force immediate navigation with full page reload
+        console.log("Executing hard redirect to:", targetUrl);
+        window.location.replace(targetUrl); // Use replace instead of href for cleaner history
       }
     } catch (error) {
       console.error("Login error:", error);

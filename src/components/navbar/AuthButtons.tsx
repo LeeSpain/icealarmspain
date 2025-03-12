@@ -35,6 +35,7 @@ const AuthButtons: React.FC<AuthButtonsProps> = ({ isMobile = false, onClose }) 
       // First clear localStorage to ensure we don't get stuck in a loop
       localStorage.removeItem('currentUser');
       localStorage.removeItem('authPersistence');
+      localStorage.removeItem('userRole');
       sessionStorage.removeItem('currentUser');
       sessionStorage.removeItem('authPersistence');
       
@@ -50,7 +51,7 @@ const AuthButtons: React.FC<AuthButtonsProps> = ({ isMobile = false, onClose }) 
       if (onClose) onClose();
       
       // Use a hard reload to completely reset the application state
-      window.location.href = '/';
+      window.location.replace('/');
     } catch (error) {
       console.error("Error during logout:", error);
       toast({
@@ -62,9 +63,10 @@ const AuthButtons: React.FC<AuthButtonsProps> = ({ isMobile = false, onClose }) 
       // Force a hard reset even on error
       localStorage.removeItem('currentUser');
       localStorage.removeItem('authPersistence');
+      localStorage.removeItem('userRole');
       sessionStorage.removeItem('currentUser');
       sessionStorage.removeItem('authPersistence');
-      window.location.href = '/';
+      window.location.replace('/');
     } finally {
       setLogoutInProgress(false);
     }
@@ -75,7 +77,13 @@ const AuthButtons: React.FC<AuthButtonsProps> = ({ isMobile = false, onClose }) 
     
     console.log("Getting dashboard link for role:", user?.role);
     
-    switch (user?.role) {
+    // CRITICAL FIX: Also check localStorage for role as a backup
+    const storedRole = localStorage.getItem('userRole');
+    const effectiveRole = user?.role || storedRole;
+    
+    console.log("Effective role for navigation:", effectiveRole);
+    
+    switch (effectiveRole) {
       case 'admin':
         return "/admin";
       case 'callcenter':

@@ -25,9 +25,16 @@ const Login: React.FC = () => {
     console.log("Login page - Forcing development mode");
     localStorage.setItem('forceDevMode', 'true');
     
+    // Also clear any old user data that might be causing conflicts
+    if (!isAuthenticated) {
+      localStorage.removeItem('currentUser');
+      localStorage.removeItem('userRole');
+      sessionStorage.removeItem('currentUser');
+    }
+    
     const currentMode = isDevelopmentMode();
     console.log("Login page - Development mode check:", currentMode);
-  }, []);
+  }, [isAuthenticated]);
   
   console.log("Login page rendering with state:", { 
     isLoading, 
@@ -37,6 +44,7 @@ const Login: React.FC = () => {
     loginInProgress,
     isDevelopment: isDevelopmentMode(),
     hasUser: !!localStorage.getItem('currentUser'),
+    storedRole: localStorage.getItem('userRole')
   });
   
   // Reset auth state if stuck in a strange state
@@ -47,7 +55,7 @@ const Login: React.FC = () => {
         console.log("Login page - Forcing load state reset due to timeout");
         forceReload();
       }
-    }, 2000); // Reduced timeout further to 2 seconds
+    }, 1500); // Reduced timeout to 1.5 seconds
     
     return () => clearTimeout(forceTimeout);
   }, [isLoading, forceReload]);
