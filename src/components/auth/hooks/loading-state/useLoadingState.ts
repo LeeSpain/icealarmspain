@@ -1,12 +1,7 @@
 
 import { useState } from "react";
 
-interface UseLoadingStateProps {
-  externalLoading?: boolean;
-  externalError?: string | null;
-}
-
-export const useLoadingState = ({ externalLoading, externalError }: UseLoadingStateProps) => {
+export const useLoadingState = (externalLoading?: boolean) => {
   const [internalLoading, setInternalLoading] = useState(false);
   const [internalError, setInternalError] = useState<string | null>(null);
   

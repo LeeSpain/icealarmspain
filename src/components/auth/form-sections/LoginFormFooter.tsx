@@ -1,8 +1,8 @@
 
 import React from "react";
-import RememberMe from "../form-elements/RememberMe";
-import ForgotPassword from "../form-elements/ForgotPassword";
-import LoginFormActions from "../form-elements/LoginFormActions";
+import { RememberMe } from "../form-elements/RememberMe";
+import { ForgotPassword } from "../form-elements/ForgotPassword";
+import { LoginFormActions } from "../form-elements/LoginFormActions";
 
 interface LoginFormFooterProps {
   rememberMe: boolean;
@@ -32,7 +32,8 @@ export const LoginFormFooter: React.FC<LoginFormFooterProps> = ({
 
       <LoginFormActions 
         isLoading={isLoading} 
-        language={language} 
+        loginText={language === 'en' ? "Sign In" : "Iniciar Sesión"}
+        loadingText={language === 'en' ? "Signing In..." : "Iniciando Sesión..."}
       />
     </div>
   );

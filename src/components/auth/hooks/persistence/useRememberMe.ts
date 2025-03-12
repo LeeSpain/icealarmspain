@@ -1,27 +1,30 @@
 
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 
-export const useRememberMe = (
-  setEmail: (email: string) => void, 
-  setRememberMeState: (state: boolean) => void
-) => {
+export const useRememberMe = () => {
+  const [rememberMe, setRememberMe] = useState(false);
+  
   // Load saved email if it exists
   useEffect(() => {
     const savedEmail = localStorage.getItem('rememberedEmail');
     if (savedEmail) {
-      setEmail(savedEmail);
-      setRememberMeState(true);
+      setRememberMe(true);
     }
-  }, [setEmail, setRememberMeState]);
+  }, []);
 
-  // Save or remove email from storage based on remember me setting
-  const handleRememberMe = (email: string, rememberMe: boolean) => {
-    if (rememberMe) {
-      localStorage.setItem('rememberedEmail', email);
-    } else {
-      localStorage.removeItem('rememberedEmail');
-    }
+  // Handle remember me toggle
+  const handleRememberMeChange = (checked: boolean) => {
+    setRememberMe(checked);
   };
 
-  return { handleRememberMe };
+  // Save or remove email from storage based on remember me setting
+  const handleRememberMe = () => {
+    console.log("Remember me handler executed, state:", rememberMe);
+  };
+
+  return { 
+    rememberMe, 
+    handleRememberMeChange, 
+    handleRememberMe 
+  };
 };
