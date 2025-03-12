@@ -12,6 +12,7 @@ export const useRememberMe = () => {
   }, []);
 
   const handleRememberMe = (email: string, checked: boolean) => {
+    console.log(`Remember me toggled: ${checked} for email: ${email}`);
     if (checked) {
       localStorage.setItem('rememberedEmail', email);
     } else {
@@ -20,6 +21,7 @@ export const useRememberMe = () => {
   };
 
   const handleRememberMeChange = (checked: boolean) => {
+    console.log(`Remember me state changed: ${checked}`);
     setRememberMe(checked);
   };
 

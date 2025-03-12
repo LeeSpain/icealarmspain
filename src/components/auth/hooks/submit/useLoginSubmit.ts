@@ -36,8 +36,10 @@ export const useLoginSubmit = ({
     isLoading: boolean
   ) => {
     e.preventDefault();
+    console.log("Form submission attempted:", { email: formData.email, rememberMe });
     
     if ((externalLoading !== undefined && externalLoading) || isLoading) {
+      console.log("Submission blocked: loading state active");
       return;
     }
     
@@ -53,6 +55,7 @@ export const useLoginSubmit = ({
     }
 
     if (Object.keys(errors).length > 0) {
+      console.log("Validation errors:", errors);
       setErrors(errors);
       return;
     }
@@ -63,13 +66,16 @@ export const useLoginSubmit = ({
     setSubmitAttempted(true);
 
     try {
+      console.log("Processing remember me:", rememberMe);
       handleRememberMe(email, rememberMe);
       
       if (onSubmit) {
+        console.log("Calling onSubmit handler");
         await onSubmit(email, password, rememberMe);
       }
       
       if (onSuccess) {
+        console.log("Calling onSuccess handler");
         await onSuccess(email, password, rememberMe);
       }
       
@@ -82,9 +88,11 @@ export const useLoginSubmit = ({
         targetUrl = '/call-center';
       }
       
+      console.log("Navigation target:", targetUrl);
       navigate(targetUrl, { replace: true });
       
     } catch (error: any) {
+      console.error("Login error:", error);
       const errorMessage = error?.message || (language === 'en' 
         ? "Failed to sign in. Please check your credentials."
         : "Error al iniciar sesión. Por favor, compruebe sus credenciales.");

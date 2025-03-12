@@ -16,6 +16,7 @@ export const useFormState = (initialEmail: string = "") => {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
+    console.log(`Field changed: ${name} = ${value}`);
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 

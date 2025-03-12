@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useLoginSubmit } from "./submit/useLoginSubmit";
 import { useFormState } from "./form-state/useFormState";
@@ -27,6 +27,8 @@ export const useLoginForm = ({
   
   // Form state management - retrieve the initial email if saved
   const initialEmail = localStorage.getItem('rememberedEmail') || '';
+  console.log("Initial email from localStorage:", initialEmail);
+  
   const { formData, errors, setErrors, handleChange } = useFormState(initialEmail);
   
   // Loading state management
@@ -63,10 +65,10 @@ export const useLoginForm = ({
   });
   
   // Handle form submission
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = useCallback((e: React.FormEvent) => {
     console.log("Form submission triggered with formData:", formData);
     submitHandler(e, formData, rememberMe, handleRememberMe, internalLoading);
-  };
+  }, [formData, rememberMe, handleRememberMe, internalLoading, submitHandler]);
   
   return {
     formData,

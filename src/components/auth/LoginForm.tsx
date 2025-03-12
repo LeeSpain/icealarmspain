@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useEffect } from "react";
 import { useLanguage } from "@/context/LanguageContext";
 import { EmailSection } from "./form-sections/EmailSection";
 import { PasswordSection } from "./form-sections/PasswordSection";
@@ -43,9 +43,20 @@ const LoginForm: React.FC<LoginFormProps> = ({
   });
 
   // Force dev mode
-  React.useEffect(() => {
+  useEffect(() => {
     localStorage.setItem('forceDevMode', 'true');
   }, []);
+
+  // Debug logs
+  useEffect(() => {
+    console.log("LoginForm state:", { 
+      email: formData.email, 
+      password: formData.password ? "[MASKED]" : "", 
+      rememberMe, 
+      errors, 
+      isLoading 
+    });
+  }, [formData, rememberMe, errors, isLoading]);
 
   return (
     <div className="w-full max-w-md mx-auto">
