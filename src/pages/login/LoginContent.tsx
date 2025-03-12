@@ -1,6 +1,6 @@
 
 import React from "react";
-import AuthForm from "@/components/AuthForm";
+import LoginForm from "@/components/auth/LoginForm";
 import { Card, CardContent } from "@/components/ui/card";
 
 interface LoginContentProps {
@@ -33,8 +33,7 @@ export const LoginContent: React.FC<LoginContentProps> = ({
         </p>
         
         <CardContent className="p-0">
-          <AuthForm 
-            mode="login" 
+          <LoginForm 
             onSuccess={handleLoginSuccess} 
             isLoading={loginInProgress}
             error={loginError}

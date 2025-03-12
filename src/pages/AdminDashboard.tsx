@@ -101,22 +101,22 @@ const AdminDashboard: React.FC = () => {
   const hasStoredRole = localStorage.getItem('userRole') === 'admin';
   const hasAdminAccess = isDevelopment || (effectiveRole === 'admin') || hasStoredRole;
   
-  // Show error toast for debugging if in development mode but no user role
-  useEffect(() => {
-    if (isDevelopment && isLoaded && !isLoading && !isAuthenticated && !effectiveUser) {
-      console.error("In dev mode but no authenticated user found");
-      toast({
-        title: "Auth Debug Info",
-        description: "Dev mode active but no user. Please check authentication.",
-        variant: "destructive"
-      });
-      
-      // Redirect to login after showing toast
-      setTimeout(() => {
-        navigate('/login?redirect=/admin', { replace: true });
-      }, 2000);
-    }
-  }, [isDevelopment, isLoaded, isLoading, isAuthenticated, effectiveUser, toast, navigate]);
+  // Debug toast for development mode but no user
+  if (isDevelopment && !isLoading && !isAuthenticated && !effectiveUser) {
+    console.error("In dev mode but no authenticated user found");
+    toast({
+      title: "Auth Debug Info",
+      description: "Dev mode active but no user. Please check authentication.",
+      variant: "destructive"
+    });
+    
+    // Redirect to login after showing toast
+    setTimeout(() => {
+      navigate('/login?redirect=/admin', { replace: true });
+    }, 2000);
+    
+    return <AdminDashboardLoading />;
+  }
   
   // Check access to admin dashboard
   if (!hasAdminAccess) {
