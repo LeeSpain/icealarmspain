@@ -91,7 +91,7 @@ export const useLoginSubmit = ({
           duration: 3000,
         });
         
-        // Critical fix: Explicitly determine the correct URL based on role
+        // Determine correct redirect based on role
         let targetUrl = "/dashboard";
         
         if (userData.role === 'admin') {
@@ -112,9 +112,8 @@ export const useLoginSubmit = ({
         
         console.log("Final redirect target:", targetUrl);
         
-        // CRITICAL FIX: Force immediate navigation with full page reload
-        console.log("Executing hard redirect to:", targetUrl);
-        window.location.replace(targetUrl); // Use replace instead of href for cleaner history
+        // CRITICAL FIX: Use navigate instead of window.location to prevent page freeze
+        navigate(targetUrl);
       }
     } catch (error) {
       console.error("Login error:", error);

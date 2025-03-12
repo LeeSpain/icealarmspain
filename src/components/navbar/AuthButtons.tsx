@@ -1,6 +1,5 @@
-
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { LogOut } from "lucide-react";
 import { ButtonCustom } from "@/components/ui/button-custom";
 import { useLanguage } from "@/context/LanguageContext";
@@ -16,6 +15,7 @@ const AuthButtons: React.FC<AuthButtonsProps> = ({ isMobile = false, onClose }) 
   const { language } = useLanguage();
   const { user, logout, isAuthenticated } = useAuth();
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [logoutInProgress, setLogoutInProgress] = React.useState(false);
   
   const loginText = language === 'en' ? "Login" : "Iniciar Sesión";
@@ -50,8 +50,8 @@ const AuthButtons: React.FC<AuthButtonsProps> = ({ isMobile = false, onClose }) 
       // Close mobile menu if open
       if (onClose) onClose();
       
-      // Use a hard reload to completely reset the application state
-      window.location.replace('/');
+      // Navigate to home page
+      navigate('/');
     } catch (error) {
       console.error("Error during logout:", error);
       toast({
@@ -60,13 +60,8 @@ const AuthButtons: React.FC<AuthButtonsProps> = ({ isMobile = false, onClose }) 
         variant: "destructive",
       });
       
-      // Force a hard reset even on error
-      localStorage.removeItem('currentUser');
-      localStorage.removeItem('authPersistence');
-      localStorage.removeItem('userRole');
-      sessionStorage.removeItem('currentUser');
-      sessionStorage.removeItem('authPersistence');
-      window.location.replace('/');
+      // Force navigation to home page even on error
+      navigate('/');
     } finally {
       setLogoutInProgress(false);
     }

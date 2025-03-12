@@ -1,6 +1,6 @@
 
 import React, { useEffect } from 'react';
-import { Navigate, useLocation } from 'react-router-dom';
+import { Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/auth';
 import { useToast } from "@/components/ui/use-toast";
 
@@ -20,6 +20,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   const { isAuthenticated, isLoading, user } = useAuth();
   const { toast } = useToast();
   const location = useLocation();
+  const navigate = useNavigate();
 
   // CRITICAL FIX: Also check localStorage for role as a backup
   const storedRole = localStorage.getItem('userRole');
@@ -53,7 +54,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   // If not authenticated, redirect to login with return path
   if (!isAuthenticated) {
     console.log("User not authenticated, redirecting to login from:", location.pathname);
-    
+    // CRITICAL FIX: Use return element instead of navigate to avoid freezing
     return <Navigate to={`/login?redirect=${encodeURIComponent(location.pathname)}`} replace />;
   }
 

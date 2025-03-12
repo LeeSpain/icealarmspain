@@ -20,7 +20,7 @@ const DashboardPage: React.FC = () => {
     if (!isLoading) {
       if (!isAuthenticated) {
         console.log("DashboardPage - Not authenticated, redirecting to login");
-        navigate('/login?redirect=/dashboard');
+        navigate('/login?redirect=/dashboard', { replace: true });
       } else if (user && user.role !== 'member' && user.role !== 'admin') {
         // Redirect user with incorrect role to the appropriate dashboard
         console.log("DashboardPage - User has role:", user.role, "- redirecting to appropriate dashboard");
@@ -31,9 +31,9 @@ const DashboardPage: React.FC = () => {
         });
         
         if (user.role === 'admin') {
-          navigate('/admin');
+          navigate('/admin', { replace: true });
         } else if (user.role === 'callcenter') {
-          navigate('/call-center');
+          navigate('/call-center', { replace: true });
         }
       } else {
         console.log("DashboardPage - User authenticated with correct role");

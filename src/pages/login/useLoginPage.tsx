@@ -41,14 +41,6 @@ export const useLoginPage = () => {
     localStorage.setItem('forceDevMode', 'true'); // Force dev mode
     localStorage.removeItem('currentUser');
     setIsLoading(false);
-    
-    // Optional: Add a small delay before reloading the page
-    // to allow state updates to complete
-    setTimeout(() => {
-      if (isMounted.current) {
-        window.location.reload();
-      }
-    }, 100);
   };
 
   // Update loading state based on auth loading
@@ -107,8 +99,8 @@ export const useLoginPage = () => {
         duration: 3000
       });
       
-      // Use window.location for a hard redirect to ensure proper auth state
-      window.location.href = redirectTo;
+      // CRITICAL FIX: Use navigate instead of window.location to prevent page freeze
+      navigate(redirectTo);
     }
   }, [isAuthenticated, authLoading, user, navigate, redirectParam, redirectTriggered, language, toast, loginInProgress]);
   
@@ -146,8 +138,8 @@ export const useLoginPage = () => {
       const redirectTo = redirectParam || getDefaultRedirect(user.role);
       console.log("Redirecting authenticated user to:", redirectTo);
       
-      // Hard redirect to ensure proper auth state
-      window.location.href = redirectTo;
+      // CRITICAL FIX: Use navigate instead of window.location for SPA navigation
+      navigate(redirectTo);
     } catch (error) {
       console.error("Login error:", error);
       if (isMounted.current) {
