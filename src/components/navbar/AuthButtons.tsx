@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { LogOut } from "lucide-react";
@@ -51,7 +52,7 @@ const AuthButtons: React.FC<AuthButtonsProps> = ({ isMobile = false, onClose }) 
       if (onClose) onClose();
       
       // Navigate to home page
-      navigate('/');
+      navigate('/', { replace: true });
     } catch (error) {
       console.error("Error during logout:", error);
       toast({
@@ -61,7 +62,7 @@ const AuthButtons: React.FC<AuthButtonsProps> = ({ isMobile = false, onClose }) 
       });
       
       // Force navigation to home page even on error
-      navigate('/');
+      navigate('/', { replace: true });
     } finally {
       setLogoutInProgress(false);
     }

@@ -1,3 +1,4 @@
+
 import { determineUserRole, isDevelopmentMode } from '../utils';
 import { User } from '../types';
 import { 
@@ -17,6 +18,8 @@ const clearAuthData = () => {
   sessionStorage.removeItem('currentUser');
   sessionStorage.removeItem('authPersistence');
   localStorage.removeItem('userRole');
+  sessionStorage.removeItem('shouldRedirect');
+  sessionStorage.removeItem('redirectTo');
 };
 
 // Login function

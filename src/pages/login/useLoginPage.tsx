@@ -1,4 +1,5 @@
-import { useState, useEffect, useRef } from "react";
+
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
 import { useAuth } from "@/context/auth";
@@ -43,7 +44,9 @@ export const useLoginPage = () => {
     });
 
     // Use navigate with replace to prevent back button issues
-    navigate(redirectTo, { replace: true });
+    setTimeout(() => {
+      navigate(redirectTo, { replace: true });
+    }, 100);
   }, [isAuthenticated, user, navigate, redirectParam, redirectTriggered, language, toast, loginInProgress]);
 
   const getDefaultRedirect = (role?: string) => {
@@ -72,6 +75,10 @@ export const useLoginPage = () => {
     try {
       const user = await login(email, password, rememberMe);
       console.log("Login successful with role:", user.role);
+      
+      // Set a flag in sessionStorage to indicate we need to redirect
+      sessionStorage.setItem('shouldRedirect', 'true');
+      sessionStorage.setItem('redirectTo', redirectParam || getDefaultRedirect(user.role));
       
       // Navigation will be handled by the useEffect above
     } catch (error) {
@@ -117,12 +124,12 @@ export const useLoginPage = () => {
   }, []);
 
   // Force reload function
-  const forceReload = () => {
+  const forceReload = useCallback(() => {
     console.log("Force reloading page to reset auth state");
     localStorage.setItem('forceDevMode', 'true'); // Force dev mode
     localStorage.removeItem('currentUser');
     setIsLoading(false);
-  };
+  }, []);
 
   // Update loading state based on auth loading
   useEffect(() => {
@@ -132,6 +139,19 @@ export const useLoginPage = () => {
       setIsLoading(false);
     }
   }, [authLoading]);
+  
+  // Check for stored redirect info
+  useEffect(() => {
+    const shouldRedirect = sessionStorage.getItem('shouldRedirect');
+    const redirectTo = sessionStorage.getItem('redirectTo');
+    
+    if (shouldRedirect === 'true' && redirectTo && isAuthenticated) {
+      console.log("Found stored redirect info, navigating to:", redirectTo);
+      sessionStorage.removeItem('shouldRedirect');
+      sessionStorage.removeItem('redirectTo');
+      navigate(redirectTo, { replace: true });
+    }
+  }, [isAuthenticated, navigate]);
   
   const devModeActive = isDevelopmentMode();
   console.log("Login page auth status:", { 

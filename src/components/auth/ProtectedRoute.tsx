@@ -35,6 +35,11 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
       allowedRoles,
       path: location.pathname
     });
+    
+    // Check for authentication issues
+    if (!isLoading && !isAuthenticated) {
+      console.log("Not authenticated, will redirect to login");
+    }
   }, [isAuthenticated, isLoading, user, adminOnly, allowedRoles, location.pathname, effectiveRole]);
 
   // Show loading state while authentication is being verified
