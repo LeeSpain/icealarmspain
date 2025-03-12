@@ -21,14 +21,12 @@ const Login: React.FC = () => {
   
   // Force development mode to be enabled for testing
   useEffect(() => {
+    // Always set the forceDevMode flag when on login page
+    console.log("Login page - Forcing development mode");
+    localStorage.setItem('forceDevMode', 'true');
+    
     const currentMode = isDevelopmentMode();
     console.log("Login page - Development mode check:", currentMode);
-    
-    // If not in development mode, force it
-    if (!currentMode) {
-      console.log("Login page - Forcing development mode");
-      localStorage.setItem('forceDevMode', 'true');
-    }
   }, []);
   
   console.log("Login page rendering with state:", { 
@@ -49,13 +47,12 @@ const Login: React.FC = () => {
         console.log("Login page - Forcing load state reset due to timeout");
         forceReload();
       }
-    }, 3000); // Reduced timeout to 3 seconds
+    }, 2000); // Reduced timeout further to 2 seconds
     
     return () => clearTimeout(forceTimeout);
   }, [isLoading, forceReload]);
   
   // Show loading state when authentication is being checked
-  // but NOT when login is in progress (that shows a different loading state)
   if (isLoading && !loginInProgress) {
     return <LoginLoading 
       isLoading={true} 

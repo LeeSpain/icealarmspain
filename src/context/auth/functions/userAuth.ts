@@ -25,70 +25,58 @@ export const login = async (email: string, password: string, rememberMe = false)
     // First, ensure we clear any existing auth state to prevent conflicts
     clearAuthData();
     
+    // Explicitly force development mode
+    localStorage.setItem('forceDevMode', 'true');
+    
     // Check for development mode
     const isDevMode = isDevelopmentMode();
     console.log('Development mode check result:', isDevMode);
     
-    // For development/testing purposes, allow specific test accounts
-    if (isDevMode) {
-      console.log('Development mode active, checking for test credentials');
-      
-      // Normalize the email for comparison
-      const normalizedEmail = email.toLowerCase().trim();
-      
-      // Check if using any of our test accounts with the correct password
-      if ((normalizedEmail === 'admin@icealarm.es' || 
-           normalizedEmail === 'callcenter@icealarm.es' || 
-           normalizedEmail === 'user@example.com') && 
-          password === 'password123') {
-        
-        console.log('Development login successful for:', normalizedEmail);
-        
-        // Create user object for development mode with a consistent ID
-        const role = determineUserRole(normalizedEmail);
-        const devUserId = `dev-${normalizedEmail.replace(/[^a-z0-9]/gi, '-')}`;
-        
-        const user: User = {
-          uid: devUserId,
-          id: devUserId,
-          email: normalizedEmail,
-          name: normalizedEmail.split('@')[0],
-          displayName: normalizedEmail.split('@')[0],
-          role,
-          profileCompleted: true,
-          language: localStorage.getItem('language') || 'en',
-          lastLogin: new Date().toISOString(),
-          createdAt: new Date().toISOString()
-        };
-        
-        console.log('Development user created with role:', role);
-        
-        // Store user data
-        localStorage.setItem('currentUser', JSON.stringify(user));
-        localStorage.setItem('authPersistence', rememberMe ? 'local' : 'session');
-        
-        // Force development mode to be remembered
-        localStorage.setItem('forceDevMode', 'true');
-        
-        return user;
-      } else {
-        // In dev mode but wrong credentials
-        console.error('Invalid development credentials');
-        throw new Error('Invalid email or password. In development mode, use admin@icealarm.es/password123');
-      }
-    }
+    // Always use development login flow for now
+    console.log('Development mode active, checking for test credentials');
     
-    // If we're here, it means we're not in dev mode or Firebase auth is configured
-    if (import.meta.env.VITE_FIREBASE_API_KEY) {
-      // Implement Firebase authentication here
-      console.error('Firebase authentication not fully implemented yet');
-      throw new Error('Firebase authentication not implemented yet. Use development mode for testing.');
-    } else {
-      // No Firebase config but not in development mode
-      console.error('No Firebase config detected and not in development mode');
-      // Force development mode and retry
+    // Normalize the email for comparison
+    const normalizedEmail = email.toLowerCase().trim();
+    
+    // Check if using any of our test accounts with the correct password
+    if ((normalizedEmail === 'admin@icealarm.es' || 
+         normalizedEmail === 'callcenter@icealarm.es' || 
+         normalizedEmail === 'user@example.com') && 
+        password === 'password123') {
+      
+      console.log('Development login successful for:', normalizedEmail);
+      
+      // Create user object for development mode with a consistent ID
+      const role = determineUserRole(normalizedEmail);
+      const devUserId = `dev-${normalizedEmail.replace(/[^a-z0-9]/gi, '-')}`;
+      
+      const user: User = {
+        uid: devUserId,
+        id: devUserId,
+        email: normalizedEmail,
+        name: normalizedEmail.split('@')[0],
+        displayName: normalizedEmail.split('@')[0],
+        role,
+        profileCompleted: true,
+        language: localStorage.getItem('language') || 'en',
+        lastLogin: new Date().toISOString(),
+        createdAt: new Date().toISOString()
+      };
+      
+      console.log('Development user created with role:', role);
+      
+      // Store user data
+      localStorage.setItem('currentUser', JSON.stringify(user));
+      localStorage.setItem('authPersistence', rememberMe ? 'local' : 'session');
+      
+      // Force development mode to be remembered
       localStorage.setItem('forceDevMode', 'true');
-      throw new Error('Development mode enabled. Please try again with test credentials.');
+      
+      return user;
+    } else {
+      // In dev mode but wrong credentials
+      console.error('Invalid development credentials');
+      throw new Error('Invalid email or password. In development mode, use admin@icealarm.es/password123');
     }
   } catch (error: any) {
     console.error('Login process error:', error);

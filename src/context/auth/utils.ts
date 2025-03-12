@@ -1,3 +1,4 @@
+
 // Function to determine the user's role based on email
 export const determineUserRole = (email: string): string => {
   if (!email) return 'member';
@@ -69,7 +70,7 @@ export const determineUserRole = (email: string): string => {
 
 // Helper function to check if we're in development mode
 export const isDevelopmentMode = (): boolean => {
-  // Force development mode for testing
+  // Force development mode for testing - check this first
   const forceDevMode = localStorage.getItem('forceDevMode') === 'true';
   if (forceDevMode) {
     console.log('Development mode forced by localStorage setting');

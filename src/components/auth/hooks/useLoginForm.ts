@@ -97,10 +97,11 @@ export const useLoginForm = ({
     e.preventDefault();
     console.log("Login form submitted with:", formData);
     
-    if (isLoading || !isMounted.current) {
-      console.log("Form submission blocked: isLoading=", isLoading);
-      return;
-    }
+    // Remove this block that's blocking form submission
+    // if (isLoading || !isMounted.current) {
+    //   console.log("Form submission blocked: isLoading=", isLoading);
+    //   return;
+    // }
     
     const newErrors = validateForm(formData, "login", language);
     if (isMounted.current) {
