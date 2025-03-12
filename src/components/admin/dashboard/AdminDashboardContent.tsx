@@ -27,7 +27,8 @@ const AdminDashboardContent: React.FC<AdminDashboardContentProps> = ({
       
       <div className="hidden xl:block">
         <ActivityManager 
-          activities={dashboardData?.activities || []} 
+          activities={dashboardData?.activities || []}
+          onActivityAdded={addActivity}
         />
       </div>
     </div>

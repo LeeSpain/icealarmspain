@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useLoginSubmit } from "./submit/useLoginSubmit";
@@ -35,13 +34,12 @@ export const useLoginForm = ({
     setInternalLoading, 
     clearError 
   } = useLoadingState(externalLoading);
+
+  const { rememberMe, handleRememberMe } = useRememberMe();
   
-  // Remember me functionality
-  const { 
-    rememberMe, 
-    handleRememberMeChange, 
-    handleRememberMe 
-  } = useRememberMe(formData, handleChange);
+  const handleRememberMeChange = (checked: boolean) => {
+    handleRememberMe(formData.email, checked);
+  };
   
   // Development credentials
   useDevCredentials(handleChange);

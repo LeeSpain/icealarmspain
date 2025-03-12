@@ -1,4 +1,3 @@
-
 import React from "react";
 import { RememberMe } from "../form-elements/RememberMe";
 import { ForgotPassword } from "../form-elements/ForgotPassword";
@@ -17,21 +16,19 @@ export const LoginFormFooter: React.FC<LoginFormFooterProps> = ({
   isLoading,
   language
 }) => {
-  console.log("LoginFormFooter: ", { isLoading });
-  
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <RememberMe 
-          checked={rememberMe} 
-          onChange={(checked: boolean) => onRememberMeChange(checked)} 
-          language={language} 
+          checked={rememberMe}
+          onChange={onRememberMeChange}
+          language={language}
         />
         <ForgotPassword language={language} />
       </div>
 
       <LoginFormActions 
-        isLoading={isLoading} 
+        isLoading={isLoading}
         loginText={language === 'en' ? "Sign In" : "Iniciar Sesión"}
         loadingText={language === 'en' ? "Signing In..." : "Iniciando Sesión..."}
       />
