@@ -44,6 +44,7 @@ const LoginForm: React.FC<LoginFormProps> = ({
   // Force dev mode
   useEffect(() => {
     localStorage.setItem('forceDevMode', 'true');
+    console.log("LoginForm: Dev mode enabled");
   }, []);
 
   // Handle form field changes
@@ -113,9 +114,12 @@ const LoginForm: React.FC<LoginFormProps> = ({
           duration: 3000
         });
         
-        // Navigate based on role
-        const targetUrl = redirectTo || getRedirectUrl(userRole);
-        navigate(targetUrl, { replace: true });
+        // Navigate based on role with slight delay to prevent redirects
+        setTimeout(() => {
+          const targetUrl = redirectTo || getRedirectUrl(userRole);
+          console.log("LoginForm: Redirecting to", targetUrl);
+          navigate(targetUrl, { replace: true });
+        }, 500);
       }
     } catch (error) {
       console.error("Login error:", error);
@@ -161,6 +165,7 @@ const LoginForm: React.FC<LoginFormProps> = ({
     
     localStorage.setItem('currentUser', JSON.stringify(user));
     localStorage.setItem('userRole', role);
+    console.log("LoginForm: User data saved to localStorage", user);
   };
 
   // Debug logs

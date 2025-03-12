@@ -23,20 +23,27 @@ const Login: React.FC = () => {
     localStorage.setItem('forceDevMode', 'true');
     console.log("Development mode forced in login page");
     
-    // Clear old user data if present
-    const existingUser = localStorage.getItem('currentUser');
-    if (existingUser) {
-      try {
-        const user = JSON.parse(existingUser);
-        if (user && user.email) {
-          console.log("Already logged in as:", user.email);
+    // Clear old user data if present only if we're on the login page directly
+    // This prevents the redirect loop
+    if (location.pathname === '/login' && !searchParams.has('redirect')) {
+      localStorage.removeItem('currentUser');
+      localStorage.removeItem('userRole');
+      console.log("Login page accessed directly, clearing user data");
+    } else {
+      const existingUser = localStorage.getItem('currentUser');
+      if (existingUser) {
+        try {
+          const user = JSON.parse(existingUser);
+          if (user && user.email) {
+            console.log("Already logged in as:", user.email);
+          }
+        } catch (e) {
+          console.error("Error parsing stored user:", e);
+          localStorage.removeItem('currentUser');
         }
-      } catch (e) {
-        console.error("Error parsing stored user:", e);
-        localStorage.removeItem('currentUser');
       }
     }
-  }, []);
+  }, [location.pathname, searchParams]);
   
   // Check if already logged in
   useEffect(() => {
@@ -47,8 +54,14 @@ const Login: React.FC = () => {
         if (user && user.role) {
           console.log("User already logged in, redirecting to dashboard:", user.role);
           
-          const targetUrl = getDefaultRedirect(user.role);
-          navigate(targetUrl, { replace: true });
+          // Add a small delay to prevent immediate redirects that might cause loops
+          const redirectTimer = setTimeout(() => {
+            const targetUrl = getDefaultRedirect(user.role);
+            console.log("Redirecting to:", targetUrl);
+            navigate(targetUrl, { replace: true });
+          }, 500);
+          
+          return () => clearTimeout(redirectTimer);
         }
       } catch (e) {
         console.error("Error parsing stored user:", e);
@@ -133,8 +146,10 @@ const Login: React.FC = () => {
       const targetUrl = redirectParam || getDefaultRedirect(role);
       console.log("Redirecting to:", targetUrl);
       
-      // Force a redirect
-      navigate(targetUrl, { replace: true });
+      // Force a redirect with a slight delay to prevent loops
+      setTimeout(() => {
+        navigate(targetUrl, { replace: true });
+      }, 500);
       
     } catch (error) {
       console.error("Login error:", error);

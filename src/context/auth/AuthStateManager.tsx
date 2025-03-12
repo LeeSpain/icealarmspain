@@ -16,6 +16,26 @@ export const AuthStateManager: React.FC<AuthStateManagerProps> = ({ children }) 
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
+  // Initialize from localStorage immediately for faster loading
+  useEffect(() => {
+    try {
+      const storedUser = localStorage.getItem('currentUser');
+      if (storedUser) {
+        console.log("AuthStateManager: Found user in localStorage, initializing state");
+        const parsedUser = JSON.parse(storedUser);
+        setUser(parsedUser);
+      }
+      
+      // Set loading to false with short delay to ensure app has time to initialize
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 300);
+    } catch (e) {
+      console.error("AuthStateManager: Error initializing from localStorage", e);
+      setIsLoading(false);
+    }
+  }, []);
+
   // Use the extracted auth effects hook
   useAuthEffects({ setUser, setIsLoading });
 
@@ -34,10 +54,14 @@ export const AuthStateManager: React.FC<AuthStateManagerProps> = ({ children }) 
     if (storedUser) {
       try {
         const parsedUser = JSON.parse(storedUser);
-        localStorage.setItem('currentUser', JSON.stringify({
+        const updatedUser = {
           ...parsedUser,
-          displayName
-        }));
+          displayName,
+          name: displayName,
+          profileCompleted: true
+        };
+        localStorage.setItem('currentUser', JSON.stringify(updatedUser));
+        console.log("AuthStateManager: Updated user profile in localStorage", updatedUser);
       } catch (e) {
         console.error('Error updating stored user', e);
       }

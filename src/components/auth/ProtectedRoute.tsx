@@ -1,5 +1,5 @@
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/auth';
 import { useToast } from "@/components/ui/use-toast";
@@ -21,13 +21,48 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   const { toast } = useToast();
   const location = useLocation();
   const navigate = useNavigate();
+  const [isPageReady, setIsPageReady] = useState(false);
+
+  // Try to get authentication info from localStorage if auth context isn't ready
+  const [localAuth, setLocalAuth] = useState({
+    isAuthenticated: false,
+    role: null as string | null,
+  });
+
+  // Initialize authentication from localStorage (faster than waiting for context)
+  useEffect(() => {
+    try {
+      const storedUser = localStorage.getItem('currentUser');
+      const userRole = localStorage.getItem('userRole');
+      
+      if (storedUser) {
+        console.log("ProtectedRoute: Found stored user");
+        setLocalAuth({
+          isAuthenticated: true,
+          role: userRole || (storedUser ? JSON.parse(storedUser)?.role : null)
+        });
+      }
+      
+      // Mark the page as ready for rendering
+      setTimeout(() => {
+        setIsPageReady(true);
+      }, 300);
+    } catch (error) {
+      console.error("ProtectedRoute: Error reading from localStorage", error);
+      setIsPageReady(true);
+    }
+  }, []);
 
   // Get role from user object first, then fallback to localStorage
-  const effectiveRole = user?.role || localStorage.getItem('userRole');
+  const effectiveRole = user?.role || localAuth.role || localStorage.getItem('userRole');
+  
+  // Use either context authentication or localStorage authentication
+  const effectivelyAuthenticated = isAuthenticated || localAuth.isAuthenticated;
 
   useEffect(() => {
     console.log("ProtectedRoute - Current auth state:", { 
-      isAuthenticated, 
+      contextAuthenticated: isAuthenticated, 
+      localAuthenticated: localAuth.isAuthenticated,
       isLoading, 
       user,
       effectiveRole,
@@ -37,13 +72,13 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
     });
     
     // Check for authentication issues
-    if (!isLoading && !isAuthenticated) {
+    if (!isLoading && !effectivelyAuthenticated) {
       console.log("Not authenticated, will redirect to login");
     }
-  }, [isAuthenticated, isLoading, user, adminOnly, allowedRoles, location.pathname, effectiveRole]);
+  }, [isAuthenticated, localAuth.isAuthenticated, isLoading, user, adminOnly, allowedRoles, location.pathname, effectiveRole]);
 
   // Show loading state while authentication is being verified
-  if (isLoading) {
+  if (isLoading && !isPageReady) {
     return (
       <div className="flex h-screen items-center justify-center bg-ice-50/30">
         <div className="flex flex-col items-center">
@@ -55,7 +90,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   }
 
   // If not authenticated, redirect to login with return path
-  if (!isAuthenticated) {
+  if (!effectivelyAuthenticated) {
     const loginPath = `/login?redirect=${encodeURIComponent(location.pathname)}`;
     console.log("User not authenticated, redirecting to:", loginPath);
     return <Navigate to={loginPath} replace />;
