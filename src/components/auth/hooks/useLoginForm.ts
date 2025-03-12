@@ -4,6 +4,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { validateForm } from "../AuthFormUtils";
 import { useAuth } from "@/context/auth";
 import { useNavigate } from "react-router-dom";
+import { isDevelopmentMode, getTestCredentials } from "@/context/auth/utils";
 
 interface LoginFormData {
   email: string;
@@ -45,8 +46,15 @@ export const useLoginForm = ({
 
   useEffect(() => {
     // Initialize with default test credentials in development
-    if (process.env.NODE_ENV === 'development' && !formData.email) {
-      setFormData(prev => ({ ...prev, email: 'admin@icealarm.es', password: 'password123' }));
+    const isDevMode = isDevelopmentMode();
+    if (isDevMode && !formData.email) {
+      const testCreds = getTestCredentials().admin;
+      setFormData(prev => ({ 
+        ...prev, 
+        email: testCreds.email, 
+        password: testCreds.password 
+      }));
+      console.log('Development mode detected, pre-filling admin test credentials');
     }
     
     return () => {

@@ -54,6 +54,19 @@ export const LoginLoading: React.FC<LoginLoadingProps> = ({
               <p><strong>Email:</strong> admin@icealarm.es</p>
               <p><strong>Password:</strong> password123</p>
             </div>
+            <div className="mt-3 font-mono bg-gray-100 p-3 rounded text-sm">
+              <p><strong>Email:</strong> callcenter@icealarm.es</p>
+              <p><strong>Password:</strong> password123</p>
+            </div>
+            <div className="mt-3 font-mono bg-gray-100 p-3 rounded text-sm">
+              <p><strong>Email:</strong> user@example.com</p>
+              <p><strong>Password:</strong> password123</p>
+            </div>
+            <p className="text-xs text-gray-500 mt-2">
+              {language === 'en'
+                ? 'If login fails, try clearing your browser storage and refreshing.'
+                : 'Si el inicio de sesión falla, intente limpiar el almacenamiento del navegador y actualizar.'}
+            </p>
             <button 
               onClick={() => window.location.reload()}
               className="mt-4 px-4 py-2 text-sm bg-ice-100 text-ice-700 rounded hover:bg-ice-200 transition-colors"

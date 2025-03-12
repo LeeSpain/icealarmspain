@@ -70,22 +70,32 @@ export const determineUserRole = (email: string): string => {
 
 // Helper function to check if we're in development mode
 export const isDevelopmentMode = (): boolean => {
-  return process.env.NODE_ENV === 'development' || !import.meta.env.VITE_FIREBASE_API_KEY;
+  // Check both process.env.NODE_ENV and the Vite environment variable
+  const isDevEnv = process.env.NODE_ENV === 'development';
+  const noFirebaseKey = !import.meta.env.VITE_FIREBASE_API_KEY;
+  
+  console.log('Environment check:', {
+    processEnv: process.env.NODE_ENV,
+    hasFirebaseKey: !!import.meta.env.VITE_FIREBASE_API_KEY,
+    isDevMode: isDevEnv || noFirebaseKey
+  });
+  
+  return isDevEnv || noFirebaseKey;
 };
 
 // Function to get test credentials for testing/development
 export const getTestCredentials = () => {
   return {
     admin: {
-      email: 'wakemanlee20@gmail.com',
+      email: 'admin@icealarm.es',
       password: 'password123'
     },
     callcenter: {
-      email: 'icealarmespana@gmail.com',
+      email: 'callcenter@icealarm.es',
       password: 'password123'
     },
     member: {
-      email: 'lwakeman@icealarm.es',
+      email: 'user@example.com',
       password: 'password123'
     }
   };

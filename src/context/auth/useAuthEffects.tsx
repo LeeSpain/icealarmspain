@@ -1,7 +1,6 @@
-
 import { useEffect, useRef } from 'react';
 import { User } from './types';
-import { determineUserRole } from './utils';
+import { determineUserRole, isDevelopmentMode } from './utils';
 import { auth, onAuthStateChanged } from '../../services/firebase/auth';
 
 interface UseAuthEffectsProps {
@@ -38,15 +37,12 @@ export const useAuthEffects = ({ setUser, setIsLoading }: UseAuthEffectsProps) =
               console.log('Found stored development user:', parsedUser.email);
               setUser(parsedUser);
               
-              // Set loading to false for dev users after a short delay
-              setTimeout(() => {
-                if (isMounted.current) {
-                  setIsLoading(false);
-                }
-              }, 500);
+              // For development users, set loading to false immediately
+              setIsLoading(false);
             } else {
               console.log('Found stored user data:', parsedUser.email);
               setUser(parsedUser);
+              // Keep loading true for regular users until Firebase auth check completes
             }
           }
         } catch (e) {
@@ -67,8 +63,25 @@ export const useAuthEffects = ({ setUser, setIsLoading }: UseAuthEffectsProps) =
       
       if (!firebaseUser) {
         console.log('No Firebase user, clearing user state');
+        
+        // Check if we have a development user
+        const storedUser = localStorage.getItem('currentUser');
+        if (storedUser) {
+          try {
+            const parsedUser = JSON.parse(storedUser);
+            if (parsedUser && parsedUser.uid && typeof parsedUser.uid === 'string' && parsedUser.uid.startsWith('dev-')) {
+              console.log('Keeping development user session active:', parsedUser.email);
+              // Don't clear development users on Firebase auth state change
+              setIsLoading(false);
+              return;
+            }
+          } catch (e) {
+            // Ignore parse errors
+          }
+        }
+        
+        // If we're here, we don't have a valid development user
         setUser(null);
-        // Set loading to false when auth state is resolved
         setIsLoading(false);
         return;
       }

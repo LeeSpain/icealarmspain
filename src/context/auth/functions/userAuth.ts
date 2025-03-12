@@ -73,6 +73,9 @@ export const login = async (email: string, password: string, rememberMe = false)
       }
     }
     
+    // If we get here, it means either:
+    // 1. We're not in dev mode
+    // 2. We're in dev mode but using credentials that don't match our test accounts
     throw new Error('Invalid email or password. In development mode, use admin@icealarm.es/password123');
   } catch (error: any) {
     console.error('Login process error:', error);

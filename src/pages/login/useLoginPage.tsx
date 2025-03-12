@@ -4,6 +4,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
 import { useAuth } from "@/context/auth";
 import { useLanguage } from "@/context/LanguageContext";
+import { isDevelopmentMode } from "@/context/auth/utils";
 
 export const useLoginPage = () => {
   const { language } = useLanguage();
@@ -49,7 +50,8 @@ export const useLoginPage = () => {
     authLoading,
     isLoading,
     redirectTriggered,
-    loginInProgress
+    loginInProgress,
+    isDevMode: isDevelopmentMode()
   });
   
   const searchParams = new URLSearchParams(location.search);
@@ -123,8 +125,8 @@ export const useLoginPage = () => {
     
     try {
       console.log("Attempting login with:", email, "Remember me:", rememberMe);
-      await login(email, password, rememberMe);
-      console.log("Login function completed successfully");
+      const user = await login(email, password, rememberMe);
+      console.log("Login function completed successfully with role:", user.role);
       
       // Note: We don't need to manually redirect here as the auth state change
       // will trigger the redirect in the useEffect above
