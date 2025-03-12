@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
+import { login } from "@/context/auth/functions/userAuth"; 
 
 interface UseLoginFormStateProps {
   onSuccess?: (email: string, password: string, rememberMe: boolean) => void | Promise<void>;
@@ -65,14 +66,6 @@ export const useLoginFormState = ({
     }
     return validationErrors;
   };
-
-  // Determine user role from email - using exact match
-  const determineRole = (email: string): string => {
-    const lowerEmail = email.toLowerCase().trim();
-    if (lowerEmail === 'admin@icealarm.es') return 'admin';
-    if (lowerEmail === 'callcenter@icealarm.es') return 'callcenter';
-    return 'member';
-  };
   
   // Get redirect URL based on role
   const getRedirectUrl = (role: string): string => {
@@ -80,26 +73,10 @@ export const useLoginFormState = ({
     switch (role) {
       case 'admin': return '/admin';
       case 'callcenter': return '/call-center';
+      case 'technician': return '/technician';
+      case 'support': return '/support';
       default: return '/dashboard';
     }
-  };
-  
-  // Create mock user object for development mode
-  const createMockUser = (email: string, role: string) => {
-    const userId = `dev-${email.replace(/[^a-z0-9]/gi, '-')}`;
-    return {
-      uid: userId,
-      id: userId,
-      email: email,
-      name: email.split('@')[0],
-      displayName: email.split('@')[0],
-      role,
-      status: 'active',
-      profileCompleted: false,
-      language: localStorage.getItem('language') || 'en',
-      lastLogin: new Date().toISOString(),
-      createdAt: new Date().toISOString()
-    };
   };
 
   // Handle form submission
@@ -120,26 +97,13 @@ export const useLoginFormState = ({
     setIsLoading(true);
     
     try {
-      // Handle remember me functionality
-      if (rememberMe) {
-        localStorage.setItem('rememberedEmail', email);
-      } else {
-        localStorage.removeItem('rememberedEmail');
-      }
-      
       // Call onSuccess callback if provided
       if (onSuccess) {
         await onSuccess(email, password, rememberMe);
       } else {
-        // Default simple login logic
-        const userRole = determineRole(email);
-        console.log("Determined role:", userRole);
-        const mockUser = createMockUser(email, userRole);
-        
-        // Save user to localStorage
-        localStorage.setItem('currentUser', JSON.stringify(mockUser));
-        localStorage.setItem('userRole', userRole);
-        console.log("LoginForm: User data saved to localStorage", mockUser);
+        // Use the centralized login function
+        const user = await login(email, password, rememberMe);
+        console.log("LoginForm: Login successful, user:", user);
         
         // Show success toast
         toast({
@@ -150,12 +114,10 @@ export const useLoginFormState = ({
           duration: 3000
         });
         
-        // Navigate based on role with slight delay to prevent redirects
-        setTimeout(() => {
-          const targetUrl = redirectTo || getRedirectUrl(userRole);
-          console.log("LoginForm: Redirecting to", targetUrl, "role:", userRole);
-          navigate(targetUrl, { replace: true });
-        }, 100);
+        // Use direct window location change to ensure redirect works
+        const targetUrl = redirectTo || getRedirectUrl(user.role);
+        console.log("LoginForm: Redirecting to", targetUrl, "role:", user.role);
+        window.location.href = targetUrl;
       }
     } catch (error) {
       console.error("Login error:", error);

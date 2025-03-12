@@ -22,6 +22,8 @@ export const DevelopmentModeAlert: React.FC<DevelopmentModeAlertProps> = ({ lang
           <li><strong>admin@icealarm.es</strong> - {language === 'en' ? "Admin Dashboard" : "Panel de Administrador"}</li>
           <li><strong>callcenter@icealarm.es</strong> - {language === 'en' ? "Call Center Dashboard" : "Panel de Centro de Llamadas"}</li>
           <li><strong>user@icealarm.es</strong> - {language === 'en' ? "Member Dashboard" : "Panel de Miembro"}</li>
+          <li><strong>technician@icealarm.es</strong> - {language === 'en' ? "Technician Dashboard" : "Panel de Técnico"}</li>
+          <li><strong>support@icealarm.es</strong> - {language === 'en' ? "Support Dashboard" : "Panel de Soporte"}</li>
         </ul>
         <p className="mt-1 text-xs">
           {language === 'en' 

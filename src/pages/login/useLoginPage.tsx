@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
 import { useLanguage } from "@/context/LanguageContext";
+import { login } from "@/context/auth/functions/userAuth";
 
 export const useLoginPage = () => {
   // Initialize all hooks first
@@ -29,19 +30,7 @@ export const useLoginPage = () => {
     }
   }, [location.pathname, searchParams]);
 
-  // Keep the rest of the functions pure
-  const determineUserRole = (email: string): string => {
-    const lowerEmail = email.toLowerCase().trim();
-    
-    if (lowerEmail === 'admin@icealarm.es') {
-      return 'admin';
-    } else if (lowerEmail === 'callcenter@icealarm.es') {
-      return 'callcenter';
-    } else {
-      return 'member';
-    }
-  };
-
+  // Get the default redirect URL based on user role
   const getDefaultRedirect = (role: string): string => {
     console.log("Determining redirect for role:", role);
     switch (role) {
@@ -49,9 +38,9 @@ export const useLoginPage = () => {
         return '/admin';
       case 'callcenter':
         return '/call-center';
-      case 'member':
       case 'technician':
       case 'support':
+      case 'member':
       default:
         return '/dashboard';
     }
@@ -74,34 +63,9 @@ export const useLoginPage = () => {
           : 'El correo electrónico y la contraseña son obligatorios');
       }
       
-      // Use exact match for determining role
-      const role = determineUserRole(email.toLowerCase().trim());
-      console.log("Determined role from email:", role);
-      
-      const userId = `dev-${email.replace(/[^a-z0-9]/gi, '-')}`;
-      const user = {
-        uid: userId,
-        id: userId,
-        email: email,
-        name: email.split('@')[0],
-        displayName: email.split('@')[0],
-        role,
-        status: 'active',
-        profileCompleted: false,
-        language: localStorage.getItem('language') || 'en',
-        lastLogin: new Date().toISOString(),
-        createdAt: new Date().toISOString()
-      };
-      
-      localStorage.setItem('currentUser', JSON.stringify(user));
-      localStorage.setItem('userRole', role);
-      console.log("Login success - stored role:", role);
-      
-      if (rememberMe) {
-        localStorage.setItem('rememberedEmail', email);
-      } else {
-        localStorage.removeItem('rememberedEmail');
-      }
+      // Use the centralized login function from auth context
+      const user = await login(email, password, rememberMe);
+      console.log("Login success - using centralized login function");
       
       toast({
         title: language === 'en' ? "Login Successful" : "Inicio de sesión exitoso",
@@ -114,14 +78,12 @@ export const useLoginPage = () => {
       // Use the specified redirect parameter or get the default based on role
       const targetUrl = redirectParam && redirectParam !== '/dashboard' 
         ? redirectParam 
-        : getDefaultRedirect(role);
+        : getDefaultRedirect(user.role);
         
       console.log("Redirecting to:", targetUrl);
       
-      // Use a shorter delay for the redirect
-      setTimeout(() => {
-        navigate(targetUrl, { replace: true });
-      }, 100);
+      // Use a direct window location change to ensure redirect happens
+      window.location.href = targetUrl;
       
     } catch (error) {
       console.error("Login error:", error);

@@ -16,6 +16,8 @@ export const determineUserRole = (email: string): string => {
     return 'technician';
   } else if (normalizedEmail === 'support@icealarm.es') {
     return 'support';
+  } else if (normalizedEmail === 'user@icealarm.es') {
+    return 'member';
   } else {
     return 'member';
   }

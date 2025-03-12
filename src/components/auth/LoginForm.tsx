@@ -13,15 +13,18 @@ interface LoginFormProps {
   isLoading?: boolean;
   error?: string | null;
   redirectTo?: string;
+  language?: string;
 }
 
 const LoginForm: React.FC<LoginFormProps> = ({ 
   onSuccess, 
   isLoading: externalLoading = false,
   error: externalError,
-  redirectTo 
+  redirectTo,
+  language: propLanguage
 }) => {
-  const { language } = useLanguage();
+  const { language: contextLanguage } = useLanguage();
+  const language = propLanguage || contextLanguage;
   
   // Force dev mode
   useEffect(() => {
@@ -55,9 +58,10 @@ const LoginForm: React.FC<LoginFormProps> = ({
       password: password ? "[MASKED]" : "", 
       rememberMe, 
       errors, 
-      isLoading 
+      isLoading,
+      redirectTo
     });
-  }, [email, password, rememberMe, errors, isLoading]);
+  }, [email, password, rememberMe, errors, isLoading, redirectTo]);
 
   return (
     <div className="w-full max-w-md mx-auto">
