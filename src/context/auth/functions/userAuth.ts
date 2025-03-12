@@ -38,7 +38,7 @@ export const login = async (email: string, password: string, rememberMe = false)
     // Normalize the email for comparison
     const normalizedEmail = email.toLowerCase().trim();
     
-    // Check if using any of our test accounts with the correct password
+    // Test credentials - admin@icealarm.es/password123, callcenter@icealarm.es/password123, user@example.com/password123
     if ((normalizedEmail === 'admin@icealarm.es' || 
          normalizedEmail === 'callcenter@icealarm.es' || 
          normalizedEmail === 'user@example.com') && 
@@ -76,7 +76,7 @@ export const login = async (email: string, password: string, rememberMe = false)
     } else {
       // In dev mode but wrong credentials
       console.error('Invalid development credentials');
-      throw new Error('Invalid email or password. In development mode, use admin@icealarm.es/password123');
+      throw new Error('Invalid email or password. Use admin@icealarm.es/password123 or user@example.com/password123');
     }
   } catch (error: any) {
     console.error('Login process error:', error);

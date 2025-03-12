@@ -90,7 +90,7 @@ export const useLoginPage = () => {
     });
     
     // Only proceed if we're authenticated and haven't redirected yet
-    if (isAuthenticated && user && !redirectTriggered) {
+    if (isAuthenticated && user && !redirectTriggered && !loginInProgress) {
       console.log("User authenticated, preparing to redirect");
       
       setRedirectTriggered(true);
@@ -107,15 +107,10 @@ export const useLoginPage = () => {
         duration: 3000
       });
       
-      // Schedule the redirect to give the toast time to appear
-      setTimeout(() => {
-        if (isMounted.current) {
-          console.log("Executing redirect now to:", redirectTo);
-          navigate(redirectTo, { replace: true });
-        }
-      }, 100);
+      // Use window.location for a hard redirect to ensure proper auth state
+      window.location.href = redirectTo;
     }
-  }, [isAuthenticated, authLoading, user, navigate, redirectParam, redirectTriggered, language, toast]);
+  }, [isAuthenticated, authLoading, user, navigate, redirectParam, redirectTriggered, language, toast, loginInProgress]);
   
   const getDefaultRedirect = (role?: string) => {
     console.log("Determining redirect for role:", role);
@@ -147,8 +142,12 @@ export const useLoginPage = () => {
       const user = await login(email, password, rememberMe);
       console.log("Login function completed successfully with role:", user.role);
       
-      // Note: We don't need to manually redirect here as the auth state change
-      // will trigger the redirect in the useEffect above
+      // Determine redirect path based on role or redirectParam
+      const redirectTo = redirectParam || getDefaultRedirect(user.role);
+      console.log("Redirecting authenticated user to:", redirectTo);
+      
+      // Hard redirect to ensure proper auth state
+      window.location.href = redirectTo;
     } catch (error) {
       console.error("Login error:", error);
       if (isMounted.current) {

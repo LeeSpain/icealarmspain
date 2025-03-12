@@ -90,24 +90,8 @@ export const useLoginSubmit = ({
             : `Bienvenido de nuevo, ${userData.displayName || userData.email?.split('@')[0] || 'Usuario'}!`,
         });
         
-        // Redirect based on user role or specific redirect path
-        if (redirectTo) {
-          console.log("Redirecting to specified path:", redirectTo);
-          navigate(redirectTo, { replace: true });
-        } else {
-          console.log("Redirecting based on role:", userData.role);
-          switch (userData.role) {
-            case 'admin':
-              navigate('/admin', { replace: true });
-              break;
-            case 'callcenter':
-              navigate('/call-center', { replace: true });
-              break;
-            default:
-              navigate('/dashboard', { replace: true });
-              break;
-          }
-        }
+        // Force a reload to ensure the auth state is properly updated
+        window.location.href = redirectTo || '/dashboard';
       }
     } catch (error) {
       console.error("Login error:", error);
