@@ -119,10 +119,17 @@ export const logout = async (): Promise<void> => {
     
     // Sign out from Firebase
     await signOut(auth);
+    
+    // Additional safety measure - force reload the app
+    setTimeout(() => {
+      window.location.href = '/';
+    }, 100);
   } catch (error) {
     console.error('Logout error:', error);
     // Clean up local state regardless of server errors
     clearAuthData();
+    // Force a refresh to clear everything
+    window.location.href = '/';
     throw error;
   }
 };

@@ -90,8 +90,15 @@ export const useLoginSubmit = ({
             : `Bienvenido de nuevo, ${userData.displayName || userData.email?.split('@')[0] || 'Usuario'}!`,
         });
         
-        // Force a reload to ensure the auth state is properly updated
-        window.location.href = redirectTo || '/dashboard';
+        // Force a reload with specific URL to ensure the auth state is properly updated
+        const targetUrl = redirectTo || (userData.role === 'admin' 
+          ? '/admin' 
+          : userData.role === 'callcenter' 
+            ? '/call-center' 
+            : '/dashboard');
+        
+        console.log("Redirecting to:", targetUrl);
+        window.location.href = targetUrl;
       }
     } catch (error) {
       console.error("Login error:", error);

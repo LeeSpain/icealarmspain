@@ -31,6 +31,10 @@ const AuthButtons: React.FC<AuthButtonsProps> = ({ isMobile = false, onClose }) 
       setLogoutInProgress(true);
       console.log("Initiating logout process...");
       
+      // First clear localStorage to ensure we don't get stuck in a loop
+      localStorage.removeItem('currentUser');
+      localStorage.removeItem('authPersistence');
+      
       await logout();
       console.log("Logout completed, navigating to home");
       
@@ -42,12 +46,8 @@ const AuthButtons: React.FC<AuthButtonsProps> = ({ isMobile = false, onClose }) 
       // Close mobile menu if open
       if (onClose) onClose();
       
-      // Clear localStorage
-      localStorage.removeItem('currentUser');
-      localStorage.removeItem('authPersistence');
-      
-      // Navigate to home page
-      navigate('/');
+      // Use window.location.href for a hard reset of the application state
+      window.location.href = '/';
     } catch (error) {
       console.error("Error during logout:", error);
       toast({
@@ -55,6 +55,11 @@ const AuthButtons: React.FC<AuthButtonsProps> = ({ isMobile = false, onClose }) 
         description: language === 'en' ? "There was a problem logging you out. Please try again." : "Hubo un problema al cerrar la sesión. Por favor, inténtelo de nuevo.",
         variant: "destructive",
       });
+      
+      // Force a hard reset even on error
+      localStorage.removeItem('currentUser');
+      localStorage.removeItem('authPersistence');
+      window.location.href = '/';
     } finally {
       setLogoutInProgress(false);
     }
