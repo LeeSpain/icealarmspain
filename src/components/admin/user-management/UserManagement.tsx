@@ -49,8 +49,10 @@ const UserManagement: React.FC<UserManagementProps> = ({ onAction }) => {
       await createUser(
         formData.email,
         formData.password,
-        formData.displayName,
-        formData.role
+        {
+          displayName: formData.displayName,
+          role: formData.role
+        }
       );
 
       setIsCreateDialogOpen(false);

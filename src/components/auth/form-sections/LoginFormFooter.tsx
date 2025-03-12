@@ -24,7 +24,7 @@ export const LoginFormFooter: React.FC<LoginFormFooterProps> = ({
       <div className="flex items-center justify-between">
         <RememberMe 
           checked={rememberMe} 
-          onChange={onRememberMeChange} 
+          onChange={(checked: boolean) => onRememberMeChange(checked)} 
           language={language} 
         />
         <ForgotPassword language={language} />

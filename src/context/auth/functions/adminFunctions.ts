@@ -30,6 +30,7 @@ export const createUser = async (email: string, password: string, userData: any)
     name: userData?.displayName || email.split('@')[0],
     displayName: userData?.displayName || email.split('@')[0],
     role,
+    status: 'active',
     profileCompleted: !!userData?.displayName,
     language: userData?.language || 'en',
     lastLogin: new Date().toISOString(),
@@ -66,6 +67,7 @@ export const getAllUsers = async (): Promise<User[]> => {
       name: 'Admin User',
       displayName: 'Admin User',
       role: 'admin',
+      status: 'active',
       profileCompleted: true,
       lastLogin: new Date().toISOString(),
       createdAt: new Date().toISOString()
@@ -77,6 +79,7 @@ export const getAllUsers = async (): Promise<User[]> => {
       name: 'Call Center Agent',
       displayName: 'Call Center Agent',
       role: 'callcenter',
+      status: 'active',
       profileCompleted: true,
       lastLogin: new Date().toISOString(),
       createdAt: new Date().toISOString()
@@ -88,6 +91,7 @@ export const getAllUsers = async (): Promise<User[]> => {
       name: 'Regular User',
       displayName: 'Regular User',
       role: 'member',
+      status: 'active',
       profileCompleted: true,
       lastLogin: new Date().toISOString(),
       createdAt: new Date().toISOString()

@@ -9,6 +9,8 @@ export interface User {
   displayName: string;
   role: string;
   profileCompleted: boolean;
+  status?: string;
+  photoURL?: string;
   language?: string;
   lastLogin?: string;
   createdAt?: string;

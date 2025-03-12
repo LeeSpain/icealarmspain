@@ -1,34 +1,33 @@
 
 import { useState, useEffect } from "react";
 
-export const useRememberMe = (
-  formData: { email: string; password: string }, 
-  handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void
-) => {
+export const useRememberMe = () => {
   const [rememberMe, setRememberMe] = useState(false);
-  
-  // Check for remembered email on component mount
+
+  // Load remembered state from localStorage
   useEffect(() => {
-    const savedEmail = localStorage.getItem('rememberedEmail');
-    if (savedEmail) {
-      handleChange({ target: { name: 'email', value: savedEmail } } as React.ChangeEvent<HTMLInputElement>);
+    const rememberedEmail = localStorage.getItem('rememberedEmail');
+    if (rememberedEmail) {
       setRememberMe(true);
     }
-  }, [handleChange]);
-  
-  // Handle remember me changes
-  const handleRememberMeChange = (checked: boolean) => {
+  }, []);
+
+  const handleRememberMe = (email: string, checked: boolean) => {
     setRememberMe(checked);
-  };
-  
-  // Save email for next login if rememberMe is checked
-  const handleRememberMe = () => {
-    if (rememberMe) {
-      localStorage.setItem('rememberedEmail', formData.email);
+    if (checked) {
+      localStorage.setItem('rememberedEmail', email);
     } else {
       localStorage.removeItem('rememberedEmail');
     }
   };
-  
-  return { rememberMe, handleRememberMeChange, handleRememberMe };
+
+  const handleRememberMeChange = (checked: boolean) => {
+    setRememberMe(checked);
+  };
+
+  return {
+    rememberMe,
+    handleRememberMe,
+    handleRememberMeChange
+  };
 };

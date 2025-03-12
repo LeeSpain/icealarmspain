@@ -30,25 +30,24 @@ const SectionRenderer: React.FC<SectionRendererProps> = ({ activeSection, onActi
       case 'users':
         return <UserManagement onAction={handleAction} />;
       case 'devices':
-        return <DeviceManagement onAction={handleAction} />;
+        return <DeviceManagement />;
       case 'roles':
-        return <RolesManagement onAction={handleAction} />;
+        return <RolesManagement />;
       case 'permissions':
-        return <PermissionsManagement onAction={handleAction} />;
+        return <PermissionsManagement />;
       case 'inventory':
-        return <InventoryManagement onAction={handleAction} />;
+        return <InventoryManagement />;
       case 'clients':
-        return <ClientManagement onAction={handleAction} />;
+        return <ClientManagement />;
       case 'onboarding':
-        return <ClientOnboarding onAction={handleAction} />;
+        return <ClientOnboarding />;
       case 'alerts':
-        return <AlertsManagement onAction={handleAction} />;
+        return <AlertsManagement />;
       default:
         return (
           <PlaceholderSection 
             title={`${activeSection.charAt(0).toUpperCase() + activeSection.slice(1)} Section`}
             description={`This is a placeholder for the ${activeSection} section. It will be implemented in a future update.`}
-            onAction={handleAction}
           />
         );
     }
