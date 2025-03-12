@@ -1,7 +1,6 @@
 
 import React from "react";
 import { RememberMe } from "../form-elements/RememberMe";
-import { ForgotPassword } from "../form-elements/ForgotPassword";
 import { LoginFormActions } from "../form-elements/LoginFormActions";
 
 interface LoginFormFooterProps {
@@ -18,21 +17,23 @@ export const LoginFormFooter: React.FC<LoginFormFooterProps> = ({
   language
 }) => {
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <div className="flex items-center justify-between">
         <RememberMe 
-          checked={rememberMe}
+          checked={rememberMe} 
           onChange={onRememberMeChange}
           language={language}
         />
-        <ForgotPassword language={language} />
+        
+        <a
+          href="/forgot-password"
+          className="text-sm font-medium text-ice-600 hover:text-ice-500"
+        >
+          {language === 'en' ? "Forgot password?" : "¿Olvidó su contraseña?"}
+        </a>
       </div>
-
-      <LoginFormActions 
-        isLoading={isLoading}
-        loginText={language === 'en' ? "Sign In" : "Iniciar Sesión"}
-        loadingText={language === 'en' ? "Signing In..." : "Iniciando Sesión..."}
-      />
+      
+      <LoginFormActions isLoading={isLoading} language={language} />
     </div>
   );
 };
