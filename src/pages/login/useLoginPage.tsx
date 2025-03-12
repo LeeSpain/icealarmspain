@@ -73,6 +73,7 @@ export const useLoginPage = () => {
     setLoginError(null);
     
     try {
+      console.log("Login attempt with credentials:", { email, rememberMe });
       const user = await login(email, password, rememberMe);
       console.log("Login successful with role:", user.role);
       
@@ -152,6 +153,18 @@ export const useLoginPage = () => {
       navigate(redirectTo, { replace: true });
     }
   }, [isAuthenticated, navigate]);
+  
+  // Add diagnostic logging
+  console.log("Login page auth status:", {
+    isAuthenticated, 
+    email: user?.email,
+    role: user?.role,
+    authLoading,
+    isLoading,
+    loginInProgress,
+    redirectTriggered,
+    redirectParam
+  });
   
   return {
     user,

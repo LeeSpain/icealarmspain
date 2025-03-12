@@ -25,7 +25,7 @@ const clearAuthData = () => {
 // Login function
 export const login = async (email: string, password: string, rememberMe = false): Promise<User> => {
   try {
-    console.log('Starting login process for:', email);
+    console.log('Starting login process for:', email, 'Remember Me:', rememberMe);
     
     // First, ensure we clear any existing auth state to prevent conflicts
     clearAuthData();
@@ -77,8 +77,13 @@ export const login = async (email: string, password: string, rememberMe = false)
       localStorage.setItem('userRole', role);
       
       return user;
-    } else {
+    } else if (isDevMode) {
+      // In dev mode but with invalid credentials
+      console.error('Invalid development credentials provided');
       throw new Error('Invalid email or password. Use admin@icealarm.es/password123 or user@example.com/password123');
+    } else {
+      // Non-dev mode login attempt (should not happen currently)
+      throw new Error('Authentication system is in maintenance. Please use admin@icealarm.es/password123 or user@example.com/password123 for testing.');
     }
   } catch (error: any) {
     console.error('Login error:', error);

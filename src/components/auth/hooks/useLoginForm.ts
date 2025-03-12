@@ -70,10 +70,11 @@ export const useLoginForm = ({
 
   // Form submission handler
   const handleSubmit = (e: React.FormEvent) => {
-    // Fixing the type issue by creating a function that doesn't take parameters
-    // but internally calls handleRememberMe with the correct parameters
+    // Create a callback function to handle the remember me functionality
     const rememberMeCallback = () => {
-      handleRememberMe(formData.email, rememberMe);
+      if (rememberMe) {
+        handleRememberMe(formData.email, rememberMe);
+      }
     };
     
     submitLogin(e, formData, rememberMe, rememberMeCallback, isLoading);

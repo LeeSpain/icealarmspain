@@ -36,6 +36,7 @@ export const useLoginSubmit = ({
     isLoading: boolean
   ) => {
     e.preventDefault();
+    console.log("Submit handler triggered with form data:", formData);
     
     // If loading is controlled externally and is true, or internal loading state is true, prevent submission
     if ((externalLoading !== undefined && externalLoading) || isLoading) {
@@ -73,7 +74,7 @@ export const useLoginSubmit = ({
     setSubmitAttempted(true);
 
     try {
-      console.log("Login form submitted with:", { email, password });
+      console.log("Login form submitted with:", { email, password, rememberMe });
 
       // Use external onSubmit handler if provided
       if (onSubmit) {
