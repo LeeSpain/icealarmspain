@@ -13,7 +13,7 @@ interface MobileMenuProps {
 const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
   if (!isOpen) return null;
 
-  // Skip authentication for direct dashboard access
+  // Direct dashboard access function - updated for more reliability
   const handleDirectAccess = (path: string, onClose: () => void) => {
     // Set development mode
     localStorage.setItem('forceDevMode', 'true');

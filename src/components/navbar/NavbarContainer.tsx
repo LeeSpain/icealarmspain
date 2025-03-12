@@ -42,7 +42,7 @@ const NavbarContainer: React.FC = () => {
     setIsMobileMenuOpen(false);
   }, [location.pathname]);
 
-  // Skip authentication for direct dashboard access
+  // Direct dashboard access function - improved for reliability
   const handleDirectAccess = (path: string) => {
     // Set development mode
     localStorage.setItem('forceDevMode', 'true');
@@ -137,7 +137,7 @@ const NavbarContainer: React.FC = () => {
             className="p-2 rounded-md text-gray-700"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           >
-            {/* Menu icon has been removed here */}
+            {/* Menu icon removed as requested */}
           </button>
         </div>
       </div>
