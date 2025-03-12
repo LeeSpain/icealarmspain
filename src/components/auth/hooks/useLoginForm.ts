@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { useFormState } from "./form-state/useFormState";
 import { useLoadingState } from "./loading-state/useLoadingState";
 import { useRememberMe } from "./persistence/useRememberMe";
@@ -69,19 +69,20 @@ export const useLoginForm = ({
   });
 
   // Form submission handler
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault(); // Ensure we prevent default form submission
+  const handleSubmit = useCallback((e: React.FormEvent) => {
+    e.preventDefault(); // Always prevent default
     console.log("Form submission initiated with:", formData);
     
     // Create a callback function to handle the remember me functionality
     const rememberMeCallback = () => {
       if (rememberMe) {
+        console.log("Executing remember me callback");
         handleRememberMe(formData.email, rememberMe);
       }
     };
     
     submitLogin(e, formData, rememberMe, rememberMeCallback, isLoading);
-  };
+  }, [formData, handleRememberMe, isLoading, rememberMe, submitLogin]);
 
   return {
     formData,

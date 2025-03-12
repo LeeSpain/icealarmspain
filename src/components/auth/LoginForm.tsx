@@ -43,10 +43,12 @@ const LoginForm: React.FC<LoginFormProps> = ({
   });
 
   // Check if using development mode
-  const isDevelopmentMode = !import.meta.env.VITE_FIREBASE_API_KEY;
+  const isDevelopmentMode = true; // Force dev mode
 
   const onFormSubmit = (e: React.FormEvent) => {
-    console.log("Form submit event triggered");
+    e.preventDefault(); // Prevent default form submission
+    console.log("Form submit event triggered - preventing default");
+    
     // Call the handleSubmit from useLoginForm
     handleSubmit(e);
   };

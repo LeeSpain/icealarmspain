@@ -35,6 +35,7 @@ export const useLoginSubmit = ({
     handleRememberMe: () => void,
     isLoading: boolean
   ) => {
+    // Always prevent default
     e.preventDefault();
     console.log("Submit handler triggered with form data:", formData);
     
@@ -77,6 +78,12 @@ export const useLoginSubmit = ({
     try {
       console.log("Login form validated, attempting submission with:", { email, password, rememberMe });
 
+      // Handle "remember me" before anything else
+      if (rememberMe) {
+        console.log("Saving email for remember me");
+        handleRememberMe();
+      }
+      
       // Use external onSubmit handler if provided
       if (onSubmit) {
         console.log("Using external onSubmit handler");
@@ -87,15 +94,37 @@ export const useLoginSubmit = ({
       if (onSuccess) {
         console.log("Using external onSuccess handler");
         await onSuccess(email, password, rememberMe);
+        
+        // Force navigate after onSuccess in case it didn't happen
+        const defaultRedirect = email.includes('admin') 
+          ? '/admin'
+          : email.includes('callcenter') 
+            ? '/call-center' 
+            : '/dashboard';
+            
+        const targetUrl = redirectTo || defaultRedirect;
+        console.log(`Forcing navigation to ${targetUrl} after successful login`);
+        
+        // Use a timeout to ensure state updates complete first
+        setTimeout(() => {
+          navigate(targetUrl, { replace: true });
+        }, 100);
+        
+        return;
       }
-      
-      // Handle "remember me" if login was successful
-      handleRememberMe();
       
       // If no external handlers are provided, perform default navigation
       if (!onSubmit && !onSuccess) {
-        console.log("No handlers provided, navigating to:", redirectTo || "/dashboard");
-        navigate(redirectTo || "/dashboard", { replace: true });
+        const defaultRedirect = email.includes('admin') 
+          ? '/admin'
+          : email.includes('callcenter') 
+            ? '/call-center' 
+            : '/dashboard';
+            
+        const targetUrl = redirectTo || defaultRedirect;
+        console.log(`No handlers provided, navigating to: ${targetUrl}`);
+        
+        navigate(targetUrl, { replace: true });
       }
     } catch (error: any) {
       console.error("Login submission error:", error);

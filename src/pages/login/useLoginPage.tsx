@@ -23,6 +23,12 @@ export const useLoginPage = () => {
   const searchParams = new URLSearchParams(location.search);
   const redirectParam = searchParams.get('redirect') || '/dashboard';
   
+  // Force development mode
+  useEffect(() => {
+    localStorage.setItem('forceDevMode', 'true');
+    console.log("Development mode forced in useLoginPage");
+  }, []);
+  
   // Handle successful authentication
   useEffect(() => {
     if (!isMounted.current || !isAuthenticated || !user || redirectTriggered || loginInProgress) {
@@ -86,18 +92,12 @@ export const useLoginPage = () => {
         duration: 3000
       });
       
-      // Set a flag in sessionStorage to indicate we need to redirect
-      sessionStorage.setItem('shouldRedirect', 'true');
-      sessionStorage.setItem('redirectTo', redirectParam || getDefaultRedirect(user.role));
-      
-      // Force a redirect immediately
+      // Determine redirect path based on role
       const redirectTo = redirectParam || getDefaultRedirect(user.role);
       console.log("Immediately redirecting to:", redirectTo);
       
-      // Wait a moment to ensure state updates are completed
-      setTimeout(() => {
-        navigate(redirectTo, { replace: true });
-      }, 100);
+      // Force a redirect immediately
+      navigate(redirectTo, { replace: true });
       
     } catch (error) {
       console.error("Login error:", error);
@@ -133,7 +133,7 @@ export const useLoginPage = () => {
         console.log("Setting initial loading false due to timeout");
         setIsLoading(false);
       }
-    }, 800); // Reduced timeout for faster loading
+    }, 400); // Reduced timeout for faster loading
     
     return () => {
       clearTimeout(initialAuthCheckTimeout);
@@ -157,19 +157,6 @@ export const useLoginPage = () => {
       setIsLoading(false);
     }
   }, [authLoading]);
-  
-  // Check for stored redirect info
-  useEffect(() => {
-    const shouldRedirect = sessionStorage.getItem('shouldRedirect');
-    const redirectTo = sessionStorage.getItem('redirectTo');
-    
-    if (shouldRedirect === 'true' && redirectTo && isAuthenticated) {
-      console.log("Found stored redirect info, navigating to:", redirectTo);
-      sessionStorage.removeItem('shouldRedirect');
-      sessionStorage.removeItem('redirectTo');
-      navigate(redirectTo, { replace: true });
-    }
-  }, [isAuthenticated, navigate]);
   
   // Add diagnostic logging
   console.log("Login page auth status:", {

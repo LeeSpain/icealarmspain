@@ -30,8 +30,8 @@ export const login = async (email: string, password: string, rememberMe = false)
     // First, ensure we clear any existing auth state to prevent conflicts
     clearAuthData();
     
-    // Always assume development mode for testing
-    const isDevMode = true; // Force development mode
+    // Force development mode for testing
+    localStorage.setItem('forceDevMode', 'true');
     console.log('Development mode forced for login');
     
     // Normalize the email for comparison
@@ -64,22 +64,15 @@ export const login = async (email: string, password: string, rememberMe = false)
       
       console.log('Development user created with role:', role);
       
-      // Store user data based on rememberMe preference
-      if (rememberMe) {
-        localStorage.setItem('currentUser', JSON.stringify(user));
-        localStorage.setItem('authPersistence', 'local');
-      } else {
-        sessionStorage.setItem('currentUser', JSON.stringify(user));
-        sessionStorage.setItem('authPersistence', 'session');
-      }
-      
-      // Always store role in localStorage for auth checks
+      // Store user data based on rememberMe preference - but ALWAYS store in localStorage for now to prevent issues
+      localStorage.setItem('currentUser', JSON.stringify(user));
+      localStorage.setItem('authPersistence', 'local');
       localStorage.setItem('userRole', role);
       
       return user;
-    } else if (isDevMode) {
-      // For development, auto-login as admin if credentials don't match exactly
-      console.log('Auto-login as admin for development');
+    } else {
+      // For any other credentials in dev mode, auto-login as admin
+      console.log('Auto-login as admin for development with credentials:', { email, password });
       
       const role = 'admin';
       const devUserId = 'dev-admin';
@@ -97,20 +90,12 @@ export const login = async (email: string, password: string, rememberMe = false)
         createdAt: new Date().toISOString()
       };
       
-      if (rememberMe) {
-        localStorage.setItem('currentUser', JSON.stringify(user));
-        localStorage.setItem('authPersistence', 'local');
-      } else {
-        sessionStorage.setItem('currentUser', JSON.stringify(user));
-        sessionStorage.setItem('authPersistence', 'session');
-      }
-      
+      // Always store in localStorage for now
+      localStorage.setItem('currentUser', JSON.stringify(user));
+      localStorage.setItem('authPersistence', 'local');
       localStorage.setItem('userRole', role);
       
       return user;
-    } else {
-      // Non-dev mode login attempt (should not happen currently)
-      throw new Error('Authentication system is in maintenance. Please use admin@icealarm.es/password123 or user@example.com/password123 for testing.');
     }
   } catch (error: any) {
     console.error('Login error:', error);
