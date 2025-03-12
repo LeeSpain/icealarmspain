@@ -1,4 +1,3 @@
-
 import { User } from '../types';
 import { determineUserRole } from '../utils';
 
@@ -6,21 +5,17 @@ import { determineUserRole } from '../utils';
 export const login = async (email: string, password: string, rememberMe: boolean = false): Promise<User> => {
   console.log('Login attempt:', { email, rememberMe });
   
-  // This is a mock implementation for development
-  // In a real app, this would authenticate with Firebase/Supabase
-  
   if (!email || !password) {
     throw new Error('Email and password are required');
   }
   
-  // For development mode, we'll accept any password
-  // Using exact email matching for role determination
+  // Determine role using exact email matching
   const role = determineUserRole(email);
   console.log('Determined role:', role);
   
   const devUserId = `dev-${email.replace(/[^a-z0-9]/gi, '-')}`;
   
-  // Create a user object for our auth context
+  // Create a user object
   const user: User = {
     uid: devUserId,
     id: devUserId,
@@ -35,13 +30,13 @@ export const login = async (email: string, password: string, rememberMe: boolean
     createdAt: new Date().toISOString()
   };
   
-  console.log('Dev mode user created:', user);
+  console.log('Created user with role:', user.role);
   
   // Store the user in localStorage
   localStorage.setItem('currentUser', JSON.stringify(user));
   localStorage.setItem('userRole', role);
+  localStorage.setItem('forceDevMode', 'true');
   
-  // If rememberMe is true, store the email for next time
   if (rememberMe) {
     localStorage.setItem('rememberedEmail', email);
   } else {

@@ -1,6 +1,3 @@
-
-// Utility functions for auth context
-
 /**
  * Determines user role based on email
  */
@@ -8,19 +5,22 @@ export const determineUserRole = (email: string): string => {
   // Normalize email for comparison
   const normalizedEmail = email.toLowerCase().trim();
   
+  console.log('Determining role for email:', normalizedEmail);
+  
   // Use exact email matching to prevent partial matches
-  if (normalizedEmail === 'admin@icealarm.es') {
-    return 'admin';
-  } else if (normalizedEmail === 'callcenter@icealarm.es') {
-    return 'callcenter';
-  } else if (normalizedEmail === 'technician@icealarm.es') {
-    return 'technician';
-  } else if (normalizedEmail === 'support@icealarm.es') {
-    return 'support';
-  } else if (normalizedEmail === 'user@icealarm.es') {
-    return 'member';
-  } else {
-    return 'member'; // Default role
+  switch (normalizedEmail) {
+    case 'admin@icealarm.es':
+      return 'admin';
+    case 'callcenter@icealarm.es':
+      return 'callcenter';
+    case 'technician@icealarm.es':
+      return 'technician';
+    case 'support@icealarm.es':
+      return 'support';
+    case 'user@icealarm.es':
+      return 'member';
+    default:
+      return 'member'; // Default role
   }
 };
 
