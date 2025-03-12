@@ -76,6 +76,7 @@ export const useLoginFormState = ({
   
   // Get redirect URL based on role
   const getRedirectUrl = (role: string): string => {
+    console.log("Getting redirect URL for role:", role);
     switch (role) {
       case 'admin': return '/admin';
       case 'callcenter': return '/call-center';
@@ -132,6 +133,7 @@ export const useLoginFormState = ({
       } else {
         // Default simple login logic
         const userRole = determineRole(email);
+        console.log("Determined role:", userRole);
         const mockUser = createMockUser(email, userRole);
         
         // Save user to localStorage
@@ -151,9 +153,9 @@ export const useLoginFormState = ({
         // Navigate based on role with slight delay to prevent redirects
         setTimeout(() => {
           const targetUrl = redirectTo || getRedirectUrl(userRole);
-          console.log("LoginForm: Redirecting to", targetUrl);
+          console.log("LoginForm: Redirecting to", targetUrl, "role:", userRole);
           navigate(targetUrl, { replace: true });
-        }, 500);
+        }, 300);
       }
     } catch (error) {
       console.error("Login error:", error);

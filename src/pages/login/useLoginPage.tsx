@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
@@ -41,7 +42,7 @@ export const useLoginPage = () => {
     }
   };
 
-  const getDefaultRedirect = (role?: string) => {
+  const getDefaultRedirect = (role: string): string => {
     console.log("Determining redirect for role:", role);
     switch (role) {
       case 'admin':
@@ -93,6 +94,7 @@ export const useLoginPage = () => {
       
       localStorage.setItem('currentUser', JSON.stringify(user));
       localStorage.setItem('userRole', role);
+      console.log("Login success - stored role:", role);
       
       if (rememberMe) {
         localStorage.setItem('rememberedEmail', email);
@@ -108,12 +110,16 @@ export const useLoginPage = () => {
         duration: 3000
       });
       
-      const targetUrl = redirectParam || getDefaultRedirect(role);
+      // Use the specified redirect parameter or get the default based on role
+      const targetUrl = redirectParam && redirectParam !== '/dashboard' 
+        ? redirectParam 
+        : getDefaultRedirect(role);
+        
       console.log("Redirecting to:", targetUrl);
       
       setTimeout(() => {
         navigate(targetUrl, { replace: true });
-      }, 500);
+      }, 300);
       
     } catch (error) {
       console.error("Login error:", error);

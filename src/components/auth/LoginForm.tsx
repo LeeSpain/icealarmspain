@@ -6,6 +6,7 @@ import { PasswordSection } from "./form-sections/PasswordSection";
 import { LoginFormFooter } from "./form-sections/LoginFormFooter";
 import { FormHeader } from "./form-sections/FormHeader";
 import { useLoginFormState } from "./hooks/useLoginFormState";
+import { DevelopmentModeAlert } from "./form-elements/DevelopmentModeAlert";
 
 interface LoginFormProps {
   onSuccess?: (email: string, password: string, rememberMe: boolean) => void | Promise<void>;
@@ -60,6 +61,8 @@ const LoginForm: React.FC<LoginFormProps> = ({
 
   return (
     <div className="w-full max-w-md mx-auto">
+      <DevelopmentModeAlert language={language} />
+      
       <FormHeader error={error} language={language} />
 
       <form onSubmit={handleSubmit} className="space-y-6">

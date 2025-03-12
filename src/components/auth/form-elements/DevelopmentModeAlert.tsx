@@ -1,6 +1,6 @@
 
 import React from "react";
-import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { BugPlay } from "lucide-react";
 
 interface DevelopmentModeAlertProps {
@@ -11,10 +11,23 @@ export const DevelopmentModeAlert: React.FC<DevelopmentModeAlertProps> = ({ lang
   return (
     <Alert className="mb-4 bg-yellow-50 border-yellow-200">
       <BugPlay className="h-4 w-4 mr-2" />
-      <AlertDescription>
+      <AlertTitle className="text-amber-800 mb-1 font-medium">
+        {language === 'en' ? "Development Mode" : "Modo de Desarrollo"}
+      </AlertTitle>
+      <AlertDescription className="text-amber-700">
         {language === 'en' 
-          ? "Development mode is enabled. Any email/password combination will work." 
-          : "El modo de desarrollo está habilitado. Cualquier combinación de correo/contraseña funcionará."}
+          ? "Use these emails to access different dashboards:" 
+          : "Use estos correos para acceder a diferentes paneles:"}
+        <ul className="list-disc ml-5 mt-1 text-sm">
+          <li>admin@icealarm.es - {language === 'en' ? "Admin Dashboard" : "Panel de Administrador"}</li>
+          <li>callcenter@icealarm.es - {language === 'en' ? "Call Center Dashboard" : "Panel de Centro de Llamadas"}</li>
+          <li>user@icealarm.es - {language === 'en' ? "Member Dashboard" : "Panel de Miembro"}</li>
+        </ul>
+        <p className="mt-1 text-xs">
+          {language === 'en' 
+            ? "Password can be anything. Email determines the role." 
+            : "La contraseña puede ser cualquiera. El correo determina el rol."}
+        </p>
       </AlertDescription>
     </Alert>
   );
