@@ -1,5 +1,5 @@
 
-import { useEffect, useRef } from "react";
+import { useState } from "react";
 import { useFormState } from "./form-state/useFormState";
 import { useLoadingState } from "./loading-state/useLoadingState";
 import { useRememberMe } from "./persistence/useRememberMe";
@@ -18,13 +18,11 @@ interface UseLoginFormProps {
 export const useLoginForm = ({ 
   externalLoading, 
   externalError, 
-  language, 
+  language,
   onSubmit,
   onSuccess,
-  redirectTo
+  redirectTo 
 }: UseLoginFormProps) => {
-  const isMounted = useRef(true);
-  
   // Initialize form state (email, password, rememberMe)
   const {
     formData,
@@ -49,12 +47,10 @@ export const useLoginForm = ({
     clearError
   } = useLoadingState({ externalLoading, externalError });
 
-  // Handle "remember me" functionality
-  const setEmailFromStorage = (email: string) => {
+  // Handle "remember me" functionality with the correct types
+  const { handleRememberMe } = useRememberMe((email: string) => {
     setFormData(prev => ({ ...prev, email }));
-  };
-  
-  const { handleRememberMe } = useRememberMe(setEmailFromStorage, setRememberMe);
+  }, setRememberMe);
 
   // Handle development mode credentials
   useDevCredentials(formData, setFormData);
@@ -72,36 +68,9 @@ export const useLoginForm = ({
     redirectTo
   });
 
-  // Unmount cleanup
-  useEffect(() => {
-    return () => {
-      isMounted.current = false;
-    };
-  }, []);
-
-  // Update internal error when external error changes
-  useEffect(() => {
-    if (externalError && isMounted.current) {
-      updateExternalError(externalError);
-    }
-  }, [externalError, updateExternalError]);
-
-  // Modified change handler to clear errors
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    handleChange(e);
-    
-    // Clear field-specific error
-    clearFieldError(e.target.name);
-    
-    // Clear general error message
-    if (internalError) {
-      clearError();
-    }
-  };
-
   // Form submission handler
-  const handleFormSubmit = (e: React.FormEvent) => {
-    submitLogin(e, formData, rememberMe, handleRememberMe, isLoading);
+  const handleSubmit = (e: React.FormEvent) => {
+    submitLogin(e, formData, rememberMe, () => handleRememberMe(formData.email, rememberMe), isLoading);
   };
 
   return {
@@ -110,8 +79,8 @@ export const useLoginForm = ({
     isLoading,
     internalError,
     errors,
-    handleChange: handleInputChange,
+    handleChange,
     handleRememberMeChange,
-    handleSubmit: handleFormSubmit
+    handleSubmit
   };
 };
