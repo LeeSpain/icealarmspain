@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
@@ -18,7 +17,89 @@ export const useLoginPage = () => {
   const [isLoading, setIsLoading] = useState(true);
   
   const isMounted = useRef(true);
+
+  // Get redirect param from URL
+  const searchParams = new URLSearchParams(location.search);
+  const redirectParam = searchParams.get('redirect') || '/dashboard';
   
+  // Handle successful authentication
+  useEffect(() => {
+    if (!isMounted.current || !isAuthenticated || !user || redirectTriggered || loginInProgress) {
+      return;
+    }
+
+    console.log("Login successful, preparing to redirect with role:", user.role);
+    setRedirectTriggered(true);
+
+    const redirectTo = redirectParam || getDefaultRedirect(user.role);
+    console.log("Redirecting to:", redirectTo);
+
+    toast({
+      title: language === 'en' ? "Login Successful" : "Inicio de sesión exitoso",
+      description: language === 'en' 
+        ? `Welcome back, ${user.displayName || user.email?.split('@')[0] || 'User'}!` 
+        : `Bienvenido de nuevo, ${user.displayName || user.email?.split('@')[0] || 'Usuario'}!`,
+      duration: 3000
+    });
+
+    // Use navigate with replace to prevent back button issues
+    navigate(redirectTo, { replace: true });
+  }, [isAuthenticated, user, navigate, redirectParam, redirectTriggered, language, toast, loginInProgress]);
+
+  const getDefaultRedirect = (role?: string) => {
+    console.log("Determining redirect for role:", role);
+    switch (role) {
+      case 'admin':
+        return '/admin';
+      case 'callcenter':
+        return '/call-center';
+      case 'member':
+      case 'technician':
+      case 'support':
+      default:
+        return '/dashboard';
+    }
+  };
+
+  const handleLoginSuccess = async (email: string, password: string, rememberMe: boolean) => {
+    if (loginInProgress || !isMounted.current) {
+      return;
+    }
+    
+    setLoginInProgress(true);
+    setLoginError(null);
+    
+    try {
+      const user = await login(email, password, rememberMe);
+      console.log("Login successful with role:", user.role);
+      
+      // Navigation will be handled by the useEffect above
+    } catch (error) {
+      console.error("Login error:", error);
+      
+      if (isMounted.current) {
+        const errorMessage = error instanceof Error 
+          ? error.message 
+          : language === 'en' 
+            ? "An unknown error occurred" 
+            : "Ha ocurrido un error desconocido";
+        
+        setLoginError(errorMessage);
+        
+        toast({
+          title: language === 'en' ? "Login Error" : "Error de inicio de sesión",
+          description: errorMessage,
+          variant: "destructive"
+        });
+      }
+    } finally {
+      if (isMounted.current) {
+        setLoginInProgress(false);
+        setIsLoading(false);
+      }
+    }
+  };
+
   // Clear mounted flag on unmount
   useEffect(() => {
     // Initial auth check should be quick
@@ -64,108 +145,6 @@ export const useLoginPage = () => {
     isDevMode: devModeActive
   });
   
-  const searchParams = new URLSearchParams(location.search);
-  const redirectParam = searchParams.get('redirect');
-  
-  // Handle authentication state changes
-  useEffect(() => {
-    if (!isMounted.current) return;
-    
-    console.log("Login page - Auth state check:", { 
-      isAuthenticated, 
-      userEmail: user?.email,
-      userRole: user?.role,
-      authLoading, 
-      isLoading,
-      loginInProgress,
-      redirectTriggered
-    });
-    
-    // Only proceed if we're authenticated and haven't redirected yet
-    if (isAuthenticated && user && !redirectTriggered && !loginInProgress) {
-      console.log("User authenticated, preparing to redirect");
-      
-      setRedirectTriggered(true);
-      
-      // Determine redirect path based on role or redirectParam
-      const redirectTo = redirectParam || getDefaultRedirect(user.role);
-      console.log("Redirecting authenticated user to:", redirectTo);
-      
-      toast({
-        title: language === 'en' ? "Login Successful" : "Inicio de sesión exitoso",
-        description: language === 'en' 
-          ? `Welcome back, ${user.displayName || user.email?.split('@')[0] || 'User'}!` 
-          : `Bienvenido de nuevo, ${user.displayName || user.email?.split('@')[0] || 'Usuario'}!`,
-        duration: 3000
-      });
-      
-      // CRITICAL FIX: Use navigate instead of window.location to prevent page freeze
-      navigate(redirectTo);
-    }
-  }, [isAuthenticated, authLoading, user, navigate, redirectParam, redirectTriggered, language, toast, loginInProgress]);
-  
-  const getDefaultRedirect = (role?: string) => {
-    console.log("Determining redirect for role:", role);
-    switch (role) {
-      case 'admin':
-        return '/admin';
-      case 'callcenter':
-        return '/call-center';
-      case 'member':
-      case 'technician':
-      case 'support':
-      default:
-        return '/dashboard';
-    }
-  };
-  
-  const handleLoginSuccess = async (email: string, password: string, rememberMe: boolean) => {
-    if (loginInProgress || !isMounted.current) {
-      console.log("Login already in progress or component unmounted");
-      return;
-    }
-    
-    console.log("Starting login process with:", { email, rememberMe });
-    setLoginInProgress(true);
-    setLoginError(null);
-    
-    try {
-      console.log("Attempting login with:", email, "Remember me:", rememberMe);
-      const user = await login(email, password, rememberMe);
-      console.log("Login function completed successfully with role:", user.role);
-      
-      // Determine redirect path based on role or redirectParam
-      const redirectTo = redirectParam || getDefaultRedirect(user.role);
-      console.log("Redirecting authenticated user to:", redirectTo);
-      
-      // CRITICAL FIX: Use navigate instead of window.location for SPA navigation
-      navigate(redirectTo);
-    } catch (error) {
-      console.error("Login error:", error);
-      if (isMounted.current) {
-        const errorMessage = error instanceof Error 
-          ? error.message 
-          : language === 'en' 
-            ? "An unknown error occurred. Please try again later." 
-            : "Ha ocurrido un error desconocido. Por favor, inténtelo más tarde.";
-        
-        console.log("Setting login error:", errorMessage);
-        setLoginError(errorMessage);
-        
-        toast({
-          title: language === 'en' ? "Login Error" : "Error de inicio de sesión",
-          description: errorMessage,
-          variant: "destructive"
-        });
-      }
-    } finally {
-      if (isMounted.current) {
-        setLoginInProgress(false);
-        setIsLoading(false);
-      }
-    }
-  };
-
   return {
     user,
     isAuthenticated,

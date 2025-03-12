@@ -22,22 +22,20 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   const location = useLocation();
   const navigate = useNavigate();
 
-  // CRITICAL FIX: Also check localStorage for role as a backup
-  const storedRole = localStorage.getItem('userRole');
-  const effectiveRole = user?.role || storedRole;
+  // Get role from user object first, then fallback to localStorage
+  const effectiveRole = user?.role || localStorage.getItem('userRole');
 
   useEffect(() => {
     console.log("ProtectedRoute - Current auth state:", { 
       isAuthenticated, 
       isLoading, 
       user,
-      storedRole,
       effectiveRole,
       adminOnly,
       allowedRoles,
       path: location.pathname
     });
-  }, [isAuthenticated, isLoading, user, adminOnly, allowedRoles, location.pathname, storedRole, effectiveRole]);
+  }, [isAuthenticated, isLoading, user, adminOnly, allowedRoles, location.pathname, effectiveRole]);
 
   // Show loading state while authentication is being verified
   if (isLoading) {
@@ -53,13 +51,11 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
 
   // If not authenticated, redirect to login with return path
   if (!isAuthenticated) {
-    console.log("User not authenticated, redirecting to login from:", location.pathname);
-    // CRITICAL FIX: Use return element instead of navigate to avoid freezing
-    return <Navigate to={`/login?redirect=${encodeURIComponent(location.pathname)}`} replace />;
+    const loginPath = `/login?redirect=${encodeURIComponent(location.pathname)}`;
+    console.log("User not authenticated, redirecting to:", loginPath);
+    return <Navigate to={loginPath} replace />;
   }
 
-  console.log("User authenticated with role:", effectiveRole);
-  
   // Check for admin access if adminOnly is true
   if (adminOnly && effectiveRole !== 'admin') {
     console.log("Admin access required but user role is:", effectiveRole);
@@ -70,12 +66,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
       variant: "destructive"
     });
     
-    // Redirect based on role
-    if (effectiveRole === 'callcenter') {
-      return <Navigate to="/call-center" replace />;
-    } else {
-      return <Navigate to="/dashboard" replace />;
-    }
+    return <Navigate to="/dashboard" replace />;
   }
 
   // If roles are specified, check if user has required role
@@ -88,19 +79,16 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
       variant: "destructive"
     });
     
-    // Redirect based on role
-    if (effectiveRole === 'admin') {
-      return <Navigate to="/admin" replace />;
-    } else if (effectiveRole === 'callcenter') {
-      return <Navigate to="/call-center" replace />;
-    } else {
-      return <Navigate to="/dashboard" replace />;
-    }
+    // Return to appropriate dashboard based on role
+    const redirectTarget = effectiveRole === 'admin' ? '/admin' : 
+                         effectiveRole === 'callcenter' ? '/call-center' : 
+                         '/dashboard';
+    
+    return <Navigate to={redirectTarget} replace />;
   }
 
   // If custom redirect path is provided and conditions are met, redirect
   if (redirectPath) {
-    console.log("Custom redirect to:", redirectPath);
     return <Navigate to={redirectPath} replace />;
   }
 
