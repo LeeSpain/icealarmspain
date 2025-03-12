@@ -1,3 +1,4 @@
+
 import React from 'react';
 import './App.css';
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
@@ -33,6 +34,7 @@ import MedicalDispenserPage from "./pages/MedicalDispenserPage";
 import HealthMetricsPage from "./pages/HealthMetricsPage";
 import MedicationsPage from "./pages/MedicationsPage";
 import Checkout from "./pages/Checkout";
+import CallCenterDashboard from "./pages/CallCenterDashboard";
 
 // Landing page component
 const Landing = () => {
@@ -85,6 +87,7 @@ function App() {
                 <Route path="/devices/glucose-monitor" element={<Layout><GlucoseMonitorPage /></Layout>} />
                 <Route path="/devices/medical-dispenser" element={<Layout><MedicalDispenserPage /></Layout>} />
                 
+                {/* User Dashboard Routes */}
                 <Route path="/dashboard" element={
                   <ProtectedRoute>
                     <Layout>
@@ -165,10 +168,20 @@ function App() {
                   </ProtectedRoute>
                 } />
                 
+                {/* Admin Dashboard Route */}
                 <Route path="/admin" element={
                   <ProtectedRoute adminOnly>
                     <Layout>
                       <AdminDashboard />
+                    </Layout>
+                  </ProtectedRoute>
+                } />
+                
+                {/* Call Center Dashboard Route - this was missing */}
+                <Route path="/call-center" element={
+                  <ProtectedRoute allowedRoles={['callcenter']}>
+                    <Layout>
+                      <CallCenterDashboard />
                     </Layout>
                   </ProtectedRoute>
                 } />

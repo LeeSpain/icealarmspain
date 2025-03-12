@@ -70,11 +70,13 @@ export const useLoginFormState = ({
   // Get redirect URL based on role
   const getRedirectUrl = (role: string): string => {
     console.log("Getting redirect URL for role:", role);
+    
+    // Make sure we're using exact paths that exist in App.tsx
     switch (role) {
       case 'admin': return '/admin';
       case 'callcenter': return '/call-center';
-      case 'technician': return '/technician';
-      case 'support': return '/support';
+      case 'technician': return '/dashboard'; // Default to dashboard for now
+      case 'support': return '/dashboard'; // Default to dashboard for now
       default: return '/dashboard';
     }
   };

@@ -33,6 +33,8 @@ export const useLoginPage = () => {
   // Get the default redirect URL based on user role
   const getDefaultRedirect = (role: string): string => {
     console.log("Determining redirect for role:", role);
+    
+    // Ensure these paths match exactly what's in App.tsx routes
     switch (role) {
       case 'admin':
         return '/admin';
