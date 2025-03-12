@@ -22,11 +22,13 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   const location = useLocation();
   const navigate = useNavigate();
   const [isPageReady, setIsPageReady] = useState(false);
+  const [checkedLocalStorage, setCheckedLocalStorage] = useState(false);
 
   // Try to get authentication info from localStorage if auth context isn't ready
   const [localAuth, setLocalAuth] = useState({
     isAuthenticated: false,
     role: null as string | null,
+    user: null as any,
   });
 
   // Initialize authentication from localStorage (faster than waiting for context)
@@ -36,19 +38,25 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
       const userRole = localStorage.getItem('userRole');
       
       if (storedUser) {
-        console.log("ProtectedRoute: Found stored user");
+        const parsedUser = JSON.parse(storedUser);
+        console.log("ProtectedRoute: Found stored user with role:", parsedUser?.role || userRole);
+        
         setLocalAuth({
           isAuthenticated: true,
-          role: userRole || (storedUser ? JSON.parse(storedUser)?.role : null)
+          role: userRole || (parsedUser ? parsedUser.role : null),
+          user: parsedUser
         });
       }
+      
+      setCheckedLocalStorage(true);
       
       // Mark the page as ready for rendering
       setTimeout(() => {
         setIsPageReady(true);
-      }, 300);
+      }, 100);
     } catch (error) {
       console.error("ProtectedRoute: Error reading from localStorage", error);
+      setCheckedLocalStorage(true);
       setIsPageReady(true);
     }
   }, []);
@@ -58,6 +66,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   
   // Use either context authentication or localStorage authentication
   const effectivelyAuthenticated = isAuthenticated || localAuth.isAuthenticated;
+  const effectiveUser = user || localAuth.user;
 
   useEffect(() => {
     console.log("ProtectedRoute - Current auth state:", { 
@@ -65,20 +74,22 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
       localAuthenticated: localAuth.isAuthenticated,
       isLoading, 
       user,
+      localUser: localAuth.user,
       effectiveRole,
       adminOnly,
       allowedRoles,
-      path: location.pathname
+      path: location.pathname,
+      checkedLocalStorage
     });
     
     // Check for authentication issues
-    if (!isLoading && !effectivelyAuthenticated) {
+    if (!isLoading && checkedLocalStorage && !effectivelyAuthenticated) {
       console.log("Not authenticated, will redirect to login");
     }
-  }, [isAuthenticated, localAuth.isAuthenticated, isLoading, user, adminOnly, allowedRoles, location.pathname, effectiveRole]);
+  }, [isAuthenticated, localAuth.isAuthenticated, isLoading, user, adminOnly, allowedRoles, location.pathname, effectiveRole, checkedLocalStorage]);
 
   // Show loading state while authentication is being verified
-  if (isLoading && !isPageReady) {
+  if ((isLoading || !checkedLocalStorage) && !isPageReady) {
     return (
       <div className="flex h-screen items-center justify-center bg-ice-50/30">
         <div className="flex flex-col items-center">

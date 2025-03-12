@@ -26,11 +26,23 @@ const LoginForm: React.FC<LoginFormProps> = ({
   const { language: contextLanguage } = useLanguage();
   const language = propLanguage || contextLanguage;
   
-  // Force dev mode
+  // Force dev mode and ensure clean authentication state
   useEffect(() => {
+    // Set development mode
     localStorage.setItem('forceDevMode', 'true');
     console.log("LoginForm: Dev mode enabled");
-  }, []);
+    
+    // Don't clear authentication data if we're on a redirect from another page
+    if (!redirectTo) {
+      // Reset previous auth state on login form mounting
+      // This ensures we don't have stale auth data causing redirect loops
+      localStorage.removeItem('currentUser');
+      localStorage.removeItem('userRole');
+      console.log("LoginForm: Fresh login, clearing previous auth state");
+    } else {
+      console.log("LoginForm: Redirected login, preserving auth state. Redirect target:", redirectTo);
+    }
+  }, [redirectTo]);
 
   // Use our custom hook for form state management
   const {

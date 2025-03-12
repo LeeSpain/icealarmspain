@@ -33,10 +33,17 @@ export const login = async (email: string, password: string, rememberMe: boolean
   
   console.log('Created user with role:', user.role);
   
-  // Store the user in localStorage
+  // Clear any previous session data before setting new
+  localStorage.removeItem('currentUser');
+  localStorage.removeItem('userRole');
+  
+  // Store the user in localStorage - make sure to do this BEFORE any redirects
   localStorage.setItem('currentUser', JSON.stringify(user));
   localStorage.setItem('userRole', role);
   localStorage.setItem('forceDevMode', 'true');
+  
+  // This is important - delay slightly to ensure storage is complete
+  await new Promise(resolve => setTimeout(resolve, 50));
   
   if (rememberMe) {
     localStorage.setItem('rememberedEmail', email);

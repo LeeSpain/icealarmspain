@@ -16,16 +16,41 @@ export const useLoginPage = () => {
   const searchParams = new URLSearchParams(location.search);
   const redirectParam = searchParams.get('redirect') || '/dashboard';
 
+  // Check if user is already logged in
   useEffect(() => {
+    // Set development mode
     localStorage.setItem('forceDevMode', 'true');
     console.log("Development mode forced in login page");
     
+    // Check if already logged in
+    const storedUser = localStorage.getItem('currentUser');
+    if (storedUser) {
+      try {
+        const user = JSON.parse(storedUser);
+        if (user && user.role) {
+          console.log("User already logged in with role:", user.role);
+          const targetUrl = redirectParam && redirectParam !== '/dashboard' 
+            ? redirectParam 
+            : getDefaultRedirect(user.role);
+          
+          // Use timeout to ensure this happens after other state updates
+          setTimeout(() => {
+            console.log("Redirecting already logged-in user to:", targetUrl);
+            navigate(targetUrl, { replace: true });
+          }, 100);
+        }
+      } catch (e) {
+        console.error("Error parsing stored user:", e);
+      }
+    }
+    
+    // Clear user data if accessing login page directly without redirect parameter
     if (location.pathname === '/login' && !searchParams.has('redirect')) {
       localStorage.removeItem('currentUser');
       localStorage.removeItem('userRole');
       console.log("Login page accessed directly, clearing user data");
     }
-  }, [location.pathname, searchParams]);
+  }, [location.pathname, searchParams, navigate, redirectParam]);
 
   const getDefaultRedirect = (role: string): string => {
     console.log("Determining redirect for role:", role);
@@ -77,7 +102,10 @@ export const useLoginPage = () => {
         
       console.log("Redirecting to:", targetUrl);
       
-      // Use React Router navigation
+      // A slight delay to ensure localStorage updates are complete
+      await new Promise(resolve => setTimeout(resolve, 200));
+      
+      // Use React Router navigation with replace to avoid back-button issues
       navigate(targetUrl, { replace: true });
       
     } catch (error) {
