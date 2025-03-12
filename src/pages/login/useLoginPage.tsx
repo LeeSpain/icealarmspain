@@ -27,7 +27,7 @@ export const useLoginPage = () => {
         console.log("Setting initial loading false due to timeout");
         setIsLoading(false);
       }
-    }, 1000); // Reduced timeout from 1500ms to 1000ms
+    }, 800); // Reduced timeout for faster loading
     
     return () => {
       clearTimeout(initialAuthCheckTimeout);
@@ -38,6 +38,7 @@ export const useLoginPage = () => {
   // Force reload function
   const forceReload = () => {
     console.log("Force reloading page to reset auth state");
+    localStorage.setItem('forceDevMode', 'true'); // Force dev mode
     localStorage.removeItem('currentUser');
     setIsLoading(false);
     
@@ -59,6 +60,7 @@ export const useLoginPage = () => {
     }
   }, [authLoading]);
   
+  const devModeActive = isDevelopmentMode();
   console.log("Login page auth status:", { 
     userEmail: user?.email,
     userRole: user?.role,
@@ -67,7 +69,7 @@ export const useLoginPage = () => {
     isLoading,
     redirectTriggered,
     loginInProgress,
-    isDevMode: isDevelopmentMode()
+    isDevMode: devModeActive
   });
   
   const searchParams = new URLSearchParams(location.search);

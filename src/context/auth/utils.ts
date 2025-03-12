@@ -1,4 +1,3 @@
-
 // Function to determine the user's role based on email
 export const determineUserRole = (email: string): string => {
   if (!email) return 'member';
@@ -77,17 +76,15 @@ export const isDevelopmentMode = (): boolean => {
     return true;
   }
   
-  // Check if we have the Firebase API key - if not, we're in development mode
-  const hasFirebaseKey = !!import.meta.env.VITE_FIREBASE_API_KEY;
-  
-  // More verbose logging for debugging
-  console.log('Development mode check:', {
-    hasFirebaseKey,
-    isDevMode: !hasFirebaseKey,
-    envMode: import.meta.env.MODE
+  // For debugging purposes - always log current environment values
+  console.log('Environment check:', {
+    mode: import.meta.env.MODE,
+    hasFirebaseKey: !!import.meta.env.VITE_FIREBASE_API_KEY,
+    isDevMode: import.meta.env.MODE === 'development' || !import.meta.env.VITE_FIREBASE_API_KEY
   });
   
-  return !hasFirebaseKey;
+  // Consider both explicit development mode and missing Firebase key
+  return import.meta.env.MODE === 'development' || !import.meta.env.VITE_FIREBASE_API_KEY;
 };
 
 // Function to get test credentials for testing/development

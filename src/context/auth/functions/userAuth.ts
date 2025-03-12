@@ -20,14 +20,16 @@ const clearAuthData = () => {
 // Login function
 export const login = async (email: string, password: string, rememberMe = false): Promise<User> => {
   try {
-    console.log('Starting login process for:', email, 'Development mode:', isDevelopmentMode());
+    console.log('Starting login process for:', email);
     
     // First, ensure we clear any existing auth state to prevent conflicts
     clearAuthData();
     
-    // For development/testing purposes, allow specific test accounts
+    // Check for development mode
     const isDevMode = isDevelopmentMode();
+    console.log('Development mode check result:', isDevMode);
     
+    // For development/testing purposes, allow specific test accounts
     if (isDevMode) {
       console.log('Development mode active, checking for test credentials');
       
@@ -76,9 +78,18 @@ export const login = async (email: string, password: string, rememberMe = false)
       }
     }
     
-    // If we're here, it means we're not in dev mode - add Firebase auth here if needed
-    console.error('Firebase authentication not implemented for production');
-    throw new Error('Please use development mode credentials or configure Firebase authentication');
+    // If we're here, it means we're not in dev mode or Firebase auth is configured
+    if (import.meta.env.VITE_FIREBASE_API_KEY) {
+      // Implement Firebase authentication here
+      console.error('Firebase authentication not fully implemented yet');
+      throw new Error('Firebase authentication not implemented yet. Use development mode for testing.');
+    } else {
+      // No Firebase config but not in development mode
+      console.error('No Firebase config detected and not in development mode');
+      // Force development mode and retry
+      localStorage.setItem('forceDevMode', 'true');
+      throw new Error('Development mode enabled. Please try again with test credentials.');
+    }
   } catch (error: any) {
     console.error('Login process error:', error);
     let errorMessage = 'Unknown authentication error';

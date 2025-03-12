@@ -19,6 +19,18 @@ const Login: React.FC = () => {
     forceReload
   } = useLoginPage();
   
+  // Force development mode to be enabled for testing
+  useEffect(() => {
+    const currentMode = isDevelopmentMode();
+    console.log("Login page - Development mode check:", currentMode);
+    
+    // If not in development mode, force it
+    if (!currentMode) {
+      console.log("Login page - Forcing development mode");
+      localStorage.setItem('forceDevMode', 'true');
+    }
+  }, []);
+  
   console.log("Login page rendering with state:", { 
     isLoading, 
     isAuthenticated, 

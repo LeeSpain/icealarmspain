@@ -25,6 +25,14 @@ export const LoginLoading: React.FC<LoginLoadingProps> = ({
     return () => clearTimeout(timer);
   }, []);
 
+  // Force development mode
+  const handleForceDevMode = () => {
+    localStorage.setItem('forceDevMode', 'true');
+    localStorage.removeItem('currentUser');
+    sessionStorage.clear();
+    window.location.reload();
+  };
+
   return (
     <div className="flex min-h-screen items-center justify-center">
       <div className="flex flex-col items-center max-w-md w-full p-6 rounded-lg bg-white shadow-md">
@@ -71,16 +79,10 @@ export const LoginLoading: React.FC<LoginLoadingProps> = ({
                 : 'Si el inicio de sesión falla, intente limpiar el almacenamiento del navegador y actualizar la página.'}
             </p>
             <button 
-              onClick={() => {
-                // Force dev mode before clearing storage
-                localStorage.setItem('forceDevMode', 'true');
-                localStorage.removeItem('currentUser');
-                sessionStorage.clear();
-                window.location.reload();
-              }}
+              onClick={handleForceDevMode}
               className="mt-4 px-4 py-2 text-sm bg-ice-100 text-ice-700 rounded hover:bg-ice-200 transition-colors"
             >
-              {language === 'en' ? 'Clear Storage & Refresh' : 'Limpiar Almacenamiento y Actualizar'}
+              {language === 'en' ? 'Clear Storage & Enable Dev Mode' : 'Limpiar Almacenamiento y Habilitar Modo Dev'}
             </button>
           </div>
         )}
