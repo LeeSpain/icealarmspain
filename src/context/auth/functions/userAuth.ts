@@ -1,3 +1,4 @@
+
 import { User } from '../types';
 import { determineUserRole } from '../utils';
 
@@ -57,6 +58,6 @@ export const logout = async (): Promise<void> => {
   localStorage.removeItem('currentUser');
   localStorage.removeItem('userRole');
   
-  // Force page refresh to clear any state
-  window.location.href = '/';
+  // Use window.location.href for reliable page reload
+  window.location.href = '/login';
 };

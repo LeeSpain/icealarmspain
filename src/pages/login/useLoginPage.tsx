@@ -6,7 +6,6 @@ import { useLanguage } from "@/context/LanguageContext";
 import { login } from "@/context/auth/functions/userAuth";
 
 export const useLoginPage = () => {
-  // Initialize all hooks first
   const { language } = useLanguage();
   const navigate = useNavigate();
   const location = useLocation();
@@ -14,11 +13,9 @@ export const useLoginPage = () => {
   const [loginInProgress, setLoginInProgress] = useState(false);
   const [loginError, setLoginError] = useState<string | null>(null);
   
-  // Get search params after hooks are initialized
   const searchParams = new URLSearchParams(location.search);
   const redirectParam = searchParams.get('redirect') || '/dashboard';
 
-  // Effect for dev mode and user data cleanup
   useEffect(() => {
     localStorage.setItem('forceDevMode', 'true');
     console.log("Development mode forced in login page");
@@ -30,11 +27,9 @@ export const useLoginPage = () => {
     }
   }, [location.pathname, searchParams]);
 
-  // Get the default redirect URL based on user role
   const getDefaultRedirect = (role: string): string => {
     console.log("Determining redirect for role:", role);
     
-    // Ensure these paths match exactly what's in App.tsx routes
     switch (role) {
       case 'admin':
         return '/admin';
@@ -65,7 +60,6 @@ export const useLoginPage = () => {
           : 'El correo electrónico y la contraseña son obligatorios');
       }
       
-      // Use the centralized login function from auth context
       const user = await login(email, password, rememberMe);
       console.log("Login success - using centralized login function");
       
@@ -77,15 +71,14 @@ export const useLoginPage = () => {
         duration: 3000
       });
       
-      // Use the specified redirect parameter or get the default based on role
       const targetUrl = redirectParam && redirectParam !== '/dashboard' 
         ? redirectParam 
         : getDefaultRedirect(user.role);
         
       console.log("Redirecting to:", targetUrl);
       
-      // Use a direct window location change to ensure redirect happens
-      window.location.href = targetUrl;
+      // Use React Router navigation
+      navigate(targetUrl, { replace: true });
       
     } catch (error) {
       console.error("Login error:", error);
