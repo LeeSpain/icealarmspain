@@ -37,7 +37,7 @@ export const useLoginForm = ({
   } = useLoadingState(externalLoading);
 
   // Remember Me functionality
-  const { rememberMe, handleRememberMeChange } = useRememberMe();
+  const { rememberMe, handleRememberMe, handleRememberMeChange } = useRememberMe();
   
   // Development credentials
   useDevCredentials(handleChange);
@@ -64,7 +64,7 @@ export const useLoginForm = ({
   // Handle form submission
   const handleSubmit = (e: React.FormEvent) => {
     console.log("Form submission triggered");
-    submitHandler(e, formData, rememberMe, handleRememberMeChange, internalLoading);
+    submitHandler(e, formData, rememberMe, handleRememberMe, internalLoading);
   };
   
   return {
