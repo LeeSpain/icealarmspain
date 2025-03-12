@@ -23,11 +23,18 @@ export const DevelopmentModeAlert: React.FC<DevelopmentModeAlertProps> = ({ lang
           
           <div className="text-xs grid grid-cols-1 gap-1.5">
             <div className="font-mono p-1.5 bg-white/50 rounded border border-amber-200">
-              <div><strong>Admin:</strong> admin@icealarm.es</div>
+              <div className="font-bold">Admin Dashboard:</div>
+              <div><strong>Email:</strong> admin@icealarm.es</div>
               <div><strong>Password:</strong> password123</div>
             </div>
             <div className="font-mono p-1.5 bg-white/50 rounded border border-amber-200">
-              <div><strong>User:</strong> user@example.com</div>
+              <div className="font-bold">Member Dashboard:</div>
+              <div><strong>Email:</strong> user@example.com</div>
+              <div><strong>Password:</strong> password123</div>
+            </div>
+            <div className="font-mono p-1.5 bg-white/50 rounded border border-amber-200">
+              <div className="font-bold">Call Center Dashboard:</div>
+              <div><strong>Email:</strong> callcenter@icealarm.es</div>
               <div><strong>Password:</strong> password123</div>
             </div>
           </div>

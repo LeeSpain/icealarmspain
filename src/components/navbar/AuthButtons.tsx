@@ -1,6 +1,6 @@
 
 import React from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { LogOut } from "lucide-react";
 import { ButtonCustom } from "@/components/ui/button-custom";
 import { useLanguage } from "@/context/LanguageContext";
@@ -15,7 +15,6 @@ interface AuthButtonsProps {
 const AuthButtons: React.FC<AuthButtonsProps> = ({ isMobile = false, onClose }) => {
   const { language } = useLanguage();
   const { user, logout, isAuthenticated } = useAuth();
-  const navigate = useNavigate();
   const { toast } = useToast();
   const [logoutInProgress, setLogoutInProgress] = React.useState(false);
   
@@ -24,7 +23,9 @@ const AuthButtons: React.FC<AuthButtonsProps> = ({ isMobile = false, onClose }) 
   const logoutText = language === 'en' ? "Logout" : "Cerrar Sesión";
   const dashboardText = language === 'en' ? "Dashboard" : "Panel";
   
-  const handleLogout = async () => {
+  const handleLogout = async (e: React.MouseEvent) => {
+    e.preventDefault(); // Prevent default link behavior
+    
     try {
       if (logoutInProgress) return;
       
@@ -34,9 +35,11 @@ const AuthButtons: React.FC<AuthButtonsProps> = ({ isMobile = false, onClose }) 
       // First clear localStorage to ensure we don't get stuck in a loop
       localStorage.removeItem('currentUser');
       localStorage.removeItem('authPersistence');
+      sessionStorage.removeItem('currentUser');
+      sessionStorage.removeItem('authPersistence');
       
       await logout();
-      console.log("Logout completed, navigating to home");
+      console.log("Logout completed, preparing for navigation");
       
       toast({
         title: language === 'en' ? "Logged Out" : "Sesión Cerrada",
@@ -46,8 +49,11 @@ const AuthButtons: React.FC<AuthButtonsProps> = ({ isMobile = false, onClose }) 
       // Close mobile menu if open
       if (onClose) onClose();
       
-      // Use window.location.href for a hard reset of the application state
-      window.location.href = '/';
+      // Short delay to allow toast to display before navigation
+      setTimeout(() => {
+        // Use window.location.href for a hard reset of the application state
+        window.location.href = '/';
+      }, 300);
     } catch (error) {
       console.error("Error during logout:", error);
       toast({
@@ -59,6 +65,8 @@ const AuthButtons: React.FC<AuthButtonsProps> = ({ isMobile = false, onClose }) 
       // Force a hard reset even on error
       localStorage.removeItem('currentUser');
       localStorage.removeItem('authPersistence');
+      sessionStorage.removeItem('currentUser');
+      sessionStorage.removeItem('authPersistence');
       window.location.href = '/';
     } finally {
       setLogoutInProgress(false);

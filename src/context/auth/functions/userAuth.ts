@@ -15,6 +15,12 @@ const clearAuthData = () => {
   console.log('Clearing all auth data');
   localStorage.removeItem('currentUser');
   localStorage.removeItem('authPersistence');
+  sessionStorage.removeItem('currentUser');
+  sessionStorage.removeItem('authPersistence');
+  
+  // Also clear any potential tokens or other auth-related items
+  localStorage.removeItem('authToken');
+  sessionStorage.removeItem('authToken');
 };
 
 // Login function
@@ -65,9 +71,19 @@ export const login = async (email: string, password: string, rememberMe = false)
       
       console.log('Development user created with role:', role);
       
-      // Store user data
+      // Store user data in the appropriate storage based on rememberMe
+      if (rememberMe) {
+        localStorage.setItem('currentUser', JSON.stringify(user));
+        localStorage.setItem('authPersistence', 'local');
+        console.log('User data stored in localStorage for persistence');
+      } else {
+        sessionStorage.setItem('currentUser', JSON.stringify(user));
+        sessionStorage.setItem('authPersistence', 'session');
+        console.log('User data stored in sessionStorage (session only)');
+      }
+      
+      // Always save to localStorage too for our development mode
       localStorage.setItem('currentUser', JSON.stringify(user));
-      localStorage.setItem('authPersistence', rememberMe ? 'local' : 'session');
       
       // Force development mode to be remembered
       localStorage.setItem('forceDevMode', 'true');
@@ -120,7 +136,14 @@ export const logout = async (): Promise<void> => {
     // Sign out from Firebase
     await signOut(auth);
     
-    // Additional safety measure - force reload the app
+    // Clear additional items that might be causing issues
+    document.cookie.split(";").forEach(function(c) {
+      document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+    });
+    
+    console.log('Logout successful, redirecting to homepage');
+    
+    // Force a reload to clear the app state completely
     setTimeout(() => {
       window.location.href = '/';
     }, 100);

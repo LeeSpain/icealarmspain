@@ -90,19 +90,32 @@ export const useLoginSubmit = ({
             : `Bienvenido de nuevo, ${userData.displayName || userData.email?.split('@')[0] || 'Usuario'}!`,
         });
         
-        // Determine the correct redirect URL based on user role
-        let targetUrl = redirectTo || '/dashboard';
+        // Simplified redirect logic with absolute paths
+        let targetUrl = "/dashboard";
         
         if (userData.role === 'admin') {
-          targetUrl = '/admin';
+          targetUrl = "/admin";
+          console.log("Admin role detected, redirecting to /admin");
         } else if (userData.role === 'callcenter') {
-          targetUrl = '/call-center';
+          targetUrl = "/call-center";
+          console.log("Call center role detected, redirecting to /call-center");
+        } else {
+          console.log("Member role detected, redirecting to /dashboard");
         }
         
-        console.log("Redirecting to:", targetUrl);
+        // Override with redirectTo if specified
+        if (redirectTo) {
+          console.log("Override redirect to:", redirectTo);
+          targetUrl = redirectTo;
+        }
         
-        // Use direct browser navigation to avoid SPA routing issues
-        window.location.href = targetUrl;
+        console.log("Final redirect target:", targetUrl);
+        
+        // Use a slight delay to ensure toast is visible before redirect
+        setTimeout(() => {
+          // Use window.location for a hard browser navigation to reset state completely
+          window.location.href = targetUrl;
+        }, 300);
       }
     } catch (error) {
       console.error("Login error:", error);
