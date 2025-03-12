@@ -32,7 +32,7 @@ export const useLoginSubmit = ({
     e: React.FormEvent,
     formData: { email: string; password: string },
     rememberMe: boolean,
-    handleRememberMe: () => void,
+    handleRememberMe: (email: string, checked: boolean) => void,
     isLoading: boolean
   ) => {
     // Always prevent default form submission
@@ -81,7 +81,7 @@ export const useLoginSubmit = ({
       // Handle "remember me" before anything else
       if (rememberMe) {
         console.log("Saving email for remember me");
-        handleRememberMe();
+        handleRememberMe(email, rememberMe);
       }
       
       // Use external onSubmit handler if provided
