@@ -35,7 +35,7 @@ export const useLoginSubmit = ({
     handleRememberMe: () => void,
     isLoading: boolean
   ) => {
-    // Always prevent default
+    // Always prevent default form submission
     e.preventDefault();
     console.log("Submit handler triggered with form data:", formData);
     
@@ -94,38 +94,28 @@ export const useLoginSubmit = ({
       if (onSuccess) {
         console.log("Using external onSuccess handler");
         await onSuccess(email, password, rememberMe);
-        
-        // Force navigate after onSuccess in case it didn't happen
-        const defaultRedirect = email.includes('admin') 
-          ? '/admin'
-          : email.includes('callcenter') 
-            ? '/call-center' 
-            : '/dashboard';
-            
-        const targetUrl = redirectTo || defaultRedirect;
-        console.log(`Forcing navigation to ${targetUrl} after successful login`);
-        
-        // Use a timeout to ensure state updates complete first
-        setTimeout(() => {
-          navigate(targetUrl, { replace: true });
-        }, 100);
-        
-        return;
       }
       
-      // If no external handlers are provided, perform default navigation
-      if (!onSubmit && !onSuccess) {
-        const defaultRedirect = email.includes('admin') 
-          ? '/admin'
-          : email.includes('callcenter') 
-            ? '/call-center' 
-            : '/dashboard';
-            
-        const targetUrl = redirectTo || defaultRedirect;
-        console.log(`No handlers provided, navigating to: ${targetUrl}`);
-        
-        navigate(targetUrl, { replace: true });
+      // Determine redirect URL based on email
+      const normalizedEmail = email.toLowerCase().trim();
+      let targetUrl = '/dashboard';
+      
+      if (normalizedEmail.includes('admin')) {
+        targetUrl = '/admin';
+      } else if (normalizedEmail.includes('callcenter')) {
+        targetUrl = '/call-center';
       }
+      
+      // Use provided redirectTo if available
+      if (redirectTo) {
+        targetUrl = redirectTo;
+      }
+      
+      console.log(`Navigating to ${targetUrl} after successful login`);
+      
+      // Force navigation with replace to prevent back-button issues
+      navigate(targetUrl, { replace: true });
+      
     } catch (error: any) {
       console.error("Login submission error:", error);
       

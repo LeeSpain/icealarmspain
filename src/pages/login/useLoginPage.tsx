@@ -50,9 +50,7 @@ export const useLoginPage = () => {
     });
 
     // Use navigate with replace to prevent back button issues
-    setTimeout(() => {
-      navigate(redirectTo, { replace: true });
-    }, 100);
+    navigate(redirectTo, { replace: true });
   }, [isAuthenticated, user, navigate, redirectParam, redirectTriggered, language, toast, loginInProgress]);
 
   const getDefaultRedirect = (role?: string) => {
@@ -127,16 +125,7 @@ export const useLoginPage = () => {
 
   // Clear mounted flag on unmount
   useEffect(() => {
-    // Initial auth check should be quick
-    const initialAuthCheckTimeout = setTimeout(() => {
-      if (isMounted.current && isLoading) {
-        console.log("Setting initial loading false due to timeout");
-        setIsLoading(false);
-      }
-    }, 400); // Reduced timeout for faster loading
-    
     return () => {
-      clearTimeout(initialAuthCheckTimeout);
       isMounted.current = false;
     };
   }, []);
@@ -157,18 +146,6 @@ export const useLoginPage = () => {
       setIsLoading(false);
     }
   }, [authLoading]);
-  
-  // Add diagnostic logging
-  console.log("Login page auth status:", {
-    isAuthenticated, 
-    email: user?.email,
-    role: user?.role,
-    authLoading,
-    isLoading,
-    loginInProgress,
-    redirectTriggered,
-    redirectParam
-  });
   
   return {
     user,

@@ -37,7 +37,7 @@ export const login = async (email: string, password: string, rememberMe = false)
     // Normalize the email for comparison
     const normalizedEmail = email.toLowerCase().trim();
     
-    // Test credentials check
+    // Test credentials check for development mode
     if ((normalizedEmail === 'admin@icealarm.es' || 
          normalizedEmail === 'callcenter@icealarm.es' || 
          normalizedEmail === 'user@example.com') && 
@@ -64,25 +64,32 @@ export const login = async (email: string, password: string, rememberMe = false)
       
       console.log('Development user created with role:', role);
       
-      // Store user data based on rememberMe preference - but ALWAYS store in localStorage for now to prevent issues
+      // Store user data based on rememberMe preference
       localStorage.setItem('currentUser', JSON.stringify(user));
       localStorage.setItem('authPersistence', 'local');
       localStorage.setItem('userRole', role);
       
       return user;
     } else {
-      // For any other credentials in dev mode, auto-login as admin
-      console.log('Auto-login as admin for development with credentials:', { email, password });
+      // For all other credentials in dev mode, create a default user
+      console.log('Using default login for development with credentials:', { email, password });
       
-      const role = 'admin';
-      const devUserId = 'dev-admin';
+      // Determine role based on email (admin, callcenter, or member)
+      let role = 'member';
+      if (normalizedEmail.includes('admin')) {
+        role = 'admin';
+      } else if (normalizedEmail.includes('callcenter')) {
+        role = 'callcenter';
+      }
+      
+      const devUserId = `dev-${role}-${Date.now()}`;
       
       const user: User = {
         uid: devUserId,
         id: devUserId,
-        email: 'admin@icealarm.es',
-        name: 'Admin User',
-        displayName: 'Admin User',
+        email: normalizedEmail,
+        name: normalizedEmail.split('@')[0],
+        displayName: normalizedEmail.split('@')[0],
         role,
         profileCompleted: true,
         language: localStorage.getItem('language') || 'en',
@@ -90,7 +97,7 @@ export const login = async (email: string, password: string, rememberMe = false)
         createdAt: new Date().toISOString()
       };
       
-      // Always store in localStorage for now
+      // Always store in localStorage
       localStorage.setItem('currentUser', JSON.stringify(user));
       localStorage.setItem('authPersistence', 'local');
       localStorage.setItem('userRole', role);

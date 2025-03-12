@@ -42,22 +42,16 @@ const LoginForm: React.FC<LoginFormProps> = ({
     redirectTo
   });
 
-  // Check if using development mode
-  const isDevelopmentMode = true; // Force dev mode
-
-  const onFormSubmit = (e: React.FormEvent) => {
-    e.preventDefault(); // Prevent default form submission
-    console.log("Form submit event triggered - preventing default");
-    
-    // Call the handleSubmit from useLoginForm
-    handleSubmit(e);
-  };
+  // Force dev mode
+  React.useEffect(() => {
+    localStorage.setItem('forceDevMode', 'true');
+  }, []);
 
   return (
     <div className="w-full max-w-md mx-auto">
-      {isDevelopmentMode && <DevelopmentModeAlert language={language} />}
+      <DevelopmentModeAlert language={language} />
 
-      <form onSubmit={onFormSubmit} className="space-y-6">
+      <form onSubmit={handleSubmit} className="space-y-6">
         {/* Display general error message if present */}
         <LoginError error={internalError} />
         
