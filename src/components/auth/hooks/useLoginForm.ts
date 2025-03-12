@@ -25,8 +25,9 @@ export const useLoginForm = ({
   const navigate = useNavigate();
   const [internalError, setInternalError] = useState<string | null>(null);
   
-  // Form state management
-  const { formData, errors, setErrors, handleChange } = useFormState();
+  // Form state management - retrieve the initial email if saved
+  const initialEmail = localStorage.getItem('rememberedEmail') || '';
+  const { formData, errors, setErrors, handleChange } = useFormState(initialEmail);
   
   // Loading state management
   const { 
@@ -39,7 +40,7 @@ export const useLoginForm = ({
   // Remember Me functionality
   const { rememberMe, handleRememberMe, handleRememberMeChange } = useRememberMe();
   
-  // Development credentials
+  // Development credentials - only load these after formData is initialized
   useDevCredentials(handleChange);
   
   // Handle external error changes
@@ -63,7 +64,7 @@ export const useLoginForm = ({
   
   // Handle form submission
   const handleSubmit = (e: React.FormEvent) => {
-    console.log("Form submission triggered");
+    console.log("Form submission triggered with formData:", formData);
     submitHandler(e, formData, rememberMe, handleRememberMe, internalLoading);
   };
   

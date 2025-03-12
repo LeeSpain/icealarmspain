@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 interface LoginFormData {
   email: string;
@@ -12,16 +12,13 @@ export const useFormState = (initialEmail: string = "") => {
     password: "",
   });
   
-  const [rememberMe, setRememberMe] = useState(false);
   const [errors, setErrors] = useState<{[key: string]: string}>({});
 
+  // Make sure the handleChange function properly updates the form data
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
+    console.log(`Field ${name} changing to: ${value}`);
     setFormData(prev => ({ ...prev, [name]: value }));
-  };
-
-  const handleRememberMeChange = () => {
-    setRememberMe(!rememberMe);
   };
 
   const clearFieldError = (fieldName: string) => {
@@ -33,12 +30,9 @@ export const useFormState = (initialEmail: string = "") => {
   return {
     formData,
     setFormData,
-    rememberMe,
-    setRememberMe,
     errors,
     setErrors,
     handleChange,
-    handleRememberMeChange,
     clearFieldError
   };
 };

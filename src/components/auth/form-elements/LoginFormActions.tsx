@@ -5,15 +5,16 @@ import { ArrowRight } from "lucide-react";
 
 interface LoginFormActionsProps {
   isLoading: boolean;
-  loginText: string;
-  loadingText: string;
+  language: string;
 }
 
 export const LoginFormActions: React.FC<LoginFormActionsProps> = ({ 
   isLoading, 
-  loginText, 
-  loadingText 
+  language 
 }) => {
+  const loginText = language === 'en' ? "Sign In" : "Iniciar Sesión";
+  const loadingText = language === 'en' ? "Signing In..." : "Iniciando Sesión...";
+  
   return (
     <div>
       <ButtonCustom

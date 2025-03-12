@@ -37,7 +37,7 @@ export const useLoginSubmit = ({
   ) => {
     // Always prevent default form submission
     e.preventDefault();
-    console.log("Submit handler triggered with form data:", formData);
+    console.log("Submit handler triggered with form data:", formData, "rememberMe:", rememberMe);
     
     // If loading is controlled externally and is true, or internal loading state is true, prevent submission
     if ((externalLoading !== undefined && externalLoading) || isLoading) {
@@ -79,10 +79,8 @@ export const useLoginSubmit = ({
       console.log("Login form validated, attempting submission with:", { email, password, rememberMe });
 
       // Handle "remember me" before anything else
-      if (rememberMe) {
-        console.log("Saving email for remember me");
-        handleRememberMe(email, rememberMe);
-      }
+      console.log("Handling remember me:", rememberMe, "for email:", email);
+      handleRememberMe(email, rememberMe);
       
       // Use external onSubmit handler if provided
       if (onSubmit) {
