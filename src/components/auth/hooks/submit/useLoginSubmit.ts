@@ -90,14 +90,18 @@ export const useLoginSubmit = ({
             : `Bienvenido de nuevo, ${userData.displayName || userData.email?.split('@')[0] || 'Usuario'}!`,
         });
         
-        // Force a reload with specific URL to ensure the auth state is properly updated
-        const targetUrl = redirectTo || (userData.role === 'admin' 
-          ? '/admin' 
-          : userData.role === 'callcenter' 
-            ? '/call-center' 
-            : '/dashboard');
+        // Determine the correct redirect URL based on user role
+        let targetUrl = redirectTo || '/dashboard';
+        
+        if (userData.role === 'admin') {
+          targetUrl = '/admin';
+        } else if (userData.role === 'callcenter') {
+          targetUrl = '/call-center';
+        }
         
         console.log("Redirecting to:", targetUrl);
+        
+        // Use direct browser navigation to avoid SPA routing issues
         window.location.href = targetUrl;
       }
     } catch (error) {
