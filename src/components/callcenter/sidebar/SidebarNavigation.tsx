@@ -2,133 +2,154 @@
 import React from "react";
 import { 
   Home, 
-  MessageCircle, 
-  Ticket as TicketIcon, 
+  MessageSquare, 
+  Ticket, 
   Users, 
-  Settings, 
-  BarChart3, 
+  Activity, 
+  BarChart, 
   Calendar, 
-  HardDrive, 
-  Lightbulb, 
+  Shield, 
+  FileText, 
   Bell, 
-  LogOut,
-  CheckCircle
+  User,
+  Settings,
+  HelpCircle,
+  LogOut 
 } from "lucide-react";
 import SidebarItem from "./SidebarItem";
+import { useLanguage } from "@/context/LanguageContext";
 
 interface SidebarNavigationProps {
   activeSection: string;
   setActiveSection: (section: string) => void;
   collapsed: boolean;
-  onLogout?: () => void;
-  user?: any;
+  onLogout: () => void;
 }
 
 const SidebarNavigation: React.FC<SidebarNavigationProps> = ({ 
   activeSection, 
   setActiveSection, 
-  collapsed, 
-  onLogout,
-  user
+  collapsed,
+  onLogout
 }) => {
+  const { language } = useLanguage();
+  
   return (
-    <div className="px-3 py-2 flex flex-col h-full">
+    <div className="px-3 py-2 flex flex-col h-full overflow-y-auto">
       <div className="flex-grow">
         <div className="mb-2 px-4 text-xs font-semibold text-muted-foreground">
-          {!collapsed && "DASHBOARD"}
+          {!collapsed && (language === 'en' ? "DASHBOARD" : "PANEL")}
         </div>
         <SidebarItem 
-          icon={Home} 
-          label="Dashboard" 
+          icon={<Home size={18} />} 
+          label={language === 'en' ? "Dashboard" : "Inicio"} 
           active={activeSection === "dashboard"} 
           collapsed={collapsed}
           onClick={() => setActiveSection("dashboard")}
         />
         <SidebarItem 
-          icon={TicketIcon} 
-          label="Tickets" 
+          icon={<Ticket size={18} />} 
+          label={language === 'en' ? "Tickets" : "Tickets"} 
           active={activeSection === "tickets"} 
           collapsed={collapsed}
           onClick={() => setActiveSection("tickets")}
         />
         <SidebarItem 
-          icon={MessageCircle} 
-          label="Chat" 
+          icon={<MessageSquare size={18} />} 
+          label={language === 'en' ? "Chat" : "Chat"} 
           active={activeSection === "chat"} 
           collapsed={collapsed}
           onClick={() => setActiveSection("chat")}
         />
+        
+        <div className="my-2 px-4 text-xs font-semibold text-muted-foreground">
+          {!collapsed && (language === 'en' ? "CLIENTS & DEVICES" : "CLIENTES Y DISPOSITIVOS")}
+        </div>
         <SidebarItem 
-          icon={Users} 
-          label="All Clients" 
+          icon={<Users size={18} />} 
+          label={language === 'en' ? "Clients" : "Clientes"} 
           active={activeSection === "clients"} 
           collapsed={collapsed}
           onClick={() => setActiveSection("clients")}
         />
-        
-        <div className="my-2 px-4 text-xs font-semibold text-muted-foreground">
-          {!collapsed && "MANAGEMENT"}
-        </div>
         <SidebarItem 
-          icon={HardDrive} 
-          label="Devices" 
+          icon={<Activity size={18} />} 
+          label={language === 'en' ? "Devices" : "Dispositivos"} 
           active={activeSection === "devices"} 
           collapsed={collapsed}
           onClick={() => setActiveSection("devices")}
         />
+        
+        <div className="my-2 px-4 text-xs font-semibold text-muted-foreground">
+          {!collapsed && (language === 'en' ? "MANAGEMENT" : "GESTIÓN")}
+        </div>
         <SidebarItem 
-          icon={BarChart3} 
-          label="Stats" 
+          icon={<BarChart size={18} />} 
+          label={language === 'en' ? "Stats" : "Estadísticas"} 
           active={activeSection === "stats"} 
           collapsed={collapsed}
           onClick={() => setActiveSection("stats")}
         />
         <SidebarItem 
-          icon={Calendar} 
-          label="Schedule" 
+          icon={<Calendar size={18} />} 
+          label={language === 'en' ? "Schedule" : "Horario"} 
           active={activeSection === "schedule"} 
           collapsed={collapsed}
           onClick={() => setActiveSection("schedule")}
         />
         <SidebarItem 
-          icon={CheckCircle} 
-          label="System Checks" 
+          icon={<Shield size={18} />} 
+          label={language === 'en' ? "System Checks" : "Verificaciones"} 
           active={activeSection === "system-checks"} 
           collapsed={collapsed}
           onClick={() => setActiveSection("system-checks")}
         />
-        
-        <div className="my-2 px-4 text-xs font-semibold text-muted-foreground">
-          {!collapsed && "OTHER"}
-        </div>
         <SidebarItem 
-          icon={Lightbulb} 
-          label="Knowledge Base" 
+          icon={<FileText size={18} />} 
+          label={language === 'en' ? "Knowledge" : "Conocimiento"} 
           active={activeSection === "knowledge"} 
           collapsed={collapsed}
           onClick={() => setActiveSection("knowledge")}
         />
         <SidebarItem 
-          icon={Bell} 
-          label="Notifications" 
+          icon={<Bell size={18} />} 
+          label={language === 'en' ? "Notifications" : "Notificaciones"} 
           active={activeSection === "notifications"} 
           collapsed={collapsed}
           onClick={() => setActiveSection("notifications")}
         />
+        
+        <div className="my-2 px-4 text-xs font-semibold text-muted-foreground">
+          {!collapsed && (language === 'en' ? "ACCOUNT" : "CUENTA")}
+        </div>
         <SidebarItem 
-          icon={Settings} 
-          label="Profile" 
+          icon={<User size={18} />} 
+          label={language === 'en' ? "Profile" : "Perfil"} 
           active={activeSection === "profile"} 
           collapsed={collapsed}
           onClick={() => setActiveSection("profile")}
+        />
+        <SidebarItem 
+          icon={<Settings size={18} />} 
+          label={language === 'en' ? "Settings" : "Configuración"} 
+          active={activeSection === "settings"} 
+          collapsed={collapsed}
+          onClick={() => setActiveSection("settings")}
+        />
+        <SidebarItem 
+          icon={<HelpCircle size={18} />} 
+          label={language === 'en' ? "Help" : "Ayuda"} 
+          active={activeSection === "help"} 
+          collapsed={collapsed}
+          onClick={() => setActiveSection("help")}
         />
       </div>
       
       {/* Logout button at the bottom */}
       <div className="mt-auto pt-4 border-t border-gray-200">
         <SidebarItem 
-          icon={LogOut} 
-          label="Logout" 
+          icon={<LogOut size={18} />} 
+          label={language === 'en' ? "Logout" : "Cerrar Sesión"} 
           active={false} 
           collapsed={collapsed}
           onClick={onLogout}

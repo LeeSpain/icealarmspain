@@ -26,7 +26,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   
   return (
     <div className={cn(
-      "h-screen bg-white border-r border-slate-200 flex flex-col transition-all duration-300 shadow-sm sticky top-0 left-0 z-10",
+      "h-screen bg-white border-r border-gray-200 flex flex-col transition-all duration-300 shadow-sm",
       collapsed ? "w-16" : "w-64"
     )}>
       <SidebarHeader 
@@ -34,19 +34,21 @@ const Sidebar: React.FC<SidebarProps> = ({
         onToggleCollapse={() => setCollapsed(!collapsed)} 
       />
       
-      <div className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-slate-200 scrollbar-track-transparent">
-        <SidebarNavigation 
-          activeSection={activeSection}
-          setActiveSection={setActiveSection}
-          collapsed={collapsed}
-          onLogout={logout}
-        />
-      </div>
+      <SidebarNavigation 
+        activeSection={activeSection}
+        setActiveSection={setActiveSection}
+        collapsed={collapsed}
+        onLogout={logout}
+      />
 
-      {/* User profile at the bottom */}
-      <div className="p-3 border-t border-slate-200">
-        <UserProfile user={user} collapsed={collapsed} handleLogout={logout} />
-      </div>
+      {user && (
+        <div className="mt-auto p-4 border-t border-gray-200">
+          <UserProfile 
+            user={user}
+            collapsed={collapsed}
+          />
+        </div>
+      )}
     </div>
   );
 };

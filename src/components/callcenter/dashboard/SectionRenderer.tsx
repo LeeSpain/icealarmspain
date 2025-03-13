@@ -25,7 +25,6 @@ const SectionRenderer: React.FC<SectionRendererProps> = ({
   handleClientSelect,
   setActiveSection 
 }) => {
-  // Add a wrapper div with max-width to match the member dashboard style
   const renderContent = () => {
     switch (activeSection) {
       case "dashboard":
@@ -56,7 +55,7 @@ const SectionRenderer: React.FC<SectionRendererProps> = ({
   };
 
   return (
-    <div className="w-full">
+    <div className="space-y-6">
       {renderContent()}
     </div>
   );

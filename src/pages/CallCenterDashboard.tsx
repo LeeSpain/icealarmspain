@@ -1,8 +1,9 @@
 
 import React, { useEffect } from "react";
+import { useCallCenterDashboard } from "@/hooks/useCallCenterDashboard";
 import Sidebar from "@/components/callcenter/sidebar/Sidebar";
 import SectionRenderer from "@/components/callcenter/dashboard/SectionRenderer";
-import { useCallCenterDashboard } from "@/hooks/useCallCenterDashboard";
+import Layout from "@/components/layout/Layout";
 
 const CallCenterDashboard: React.FC = () => {
   const {
@@ -59,7 +60,7 @@ const CallCenterDashboard: React.FC = () => {
       />
       
       <div className="flex-1 overflow-auto transition-all duration-300">
-        <div className="p-6 max-w-7xl mx-auto w-full">
+        <div className="p-4 lg:p-6 w-full max-w-7xl mx-auto">
           <SectionRenderer 
             activeSection={activeSection} 
             selectedClient={selectedClient} 
