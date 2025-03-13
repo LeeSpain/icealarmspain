@@ -6,8 +6,50 @@ import MemberSidebar from "@/components/member/MemberSidebar";
 import { useLanguage } from "@/context/LanguageContext";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Activity, Heart, LineChart, Thermometer, Weight, Plus } from "lucide-react";
+import { Activity, Heart, LineChart, Thermometer, Weight, Plus, ArrowUp, ArrowDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { 
+  LineChart as RechartsLineChart, 
+  Line, 
+  XAxis, 
+  YAxis, 
+  CartesianGrid, 
+  Tooltip, 
+  ResponsiveContainer,
+  AreaChart,
+  Area
+} from "recharts";
+
+// Mock data for charts
+const glucoseData = [
+  { name: "Mon", value: 110 },
+  { name: "Tue", value: 115 },
+  { name: "Wed", value: 112 },
+  { name: "Thu", value: 118 },
+  { name: "Fri", value: 108 },
+  { name: "Sat", value: 112 },
+  { name: "Sun", value: 110 },
+];
+
+const heartRateData = [
+  { name: "Mon", value: 72 },
+  { name: "Tue", value: 75 },
+  { name: "Wed", value: 73 },
+  { name: "Thu", value: 78 },
+  { name: "Fri", value: 70 },
+  { name: "Sat", value: 72 },
+  { name: "Sun", value: 71 },
+];
+
+const bloodPressureData = [
+  { name: "Mon", systolic: 120, diastolic: 80 },
+  { name: "Tue", systolic: 125, diastolic: 82 },
+  { name: "Wed", systolic: 118, diastolic: 78 },
+  { name: "Thu", systolic: 130, diastolic: 85 },
+  { name: "Fri", systolic: 122, diastolic: 80 },
+  { name: "Sat", systolic: 119, diastolic: 79 },
+  { name: "Sun", systolic: 121, diastolic: 81 },
+];
 
 const DashboardHealthMetricsPage: React.FC = () => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
@@ -38,41 +80,56 @@ const DashboardHealthMetricsPage: React.FC = () => {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-            <Card>
+            <Card className="bg-white shadow-sm hover:shadow-md transition-shadow">
               <CardContent className="p-4 flex flex-col items-center">
                 <Heart className="h-8 w-8 text-red-500 mb-2" />
                 <div className="text-2xl font-bold">72 <span className="text-sm font-normal">bpm</span></div>
-                <p className="text-xs text-muted-foreground">
+                <div className="flex items-center text-xs text-green-600">
+                  <ArrowDown className="h-3 w-3 mr-1" />
+                  <span>3% from yesterday</span>
+                </div>
+                <p className="text-xs text-muted-foreground mt-1">
                   {language === 'en' ? 'Heart Rate' : 'Ritmo Cardíaco'}
                 </p>
               </CardContent>
             </Card>
             
-            <Card>
+            <Card className="bg-white shadow-sm hover:shadow-md transition-shadow">
               <CardContent className="p-4 flex flex-col items-center">
                 <Thermometer className="h-8 w-8 text-orange-500 mb-2" />
                 <div className="text-2xl font-bold">36.5 <span className="text-sm font-normal">°C</span></div>
-                <p className="text-xs text-muted-foreground">
+                <div className="flex items-center text-xs text-gray-500">
+                  <span>No change</span>
+                </div>
+                <p className="text-xs text-muted-foreground mt-1">
                   {language === 'en' ? 'Temperature' : 'Temperatura'}
                 </p>
               </CardContent>
             </Card>
             
-            <Card>
+            <Card className="bg-white shadow-sm hover:shadow-md transition-shadow">
               <CardContent className="p-4 flex flex-col items-center">
                 <Activity className="h-8 w-8 text-blue-500 mb-2" />
                 <div className="text-2xl font-bold">112 <span className="text-sm font-normal">mg/dL</span></div>
-                <p className="text-xs text-muted-foreground">
+                <div className="flex items-center text-xs text-red-600">
+                  <ArrowUp className="h-3 w-3 mr-1" />
+                  <span>2% from yesterday</span>
+                </div>
+                <p className="text-xs text-muted-foreground mt-1">
                   {language === 'en' ? 'Glucose' : 'Glucosa'}
                 </p>
               </CardContent>
             </Card>
             
-            <Card>
+            <Card className="bg-white shadow-sm hover:shadow-md transition-shadow">
               <CardContent className="p-4 flex flex-col items-center">
                 <Weight className="h-8 w-8 text-green-500 mb-2" />
                 <div className="text-2xl font-bold">68 <span className="text-sm font-normal">kg</span></div>
-                <p className="text-xs text-muted-foreground">
+                <div className="flex items-center text-xs text-green-600">
+                  <ArrowDown className="h-3 w-3 mr-1" />
+                  <span>0.5kg last week</span>
+                </div>
+                <p className="text-xs text-muted-foreground mt-1">
                   {language === 'en' ? 'Weight' : 'Peso'}
                 </p>
               </CardContent>
@@ -81,7 +138,7 @@ const DashboardHealthMetricsPage: React.FC = () => {
           
           <Tabs defaultValue="all" className="w-full">
             <div className="flex justify-between items-center mb-4">
-              <TabsList>
+              <TabsList className="bg-white border shadow-sm">
                 <TabsTrigger value="all">
                   {language === 'en' ? 'All Metrics' : 'Todas las Métricas'}
                 </TabsTrigger>
@@ -96,28 +153,39 @@ const DashboardHealthMetricsPage: React.FC = () => {
                 </TabsTrigger>
               </TabsList>
               
-              <Button size="sm">
+              <Button size="sm" className="bg-ice-600 hover:bg-ice-700">
                 <Plus className="h-4 w-4 mr-1" />
                 {language === 'en' ? 'Add Reading' : 'Añadir Lectura'}
               </Button>
             </div>
             
             <TabsContent value="all">
-              <Card>
+              <Card className="bg-white shadow-sm">
                 <CardHeader>
-                  <CardTitle className="flex items-center">
+                  <CardTitle className="flex items-center text-lg">
                     <LineChart className="h-5 w-5 mr-2" />
                     {language === 'en' ? 'Health Metrics Overview' : 'Resumen de Métricas de Salud'}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
-                    <div className="h-64 bg-gray-100 rounded-lg flex items-center justify-center">
-                      <p className="text-muted-foreground">
-                        {language === 'en' 
-                          ? 'Health metrics chart will appear here' 
-                          : 'El gráfico de métricas de salud aparecerá aquí'}
-                      </p>
+                    <div className="h-64 rounded-lg">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <RechartsLineChart data={glucoseData} margin={{ top: 10, right: 10, left: 0, bottom: 10 }}>
+                          <CartesianGrid strokeDasharray="3 3" opacity={0.2} />
+                          <XAxis dataKey="name" tickLine={false} axisLine={false} />
+                          <YAxis tickLine={false} axisLine={false} />
+                          <Tooltip />
+                          <Line 
+                            type="monotone" 
+                            dataKey="value" 
+                            stroke="#3B82F6" 
+                            strokeWidth={2} 
+                            dot={{ r: 4 }} 
+                            activeDot={{ r: 6, strokeWidth: 2 }} 
+                          />
+                        </RechartsLineChart>
+                      </ResponsiveContainer>
                     </div>
                     
                     <div className="border-t pt-4">
@@ -126,7 +194,7 @@ const DashboardHealthMetricsPage: React.FC = () => {
                       </h3>
                       
                       <div className="space-y-3">
-                        <div className="p-3 border rounded-lg flex justify-between items-center">
+                        <div className="p-3 border rounded-lg flex justify-between items-center bg-white hover:bg-gray-50 transition-colors">
                           <div className="flex items-center">
                             <Activity className="h-5 w-5 text-blue-500 mr-2" />
                             <div>
@@ -144,7 +212,7 @@ const DashboardHealthMetricsPage: React.FC = () => {
                           </div>
                         </div>
                         
-                        <div className="p-3 border rounded-lg flex justify-between items-center">
+                        <div className="p-3 border rounded-lg flex justify-between items-center bg-white hover:bg-gray-50 transition-colors">
                           <div className="flex items-center">
                             <Heart className="h-5 w-5 text-red-500 mr-2" />
                             <div>
@@ -169,57 +237,96 @@ const DashboardHealthMetricsPage: React.FC = () => {
             </TabsContent>
             
             <TabsContent value="glucose">
-              <Card>
+              <Card className="bg-white shadow-sm">
                 <CardHeader>
-                  <CardTitle>
+                  <CardTitle className="text-lg">
                     {language === 'en' ? 'Glucose Readings' : 'Lecturas de Glucosa'}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="h-64 bg-gray-100 rounded-lg flex items-center justify-center">
-                    <p className="text-muted-foreground">
-                      {language === 'en' 
-                        ? 'Glucose chart will appear here' 
-                        : 'El gráfico de glucosa aparecerá aquí'}
-                    </p>
+                  <div className="h-64 rounded-lg">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <AreaChart data={glucoseData} margin={{ top: 10, right: 10, left: 0, bottom: 10 }}>
+                        <CartesianGrid strokeDasharray="3 3" opacity={0.2} />
+                        <XAxis dataKey="name" tickLine={false} axisLine={false} />
+                        <YAxis tickLine={false} axisLine={false} />
+                        <Tooltip />
+                        <Area 
+                          type="monotone" 
+                          dataKey="value" 
+                          stroke="#3B82F6" 
+                          fill="#93C5FD" 
+                          fillOpacity={0.3} 
+                        />
+                      </AreaChart>
+                    </ResponsiveContainer>
                   </div>
                 </CardContent>
               </Card>
             </TabsContent>
             
             <TabsContent value="heart">
-              <Card>
+              <Card className="bg-white shadow-sm">
                 <CardHeader>
-                  <CardTitle>
+                  <CardTitle className="text-lg">
                     {language === 'en' ? 'Heart Rate Readings' : 'Lecturas de Ritmo Cardíaco'}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="h-64 bg-gray-100 rounded-lg flex items-center justify-center">
-                    <p className="text-muted-foreground">
-                      {language === 'en' 
-                        ? 'Heart rate chart will appear here' 
-                        : 'El gráfico de ritmo cardíaco aparecerá aquí'}
-                    </p>
+                  <div className="h-64 rounded-lg">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <AreaChart data={heartRateData} margin={{ top: 10, right: 10, left: 0, bottom: 10 }}>
+                        <CartesianGrid strokeDasharray="3 3" opacity={0.2} />
+                        <XAxis dataKey="name" tickLine={false} axisLine={false} />
+                        <YAxis tickLine={false} axisLine={false} />
+                        <Tooltip />
+                        <Area 
+                          type="monotone" 
+                          dataKey="value" 
+                          stroke="#EF4444" 
+                          fill="#FCA5A5" 
+                          fillOpacity={0.3} 
+                        />
+                      </AreaChart>
+                    </ResponsiveContainer>
                   </div>
                 </CardContent>
               </Card>
             </TabsContent>
             
             <TabsContent value="bp">
-              <Card>
+              <Card className="bg-white shadow-sm">
                 <CardHeader>
-                  <CardTitle>
+                  <CardTitle className="text-lg">
                     {language === 'en' ? 'Blood Pressure Readings' : 'Lecturas de Presión Arterial'}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="h-64 bg-gray-100 rounded-lg flex items-center justify-center">
-                    <p className="text-muted-foreground">
-                      {language === 'en' 
-                        ? 'Blood pressure chart will appear here' 
-                        : 'El gráfico de presión arterial aparecerá aquí'}
-                    </p>
+                  <div className="h-64 rounded-lg">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <RechartsLineChart data={bloodPressureData} margin={{ top: 10, right: 10, left: 0, bottom: 10 }}>
+                        <CartesianGrid strokeDasharray="3 3" opacity={0.2} />
+                        <XAxis dataKey="name" tickLine={false} axisLine={false} />
+                        <YAxis tickLine={false} axisLine={false} />
+                        <Tooltip />
+                        <Line 
+                          type="monotone" 
+                          dataKey="systolic" 
+                          stroke="#EF4444" 
+                          strokeWidth={2} 
+                          dot={{ r: 3 }} 
+                          activeDot={{ r: 5, strokeWidth: 2 }} 
+                        />
+                        <Line 
+                          type="monotone" 
+                          dataKey="diastolic" 
+                          stroke="#3B82F6" 
+                          strokeWidth={2} 
+                          dot={{ r: 3 }} 
+                          activeDot={{ r: 5, strokeWidth: 2 }} 
+                        />
+                      </RechartsLineChart>
+                    </ResponsiveContainer>
                   </div>
                 </CardContent>
               </Card>

@@ -17,19 +17,21 @@ const AdminDashboardContent: React.FC<AdminDashboardContentProps> = ({
   };
 
   return (
-    <div className="grid grid-cols-1 xl:grid-cols-4 gap-6">
-      <div className="xl:col-span-3">
-        <SectionRenderer 
-          activeSection={activeSection} 
-          onAction={handleComponentAction}
-        />
-      </div>
-      
-      <div className="hidden xl:block">
-        <ActivityManager 
-          activities={dashboardData?.activities || []}
-          onActivityAdded={addActivity}
-        />
+    <div className="w-full">
+      <div className="grid grid-cols-1 xl:grid-cols-4 gap-6">
+        <div className="xl:col-span-3">
+          <SectionRenderer 
+            activeSection={activeSection} 
+            onAction={handleComponentAction}
+          />
+        </div>
+        
+        <div className="hidden xl:block">
+          <ActivityManager 
+            activities={dashboardData?.activities || []}
+            onActivityAdded={addActivity}
+          />
+        </div>
       </div>
     </div>
   );

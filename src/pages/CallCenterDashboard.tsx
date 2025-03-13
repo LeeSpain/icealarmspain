@@ -49,7 +49,7 @@ const CallCenterDashboard: React.FC = () => {
   };
 
   return (
-    <div className="flex h-screen bg-slate-50">
+    <div className="flex h-screen bg-ice-50/30">
       <Sidebar
         activeSection={activeSection}
         setActiveSection={setActiveSection}
@@ -59,7 +59,7 @@ const CallCenterDashboard: React.FC = () => {
       />
       
       <div className="flex-1 overflow-auto transition-all duration-300">
-        <div className="p-8 max-w-7xl mx-auto w-full">
+        <div className="p-6 max-w-7xl mx-auto w-full">
           <SectionRenderer 
             activeSection={activeSection} 
             selectedClient={selectedClient} 

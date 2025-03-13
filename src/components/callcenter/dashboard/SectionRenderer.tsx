@@ -25,32 +25,41 @@ const SectionRenderer: React.FC<SectionRendererProps> = ({
   handleClientSelect,
   setActiveSection 
 }) => {
-  switch (activeSection) {
-    case "dashboard":
-      return <AgentDashboard setActiveSection={setActiveSection} />;
-    case "tickets":
-      return <TicketingSystem onClientSelect={handleClientSelect} />;
-    case "chat":
-      return <ChatSystem />;
-    case "clients":
-      return <ClientDetails selectedClientId={selectedClient} />;
-    case "devices":
-      return <DeviceManagement />;
-    case "stats":
-      return <CallStats />;
-    case "schedule":
-      return <AgentSchedule />;
-    case "system-checks":
-      return <SystemChecks />;
-    case "knowledge":
-      return <KnowledgeBase />;
-    case "notifications":
-      return <NotificationCenter />;
-    case "profile":
-      return <AgentProfile />;
-    default:
-      return <AgentDashboard setActiveSection={setActiveSection} />;
-  }
+  // Add a wrapper div with max-width to match the member dashboard style
+  const renderContent = () => {
+    switch (activeSection) {
+      case "dashboard":
+        return <AgentDashboard setActiveSection={setActiveSection} />;
+      case "tickets":
+        return <TicketingSystem onClientSelect={handleClientSelect} />;
+      case "chat":
+        return <ChatSystem />;
+      case "clients":
+        return <ClientDetails selectedClientId={selectedClient} />;
+      case "devices":
+        return <DeviceManagement />;
+      case "stats":
+        return <CallStats />;
+      case "schedule":
+        return <AgentSchedule />;
+      case "system-checks":
+        return <SystemChecks />;
+      case "knowledge":
+        return <KnowledgeBase />;
+      case "notifications":
+        return <NotificationCenter />;
+      case "profile":
+        return <AgentProfile />;
+      default:
+        return <AgentDashboard setActiveSection={setActiveSection} />;
+    }
+  };
+
+  return (
+    <div className="w-full">
+      {renderContent()}
+    </div>
+  );
 };
 
 export default SectionRenderer;
