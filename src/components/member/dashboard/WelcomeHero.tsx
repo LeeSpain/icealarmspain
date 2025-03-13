@@ -3,7 +3,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { useLanguage } from '@/context/LanguageContext';
 import { Button } from '@/components/ui/button';
-import { PlusCircle, ShoppingCart, Trash2, LogOut, FileText } from 'lucide-react';
+import { PlusCircle, ShoppingCart, Trash2, LogOut, FileText, ClipboardList } from 'lucide-react';
 import { User } from '@/context/auth';
 import { useNavigate } from 'react-router-dom';
 
@@ -65,18 +65,28 @@ export const WelcomeHero: React.FC<WelcomeHeroProps> = ({
                 : 'Bienvenido a tu panel de ICE Alarm España'}
             </p>
             
-            {/* Complete profile prompt if needed */}
-            {(!user?.profileCompleted) && (
+            {/* Action buttons */}
+            <div className="flex flex-wrap gap-2 mt-3">
               <Button
-                onClick={() => navigate('/onboarding')}
-                className="mt-3 bg-ice-100 hover:bg-ice-200 text-ice-700"
+                onClick={() => navigate('/dashboard/personal-details')}
+                className="bg-ice-100 hover:bg-ice-200 text-ice-700"
               >
                 <FileText className="mr-2 h-4 w-4" />
                 {language === 'en' 
-                  ? 'Complete your personal details' 
-                  : 'Completa tus datos personales'}
+                  ? 'Personal Details' 
+                  : 'Datos Personales'}
               </Button>
-            )}
+              
+              <Button
+                onClick={() => navigate('/dashboard/questionnaire')}
+                className="bg-ice-100 hover:bg-ice-200 text-ice-700"
+              >
+                <ClipboardList className="mr-2 h-4 w-4" />
+                {language === 'en' 
+                  ? 'Personal Questionnaire' 
+                  : 'Cuestionario Personal'}
+              </Button>
+            </div>
           </div>
           
           <div className="flex flex-wrap gap-2">

@@ -36,6 +36,11 @@ import MedicationsPage from "./pages/MedicationsPage";
 import Checkout from "./pages/Checkout";
 import CallCenterDashboard from "./pages/CallCenterDashboard";
 
+// New imports for internal dashboard pages
+import ChatSupportPage from "./components/member/chat/ChatSupportPage";
+import PersonalDetailsPage from "./components/member/personal-details/PersonalDetailsPage";
+import QuestionnairePage from "./components/member/questionnaire/QuestionnairePage";
+
 // Landing page component
 const Landing = () => {
   return (
@@ -92,6 +97,31 @@ function App() {
                   <ProtectedRoute>
                     <Layout>
                       <DashboardPage />
+                    </Layout>
+                  </ProtectedRoute>
+                } />
+                
+                {/* New Internal Dashboard Routes */}
+                <Route path="/dashboard/chat" element={
+                  <ProtectedRoute>
+                    <Layout>
+                      <ChatSupportPage />
+                    </Layout>
+                  </ProtectedRoute>
+                } />
+                
+                <Route path="/dashboard/personal-details" element={
+                  <ProtectedRoute>
+                    <Layout>
+                      <PersonalDetailsPage />
+                    </Layout>
+                  </ProtectedRoute>
+                } />
+                
+                <Route path="/dashboard/questionnaire" element={
+                  <ProtectedRoute>
+                    <Layout>
+                      <QuestionnairePage />
                     </Layout>
                   </ProtectedRoute>
                 } />
@@ -177,7 +207,7 @@ function App() {
                   </ProtectedRoute>
                 } />
                 
-                {/* Call Center Dashboard Route - this was missing */}
+                {/* Call Center Dashboard Route */}
                 <Route path="/call-center" element={
                   <ProtectedRoute allowedRoles={['callcenter']}>
                     <Layout>

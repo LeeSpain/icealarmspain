@@ -30,18 +30,18 @@ const MemberSidebar: React.FC<MemberSidebarProps> = ({
     const path = location.pathname;
     
     if (path === '/dashboard') return 'dashboard';
-    if (path.startsWith('/dashboard/profile')) return 'profile';
-    if (path.startsWith('/dashboard/settings')) return 'settings';
-    if (path.startsWith('/dashboard/help')) return 'help';
-    if (path.startsWith('/dashboard/health/metrics')) return 'health-metrics';
-    if (path.startsWith('/dashboard/health/medications')) return 'medications';
-    if (path.startsWith('/dashboard/health/info')) return 'medical-info';
-    if (path.startsWith('/dashboard/devices/sos-pendant')) return 'sos-pendant';
-    if (path.startsWith('/dashboard/devices/glucose-monitor')) return 'glucose-monitor';
-    if (path.startsWith('/dashboard/devices/medical-dispenser')) return 'medical-dispenser';
-    if (path.startsWith('/dashboard/emergency-contacts')) return 'emergency-contacts';
-    if (path.startsWith('/dashboard/chat')) return 'chat';
-    if (path.startsWith('/dashboard/personal-details')) return 'personal-details';
+    if (path.includes('/dashboard/chat')) return 'chat';
+    if (path.includes('/dashboard/personal-details')) return 'personal-details';
+    if (path.includes('/dashboard/emergency-contacts')) return 'emergency-contacts';
+    if (path.includes('/dashboard/devices/sos-pendant')) return 'sos-pendant';
+    if (path.includes('/dashboard/devices/glucose-monitor')) return 'glucose-monitor';
+    if (path.includes('/dashboard/devices/medical-dispenser')) return 'medical-dispenser';
+    if (path.includes('/dashboard/health/metrics')) return 'health-metrics';
+    if (path.includes('/dashboard/health/medications')) return 'medications';
+    if (path.includes('/dashboard/health/info')) return 'medical-info';
+    if (path.includes('/dashboard/profile')) return 'profile';
+    if (path.includes('/dashboard/settings')) return 'settings';
+    if (path.includes('/dashboard/help')) return 'help';
     
     return activePage;
   };
