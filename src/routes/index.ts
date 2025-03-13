@@ -1,12 +1,12 @@
 
-import MainRoutes from './mainRoutes';
+import { mainRoutes } from './mainRoutes';
 import { dashboardRoutes } from './dashboardRoutes';
 import { adminRoutes } from './adminRoutes';
 import { callCenterRoutes } from './callCenterRoutes';
 
 // Export all routes from a central location
 export const routes = [
-  MainRoutes,
+  ...mainRoutes,
   ...dashboardRoutes,
   ...adminRoutes,
   ...callCenterRoutes
