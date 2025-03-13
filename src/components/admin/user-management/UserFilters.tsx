@@ -23,7 +23,7 @@ export const UserFilters: React.FC<UserFiltersProps> = ({
           placeholder="Search users..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="pl-8"
+          className="pl-8 border-ice-200 focus:border-ice-300"
         />
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -46,11 +46,11 @@ export const UserFilters: React.FC<UserFiltersProps> = ({
         onValueChange={setActiveTab}
         className="w-full sm:w-auto"
       >
-        <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="all">All</TabsTrigger>
-          <TabsTrigger value="admin">Admins</TabsTrigger>
-          <TabsTrigger value="callcenter">Call Center</TabsTrigger>
-          <TabsTrigger value="member">Members</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-4 bg-ice-50">
+          <TabsTrigger value="all" className="data-[state=active]:bg-white data-[state=active]:text-ice-800">All</TabsTrigger>
+          <TabsTrigger value="admin" className="data-[state=active]:bg-white data-[state=active]:text-ice-800">Admins</TabsTrigger>
+          <TabsTrigger value="callcenter" className="data-[state=active]:bg-white data-[state=active]:text-ice-800">Call Center</TabsTrigger>
+          <TabsTrigger value="member" className="data-[state=active]:bg-white data-[state=active]:text-ice-800">Members</TabsTrigger>
         </TabsList>
       </Tabs>
     </div>

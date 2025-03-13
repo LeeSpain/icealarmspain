@@ -14,7 +14,7 @@ export const UserManagementHeader: React.FC<UserManagementHeaderProps> = ({ onCr
         <h2 className="text-2xl font-bold text-ice-800">User Management</h2>
         <p className="text-muted-foreground">Manage users, assign roles, and track user activity</p>
       </div>
-      <Button onClick={onCreateUser} className="flex items-center gap-2">
+      <Button onClick={onCreateUser} className="flex items-center gap-2 bg-ice-600 hover:bg-ice-700">
         <UserPlus size={16} />
         Add User
       </Button>

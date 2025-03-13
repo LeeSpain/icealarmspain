@@ -22,9 +22,9 @@ const AdminAIAssistant: React.FC<AdminAIAssistantProps> = ({
   } = useAdminAI(currentSection, onNavigate);
 
   return (
-    <Card className="w-full h-full flex flex-col overflow-hidden shadow-md">
-      <CardHeader className="bg-gradient-to-r from-ice-50 to-ice-100 py-3">
-        <CardTitle className="flex items-center text-lg text-ice-900">
+    <Card className="w-full h-full flex flex-col overflow-hidden shadow-md border border-ice-100">
+      <CardHeader className="bg-gradient-to-r from-ice-50 to-ice-100 py-3 px-4">
+        <CardTitle className="flex items-center text-lg text-ice-800">
           <Bot className="text-ice-600 mr-2 h-5 w-5" />
           {language === 'en' ? 'Administrative AI Assistant' : 'Asistente de IA Administrativo'}
         </CardTitle>

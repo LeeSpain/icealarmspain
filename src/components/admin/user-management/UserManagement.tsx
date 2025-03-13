@@ -127,7 +127,7 @@ const UserManagement: React.FC<UserManagementProps> = ({ onAction }) => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 bg-white p-6 rounded-lg shadow-sm">
       <UserManagementHeader onCreateUser={() => setIsCreateDialogOpen(true)} />
       
       <UserFilters 
