@@ -10,7 +10,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import SectionDivider from "@/components/layout/SectionDivider";
 import DecorativeElements from "@/components/layout/DecorativeElements";
-import DeviceShowcase from "@/components/DeviceShowcase";
+import DeviceShowcaseVertical from "@/components/devices/DeviceShowcaseVertical";
 
 const DevicesPage: React.FC = () => {
   const { language } = useLanguage();
@@ -34,10 +34,10 @@ const DevicesPage: React.FC = () => {
         {/* Section Divider with enhanced styling */}
         <SectionDivider />
         
-        {/* Use the same DeviceShowcase component from the homepage */}
+        {/* Use the specialized vertical DeviceShowcase component */}
         <SectionWrapper className="py-16">
           <div className="container mx-auto px-4 md:px-6">
-            <DeviceShowcase />
+            <DeviceShowcaseVertical />
           </div>
         </SectionWrapper>
         
