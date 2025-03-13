@@ -110,45 +110,47 @@ const DeviceCard: React.FC<DeviceCardProps> = ({
                 </ul>
               </div>
             </div>
-            
-            <div className="text-center md:text-left mb-6">
-              <p className="text-2xl font-bold text-orange-600 mb-1">
-                {language === 'en' ? "Starting from" : "Desde"} {price}
-              </p>
-              <p className="text-xs text-muted-foreground">
-                {language === 'en' ? "+ " : "+ "}{monthlyPrice} {language === 'en' ? "monthly monitoring" : "monitoreo mensual"}
-              </p>
-            </div>
-            
-            <div className="flex flex-col sm:flex-row gap-4 mt-4 justify-center md:justify-start">
-              <Link to={path} className="flex-1 md:flex-initial">
-                <ButtonCustom 
-                  variant="primary" 
-                  className="w-full md:w-auto group"
-                >
-                  {language === 'en' ? "Learn More" : "Más Información"}
-                  <ArrowRight size={16} className="ml-2 group-hover:translate-x-1 transition-transform" />
-                </ButtonCustom>
-              </Link>
-              <Link to="/join" className="flex-1 md:flex-initial">
-                <ButtonCustom 
-                  variant="outline" 
-                  className="w-full md:w-auto hover:bg-ice-50"
-                >
-                  {language === 'en' ? "Add to Order" : "Añadir al Pedido"}
-                </ButtonCustom>
-              </Link>
-            </div>
           </div>
           
-          {/* Right: Image */}
-          <div className="md:w-1/3 flex items-center justify-center md:order-last">
-            <div className="overflow-hidden rounded-lg h-64 bg-white shadow-inner border border-ice-100 w-full">
-              <img 
-                src={image}
-                alt={name}
-                className="w-full h-full object-contain transition-transform hover:scale-105 p-2"
-              />
+          {/* Right: Image and pricing */}
+          <div className="md:w-1/3 md:order-last">
+            <div className="flex flex-col h-full">
+              <div className="overflow-hidden rounded-lg h-64 bg-white shadow-inner border border-ice-100 w-full mb-4">
+                <img 
+                  src={image}
+                  alt={name}
+                  className="w-full h-full object-contain transition-transform hover:scale-105 p-2"
+                />
+              </div>
+              
+              <div className="text-center">
+                <p className="text-2xl font-bold text-orange-600 mb-1">
+                  {language === 'en' ? "Starting from" : "Desde"} {price}
+                </p>
+                <p className="text-xs text-muted-foreground mb-4">
+                  {language === 'en' ? "+ " : "+ "}{monthlyPrice} {language === 'en' ? "monthly monitoring" : "monitoreo mensual"}
+                </p>
+                
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <Link to={path} className="flex-1">
+                    <ButtonCustom 
+                      variant="primary" 
+                      className="w-full group"
+                    >
+                      {language === 'en' ? "Learn More" : "Más Información"}
+                      <ArrowRight size={16} className="ml-2 group-hover:translate-x-1 transition-transform" />
+                    </ButtonCustom>
+                  </Link>
+                  <Link to="/join" className="flex-1">
+                    <ButtonCustom 
+                      variant="outline" 
+                      className="w-full hover:bg-ice-50"
+                    >
+                      {language === 'en' ? "Add to Order" : "Añadir al Pedido"}
+                    </ButtonCustom>
+                  </Link>
+                </div>
+              </div>
             </div>
           </div>
         </div>
