@@ -19,6 +19,9 @@ const ContactContent: React.FC = () => {
           {/* Contact cards section */}
           <ContactCards />
           
+          {/* AI Guardian section */}
+          <AIGuardianSection />
+          
           {/* Form section with enhanced styling */}
           <div className="bg-gradient-to-br from-white to-ice-50/50 rounded-2xl shadow-lg p-8 mb-16 relative overflow-hidden">
             {/* Decorative elements */}
@@ -42,9 +45,6 @@ const ContactContent: React.FC = () => {
               </div>
             </div>
           </div>
-          
-          {/* AI Guardian section */}
-          <AIGuardianSection />
         </div>
       </div>
     </div>

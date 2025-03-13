@@ -3,6 +3,7 @@ import React from "react";
 import { Shield, Sparkles } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
 import { Button } from "@/components/ui/button";
+import HeroBackground from "../hero/HeroBackground";
 
 const ContactHero: React.FC = () => {
   const { language } = useLanguage();
@@ -12,19 +13,12 @@ const ContactHero: React.FC = () => {
       id="contact-hero" 
       className="relative pt-32 pb-24 overflow-hidden"
     >
-      {/* Enhanced Background Elements */}
-      <div className="absolute top-20 right-0 w-96 h-96 bg-gradient-radial from-ice-100/70 to-transparent rounded-full filter blur-3xl opacity-70 -z-10 animate-pulse-gentle"></div>
-      <div className="absolute bottom-0 left-20 w-72 h-72 bg-gradient-radial from-guardian-100/60 to-transparent rounded-full filter blur-3xl opacity-50 -z-10"></div>
-      <div className="absolute top-40 left-1/4 w-64 h-64 rounded-full border border-ice-200/50 -z-10 animate-float"></div>
-      
-      {/* Decorative accent lines */}
-      <div className="absolute top-1/4 left-0 w-full h-px bg-gradient-to-r from-transparent via-ice-200/50 to-transparent -z-10"></div>
-      <div className="absolute top-2/3 left-0 w-full h-px bg-gradient-to-r from-transparent via-guardian-200/30 to-transparent -z-10"></div>
+      <HeroBackground />
       
       <div className="container mx-auto px-4 md:px-6">
         <div className="max-w-5xl mx-auto">
-          <div className="flex flex-col md:flex-row items-center gap-10">
-            <div className="w-full md:w-1/2 space-y-6 animate-slide-down">
+          <div className="flex flex-col items-center gap-10">
+            <div className="w-full space-y-6 animate-slide-down text-center">
               <div className="inline-flex items-center px-3 py-1.5 rounded-full bg-gradient-to-r from-ice-50/80 to-ice-100/80 border border-ice-200 text-ice-600 text-sm font-medium mb-6 shadow-sm backdrop-blur-sm">
                 <Shield size={16} className="mr-2" />
                 <span className="relative">
@@ -53,27 +47,11 @@ const ContactHero: React.FC = () => {
                 <div className="absolute -bottom-8 left-0 w-24 h-0.5 bg-gradient-to-r from-guardian-300 via-transparent to-transparent rounded-full opacity-60"></div>
               </div>
               
-              <p className="text-lg md:text-xl text-muted-foreground max-w-xl backdrop-blur-sm bg-white/5 py-2 rounded-lg">
+              <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto backdrop-blur-sm bg-white/5 py-2 rounded-lg">
                 {language === 'en' 
                   ? 'Our multilingual team is ready to assist you with any questions about our services, devices, or support needs.' 
                   : 'Nuestro equipo multilingüe está listo para ayudarte con cualquier pregunta sobre nuestros servicios, dispositivos o necesidades de soporte.'}
               </p>
-            </div>
-            
-            {/* Visual element - contact illustration */}
-            <div className="w-full md:w-1/2 flex justify-center">
-              <div className="relative">
-                <div className="absolute inset-0 bg-gradient-to-tr from-ice-100/50 to-guardian-100/50 rounded-lg -rotate-3 scale-[1.03] z-0"></div>
-                <div className="glass-panel p-1 rounded-lg shadow-xl relative z-10">
-                  <img 
-                    src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&q=80"
-                    alt={language === 'en' ? "Customer support" : "Servicio al cliente"}
-                    className="w-full h-auto rounded-lg object-cover aspect-[4/3]"
-                  />
-                </div>
-                <div className="absolute -bottom-4 -right-4 w-20 h-20 bg-ice-100 rounded-full z-0 opacity-80"></div>
-                <div className="absolute -top-4 -left-4 w-16 h-16 bg-guardian-100 rounded-full z-0 opacity-80"></div>
-              </div>
             </div>
           </div>
         </div>

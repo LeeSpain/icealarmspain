@@ -4,7 +4,6 @@ import { Helmet } from "react-helmet-async";
 import { useLanguage } from "@/context/LanguageContext";
 import ContactHero from "@/components/contact/ContactHero";
 import ContactContent from "@/components/contact/ContactContent";
-import EnhancedAIGuardianSection from "@/components/contact/EnhancedAIGuardianSection";
 
 const Contact: React.FC = () => {
   const { language } = useLanguage();
