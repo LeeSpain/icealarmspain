@@ -13,20 +13,8 @@ interface MobileMenuProps {
 const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
   if (!isOpen) return null;
 
-  // Direct dashboard access function - updated for more reliability
+  // Simplified direct access function
   const handleDirectAccess = (path: string, onClose: () => void) => {
-    // Set development mode
-    localStorage.setItem('forceDevMode', 'true');
-    
-    // Set appropriate user role based on the path
-    if (path === '/admin') {
-      localStorage.setItem('userRole', 'admin');
-    } else if (path === '/call-center') {
-      localStorage.setItem('userRole', 'callcenter');
-    } else {
-      localStorage.setItem('userRole', 'member');
-    }
-    
     // Create a minimal user object to store
     const devUser = {
       uid: `dev-user-${Date.now()}`,
@@ -44,6 +32,8 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
     
     // Store the user in localStorage
     localStorage.setItem('currentUser', JSON.stringify(devUser));
+    localStorage.setItem('userRole', devUser.role);
+    localStorage.setItem('forceDevMode', 'true');
     
     console.log("Direct access activated for:", path);
     

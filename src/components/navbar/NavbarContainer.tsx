@@ -42,20 +42,8 @@ const NavbarContainer: React.FC = () => {
     setIsMobileMenuOpen(false);
   }, [location.pathname]);
 
-  // Direct dashboard access function - improved for reliability
+  // Simplified direct access function - no authentication checks
   const handleDirectAccess = (path: string) => {
-    // Set development mode
-    localStorage.setItem('forceDevMode', 'true');
-    
-    // Set appropriate user role based on the path
-    if (path === '/admin') {
-      localStorage.setItem('userRole', 'admin');
-    } else if (path === '/call-center') {
-      localStorage.setItem('userRole', 'callcenter');
-    } else {
-      localStorage.setItem('userRole', 'member');
-    }
-    
     // Create a minimal user object to store
     const devUser = {
       uid: `dev-user-${Date.now()}`,
@@ -73,6 +61,8 @@ const NavbarContainer: React.FC = () => {
     
     // Store the user in localStorage
     localStorage.setItem('currentUser', JSON.stringify(devUser));
+    localStorage.setItem('userRole', devUser.role);
+    localStorage.setItem('forceDevMode', 'true');
     
     console.log("Direct access activated for:", path);
   };

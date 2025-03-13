@@ -2,7 +2,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
-import { useAuth } from "@/context/auth";
 import { useLanguage } from "@/context/LanguageContext";
 import { DashboardActivity } from "@/components/admin/dashboard/ActivityManager";
 
@@ -10,7 +9,6 @@ export const useAdminDashboard = () => {
   const location = useLocation();
   const [activeSection, setActiveSection] = useState<string>("");
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-  const { user, isAuthenticated, isLoading } = useAuth();
   const { language } = useLanguage();
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -24,16 +22,6 @@ export const useAdminDashboard = () => {
     revenueByProduct: [],
     recentActivities: []
   });
-
-  // Add debugging for blank page troubleshooting
-  useEffect(() => {
-    console.log("useAdminDashboard initial state:", {
-      isAuthenticated, 
-      user, 
-      isLoading,
-      location: location.pathname
-    });
-  }, []);
 
   // Extract active section from URL
   useEffect(() => {
@@ -53,61 +41,17 @@ export const useAdminDashboard = () => {
     setActiveSection(section);
   }, [location.pathname]);
 
-  // In development mode, always fetch dashboard data
+  // Always fetch dashboard data
   useEffect(() => {
-    const isDevelopment = localStorage.getItem('forceDevMode') === 'true';
-    if (isDevelopment || (isAuthenticated && user && (user.role === 'admin' || localStorage.getItem('userRole') === 'admin'))) {
-      console.log("Fetching dashboard data in useAdminDashboard");
-      fetchDashboardData();
-    }
-  }, [isAuthenticated, user]);
-
-  // Handle authentication and role checking
-  useEffect(() => {
-    console.log("AdminDashboard - Auth state:", { 
-      isAuthenticated, 
-      user, 
-      isLoading,
-      userRole: user?.role,
-      storedRole: localStorage.getItem('userRole')
+    console.log("Fetching dashboard data in useAdminDashboard");
+    fetchDashboardData();
+    
+    // Welcome notification
+    toast({
+      title: "Welcome to Admin Dashboard",
+      description: `${getTimeOfDay()}, Admin User!`, 
     });
-    
-    const isDevelopment = localStorage.getItem('forceDevMode') === 'true';
-    
-    if (!isLoading) {
-      if (!isDevelopment && !isAuthenticated) {
-        console.log("AdminDashboard - Not authenticated, redirecting to login");
-        navigate('/login?redirect=/admin', { replace: true });
-      } else if (!isDevelopment && user && user.role !== 'admin' && localStorage.getItem('userRole') !== 'admin') {
-        console.log("AdminDashboard - User has incorrect role:", user.role);
-        
-        toast({
-          title: "Access Denied",
-          description: "You don't have permission to access the admin dashboard",
-          variant: "destructive"
-        });
-        
-        switch (user.role) {
-          case 'callcenter':
-            navigate('/call-center', { replace: true });
-            break;
-          default:
-            navigate('/dashboard', { replace: true });
-            break;
-        }
-      } else {
-        console.log("AdminDashboard - User authenticated with correct role or in dev mode");
-        fetchDashboardData();
-        
-        // Welcome notification
-        const userName = user?.displayName || user?.email?.split('@')[0] || 'Admin';
-        toast({
-          title: "Welcome to Admin Dashboard",
-          description: `${getTimeOfDay()}, ${userName}!`, 
-        });
-      }
-    }
-  }, [isAuthenticated, user, navigate, isLoading, toast]);
+  }, []);
 
   const getTimeOfDay = () => {
     const hour = new Date().getHours();
@@ -135,7 +79,7 @@ export const useAdminDashboard = () => {
         ],
         recentActivities: [
           { id: 1, type: "System", description: "Dashboard initialized", time: "Just now" },
-          { id: 2, type: "User", description: `${user?.displayName || user?.email?.split('@')[0] || 'Admin'} logged in`, time: "Just now" },
+          { id: 2, type: "User", description: "Admin User logged in", time: "Just now" },
         ]
       };
       
@@ -178,9 +122,9 @@ export const useAdminDashboard = () => {
     sidebarCollapsed,
     setSidebarCollapsed,
     dashboardData,
-    user,
-    isAuthenticated,
-    isLoading,
+    user: { role: 'admin' },
+    isAuthenticated: true,
+    isLoading: false,
     language,
     handleSectionChange,
     addActivity

@@ -1,7 +1,6 @@
 
-import React from "react";
+import React, { useEffect } from "react";
 import Sidebar from "@/components/callcenter/sidebar/Sidebar";
-import LoadingState from "@/components/callcenter/dashboard/LoadingState";
 import SectionRenderer from "@/components/callcenter/dashboard/SectionRenderer";
 import { useCallCenterDashboard } from "@/hooks/useCallCenterDashboard";
 
@@ -12,19 +11,42 @@ const CallCenterDashboard: React.FC = () => {
     sidebarCollapsed,
     setSidebarCollapsed,
     selectedClient,
-    handleClientSelect,
-    user,
-    isAuthenticated,
-    isLoading
+    handleClientSelect
   } = useCallCenterDashboard();
 
-  if (isLoading) {
-    return <LoadingState />;
-  }
+  // Force dev user role to callcenter
+  useEffect(() => {
+    const devUser = {
+      uid: `dev-callcenter-${Date.now()}`,
+      id: `dev-callcenter-${Date.now()}`,
+      email: `callcenter@example.com`,
+      name: 'Call Center Agent',
+      displayName: 'Call Center Agent',
+      role: 'callcenter',
+      status: 'active',
+      profileCompleted: true,
+      language: 'en',
+      lastLogin: new Date().toISOString(),
+      createdAt: new Date().toISOString()
+    };
+    
+    localStorage.setItem('currentUser', JSON.stringify(devUser));
+    localStorage.setItem('userRole', 'callcenter');
+    localStorage.setItem('forceDevMode', 'true');
+  }, []);
 
-  if (!isAuthenticated || !user || user.role !== 'callcenter') {
-    return <LoadingState message="Redirecting..." />;
-  }
+  // Create a user object for the sidebar
+  const mockUser = {
+    uid: "dev-callcenter",
+    id: "dev-callcenter",
+    email: "callcenter@example.com",
+    name: "Call Center Agent",
+    displayName: "Call Center Agent",
+    role: "callcenter",
+    status: "active",
+    profileCompleted: true,
+    language: "en"
+  };
 
   return (
     <div className="flex h-screen bg-slate-50">
@@ -33,7 +55,7 @@ const CallCenterDashboard: React.FC = () => {
         setActiveSection={setActiveSection}
         collapsed={sidebarCollapsed}
         setCollapsed={setSidebarCollapsed}
-        user={user}
+        user={mockUser}
       />
       
       <div className="flex-1 overflow-auto transition-all duration-300">
