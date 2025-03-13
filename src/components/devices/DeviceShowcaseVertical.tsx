@@ -1,139 +1,15 @@
 
 import React from "react";
-import { BellRing, PlusSquare, ActivitySquare, ShoppingBag, Info } from "lucide-react";
+import { ShoppingBag, Info } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
 import { Link } from "react-router-dom";
 import { ButtonCustom } from "@/components/ui/button-custom";
 import DeviceCard from "./DeviceCard";
+import { getDevices } from "./deviceData";
 
 const DeviceShowcaseVertical: React.FC = () => {
   const { language } = useLanguage();
-
-  const devices = [
-    {
-      id: "sos",
-      name: language === 'en' ? "SOS Pendant" : "Colgante SOS",
-      icon: <BellRing className="w-12 h-12 text-orange-500" />,
-      image: "/lovable-uploads/ad65a632-e7ef-4c61-a20e-7b6ff282a87a.png",
-      features: language === 'en' ? [
-        "One-touch emergency call",
-        "GPS tracking",
-        "Fall detection sensors",
-        "Custom emergency routing",
-        "AI wellness check-ins"
-      ] : [
-        "Llamada de emergencia con un toque",
-        "Seguimiento GPS",
-        "Sensores de detección de caídas",
-        "Enrutamiento personalizado",
-        "Revisiones de bienestar con IA"
-      ],
-      techSpecs: language === 'en' ? [
-        "Battery life: Up to 7 days",
-        "Water-resistant (IP67)",
-        "Dimensions: 4.2 x 2.8 x 1.1 cm",
-        "Weight: 35g",
-        "Connectivity: 4G LTE & Bluetooth"
-      ] : [
-        "Duración de batería: Hasta 7 días",
-        "Resistente al agua (IP67)",
-        "Dimensiones: 4.2 x 2.8 x 1.1 cm",
-        "Peso: 35g",
-        "Conectividad: 4G LTE y Bluetooth"
-      ],
-      description: language === 'en' ? 
-        "Immediate emergency response with just one touch. Our advanced pendant provides around-the-clock protection with built-in fall detection and GPS tracking." :
-        "Respuesta inmediata a emergencias con un solo toque. Nuestro colgante avanzado proporciona protección las 24 horas con detección de caídas y seguimiento GPS.",
-      longDescription: language === 'en' ?
-        "The SOS Pendant is designed for seniors and vulnerable individuals to maintain independence while ensuring help is always available. Its advanced fall detection automatically alerts emergency services and caregivers if a fall is detected, even if the user is unconscious." :
-        "El Colgante SOS está diseñado para personas mayores y vulnerables para mantener la independencia mientras se asegura de que la ayuda esté siempre disponible. Su detección avanzada de caídas alerta automáticamente a los servicios de emergencia y cuidadores si se detecta una caída, incluso si el usuario está inconsciente.",
-      path: "/sos-pendant",
-      price: "€110.00",
-      monthlyPrice: "€24.99"
-    },
-    {
-      id: "dispenser",
-      name: language === 'en' ? "Medical Dispenser" : "Dispensador Médico",
-      icon: <PlusSquare className="w-12 h-12 text-guardian-500" />,
-      image: "/lovable-uploads/5e439305-cf63-4080-962e-52657e864050.png",
-      features: language === 'en' ? [
-        "Automated pill dispensing",
-        "Missed dose notifications",
-        "AI-powered reminders",
-        "Escalation protocols",
-        "Medication adherence tracking"
-      ] : [
-        "Dispensación automática de píldoras",
-        "Notificaciones de dosis olvidadas",
-        "Recordatorios potenciados por IA",
-        "Protocolos de escalada",
-        "Seguimiento de adherencia"
-      ],
-      techSpecs: language === 'en' ? [
-        "Capacity: Up to 28 doses",
-        "Power: AC with 48-hour battery backup",
-        "Dimensions: 22 x 15 x 5 cm",
-        "Connectivity: Wi-Fi & Cellular",
-        "Tamper-proof locking system"
-      ] : [
-        "Capacidad: Hasta 28 dosis",
-        "Alimentación: CA con batería de respaldo de 48 horas",
-        "Dimensiones: 22 x 15 x 5 cm",
-        "Conectividad: Wi-Fi y Celular",
-        "Sistema de bloqueo a prueba de manipulaciones"
-      ],
-      description: language === 'en' ? 
-        "Never miss a dose again. Our smart Medical Dispenser provides automated medication management with intelligent reminders and adherence tracking." :
-        "Nunca vuelva a olvidar una dosis. Nuestro Dispensador Médico inteligente proporciona gestión automatizada de medicamentos con recordatorios inteligentes.",
-      longDescription: language === 'en' ?
-        "The Medical Dispenser is perfect for individuals managing multiple medications. Its smart system alerts caregivers if doses are missed and can be programmed remotely. The dispenser only provides access to the correct medication at the prescribed time, preventing overdose or medication errors." :
-        "El Dispensador Médico es perfecto para personas que manejan múltiples medicamentos. Su sistema inteligente alerta a los cuidadores si se olvidan las dosis y puede programarse de forma remota. El dispensador solo proporciona acceso a la medicación correcta en el momento prescrito, evitando sobredosis o errores de medicación.",
-      path: "/medical-dispenser",
-      price: "€249.99",
-      monthlyPrice: "€24.99"
-    },
-    {
-      id: "glucose",
-      name: language === 'en' ? "Glucose Monitor" : "Monitor de Glucosa",
-      icon: <ActivitySquare className="w-12 h-12 text-orange-500" />,
-      image: "/lovable-uploads/6eb6b5d1-34a3-4236-ac3a-351d6c22de7e.png",
-      features: language === 'en' ? [
-        "Continuous glucose monitoring",
-        "AI trend analysis",
-        "Immediate alerts",
-        "Emergency response",
-        "Dietary recommendations"
-      ] : [
-        "Monitoreo continuo de glucosa",
-        "Análisis de tendencias con IA",
-        "Alertas inmediatas",
-        "Respuesta de emergencia",
-        "Recomendaciones dietéticas"
-      ],
-      techSpecs: language === 'en' ? [
-        "Sensor life: 14 days",
-        "Reading interval: Every 5 minutes",
-        "Water-resistant (IP68)",
-        "Wireless range: Up to 6 meters",
-        "App compatibility: iOS & Android"
-      ] : [
-        "Vida del sensor: 14 días",
-        "Intervalo de lecturas: Cada 5 minutos",
-        "Resistente al agua (IP68)",
-        "Alcance inalámbrico: Hasta 6 metros",
-        "Compatibilidad con apps: iOS y Android"
-      ],
-      description: language === 'en' ? 
-        "Real-time glucose monitoring with AI-powered analysis. Receive immediate alerts for concerning levels and personalized recommendations for better health." :
-        "Monitoreo de glucosa en tiempo real con análisis impulsado por IA. Reciba alertas inmediatas para niveles preocupantes y recomendaciones personalizadas.",
-      longDescription: language === 'en' ?
-        "Our Glucose Monitor provides 24/7 monitoring without the need for constant finger pricks. The AI system learns the user's patterns and can predict hypoglycemic or hyperglycemic events before they occur, providing life-saving alerts to both the user and caregivers." :
-        "Nuestro Monitor de Glucosa proporciona monitoreo 24/7 sin necesidad de pinchazos constantes en el dedo. El sistema de IA aprende los patrones del usuario y puede predecir eventos hipoglucémicos o hiperglucémicos antes de que ocurran, proporcionando alertas que salvan vidas tanto al usuario como a los cuidadores.",
-      path: "/glucose-monitor",
-      price: "€149.99",
-      monthlyPrice: "€24.99"
-    }
-  ];
+  const devices = getDevices(language);
 
   return (
     <section id="devices" className="py-20">
@@ -171,12 +47,23 @@ const DeviceShowcaseVertical: React.FC = () => {
               icon={device.icon}
               image={device.image}
               description={device.description}
-              longDescription={device.longDescription}
+              longDescription={device.description}
               features={device.features}
-              techSpecs={device.techSpecs}
+              techSpecs={[
+                device.specs.batteryLife ? `Battery life: ${device.specs.batteryLife}` : '',
+                device.specs.waterResistance ? `Water resistance: ${device.specs.waterResistance}` : '',
+                device.specs.connectivity ? `Connectivity: ${device.specs.connectivity}` : '',
+                device.specs.dimensions ? `Dimensions: ${device.specs.dimensions}` : '',
+                device.specs.weight ? `Weight: ${device.specs.weight}` : '',
+                device.specs.capacity ? `Capacity: ${device.specs.capacity}` : '',
+                device.specs.powerSource ? `Power source: ${device.specs.powerSource}` : '',
+                device.specs.sensorLife ? `Sensor life: ${device.specs.sensorLife}` : '',
+                device.specs.readingRange ? `Reading range: ${device.specs.readingRange}` : '',
+                device.specs.accuracy ? `Accuracy: ${device.specs.accuracy}` : '',
+              ].filter(Boolean)}
               path={device.path}
-              price={device.price}
-              monthlyPrice={device.monthlyPrice}
+              price={`€${device.price.toFixed(2)}`}
+              monthlyPrice={`€${device.monthlyService.toFixed(2)}`}
               index={index}
             />
           ))}
