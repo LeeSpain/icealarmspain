@@ -4,7 +4,6 @@ import { useLanguage } from "@/context/LanguageContext";
 import DeviceHero from "@/components/devices/DeviceHero";
 import CallCenterServices from "@/components/devices/CallCenterServices";
 import GuardianAISection from "@/components/devices/GuardianAISection";
-import DeviceCTA from "@/components/devices/DeviceCTA";
 import SectionWrapper from "@/components/layout/SectionWrapper";
 import SectionDivider from "@/components/layout/SectionDivider";
 import DeviceShowcaseVertical from "@/components/devices/DeviceShowcaseVertical";
@@ -50,9 +49,6 @@ const DevicesPage: React.FC = () => {
             <GuardianAISection language={language} />
           </div>
         </SectionWrapper>
-        
-        {/* CTA section without footer */}
-        <DeviceCTA language={language} />
       </main>
     </Layout>
   );
