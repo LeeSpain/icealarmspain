@@ -69,13 +69,13 @@ const Index: React.FC = () => {
   
   return (
     <Layout>
-      <div className="flex flex-col min-h-screen bg-gradient-to-b from-white via-ice-50/30 to-white">
+      <div className="flex flex-col min-h-screen bg-white">
         <Helmet>
           <meta name="description" content={seoDescription} />
           <meta property="og:type" content="website" />
         </Helmet>
         
-        {/* Enhanced Decorative Elements */}
+        {/* Simplified Decorative Elements */}
         <DecorativeElements />
         
         <main className="flex-grow relative">
