@@ -15,6 +15,7 @@ import DeviceShowcase from "../components/DeviceShowcase";
 import Pricing from "../components/Pricing";
 import ExpatInfo from "../components/ExpatInfo";
 import Testimonials from "../components/Testimonials";
+import SOSPendantPage from "../pages/SOSPendantPage";
 
 // Landing page component
 const Landing = () => {
@@ -61,6 +62,10 @@ export const mainRoutes: RouteConfig[] = [
   {
     path: "/checkout",
     element: <Layout><Checkout /></Layout>
+  },
+  {
+    path: "/sos-pendant",
+    element: <Layout><SOSPendantPage /></Layout>
   },
   {
     path: "*",
