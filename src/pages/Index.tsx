@@ -10,6 +10,7 @@ import { useLanguage } from "@/context/LanguageContext";
 import DashboardPreview from "@/components/dashboard/DashboardPreview";
 import DecorativeElements from "@/components/layout/DecorativeElements";
 import SectionDivider from "@/components/layout/SectionDivider";
+import SectionWrapper from "@/components/layout/SectionWrapper";
 import { Helmet } from "react-helmet-async";
 
 const Index: React.FC = () => {
@@ -88,16 +89,23 @@ const Index: React.FC = () => {
         {/* Section Divider with enhanced styling */}
         <SectionDivider />
         
-        {/* Dashboard Example Section */}
-        <DashboardPreview />
+        {/* Dashboard Example Section with consistent spacing */}
+        <SectionWrapper>
+          <DashboardPreview />
+        </SectionWrapper>
         
-        <DeviceShowcase />
+        {/* Device Showcase with consistent spacing */}
+        <SectionWrapper>
+          <DeviceShowcase />
+        </SectionWrapper>
         
+        {/* Pricing section is already handled in the Pricing component */}
         <Pricing />
         
         {/* Section Divider with enhanced styling */}
         <SectionDivider variant="white-to-ice" />
         
+        {/* ExpatInfo has its own spacing adjustments now */}
         <ExpatInfo />
       </main>
       

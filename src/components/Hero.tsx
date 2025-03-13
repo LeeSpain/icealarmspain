@@ -30,13 +30,13 @@ const Hero: React.FC = () => {
         <div className="max-w-5xl mx-auto">
           <HeroHeader language={language} handleClick={handleClick} />
           
-          {/* Feature Cards Section - consistent spacing */}
-          <div className="py-20">
+          {/* Feature Cards Section - reduced and consistent spacing */}
+          <div className="py-14">
             <FeatureCards language={language} />
           </div>
           
-          {/* Dashboard Preview Section - consistent spacing */}
-          <div className="py-20">
+          {/* Dashboard Preview Section - same reduced spacing */}
+          <div className="py-14">
             <DashboardPreview language={language} />
           </div>
         </div>

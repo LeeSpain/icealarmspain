@@ -91,7 +91,7 @@ const Pricing: React.FC = () => {
   return (
     <section id="pricing" className="py-0 bg-white">
       <PricingHero language={language} />
-      <div className="container mx-auto px-4 md:px-6 py-20">
+      <div className="container mx-auto px-4 md:px-6 py-14">
         <div className="max-w-5xl mx-auto">
           <PricingPlans plans={plans} language={language} />
           <PricingActions language={language} />
