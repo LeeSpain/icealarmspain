@@ -1,5 +1,6 @@
+
 import React from "react";
-import { Shield, Sparkles, Mail, Phone, MapPin } from "lucide-react";
+import { Shield, Sparkles } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
 import { Button } from "@/components/ui/button";
 
@@ -57,34 +58,6 @@ const ContactHero: React.FC = () => {
                   ? 'Our multilingual team is ready to assist you with any questions about our services, devices, or support needs.' 
                   : 'Nuestro equipo multilingüe está listo para ayudarte con cualquier pregunta sobre nuestros servicios, dispositivos o necesidades de soporte.'}
               </p>
-              
-              {/* Contact methods section */}
-              <div className="grid grid-cols-1 gap-4 mt-8">
-                <div className="flex items-center text-muted-foreground hover:text-ice-600 transition-colors">
-                  <div className="w-10 h-10 rounded-full bg-ice-50 flex items-center justify-center mr-3">
-                    <Phone size={18} className="text-ice-600" />
-                  </div>
-                  <span>+34 951 123 456</span>
-                </div>
-                
-                <div className="flex items-center text-muted-foreground hover:text-ice-600 transition-colors">
-                  <div className="w-10 h-10 rounded-full bg-ice-50 flex items-center justify-center mr-3">
-                    <Mail size={18} className="text-ice-600" />
-                  </div>
-                  <span>info@icealarespana.com</span>
-                </div>
-                
-                <div className="flex items-center text-muted-foreground hover:text-ice-600 transition-colors">
-                  <div className="w-10 h-10 rounded-full bg-ice-50 flex items-center justify-center mr-3">
-                    <MapPin size={18} className="text-ice-600" />
-                  </div>
-                  <span>{language === 'en' ? 'Marbella, Málaga, Spain' : 'Marbella, Málaga, España'}</span>
-                </div>
-              </div>
-              
-              <Button className="mt-4 bg-gradient-to-r from-ice-500 to-guardian-600 hover:from-ice-600 hover:to-guardian-700 text-white border-none shadow-md hover:shadow-lg transition-all">
-                {language === 'en' ? 'Schedule a Consultation' : 'Programar una Consulta'}
-              </Button>
             </div>
             
             {/* Visual element - contact illustration */}

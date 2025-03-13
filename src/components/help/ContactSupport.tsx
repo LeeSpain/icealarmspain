@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useLanguage } from "@/context/LanguageContext";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -106,7 +105,6 @@ const ContactSupport: React.FC = () => {
       submittingButton: "Enviando...",
       phoneTitle: "Soporte Telefónico",
       phoneDescription: "Disponible de lunes a viernes, 9AM a 6PM CET",
-      phoneNumber: "+34 900 123 456",
       emailTitle: "Soporte por Correo",
       emailDescription: "Para consultas no urgentes",
       emailAddress: "soporte@icealarm.es",
@@ -200,36 +198,6 @@ const ContactSupport: React.FC = () => {
       </div>
       
       <div className="space-y-4">
-        <Card>
-          <CardContent className="pt-6">
-            <div className="flex items-start space-x-4">
-              <Phone className="h-6 w-6 text-ice-600 mt-1" />
-              <div>
-                <h3 className="font-medium">{content.phoneTitle}</h3>
-                <p className="text-sm text-muted-foreground">{content.phoneDescription}</p>
-                <a href={`tel:${content.phoneNumber}`} className="text-ice-600 font-medium block mt-1">
-                  {content.phoneNumber}
-                </a>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardContent className="pt-6">
-            <div className="flex items-start space-x-4">
-              <Mail className="h-6 w-6 text-ice-600 mt-1" />
-              <div>
-                <h3 className="font-medium">{content.emailTitle}</h3>
-                <p className="text-sm text-muted-foreground">{content.emailDescription}</p>
-                <a href={`mailto:${content.emailAddress}`} className="text-ice-600 font-medium block mt-1">
-                  {content.emailAddress}
-                </a>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        
         <Card>
           <CardContent className="pt-6">
             <div className="flex items-start space-x-4">
