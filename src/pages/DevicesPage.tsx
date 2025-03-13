@@ -7,10 +7,8 @@ import GuardianAISection from "@/components/devices/GuardianAISection";
 import DeviceCTA from "@/components/devices/DeviceCTA";
 import SectionWrapper from "@/components/layout/SectionWrapper";
 import SectionDivider from "@/components/layout/SectionDivider";
-import DecorativeElements from "@/components/layout/DecorativeElements";
 import DeviceShowcaseVertical from "@/components/devices/DeviceShowcaseVertical";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
+import Layout from "@/components/layout/Layout";
 
 const DevicesPage: React.FC = () => {
   const { language } = useLanguage();
@@ -21,8 +19,7 @@ const DevicesPage: React.FC = () => {
   }, []);
 
   return (
-    <div className="flex flex-col min-h-screen bg-white">
-      <Navbar />
+    <Layout>
       <main className="flex-grow relative">
         {/* Hero section with pt-44 matching homepage */}
         <DeviceHero language={language} />
@@ -57,8 +54,7 @@ const DevicesPage: React.FC = () => {
         {/* CTA section */}
         <DeviceCTA language={language} />
       </main>
-      <Footer />
-    </div>
+    </Layout>
   );
 };
 
