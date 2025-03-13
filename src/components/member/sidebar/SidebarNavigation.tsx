@@ -15,8 +15,7 @@ import {
   PhoneCall,
   Heart,
   LogOut,
-  CalendarCheck,
-  ClipboardList
+  CalendarCheck
 } from "lucide-react";
 import SidebarItem from "./SidebarItem";
 import { useToast } from "@/components/ui/use-toast";
@@ -102,13 +101,6 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({
           active={isActive("/dashboard/emergency-contacts")} 
           collapsed={collapsed}
           onClick={() => handleNavigation("/dashboard/emergency-contacts")}
-        />
-        <SidebarItem 
-          icon={<ClipboardList size={18} />} 
-          label={language === 'en' ? "Personal Questionnaire" : "Cuestionario Personal"} 
-          active={isActive("/dashboard/questionnaire")} 
-          collapsed={collapsed}
-          onClick={() => handleNavigation("/dashboard/questionnaire")}
         />
         
         <div className="my-2 px-4 text-xs font-semibold text-muted-foreground">

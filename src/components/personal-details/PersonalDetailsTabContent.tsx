@@ -1,9 +1,12 @@
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { useLanguage } from "@/context/LanguageContext";
 import { useAuth } from "@/context/auth";
 import { Input } from "@/components/ui/input";
+import { useNavigate } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import { ClipboardList } from 'lucide-react';
 
 interface PersonalDetailsTabContentProps {
   editMode: boolean;
@@ -16,18 +19,47 @@ const PersonalDetailsTabContent: React.FC<PersonalDetailsTabContentProps> = ({
 }) => {
   const { language } = useLanguage();
   const { user } = useAuth();
+  const navigate = useNavigate();
+  const [localQuestionnaireData, setLocalQuestionnaireData] = useState<any>(null);
   
-  if (!questionnaireData) {
+  // Try to get questionnaire data from localStorage if not provided via props
+  useEffect(() => {
+    if (!questionnaireData) {
+      const savedData = localStorage.getItem('userQuestionnaire');
+      if (savedData) {
+        try {
+          const parsedData = JSON.parse(savedData);
+          setLocalQuestionnaireData(parsedData);
+        } catch (error) {
+          console.error("Error parsing questionnaire data:", error);
+        }
+      }
+    }
+  }, [questionnaireData]);
+
+  const dataToUse = questionnaireData || localQuestionnaireData;
+  
+  if (!dataToUse) {
     return (
       <Card>
         <CardContent className="p-6">
           <div className="text-center py-8">
-            <p className="text-gray-500">
+            <p className="text-gray-500 mb-4">
               {language === 'en'
                 ? 'No personal information available. Please complete the questionnaire.'
                 : 'No hay información personal disponible. Por favor complete el cuestionario.'
               }
             </p>
+            <Button 
+              variant="outline"
+              onClick={() => navigate('/dashboard/questionnaire')}
+              className="flex items-center gap-2"
+            >
+              <ClipboardList className="h-4 w-4" />
+              {language === 'en' 
+                ? 'Complete Personal Questionnaire' 
+                : 'Completar Cuestionario Personal'}
+            </Button>
           </div>
         </CardContent>
       </Card>
@@ -35,8 +67,8 @@ const PersonalDetailsTabContent: React.FC<PersonalDetailsTabContentProps> = ({
   }
   
   // Extract personal info from questionnaire data
-  const personalInfo = questionnaireData.personal || {};
-  const addressInfo = questionnaireData.address || {};
+  const personalInfo = dataToUse.personal || {};
+  const addressInfo = dataToUse.address || {};
   
   return (
     <Card>

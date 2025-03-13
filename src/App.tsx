@@ -116,9 +116,7 @@ function App() {
                 
                 <Route path="/dashboard/questionnaire" element={
                   <ProtectedRoute>
-                    <Layout>
-                      <QuestionnairePage />
-                    </Layout>
+                    <DashboardPage />
                   </ProtectedRoute>
                 } />
                 

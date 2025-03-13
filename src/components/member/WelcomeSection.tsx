@@ -2,12 +2,15 @@
 import React from 'react';
 import { useLanguage } from '@/context/LanguageContext';
 import { useAuth } from '@/context/auth';
-import { Shield, Calendar, Bell, Activity, CheckCircle } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Shield, Calendar, Bell, Activity, CheckCircle, ClipboardList } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 
 const WelcomeSection: React.FC = () => {
   const { language } = useLanguage();
   const { user } = useAuth();
+  const navigate = useNavigate();
   
   // Get current date
   const currentDate = new Date();
@@ -31,6 +34,10 @@ const WelcomeSection: React.FC = () => {
       return 'Buenas noches';
     }
   };
+
+  const handleNavigateToQuestionnaire = () => {
+    navigate('/dashboard/questionnaire');
+  };
   
   return (
     <Card className="mb-8 rounded-xl overflow-hidden border-none shadow-md">
@@ -51,6 +58,15 @@ const WelcomeSection: React.FC = () => {
                   ? 'Welcome to your personal dashboard. All your health metrics and devices are being monitored in real-time.' 
                   : 'Bienvenido a tu panel personal. Todas tus métricas de salud y dispositivos están siendo monitoreados en tiempo real.'}
               </p>
+              
+              <Button 
+                variant="outline" 
+                className="mt-4 flex items-center gap-2"
+                onClick={handleNavigateToQuestionnaire}
+              >
+                <ClipboardList className="h-4 w-4" />
+                {language === 'en' ? 'Complete Personal Questionnaire' : 'Completar Cuestionario Personal'}
+              </Button>
             </div>
             <div className="flex flex-col sm:flex-row gap-3">
               <div className="bg-white p-3 rounded-lg shadow-sm flex items-center text-ice-600 border border-ice-100">

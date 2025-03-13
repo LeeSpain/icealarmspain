@@ -10,6 +10,7 @@ import MultiEntrySection from './MultiEntrySection';
 import RegularQuestionSection from './RegularQuestionSection';
 import { useLanguage } from '@/context/LanguageContext';
 import { useAuth } from '@/context/auth';
+import { toast } from 'sonner';
 
 const QuestionnaireForm: React.FC = () => {
   const { language } = useLanguage();
@@ -53,17 +54,22 @@ const QuestionnaireForm: React.FC = () => {
     
     console.log("Answers submitted:", formattedAnswers);
     
-    // Save to local storage for demonstration purposes
+    // Save to local storage for the personal details page to access
     localStorage.setItem('userQuestionnaire', JSON.stringify(formattedAnswers));
     
     // Mark user's profile as completed
     localStorage.setItem('profileCompleted', 'true');
     
+    // Show success message
+    toast.success(
+      language === 'en' 
+        ? 'Questionnaire completed successfully! Your information has been saved to your Personal Details.'
+        : 'Cuestionario completado con éxito! Su información ha sido guardada en sus Datos Personales.'
+    );
+    
     // Navigate to personal details page with the appropriate path
     setTimeout(() => {
-      const targetPath = isDashboardRoute ? "/dashboard/personal-details" : "/personal-details";
-      console.log("Navigating to:", targetPath, "isDashboardRoute:", isDashboardRoute);
-      navigate(targetPath);
+      navigate('/dashboard/personal-details');
     }, 1000);
   };
 
