@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { SectionRendererProps } from './SectionRenderer.d';
 import UserManagement from '../user-management/UserManagement';
@@ -76,7 +75,7 @@ const SectionRenderer: React.FC<SectionRendererProps> = ({
     case 'client-onboarding':
       return <ClientOnboarding onAction={onAction} />;
     case 'inventory':
-      return <InventoryManagement />;
+      return <InventoryManagement onAction={onAction} />;
     case 'devices':
       return <DeviceManagement onAction={onAction} />;
     case 'alerts':
