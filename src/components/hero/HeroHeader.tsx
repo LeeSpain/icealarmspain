@@ -24,7 +24,7 @@ const HeroHeader: React.FC<HeroHeaderProps> = ({ language, handleClick }) => {
         {/* Decorative elements behind the headline */}
         <div className="absolute -top-10 left-1/2 transform -translate-x-1/2 w-32 h-1 bg-gradient-to-r from-transparent via-ice-400 to-transparent rounded-full opacity-70"></div>
         
-        <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold font-inter leading-tight mx-auto max-w-4xl relative">
+        <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold font-playfair leading-tight mx-auto max-w-4xl relative">
           <span className="relative z-10 bg-gradient-to-r from-gray-900 via-ice-900 to-guardian-800 bg-clip-text text-transparent inline-block">
             {language === 'en' 
               ? 'Intelligent Health Monitoring & Emergency Response' 
