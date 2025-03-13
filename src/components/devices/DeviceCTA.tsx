@@ -23,7 +23,7 @@ const DeviceCTA: React.FC<DeviceCTAProps> = ({ language }) => {
   return (
     <section className="py-14 bg-gradient-to-b from-ice-50 to-white text-center">
       <div className="container mx-auto px-4">
-        <h2 className="text-3xl md:text-4xl font-bold mb-6">
+        <h2 className="text-3xl md:text-4xl font-bold mb-6 font-playfair">
           {language === 'en' 
             ? "Ready to Experience Complete Health Monitoring?" 
             : "¿Listo para Experimentar un Monitoreo de Salud Completo?"}
