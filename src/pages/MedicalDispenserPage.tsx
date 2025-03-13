@@ -17,8 +17,8 @@ const MedicalDispenserPage: React.FC = () => {
 
   return (
     <div className="flex flex-col min-h-screen">
-      <main className="flex-grow pt-24 pb-16">
-        <div className="container mx-auto px-4 mb-8">
+      <main className="flex-grow">
+        <div className="container mx-auto px-4 pt-24 mb-8">
           <div className="flex items-center">
             <Link to="/products">
               <ButtonCustom variant="ghost" size="sm" className="flex items-center">

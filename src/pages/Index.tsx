@@ -1,11 +1,9 @@
 
 import React, { useEffect, useCallback, useRef } from "react";
-import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import DeviceShowcase from "@/components/DeviceShowcase";
 import Pricing from "@/components/Pricing";
 import ExpatInfo from "@/components/ExpatInfo";
-import Footer from "@/components/Footer";
 import { useLanguage } from "@/context/LanguageContext";
 import DashboardPreview from "@/components/dashboard/DashboardPreview";
 import DecorativeElements from "@/components/layout/DecorativeElements";
@@ -78,8 +76,6 @@ const Index: React.FC = () => {
       {/* Enhanced Decorative Elements */}
       <DecorativeElements />
       
-      <Navbar />
-      
       <main className="flex-grow relative">
         {/* Wrapping Hero in error boundary */}
         <div className="relative">
@@ -108,8 +104,6 @@ const Index: React.FC = () => {
         {/* ExpatInfo has its own spacing adjustments now */}
         <ExpatInfo />
       </main>
-      
-      <Footer />
     </div>
   );
 };
