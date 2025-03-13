@@ -22,7 +22,7 @@ const ProductsHero: React.FC = () => {
   return (
     <section 
       id="products-hero" 
-      className="relative pt-32 pb-24 overflow-hidden"
+      className="relative pt-24 pb-24 overflow-hidden"
     >
       {/* Enhanced Background Elements */}
       <div className="absolute top-20 right-0 w-96 h-96 bg-gradient-radial from-ice-100/70 to-transparent rounded-full filter blur-3xl opacity-70 -z-10 animate-pulse-gentle"></div>
