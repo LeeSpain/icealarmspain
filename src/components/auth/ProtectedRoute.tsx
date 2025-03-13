@@ -1,6 +1,5 @@
 
 import React from 'react';
-import { useLocation } from 'react-router-dom';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -15,10 +14,9 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   allowedRoles = [],
   redirectPath
 }) => {
-  const location = useLocation();
-  console.log("ProtectedRoute rendering for path:", location.pathname);
+  console.log("ProtectedRoute rendering with no authentication checks");
   
-  // In this simplified version, we always render the children without authentication checks
+  // Just render the children with no authentication checks
   return <>{children}</>;
 };
 

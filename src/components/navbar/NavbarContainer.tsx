@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { ChevronDown } from "lucide-react";
 import Logo from "@/components/Logo";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 import NavLinks from "./NavLinks";
 import AuthButtons from "./AuthButtons";
@@ -19,6 +19,7 @@ const NavbarContainer: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
   
   console.log("Navbar component rendering, path:", location.pathname);
   
@@ -42,7 +43,7 @@ const NavbarContainer: React.FC = () => {
     setIsMobileMenuOpen(false);
   }, [location.pathname]);
 
-  // Simplified direct access function - no authentication checks
+  // Direct access function - no authentication
   const handleDirectAccess = (path: string) => {
     // Create a minimal user object to store
     const devUser = {
@@ -65,6 +66,9 @@ const NavbarContainer: React.FC = () => {
     localStorage.setItem('forceDevMode', 'true');
     
     console.log("Direct access activated for:", path);
+    
+    // Navigate directly to the requested dashboard
+    navigate(path);
   };
 
   return (
@@ -85,32 +89,29 @@ const NavbarContainer: React.FC = () => {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-48 bg-white">
-              <DropdownMenuItem asChild>
-                <Link 
-                  to="/admin" 
-                  className="w-full"
+              <DropdownMenuItem>
+                <div 
+                  className="w-full cursor-pointer"
                   onClick={() => handleDirectAccess('/admin')}
                 >
                   Admin Dashboard
-                </Link>
+                </div>
               </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <Link 
-                  to="/call-center" 
-                  className="w-full"
+              <DropdownMenuItem>
+                <div 
+                  className="w-full cursor-pointer"
                   onClick={() => handleDirectAccess('/call-center')}
                 >
                   Call Center
-                </Link>
+                </div>
               </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <Link 
-                  to="/dashboard" 
-                  className="w-full"
+              <DropdownMenuItem>
+                <div 
+                  className="w-full cursor-pointer"
                   onClick={() => handleDirectAccess('/dashboard')}
                 >
                   Member Dashboard
-                </Link>
+                </div>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

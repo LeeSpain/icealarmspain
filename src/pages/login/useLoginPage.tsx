@@ -3,7 +3,6 @@ import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
 import { useLanguage } from "@/context/LanguageContext";
-import { login } from "@/context/auth/functions/userAuth";
 
 export const useLoginPage = () => {
   const { language } = useLanguage();
@@ -16,114 +15,84 @@ export const useLoginPage = () => {
   const searchParams = new URLSearchParams(location.search);
   const redirectParam = searchParams.get('redirect') || '/dashboard';
 
-  // Check if user is already logged in
+  // Set up dev mode and direct access
   useEffect(() => {
     // Set development mode
     localStorage.setItem('forceDevMode', 'true');
     console.log("Development mode forced in login page");
     
-    // Check if already logged in
-    const storedUser = localStorage.getItem('currentUser');
-    if (storedUser) {
-      try {
-        const user = JSON.parse(storedUser);
-        if (user && user.role) {
-          console.log("User already logged in with role:", user.role);
-          const targetUrl = redirectParam && redirectParam !== '/dashboard' 
-            ? redirectParam 
-            : getDefaultRedirect(user.role);
-          
-          // Use timeout to ensure this happens after other state updates
-          setTimeout(() => {
-            console.log("Redirecting already logged-in user to:", targetUrl);
-            navigate(targetUrl, { replace: true });
-          }, 100);
-        }
-      } catch (e) {
-        console.error("Error parsing stored user:", e);
-      }
+    // If we're accessing the login page directly, simulate auto-login to dashboard
+    if (location.pathname === '/login') {
+      const devUser = {
+        uid: `dev-member-${Date.now()}`,
+        id: `dev-member-${Date.now()}`,
+        email: `member@example.com`,
+        name: 'Member User',
+        displayName: 'Member User',
+        role: 'member',
+        status: 'active',
+        profileCompleted: true,
+        language: 'en',
+        lastLogin: new Date().toISOString(),
+        createdAt: new Date().toISOString()
+      };
+      
+      localStorage.setItem('currentUser', JSON.stringify(devUser));
+      localStorage.setItem('userRole', 'member');
+      
+      // Navigate directly to dashboard
+      navigate('/dashboard', { replace: true });
     }
-    
-    // Clear user data if accessing login page directly without redirect parameter
-    if (location.pathname === '/login' && !searchParams.has('redirect')) {
-      localStorage.removeItem('currentUser');
-      localStorage.removeItem('userRole');
-      console.log("Login page accessed directly, clearing user data");
-    }
-  }, [location.pathname, searchParams, navigate, redirectParam]);
+  }, [location.pathname, navigate]);
 
-  const getDefaultRedirect = (role: string): string => {
-    console.log("Determining redirect for role:", role);
-    
-    switch (role) {
-      case 'admin':
-        return '/admin';
-      case 'callcenter':
-        return '/call-center';
-      case 'technician':
-      case 'support':
-      case 'member':
-      default:
-        return '/dashboard';
-    }
-  };
-
+  // Simplified login handler that just creates a dev user and redirects
   const handleLoginSuccess = async (email: string, password: string, rememberMe: boolean) => {
-    if (loginInProgress) {
-      return;
-    }
-    
     setLoginInProgress(true);
-    setLoginError(null);
     
     try {
-      console.log("Login attempt with credentials:", { email, rememberMe });
+      // Create a dev user based on email
+      const role = email.includes('admin') ? 'admin' : 
+                  email.includes('callcenter') ? 'callcenter' : 'member';
       
-      if (!email || !password) {
-        throw new Error(language === 'en' 
-          ? 'Email and password are required' 
-          : 'El correo electrónico y la contraseña son obligatorios');
-      }
+      const devUser = {
+        uid: `dev-${role}-${Date.now()}`,
+        id: `dev-${role}-${Date.now()}`,
+        email: email,
+        name: email.split('@')[0],
+        displayName: email.split('@')[0],
+        role: role,
+        status: 'active',
+        profileCompleted: true,
+        language: 'en',
+        lastLogin: new Date().toISOString(),
+        createdAt: new Date().toISOString()
+      };
       
-      const user = await login(email, password, rememberMe);
-      console.log("Login success - using centralized login function");
+      // Store in localStorage
+      localStorage.setItem('currentUser', JSON.stringify(devUser));
+      localStorage.setItem('userRole', role);
+      localStorage.setItem('forceDevMode', 'true');
       
+      // Success toast
       toast({
         title: language === 'en' ? "Login Successful" : "Inicio de sesión exitoso",
         description: language === 'en' 
-          ? `Welcome, ${user.displayName || user.email?.split('@')[0] || 'User'}!` 
-          : `Bienvenido, ${user.displayName || user.email?.split('@')[0] || 'Usuario'}!`,
+          ? `Welcome, ${devUser.displayName}!` 
+          : `Bienvenido, ${devUser.displayName}!`,
         duration: 3000
       });
       
-      const targetUrl = redirectParam && redirectParam !== '/dashboard' 
-        ? redirectParam 
-        : getDefaultRedirect(user.role);
-        
-      console.log("Redirecting to:", targetUrl);
+      // Determine redirect path
+      const targetUrl = role === 'admin' ? '/admin' : 
+                        role === 'callcenter' ? '/call-center' : 
+                        '/dashboard';
       
-      // A slight delay to ensure localStorage updates are complete
-      await new Promise(resolve => setTimeout(resolve, 200));
-      
-      // Use React Router navigation with replace to avoid back-button issues
+      // Navigate to appropriate dashboard
       navigate(targetUrl, { replace: true });
       
     } catch (error) {
       console.error("Login error:", error);
-      
-      const errorMessage = error instanceof Error 
-        ? error.message 
-        : language === 'en' 
-          ? "An unknown error occurred" 
-          : "Ha ocurrido un error desconocido";
-      
-      setLoginError(errorMessage);
-      
-      toast({
-        title: language === 'en' ? "Login Error" : "Error de inicio de sesión",
-        description: errorMessage,
-        variant: "destructive"
-      });
+      setLoginError("An error occurred during login");
     } finally {
       setLoginInProgress(false);
     }
