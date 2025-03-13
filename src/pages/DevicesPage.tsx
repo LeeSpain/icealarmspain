@@ -30,32 +30,37 @@ const DevicesPage: React.FC = () => {
       <Navbar />
       
       <main className="flex-grow relative">
-        <div className="relative">
-          <DeviceHero language={language} />
-        </div>
+        {/* Hero section */}
+        <DeviceHero language={language} />
         
         {/* Section Divider with enhanced styling */}
         <SectionDivider />
         
-        <SectionWrapper>
-          <DevicesGrid devices={devices} language={language} />
+        {/* Devices Grid - Centered with consistent spacing */}
+        <SectionWrapper className="py-16">
+          <div className="container mx-auto px-4 md:px-6">
+            <DevicesGrid devices={devices} language={language} />
+          </div>
         </SectionWrapper>
         
         {/* Section Divider for consistent spacing */}
         <SectionDivider variant="white-to-ice" />
         
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <SectionWrapper>
-            <CallCenterServices language={language} />
-          </SectionWrapper>
-          
-          <SectionWrapper>
-            <GuardianAISection language={language} />
-          </SectionWrapper>
-        </div>
+        {/* Service sections displayed side by side */}
+        <SectionWrapper className="py-16 bg-ice-50/30">
+          <div className="container mx-auto px-4 md:px-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              <CallCenterServices language={language} />
+              <GuardianAISection language={language} />
+            </div>
+          </div>
+        </SectionWrapper>
         
+        {/* CTA section */}
         <DeviceCTA language={language} />
       </main>
+      
+      {/* Single footer */}
       <Footer />
     </div>
   );

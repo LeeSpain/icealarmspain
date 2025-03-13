@@ -17,27 +17,29 @@ const DispenserTabs: React.FC<DispenserTabsProps> = ({ medications }) => {
   const { language } = useLanguage();
   
   return (
-    <Tabs defaultValue="overview">
-      <TabsList className="mb-4">
-        <TabsTrigger value="overview">
-          {language === 'en' ? 'Overview' : 'Resumen'}
-        </TabsTrigger>
-        <TabsTrigger value="medications">
-          {language === 'en' ? 'Medications' : 'Medicamentos'}
-        </TabsTrigger>
-        <TabsTrigger value="schedule">
-          {language === 'en' ? 'Schedule' : 'Horario'}
-        </TabsTrigger>
-        <TabsTrigger value="settings">
-          {language === 'en' ? 'Settings' : 'Configuración'}
-        </TabsTrigger>
-      </TabsList>
-      
-      <OverviewTabContent medications={medications} />
-      <MedicationsTabContent />
-      <ScheduleTabContent />
-      <SettingsTabContent />
-    </Tabs>
+    <div className="w-full max-w-4xl mx-auto">
+      <Tabs defaultValue="overview" className="w-full">
+        <TabsList className="mb-4 w-full flex justify-center">
+          <TabsTrigger value="overview" className="flex-1">
+            {language === 'en' ? 'Overview' : 'Resumen'}
+          </TabsTrigger>
+          <TabsTrigger value="medications" className="flex-1">
+            {language === 'en' ? 'Medications' : 'Medicamentos'}
+          </TabsTrigger>
+          <TabsTrigger value="schedule" className="flex-1">
+            {language === 'en' ? 'Schedule' : 'Horario'}
+          </TabsTrigger>
+          <TabsTrigger value="settings" className="flex-1">
+            {language === 'en' ? 'Settings' : 'Configuración'}
+          </TabsTrigger>
+        </TabsList>
+        
+        <OverviewTabContent medications={medications} />
+        <MedicationsTabContent />
+        <ScheduleTabContent />
+        <SettingsTabContent />
+      </Tabs>
+    </div>
   );
 };
 

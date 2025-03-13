@@ -11,32 +11,34 @@ const DeviceTabs: React.FC = () => {
   const { language } = useLanguage();
   
   return (
-    <Tabs defaultValue="overview">
-      <TabsList className="mb-4">
-        <TabsTrigger value="overview">
-          {language === 'en' ? 'Overview' : 'Resumen'}
-        </TabsTrigger>
-        <TabsTrigger value="readings">
-          {language === 'en' ? 'Readings' : 'Lecturas'}
-        </TabsTrigger>
-        <TabsTrigger value="settings">
-          {language === 'en' ? 'Settings' : 'Configuración'}
-        </TabsTrigger>
-      </TabsList>
-      
-      <TabsContent value="overview" className="space-y-4">
-        <DeviceOverview />
-        <QuickActions />
-      </TabsContent>
-      
-      <TabsContent value="readings" className="space-y-4">
-        <ReadingsHistory />
-      </TabsContent>
-      
-      <TabsContent value="settings" className="space-y-4">
-        <DeviceSettings />
-      </TabsContent>
-    </Tabs>
+    <div className="w-full max-w-4xl mx-auto">
+      <Tabs defaultValue="overview" className="w-full">
+        <TabsList className="mb-4 w-full flex justify-center">
+          <TabsTrigger value="overview" className="flex-1">
+            {language === 'en' ? 'Overview' : 'Resumen'}
+          </TabsTrigger>
+          <TabsTrigger value="readings" className="flex-1">
+            {language === 'en' ? 'Readings' : 'Lecturas'}
+          </TabsTrigger>
+          <TabsTrigger value="settings" className="flex-1">
+            {language === 'en' ? 'Settings' : 'Configuración'}
+          </TabsTrigger>
+        </TabsList>
+        
+        <TabsContent value="overview" className="space-y-4">
+          <DeviceOverview />
+          <QuickActions />
+        </TabsContent>
+        
+        <TabsContent value="readings" className="space-y-4">
+          <ReadingsHistory />
+        </TabsContent>
+        
+        <TabsContent value="settings" className="space-y-4">
+          <DeviceSettings />
+        </TabsContent>
+      </Tabs>
+    </div>
   );
 };
 
