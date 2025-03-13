@@ -302,7 +302,7 @@ const SOSPendantPage: React.FC = () => {
                         </h4>
                         <p className="text-muted-foreground">
                           {language === 'en' 
-                            ? 'The built-in accelerometer automatically detects falls. If a fall is detected, the pendant initiates a 30-second countdown before calling for help, allowing you to cancel if it\'s a false alarm.' 
+                            ? "The built-in accelerometer automatically detects falls. If a fall is detected, the pendant initiates a 30-second countdown before calling for help, allowing you to cancel if it\'s a false alarm." 
                             : 'El acelerómetro incorporado detecta automáticamente caídas. Si se detecta una caída, el colgante inicia una cuenta regresiva de 30 segundos antes de llamar para pedir ayuda, permitiéndote cancelar si es una falsa alarma.'}
                         </p>
                       </div>
