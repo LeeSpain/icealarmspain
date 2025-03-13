@@ -18,6 +18,8 @@ import {
 } from "lucide-react";
 import SidebarItem from "./SidebarItem";
 import { useLanguage } from "@/context/LanguageContext";
+import { useNavigate } from "react-router-dom";
+import { useToast } from "@/components/ui/use-toast";
 
 interface SidebarNavigationProps {
   activeSection: string;
@@ -33,6 +35,31 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({
   onLogout
 }) => {
   const { language } = useLanguage();
+  const navigate = useNavigate();
+  const { toast } = useToast();
+  
+  const handleLogout = async () => {
+    try {
+      // Show toast notification
+      toast({
+        title: language === 'en' ? "Logging out" : "Cerrando sesión",
+        description: language === 'en' ? "You are being logged out" : "Se está cerrando su sesión"
+      });
+      
+      // Call the provided onLogout function
+      await onLogout();
+      
+      // Force navigation to login page with a full page reload to prevent automatic redirects
+      window.location.href = '/login?redirect=none';
+    } catch (error) {
+      console.error('Logout error:', error);
+      toast({
+        variant: "destructive",
+        title: language === 'en' ? "Logout failed" : "Error al cerrar sesión",
+        description: language === 'en' ? "There was a problem logging you out" : "Hubo un problema al cerrar sesión"
+      });
+    }
+  };
   
   return (
     <div className="px-3 py-2 flex flex-col h-full overflow-y-auto">
@@ -152,7 +179,7 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({
           label={language === 'en' ? "Logout" : "Cerrar Sesión"} 
           active={false} 
           collapsed={collapsed}
-          onClick={onLogout}
+          onClick={handleLogout}
         />
       </div>
     </div>

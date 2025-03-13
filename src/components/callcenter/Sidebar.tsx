@@ -6,6 +6,7 @@ import SidebarNavigation from './sidebar/SidebarNavigation';
 import UserProfile from './sidebar/UserProfile';
 import { User } from '@/context/auth';
 import { cn } from '@/lib/utils';
+import { useToast } from '@/components/ui/use-toast';
 
 interface SidebarProps {
   activeSection: string;
@@ -23,6 +24,29 @@ const Sidebar: React.FC<SidebarProps> = ({
   user
 }) => {
   const { logout } = useAuth();
+  const { toast } = useToast();
+  
+  const handleLogout = async () => {
+    try {
+      // Clear any session/local storage related to user preferences
+      localStorage.removeItem('activeSection');
+      
+      // Call the auth logout function
+      await logout();
+      
+      // Flag to prevent automatic login after logout
+      sessionStorage.setItem('recentlyLoggedOut', 'true');
+      
+      console.log("Call center logout complete");
+    } catch (error) {
+      console.error('Error during call center logout:', error);
+      toast({
+        variant: "destructive",
+        title: "Logout failed",
+        description: "There was a problem logging you out. Please try again."
+      });
+    }
+  };
   
   return (
     <div className={cn(
@@ -38,7 +62,7 @@ const Sidebar: React.FC<SidebarProps> = ({
         activeSection={activeSection}
         setActiveSection={setActiveSection}
         collapsed={collapsed}
-        onLogout={logout}
+        onLogout={handleLogout}
       />
 
       {user && (
