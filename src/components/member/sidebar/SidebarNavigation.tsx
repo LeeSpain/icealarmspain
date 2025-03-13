@@ -54,8 +54,7 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({
       onLogout();
     } else {
       // Clear localStorage
-      localStorage.removeItem('currentUser');
-      localStorage.removeItem('userRole');
+      localStorage.clear();
       
       // Show toast
       toast({
@@ -63,8 +62,8 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({
         description: language === 'en' ? "You have been logged out successfully" : "Ha cerrado sesión con éxito",
       });
       
-      // Navigate to home
-      navigate('/');
+      // Use window.location.href for a full page reload and navigation
+      window.location.href = '/';
     }
   };
   

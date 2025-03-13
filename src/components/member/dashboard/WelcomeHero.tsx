@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { motion } from 'framer-motion';
 import { useLanguage } from '@/context/LanguageContext';
@@ -45,13 +46,13 @@ export const WelcomeHero: React.FC<WelcomeHeroProps> = ({
     // Clear all localStorage
     localStorage.clear();
     
-    // Call the provided onLogout handler
+    // Call the provided onLogout handler if available
     if (onLogout) {
       onLogout();
     }
     
-    // Navigate to home with replace to prevent going back
-    navigate('/', { replace: true });
+    // Use window.location.href for a complete page refresh and navigation
+    window.location.href = '/';
   };
 
   return (

@@ -1,116 +1,65 @@
 
-import React from 'react';
-import { useLanguage } from '@/context/LanguageContext';
+import React, { useEffect, useState } from 'react';
+import { WelcomeHero } from '@/components/member/dashboard/WelcomeHero';
 import { useAuth } from '@/context/auth';
+import { useToast } from '@/components/ui/use-toast';
 import { useNavigate } from 'react-router-dom';
-import { Shield, Calendar, CheckCircle, Clipboard, FileText } from 'lucide-react';
-import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { useLanguage } from '@/context/LanguageContext';
 
-const WelcomeSection: React.FC = () => {
-  const { language } = useLanguage();
+const WelcomeSection = () => {
   const { user } = useAuth();
+  const [showAddProducts, setShowAddProducts] = useState(false);
+  const [hasDevices, setHasDevices] = useState(false);
+  const { toast } = useToast();
   const navigate = useNavigate();
+  const { language } = useLanguage();
   
-  // Get current date
-  const currentDate = new Date();
-  const formattedDate = new Intl.DateTimeFormat(language === 'en' ? 'en-US' : 'es-ES', {
-    weekday: 'long',
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
-  }).format(currentDate);
-  
-  // Get time-based greeting
-  const getTimeBasedGreeting = () => {
-    const hour = currentDate.getHours();
-    if (language === 'en') {
-      if (hour < 12) return 'Good morning';
-      if (hour < 18) return 'Good afternoon';
-      return 'Good evening';
-    } else {
-      if (hour < 12) return 'Buenos días';
-      if (hour < 18) return 'Buenas tardes';
-      return 'Buenas noches';
+  useEffect(() => {
+    // Check if the user has devices
+    const userDevices = localStorage.getItem('userDevices');
+    if (userDevices) {
+      try {
+        const devices = JSON.parse(userDevices);
+        setHasDevices(devices.length > 0);
+      } catch (error) {
+        console.error('Error parsing user devices:', error);
+        setHasDevices(false);
+      }
     }
-  };
-
-  const handleNavigateToQuestionnaire = () => {
-    navigate('/dashboard/questionnaire');
+  }, []);
+  
+  const handleClearDevices = () => {
+    localStorage.removeItem('userDevices');
+    setHasDevices(false);
+    toast({
+      title: language === 'en' ? "Devices Cleared" : "Dispositivos Borrados",
+      description: language === 'en' ? "All devices have been removed" : "Todos los dispositivos han sido eliminados",
+    });
   };
   
-  const handleNavigateToPersonalDetails = () => {
-    navigate('/dashboard/personal-details');
+  const handleLogout = () => {
+    // Clear all localStorage
+    localStorage.clear();
+    
+    // Show toast notification
+    toast({
+      title: language === 'en' ? "Logged Out" : "Sesión Cerrada",
+      description: language === 'en' ? "You have been logged out successfully" : "Ha cerrado sesión con éxito",
+    });
+    
+    // Using window.location.href for a complete page refresh and navigation
+    window.location.href = '/';
   };
   
   return (
-    <Card className="mb-6 rounded-xl overflow-hidden border-none shadow-sm">
-      <div className="absolute h-1 w-full bg-gradient-to-r from-ice-400 via-ice-600 to-ice-800"></div>
-      <CardContent className="p-0">
-        <div className="bg-gradient-to-r from-ice-50 to-ice-100 p-5">
-          <div className="flex flex-col space-y-3">
-            {/* Top section with date and greeting */}
-            <div className="flex items-center justify-between">
-              <div className="flex items-center text-ice-600 font-medium text-xs">
-                <Calendar className="h-3.5 w-3.5 mr-1.5" />
-                <span>{formattedDate}</span>
-              </div>
-              <div className="inline-flex items-center gap-1.5 px-2 py-1 bg-green-100 border border-green-200 rounded-full text-green-700 text-xs">
-                <CheckCircle className="h-3 w-3" />
-                <span>{language === 'en' ? 'All Systems Operational' : 'Todos los Sistemas Operativos'}</span>
-              </div>
-            </div>
-            
-            {/* Main content */}
-            <div>
-              <h1 className="text-2xl font-bold text-ice-800 mb-1.5">
-                {`${getTimeBasedGreeting()}, ${user?.name || 'Member'}!`}
-              </h1>
-              <p className="text-ice-700 text-sm mb-3">
-                {language === 'en' 
-                  ? 'Welcome to your personal dashboard. All your health metrics and devices are being monitored in real-time.' 
-                  : 'Bienvenido a tu panel personal. Todas tus métricas de salud y dispositivos están siendo monitoreados en tiempo real.'}
-              </p>
-            </div>
-            
-            {/* Action buttons */}
-            <div className="flex flex-wrap gap-2">
-              <Button 
-                variant="outline" 
-                size="sm"
-                className="flex items-center gap-1.5 bg-white"
-                onClick={handleNavigateToQuestionnaire}
-              >
-                <Clipboard className="h-3.5 w-3.5" />
-                {language === 'en' ? 'Complete Questionnaire' : 'Completar Cuestionario'}
-              </Button>
-              
-              <Button 
-                variant="outline" 
-                size="sm"
-                className="flex items-center gap-1.5 bg-white"
-                onClick={handleNavigateToPersonalDetails}
-              >
-                <FileText className="h-3.5 w-3.5" />
-                {language === 'en' ? 'Personal Details' : 'Datos Personales'}
-              </Button>
-            </div>
-            
-            {/* Status tags */}
-            <div className="flex flex-wrap gap-2 mt-1">
-              <div className="inline-flex items-center gap-1.5 px-2 py-1 bg-ice-100 border border-ice-200 rounded-full text-ice-700 text-xs">
-                <Shield className="h-3 w-3" />
-                <span>{language === 'en' ? 'Protected' : 'Protegido'}</span>
-              </div>
-              <div className="inline-flex items-center gap-1.5 px-2 py-1 bg-blue-100 border border-blue-200 rounded-full text-blue-700 text-xs">
-                <Calendar className="h-3 w-3" />
-                <span>{language === 'en' ? 'Next Check: Tomorrow' : 'Próxima Revisión: Mañana'}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </CardContent>
-    </Card>
+    <WelcomeHero 
+      onShowAddProducts={() => setShowAddProducts(!showAddProducts)}
+      showAddProducts={showAddProducts}
+      hasDevices={hasDevices}
+      onClearDevices={handleClearDevices}
+      onLogout={handleLogout}
+      user={user}
+    />
   );
 };
 

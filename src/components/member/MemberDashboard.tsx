@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/auth";
@@ -83,16 +84,17 @@ const MemberDashboard: React.FC = () => {
     });
     
     // Navigate to home page with replace to prevent going back
-    navigate('/', { replace: true });
+    // Using window.location instead of navigate to force full page reload
+    window.location.href = '/';
   };
   
   // If there's no user, redirect to login
   useEffect(() => {
     const currentUser = localStorage.getItem('currentUser');
     if (!currentUser) {
-      navigate('/', { replace: true });
+      window.location.href = '/';
     }
-  }, [navigate]);
+  }, []);
 
   return (
     <div className="space-y-6">
