@@ -30,7 +30,7 @@ const DeviceShowcase: React.FC = () => {
       description: language === 'en' ? 
         "Immediate emergency response with just one touch. Our advanced pendant provides around-the-clock protection with built-in fall detection and GPS tracking." :
         "Respuesta inmediata a emergencias con un solo toque. Nuestro colgante avanzado proporciona protección las 24 horas con detección de caídas y seguimiento GPS.",
-      path: "/devices/sos-pendant"
+      path: "/sos-pendant"
     },
     {
       id: "dispenser",
@@ -53,7 +53,7 @@ const DeviceShowcase: React.FC = () => {
       description: language === 'en' ? 
         "Never miss a dose again. Our smart Medical Dispenser provides automated medication management with intelligent reminders and adherence tracking." :
         "Nunca vuelva a olvidar una dosis. Nuestro Dispensador Médico inteligente proporciona gestión automatizada de medicamentos con recordatorios inteligentes.",
-      path: "/devices/medical-dispenser"
+      path: "/medical-dispenser"
     },
     {
       id: "glucose",
@@ -76,7 +76,7 @@ const DeviceShowcase: React.FC = () => {
       description: language === 'en' ? 
         "Real-time glucose monitoring with AI-powered analysis. Receive immediate alerts for concerning levels and personalized recommendations for better health." :
         "Monitoreo de glucosa en tiempo real con análisis impulsado por IA. Reciba alertas inmediatas para niveles preocupantes y recomendaciones personalizadas.",
-      path: "/devices/glucose-monitor"
+      path: "/glucose-monitor"
     }
   ];
 
