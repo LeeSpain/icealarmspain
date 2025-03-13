@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/auth";
@@ -7,6 +6,7 @@ import { useToast } from "@/components/ui/use-toast";
 import WelcomeSection from "@/components/member/WelcomeSection";
 import SOSTile from "@/components/member/dashboard/SOSTile";
 import GlucoseTile from "@/components/member/dashboard/GlucoseTile";
+import WeatherTile from "@/components/member/dashboard/WeatherTile";
 import AIGuardianTile from "@/components/member/dashboard/ai-guardian/AIGuardianTile";
 import NotificationSection from "@/components/member/dashboard/notifications/NotificationSection";
 import { CartSection } from "@/components/member/dashboard/CartSection";
