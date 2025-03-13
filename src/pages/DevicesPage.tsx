@@ -20,7 +20,7 @@ const DevicesPage: React.FC = () => {
   console.log("DevicesPage rendering");
 
   return (
-    <>
+    <Layout>
       <main className="flex-grow relative">
         {/* Hero section with pt-44 matching homepage */}
         <DeviceHero language={language} />
@@ -52,8 +52,7 @@ const DevicesPage: React.FC = () => {
           </div>
         </SectionWrapper>
       </main>
-      <Layout.Footer />
-    </>
+    </Layout>
   );
 };
 
