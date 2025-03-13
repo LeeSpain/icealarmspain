@@ -1,7 +1,4 @@
-
 import React, { useState } from "react";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
 import { useLanguage } from "@/context/LanguageContext";
 import { useNavigate } from "react-router-dom";
 import MembershipTypeSelector from "@/components/join/MembershipTypeSelector";
@@ -126,7 +123,6 @@ const Join: React.FC = () => {
   return (
     <div className="flex flex-col min-h-screen bg-gradient-to-b from-white via-ice-50/30 to-white">
       <JoinBackgroundEffects />
-      <Navbar />
       <main className="flex-grow">
         <JoinHero language={language} />
 
@@ -165,7 +161,6 @@ const Join: React.FC = () => {
           )}
         </div>
       </main>
-      <Footer />
       <ToastContainer />
     </div>
   );
