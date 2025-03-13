@@ -1,6 +1,7 @@
 
 import React from "react";
 import { useLanguage } from "@/context/LanguageContext";
+import { useLocation } from "react-router-dom";
 import HeroHeader from "./hero/HeroHeader";
 import FeatureCards from "./hero/FeatureCards";
 import DashboardPreview from "./hero/DashboardPreview";
@@ -9,6 +10,9 @@ import Testimonials from "./Testimonials";
 
 const Hero: React.FC = () => {
   const { language } = useLanguage();
+  const location = useLocation();
+  const isHomepage = location.pathname === "/" || location.pathname === "";
+  
   console.log("Hero component rendering with language:", language);
 
   // Function to handle click and scroll to top
@@ -22,7 +26,7 @@ const Hero: React.FC = () => {
   return (
     <section 
       id="home" 
-      className="relative pt-24 overflow-hidden"
+      className={`relative ${isHomepage ? 'pt-32' : 'pt-24'} overflow-hidden`}
     >
       <HeroBackground />
       
