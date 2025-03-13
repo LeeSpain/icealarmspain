@@ -14,8 +14,6 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   allowedRoles = [],
   redirectPath
 }) => {
-  console.log("ProtectedRoute rendering with no authentication checks");
-  
   // Just render the children with no authentication checks
   return <>{children}</>;
 };

@@ -18,6 +18,7 @@ import {
   CalendarCheck
 } from "lucide-react";
 import SidebarItem from "./SidebarItem";
+import { useToast } from "@/components/ui/use-toast";
 
 interface SidebarNavigationProps {
   collapsed: boolean;
@@ -34,14 +35,35 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({
 }) => {
   const location = useLocation();
   const navigate = useNavigate();
+  const { toast } = useToast();
   
   const isActive = (path: string) => {
     return location.pathname === path || location.pathname.startsWith(path);
   };
   
   const handleNavigation = (path: string) => {
+    console.log(`Navigating to: ${path}`);
     navigate(path);
     window.scrollTo(0, 0);
+  };
+  
+  const handleLogout = () => {
+    if (onLogout) {
+      onLogout();
+    } else {
+      // Clear localStorage
+      localStorage.removeItem('currentUser');
+      localStorage.removeItem('userRole');
+      
+      // Show toast
+      toast({
+        title: "Logged Out",
+        description: "You have been logged out successfully",
+      });
+      
+      // Navigate to home
+      navigate('/');
+    }
   };
   
   return (
@@ -162,7 +184,7 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({
           label="Logout" 
           active={false} 
           collapsed={collapsed}
-          onClick={onLogout}
+          onClick={handleLogout}
         />
       </div>
     </div>

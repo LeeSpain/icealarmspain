@@ -2,9 +2,13 @@
 import React, { useState, useEffect } from "react";
 import MemberSidebar from "@/components/member/MemberSidebar";
 import MemberDashboard from "@/components/member/MemberDashboard";
+import { useLocation } from "react-router-dom";
 
 const DashboardPage: React.FC = () => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const location = useLocation();
+  
+  console.log("Dashboard page rendering, path:", location.pathname);
   
   // Force dev user role to member
   useEffect(() => {
@@ -12,8 +16,8 @@ const DashboardPage: React.FC = () => {
       uid: `dev-member-${Date.now()}`,
       id: `dev-member-${Date.now()}`,
       email: `member@example.com`,
-      name: 'Member User',
-      displayName: 'Member User',
+      name: 'Elena Martinez',
+      displayName: 'Elena Martinez',
       role: 'member',
       status: 'active',
       profileCompleted: true,
@@ -36,7 +40,7 @@ const DashboardPage: React.FC = () => {
       />
       
       <div className="flex-1 overflow-auto transition-all duration-300">
-        <div className="p-6 w-full">
+        <div className="p-6 w-full max-w-7xl mx-auto">
           <MemberDashboard />
         </div>
       </div>
