@@ -1,3 +1,4 @@
+
 import React from 'react';
 import './App.css';
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
@@ -176,21 +177,17 @@ function App() {
                   </ProtectedRoute>
                 } />
                 
-                {/* Admin Dashboard Route */}
+                {/* Admin Dashboard Route - Now without Layout wrapper */}
                 <Route path="/admin" element={
                   <ProtectedRoute adminOnly>
-                    <Layout>
-                      <AdminDashboard />
-                    </Layout>
+                    <AdminDashboard />
                   </ProtectedRoute>
                 } />
                 
-                {/* Call Center Dashboard Route */}
+                {/* Call Center Dashboard Route - Now without Layout wrapper */}
                 <Route path="/call-center" element={
                   <ProtectedRoute allowedRoles={['callcenter']}>
-                    <Layout>
-                      <CallCenterDashboard />
-                    </Layout>
+                    <CallCenterDashboard />
                   </ProtectedRoute>
                 } />
                 
