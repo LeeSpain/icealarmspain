@@ -44,13 +44,17 @@ const DevicesPage: React.FC = () => {
         {/* Section Divider for consistent spacing */}
         <SectionDivider variant="white-to-ice" />
         
-        {/* Service sections displayed side by side */}
+        {/* Service sections stacked vertically */}
         <SectionWrapper className="py-16 bg-ice-50/30">
-          <div className="container mx-auto px-4 md:px-6">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              <CallCenterServices language={language} />
-              <GuardianAISection language={language} />
-            </div>
+          <div className="container mx-auto px-4 md:px-6 max-w-5xl">
+            {/* 24/7 Support Center section */}
+            <CallCenterServices language={language} />
+            
+            {/* Small divider between sections */}
+            <div className="h-16"></div>
+            
+            {/* AI Guardian Technology section */}
+            <GuardianAISection language={language} />
           </div>
         </SectionWrapper>
         
