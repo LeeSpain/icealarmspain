@@ -23,7 +23,7 @@ const DashboardHealthMetricsPage: React.FC = () => {
       />
       
       <div className="flex-1 overflow-auto transition-all duration-300">
-        <div className="p-6 w-full">
+        <div className="p-6 max-w-7xl mx-auto">
           <ToastContainer />
           
           <div className="mb-6">
