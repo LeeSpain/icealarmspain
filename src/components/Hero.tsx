@@ -22,7 +22,7 @@ const Hero: React.FC = () => {
   return (
     <section 
       id="home" 
-      className="relative pt-32 overflow-hidden"
+      className="relative pt-24 overflow-hidden"
     >
       <HeroBackground />
       
