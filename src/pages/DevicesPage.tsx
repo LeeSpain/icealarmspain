@@ -51,7 +51,7 @@ const DevicesPage: React.FC = () => {
           </div>
         </SectionWrapper>
         
-        {/* CTA section */}
+        {/* CTA section without footer */}
         <DeviceCTA language={language} />
       </main>
     </Layout>

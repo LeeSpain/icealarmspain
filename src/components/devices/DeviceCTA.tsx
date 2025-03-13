@@ -9,7 +9,7 @@ interface DeviceCTAProps {
 }
 
 const DeviceCTA: React.FC<DeviceCTAProps> = ({ language }) => {
-  console.log("Rendering DeviceCTA component");
+  console.log("Rendering DeviceCTA component - without footer");
   
   return (
     <section className="bg-white py-16">
