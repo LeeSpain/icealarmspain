@@ -15,6 +15,7 @@ export const DashboardOverview: React.FC = () => {
         icon={<Activity size={18} className="text-blue-500" />} 
         trend="+1"
         trendDirection="up"
+        status="normal"
       />
       <MetricCard 
         title={language === 'en' ? "System Status" : "Estado del Sistema"} 
@@ -34,6 +35,7 @@ export const DashboardOverview: React.FC = () => {
         value="March 17" 
         icon={<AlertTriangle size={18} className="text-purple-500" />} 
         description={language === 'en' ? "Scheduled" : "Programado"}
+        status="normal"
       />
     </div>
   );
