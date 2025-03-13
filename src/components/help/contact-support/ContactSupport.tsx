@@ -3,6 +3,8 @@ import React from "react";
 import { useLanguage } from "@/context/LanguageContext";
 import ContactForm from "./ContactForm";
 import LiveChatCard from "./LiveChatCard";
+import PhoneCard from "./PhoneCard";
+import EmailCard from "./EmailCard";
 
 const ContactSupport: React.FC = () => {
   const { language } = useLanguage();
@@ -15,6 +17,8 @@ const ContactSupport: React.FC = () => {
       
       <div className="space-y-4">
         <LiveChatCard />
+        <PhoneCard />
+        <EmailCard />
       </div>
     </div>
   );
