@@ -1,9 +1,10 @@
 
 import React from "react";
-import { BellRing, PlusSquare, ActivitySquare, ShoppingBag, Info, ArrowRight, Check, Clock, Shield } from "lucide-react";
+import { BellRing, PlusSquare, ActivitySquare, ShoppingBag, Info } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
 import { Link } from "react-router-dom";
 import { ButtonCustom } from "@/components/ui/button-custom";
+import DeviceCard from "./DeviceCard";
 
 const DeviceShowcaseVertical: React.FC = () => {
   const { language } = useLanguage();
@@ -46,7 +47,9 @@ const DeviceShowcaseVertical: React.FC = () => {
       longDescription: language === 'en' ?
         "The SOS Pendant is designed for seniors and vulnerable individuals to maintain independence while ensuring help is always available. Its advanced fall detection automatically alerts emergency services and caregivers if a fall is detected, even if the user is unconscious." :
         "El Colgante SOS está diseñado para personas mayores y vulnerables para mantener la independencia mientras se asegura de que la ayuda esté siempre disponible. Su detección avanzada de caídas alerta automáticamente a los servicios de emergencia y cuidadores si se detecta una caída, incluso si el usuario está inconsciente.",
-      path: "/sos-pendant"
+      path: "/sos-pendant",
+      price: "€110.00",
+      monthlyPrice: "€24.99"
     },
     {
       id: "dispenser",
@@ -85,7 +88,9 @@ const DeviceShowcaseVertical: React.FC = () => {
       longDescription: language === 'en' ?
         "The Medical Dispenser is perfect for individuals managing multiple medications. Its smart system alerts caregivers if doses are missed and can be programmed remotely. The dispenser only provides access to the correct medication at the prescribed time, preventing overdose or medication errors." :
         "El Dispensador Médico es perfecto para personas que manejan múltiples medicamentos. Su sistema inteligente alerta a los cuidadores si se olvidan las dosis y puede programarse de forma remota. El dispensador solo proporciona acceso a la medicación correcta en el momento prescrito, evitando sobredosis o errores de medicación.",
-      path: "/medical-dispenser"
+      path: "/medical-dispenser",
+      price: "€249.99",
+      monthlyPrice: "€24.99"
     },
     {
       id: "glucose",
@@ -124,7 +129,9 @@ const DeviceShowcaseVertical: React.FC = () => {
       longDescription: language === 'en' ?
         "Our Glucose Monitor provides 24/7 monitoring without the need for constant finger pricks. The AI system learns the user's patterns and can predict hypoglycemic or hyperglycemic events before they occur, providing life-saving alerts to both the user and caregivers." :
         "Nuestro Monitor de Glucosa proporciona monitoreo 24/7 sin necesidad de pinchazos constantes en el dedo. El sistema de IA aprende los patrones del usuario y puede predecir eventos hipoglucémicos o hiperglucémicos antes de que ocurran, proporcionando alertas que salvan vidas tanto al usuario como a los cuidadores.",
-      path: "/glucose-monitor"
+      path: "/glucose-monitor",
+      price: "€149.99",
+      monthlyPrice: "€24.99"
     }
   ];
 
@@ -157,123 +164,21 @@ const DeviceShowcaseVertical: React.FC = () => {
         
         <div className="flex flex-col gap-12 max-w-4xl mx-auto">
           {devices.map((device, index) => (
-            <div 
+            <DeviceCard
               key={device.id}
-              className="glass-card relative overflow-hidden transition-all duration-300 hover:shadow-lg animate-slide-up"
-              style={{ 
-                animationDelay: `${(index + 1) * 0.1}s`,
-                background: `linear-gradient(to bottom right, ${index % 2 === 0 ? 'white, #f8fafc' : '#f8fafc, white'})` 
-              }}
-            >
-              <div 
-                className="absolute top-0 left-0 w-full h-1.5"
-                style={{ 
-                  background: index === 0 
-                    ? 'linear-gradient(to right, #ff7e1d, #ff9a4d)' 
-                    : index === 1 
-                      ? 'linear-gradient(to right, #16a34a, #4ade80)' 
-                      : 'linear-gradient(to right, #ff7e1d, #16a34a)' 
-                }}
-              ></div>
-              
-              <div className="p-6">
-                <div className="flex flex-col md:flex-row md:items-start gap-8">
-                  {/* Left: Image and basic info */}
-                  <div className="flex flex-col items-center md:w-1/3">
-                    <div className="mb-4 bg-ice-50/50 p-3 rounded-full inline-block">
-                      {device.icon}
-                    </div>
-                    <h3 className="text-2xl font-semibold mb-4">{device.name}</h3>
-                    
-                    <div className="mb-4 overflow-hidden rounded-lg h-64 bg-white shadow-inner border border-ice-100 w-full">
-                      <img 
-                        src={device.image}
-                        alt={device.name}
-                        className="w-full h-full object-contain transition-transform hover:scale-105 p-2"
-                      />
-                    </div>
-                    
-                    <p className="text-2xl font-bold text-orange-600 mb-1">
-                      {language === 'en' ? "Starting from" : "Desde"} €{device.id === "sos" ? "110.00" : device.id === "dispenser" ? "249.99" : "149.99"}
-                    </p>
-                    <p className="text-xs text-muted-foreground mb-4">
-                      {language === 'en' ? "+ €24.99 monthly monitoring" : "+ €24.99 monitoreo mensual"}
-                    </p>
-                  </div>
-                  
-                  {/* Right: Description and features */}
-                  <div className="md:w-2/3">
-                    <div className="mb-6 text-left">
-                      <h4 className="text-lg font-medium mb-2">
-                        {language === 'en' ? "About this device" : "Sobre este dispositivo"}
-                      </h4>
-                      <p className="text-muted-foreground mb-4">
-                        {device.description}
-                      </p>
-                      <p className="text-muted-foreground">
-                        {device.longDescription}
-                      </p>
-                    </div>
-                    
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                      <div className="bg-ice-50/30 p-4 rounded-lg">
-                        <h4 className="font-medium mb-3 text-ice-600 flex items-center">
-                          <Check size={18} className="mr-2" />
-                          {language === 'en' ? "Key Features" : "Características Principales"}
-                        </h4>
-                        <ul className="space-y-2">
-                          {device.features.map((feature, idx) => (
-                            <li key={idx} className="flex items-start text-sm">
-                              <div className="bg-green-50 rounded-full p-0.5 flex-shrink-0 mt-0.5 mr-2">
-                                <Check size={14} className="text-green-500" />
-                              </div>
-                              <span>{feature}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                      
-                      <div className="bg-orange-50/30 p-4 rounded-lg">
-                        <h4 className="font-medium mb-3 text-orange-600 flex items-center">
-                          <Shield size={18} className="mr-2" />
-                          {language === 'en' ? "Technical Specifications" : "Especificaciones Técnicas"}
-                        </h4>
-                        <ul className="space-y-2">
-                          {device.techSpecs.map((spec, idx) => (
-                            <li key={idx} className="flex items-start text-sm">
-                              <div className="bg-orange-50 rounded-full p-0.5 flex-shrink-0 mt-0.5 mr-2">
-                                <Clock size={14} className="text-orange-500" />
-                              </div>
-                              <span>{spec}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    </div>
-                    
-                    <div className="flex flex-col sm:flex-row gap-4 mt-4">
-                      <Link to={device.path} className="flex-1">
-                        <ButtonCustom 
-                          variant="primary" 
-                          className="w-full group"
-                        >
-                          {language === 'en' ? "Learn More" : "Más Información"}
-                          <ArrowRight size={16} className="ml-2 group-hover:translate-x-1 transition-transform" />
-                        </ButtonCustom>
-                      </Link>
-                      <Link to="/join" className="flex-1">
-                        <ButtonCustom 
-                          variant="outline" 
-                          className="w-full hover:bg-ice-50"
-                        >
-                          {language === 'en' ? "Add to Order" : "Añadir al Pedido"}
-                        </ButtonCustom>
-                      </Link>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+              id={device.id}
+              name={device.name}
+              icon={device.icon}
+              image={device.image}
+              description={device.description}
+              longDescription={device.longDescription}
+              features={device.features}
+              techSpecs={device.techSpecs}
+              path={device.path}
+              price={device.price}
+              monthlyPrice={device.monthlyPrice}
+              index={index}
+            />
           ))}
         </div>
         
