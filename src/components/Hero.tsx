@@ -26,7 +26,7 @@ const Hero: React.FC = () => {
   return (
     <section 
       id="home" 
-      className={`relative ${isHomepage ? 'pt-44' : 'pt-24'} overflow-hidden`}
+      className={`relative ${isHomepage ? 'pt-46' : 'pt-24'} overflow-hidden`}
     >
       <HeroBackground />
       
