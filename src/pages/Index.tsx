@@ -78,7 +78,7 @@ const Index: React.FC = () => {
         {/* Enhanced Decorative Elements */}
         <DecorativeElements />
         
-        <main className="flex-grow relative pt-0">
+        <main className="flex-grow relative">
           {/* Wrapping Hero in error boundary */}
           <div className="relative">
             <Hero />
