@@ -1,14 +1,12 @@
 
 import React, { useEffect } from "react";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
-import HeroSection from "@/components/glucose-monitor/HeroSection";
-import ProductDetailTabs from "@/components/glucose-monitor/ProductDetailTabs";
-import CallToAction from "@/components/glucose-monitor/CallToAction";
 import { Link } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import { ButtonCustom } from "@/components/ui/button-custom";
 import { useLanguage } from "@/context/LanguageContext";
+import HeroSection from "@/components/glucose-monitor/HeroSection";
+import ProductDetailTabs from "@/components/glucose-monitor/ProductDetailTabs";
+import CallToAction from "@/components/glucose-monitor/CallToAction";
 
 const GlucoseMonitorPage: React.FC = () => {
   const { language } = useLanguage();
@@ -19,7 +17,6 @@ const GlucoseMonitorPage: React.FC = () => {
 
   return (
     <div className="flex flex-col min-h-screen">
-      <Navbar />
       <main className="flex-grow pt-24 pb-16">
         <div className="container mx-auto px-4 mb-8">
           <div className="flex items-center">
@@ -35,7 +32,6 @@ const GlucoseMonitorPage: React.FC = () => {
         <ProductDetailTabs />
         <CallToAction />
       </main>
-      <Footer />
     </div>
   );
 };
