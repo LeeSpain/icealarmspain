@@ -2,20 +2,18 @@
 import React, { useEffect } from "react";
 import { useLanguage } from "@/context/LanguageContext";
 import DeviceHero from "@/components/devices/DeviceHero";
-import DevicesGrid from "@/components/devices/DevicesGrid";
 import CallCenterServices from "@/components/devices/CallCenterServices";
 import GuardianAISection from "@/components/devices/GuardianAISection";
 import DeviceCTA from "@/components/devices/DeviceCTA";
-import { getDevices } from "@/components/devices/deviceData";
 import SectionWrapper from "@/components/layout/SectionWrapper";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import SectionDivider from "@/components/layout/SectionDivider";
 import DecorativeElements from "@/components/layout/DecorativeElements";
+import DeviceShowcase from "@/components/DeviceShowcase";
 
 const DevicesPage: React.FC = () => {
   const { language } = useLanguage();
-  const devices = getDevices(language);
   
   // Add effect for scrolling to top on mount
   useEffect(() => {
@@ -36,10 +34,10 @@ const DevicesPage: React.FC = () => {
         {/* Section Divider with enhanced styling */}
         <SectionDivider />
         
-        {/* Devices Grid - Centered with consistent spacing */}
+        {/* Use the same DeviceShowcase component from the homepage */}
         <SectionWrapper className="py-16">
           <div className="container mx-auto px-4 md:px-6">
-            <DevicesGrid devices={devices} language={language} />
+            <DeviceShowcase />
           </div>
         </SectionWrapper>
         
