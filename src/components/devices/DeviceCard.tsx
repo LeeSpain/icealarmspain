@@ -56,7 +56,7 @@ const DeviceCard: React.FC<DeviceCardProps> = ({
       ></div>
       
       <div className="p-6">
-        <div className="flex flex-col md:flex-row md:items-start gap-8">
+        <div className="flex flex-col-reverse md:flex-row md:items-start gap-8">
           {/* Left: Description and features */}
           <div className="md:w-2/3">
             <div className="flex items-center justify-center md:justify-start mb-4">
@@ -142,7 +142,7 @@ const DeviceCard: React.FC<DeviceCardProps> = ({
           </div>
           
           {/* Right: Image */}
-          <div className="md:w-1/3 flex items-center justify-center">
+          <div className="md:w-1/3 flex items-center justify-center md:order-last">
             <div className="overflow-hidden rounded-lg h-64 bg-white shadow-inner border border-ice-100 w-full">
               <img 
                 src={image}
