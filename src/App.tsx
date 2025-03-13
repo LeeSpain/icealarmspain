@@ -1,4 +1,3 @@
-
 import React from 'react';
 import './App.css';
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
@@ -40,6 +39,7 @@ import DashboardMedicationsPage from "./pages/dashboard/DashboardMedicationsPage
 import DashboardProfilePage from "./pages/dashboard/DashboardProfilePage";
 import DashboardSettingsPage from "./pages/dashboard/DashboardSettingsPage";
 import QuestionnairePage from "./components/member/questionnaire/QuestionnairePage";
+import DashboardHelpPage from "./pages/dashboard/DashboardHelpPage";
 
 // Landing page component
 const Landing = () => {
@@ -134,9 +134,7 @@ function App() {
                 
                 <Route path="/dashboard/help" element={
                   <ProtectedRoute>
-                    <Layout>
-                      <HelpSupportPage />
-                    </Layout>
+                    <DashboardHelpPage />
                   </ProtectedRoute>
                 } />
                 

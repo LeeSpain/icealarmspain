@@ -17,6 +17,7 @@ const DashboardHelpPage: React.FC = () => {
   return (
     <div className="flex h-screen bg-ice-50/30">
       <MemberSidebar 
+        activePage="help"
         collapsed={sidebarCollapsed}
         setCollapsed={setSidebarCollapsed}
       />
