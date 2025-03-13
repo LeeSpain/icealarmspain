@@ -1,6 +1,6 @@
 
 import React from "react";
-import { RouteConfig } from './types';
+import { Route, Routes, Navigate } from "react-router-dom";
 import Index from "@/pages/Index";
 import AboutUs from "@/pages/AboutUs";
 import Products from "@/pages/Products";
@@ -18,75 +18,28 @@ import SOSPendantDetailPage from "@/pages/SOSPendantDetailPage";
 import MedicalDispenserDetailPage from "@/pages/MedicalDispenserDetailPage";
 import GlucoseMonitorPage from "@/pages/GlucoseMonitorPage";
 
-export const mainRoutes: RouteConfig[] = [
-  {
-    path: "/",
-    element: <Index />
-  },
-  {
-    path: "/about",
-    element: <AboutUs />
-  },
-  {
-    path: "/products",
-    element: <Products />
-  },
-  {
-    path: "/devices",
-    element: <DevicesPage />
-  },
-  {
-    path: "/sos-pendant",
-    element: <SOSPendantDetailPage />
-  },
-  {
-    path: "/medical-dispenser",
-    element: <MedicalDispenserDetailPage />
-  },
-  {
-    path: "/glucose-monitor",
-    element: <GlucoseMonitorPage />
-  },
-  {
-    path: "/pricing",
-    element: <Join />
-  },
-  {
-    path: "/join",
-    element: <Join />
-  },
-  {
-    path: "/contact",
-    element: <Contact />
-  },
-  {
-    path: "/login",
-    element: <Login />
-  },
-  {
-    path: "/terms",
-    element: <Terms />
-  },
-  {
-    path: "/privacy",
-    element: <Privacy />
-  },
-  {
-    path: "/checkout",
-    element: <Checkout />
-  },
-  {
-    path: "/help",
-    element: <HelpCenter />
-  },
-  {
-    path: "/commercial",
-    element: <Commercial />
-  },
-  {
-    path: "*",
-    element: <NotFound />
-  }
-];
+const MainRoutes = () => {
+  return (
+    <Routes>
+      <Route path="/" element={<Index />} />
+      <Route path="/about" element={<AboutUs />} />
+      <Route path="/products" element={<Products />} />
+      <Route path="/devices" element={<DevicesPage />} />
+      <Route path="/sos-pendant" element={<SOSPendantDetailPage />} />
+      <Route path="/medical-dispenser" element={<MedicalDispenserDetailPage />} />
+      <Route path="/glucose-monitor" element={<GlucoseMonitorPage />} />
+      <Route path="/pricing" element={<Join />} />
+      <Route path="/join" element={<Join />} />
+      <Route path="/contact" element={<Contact />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/terms" element={<Terms />} />
+      <Route path="/privacy" element={<Privacy />} />
+      <Route path="/checkout" element={<Checkout />} />
+      <Route path="/help" element={<HelpCenter />} />
+      <Route path="/commercial" element={<Commercial />} />
+      <Route path="*" element={<NotFound />} />
+    </Routes>
+  );
+};
 
-export default mainRoutes;
+export default MainRoutes;
