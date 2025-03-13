@@ -16,6 +16,8 @@ import Pricing from "../components/Pricing";
 import ExpatInfo from "../components/ExpatInfo";
 import Testimonials from "../components/Testimonials";
 import SOSPendantPage from "../pages/SOSPendantPage";
+import MedicalDispenserPage from "../pages/MedicalDispenserPage";
+import GlucoseMonitorPage from "../pages/GlucoseMonitorPage";
 
 // Landing page component
 const Landing = () => {
@@ -66,6 +68,14 @@ export const mainRoutes: RouteConfig[] = [
   {
     path: "/sos-pendant",
     element: <Layout><SOSPendantPage /></Layout>
+  },
+  {
+    path: "/medical-dispenser",
+    element: <Layout><MedicalDispenserPage /></Layout>
+  },
+  {
+    path: "/glucose-monitor",
+    element: <Layout><GlucoseMonitorPage /></Layout>
   },
   {
     path: "*",
