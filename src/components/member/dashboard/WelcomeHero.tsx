@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { motion } from 'framer-motion';
 import { useLanguage } from '@/context/LanguageContext';
@@ -38,6 +37,21 @@ export const WelcomeHero: React.FC<WelcomeHeroProps> = ({
       if (hour < 18) return 'Buenas tardes';
       return 'Buenas noches';
     }
+  };
+
+  const handleLogout = (e: React.MouseEvent) => {
+    e.preventDefault();
+    
+    // Clear all localStorage
+    localStorage.clear();
+    
+    // Call the provided onLogout handler
+    if (onLogout) {
+      onLogout();
+    }
+    
+    // Navigate to home with replace to prevent going back
+    navigate('/', { replace: true });
   };
 
   return (
@@ -119,7 +133,7 @@ export const WelcomeHero: React.FC<WelcomeHeroProps> = ({
             <Button 
               variant="ghost" 
               className="flex items-center gap-2 text-gray-600"
-              onClick={onLogout}
+              onClick={handleLogout}
             >
               <LogOut className="h-4 w-4" />
               {language === 'en' ? 'Logout' : 'Cerrar sesión'}

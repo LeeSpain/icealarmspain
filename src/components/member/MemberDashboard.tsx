@@ -7,8 +7,6 @@ import { useToast } from "@/components/ui/use-toast";
 import WelcomeSection from "@/components/member/WelcomeSection";
 import SOSTile from "@/components/member/dashboard/SOSTile";
 import GlucoseTile from "@/components/member/dashboard/GlucoseTile";
-import WeatherTile from "@/components/member/dashboard/WeatherTile";
-import NewsTile from "@/components/member/dashboard/NewsTile";
 import AIGuardianTile from "@/components/member/dashboard/ai-guardian/AIGuardianTile";
 import NotificationSection from "@/components/member/dashboard/notifications/NotificationSection";
 import { CartSection } from "@/components/member/dashboard/CartSection";
@@ -75,19 +73,27 @@ const MemberDashboard: React.FC = () => {
   };
 
   const handleLogout = () => {
-    // Clear localStorage
-    localStorage.removeItem('currentUser');
-    localStorage.removeItem('userRole');
+    // Clear all localStorage items
+    localStorage.clear();
     
+    // Show toast notification
     toast({
       title: language === 'en' ? "Logged Out" : "Sesión Cerrada",
       description: language === 'en' ? "You have been logged out" : "Ha cerrado sesión con éxito",
     });
     
-    // Navigate to home page
-    navigate('/');
+    // Navigate to home page with replace to prevent going back
+    navigate('/', { replace: true });
   };
   
+  // If there's no user, redirect to login
+  useEffect(() => {
+    const currentUser = localStorage.getItem('currentUser');
+    if (!currentUser) {
+      navigate('/', { replace: true });
+    }
+  }, [navigate]);
+
   return (
     <div className="space-y-6">
       {/* Welcome Section */}
@@ -127,7 +133,7 @@ const MemberDashboard: React.FC = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <SOSTile />
         <GlucoseTile />
-        {hasDevices ? <AIGuardianTile /> : <NewsTile />}
+        {hasDevices ? <AIGuardianTile /> : <WeatherTile />}
       </div>
     </div>
   );
