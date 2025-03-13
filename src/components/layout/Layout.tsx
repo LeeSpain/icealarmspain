@@ -16,4 +16,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
+// Create a separate Footer component export
+Layout.Footer = Footer;
+
 export default Layout;
