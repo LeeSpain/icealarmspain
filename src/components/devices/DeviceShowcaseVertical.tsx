@@ -12,7 +12,7 @@ const DeviceShowcaseVertical: React.FC = () => {
   const devices = getDevices(language);
 
   return (
-    <section id="devices" className="py-20">
+    <section id="devices" className="py-12">
       <div className="container mx-auto px-4 md:px-6">
         <div className="text-center max-w-3xl mx-auto mb-16 animate-slide-down">
           <div className="inline-flex items-center px-3 py-1 rounded-full bg-ice-50 border border-ice-200 text-ice-600 text-sm font-medium mb-4">
@@ -38,7 +38,7 @@ const DeviceShowcaseVertical: React.FC = () => {
           </div>
         </div>
         
-        <div className="flex flex-col gap-12 max-w-4xl mx-auto">
+        <div className="flex flex-col gap-8 max-w-5xl mx-auto">
           {devices.map((device, index) => (
             <DeviceCard
               key={device.id}

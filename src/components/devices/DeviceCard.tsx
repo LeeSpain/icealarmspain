@@ -56,36 +56,17 @@ const DeviceCard: React.FC<DeviceCardProps> = ({
       ></div>
       
       <div className="p-6">
-        <div className="flex flex-col md:flex-row md:items-start gap-8">
-          {/* Left: Image and basic info */}
-          <div className="flex flex-col items-center md:w-1/3">
-            <div className="mb-4 bg-ice-50/50 p-3 rounded-full inline-block">
-              {icon}
-            </div>
-            <h3 className="text-2xl font-semibold mb-4">{name}</h3>
-            
-            <div className="mb-4 overflow-hidden rounded-lg h-64 bg-white shadow-inner border border-ice-100 w-full">
-              <img 
-                src={image}
-                alt={name}
-                className="w-full h-full object-contain transition-transform hover:scale-105 p-2"
-              />
-            </div>
-            
-            <p className="text-2xl font-bold text-orange-600 mb-1">
-              {language === 'en' ? "Starting from" : "Desde"} {price}
-            </p>
-            <p className="text-xs text-muted-foreground mb-4">
-              {language === 'en' ? "+ " : "+ "}{monthlyPrice} {language === 'en' ? "monthly monitoring" : "monitoreo mensual"}
-            </p>
-          </div>
-          
-          {/* Right: Description and features */}
+        <div className="flex flex-col md:flex-row md:items-center gap-8">
+          {/* Left: Description and features */}
           <div className="md:w-2/3">
-            <div className="mb-6 text-left">
-              <h4 className="text-lg font-medium mb-2">
-                {language === 'en' ? "About this device" : "Sobre este dispositivo"}
-              </h4>
+            <div className="flex items-center justify-center md:justify-start mb-4">
+              <div className="bg-ice-50/50 p-3 rounded-full inline-block mr-3">
+                {icon}
+              </div>
+              <h3 className="text-2xl font-semibold">{name}</h3>
+            </div>
+            
+            <div className="mb-6 text-center md:text-left">
               <p className="text-muted-foreground mb-4">
                 {description}
               </p>
@@ -130,24 +111,44 @@ const DeviceCard: React.FC<DeviceCardProps> = ({
               </div>
             </div>
             
-            <div className="flex flex-col sm:flex-row gap-4 mt-4">
-              <Link to={path} className="flex-1">
+            <div className="text-center md:text-left mb-6">
+              <p className="text-2xl font-bold text-orange-600 mb-1">
+                {language === 'en' ? "Starting from" : "Desde"} {price}
+              </p>
+              <p className="text-xs text-muted-foreground">
+                {language === 'en' ? "+ " : "+ "}{monthlyPrice} {language === 'en' ? "monthly monitoring" : "monitoreo mensual"}
+              </p>
+            </div>
+            
+            <div className="flex flex-col sm:flex-row gap-4 mt-4 justify-center md:justify-start">
+              <Link to={path} className="flex-1 md:flex-initial">
                 <ButtonCustom 
                   variant="primary" 
-                  className="w-full group"
+                  className="w-full md:w-auto group"
                 >
                   {language === 'en' ? "Learn More" : "Más Información"}
                   <ArrowRight size={16} className="ml-2 group-hover:translate-x-1 transition-transform" />
                 </ButtonCustom>
               </Link>
-              <Link to="/join" className="flex-1">
+              <Link to="/join" className="flex-1 md:flex-initial">
                 <ButtonCustom 
                   variant="outline" 
-                  className="w-full hover:bg-ice-50"
+                  className="w-full md:w-auto hover:bg-ice-50"
                 >
                   {language === 'en' ? "Add to Order" : "Añadir al Pedido"}
                 </ButtonCustom>
               </Link>
+            </div>
+          </div>
+          
+          {/* Right: Image */}
+          <div className="md:w-1/3 flex items-center justify-center">
+            <div className="overflow-hidden rounded-lg h-64 bg-white shadow-inner border border-ice-100 w-full">
+              <img 
+                src={image}
+                alt={name}
+                className="w-full h-full object-contain transition-transform hover:scale-105 p-2"
+              />
             </div>
           </div>
         </div>
