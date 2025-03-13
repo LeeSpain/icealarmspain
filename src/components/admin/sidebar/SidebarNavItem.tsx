@@ -37,7 +37,7 @@ const SidebarNavItem: React.FC<SidebarNavItemProps> = ({
     <div className="mb-1">
       <button
         onClick={handleClick}
-        className={`flex items-center w-full space-x-2 px-4 py-2 transition-colors duration-200
+        className={`flex items-center w-full space-x-2 px-3 py-2 rounded transition-colors duration-200
           ${isActive || isChildActive ? 'bg-ice-700 text-white' : 'text-ice-300 hover:text-white hover:bg-ice-700/70'}
           ${collapsed ? 'justify-center' : 'justify-between'}`}
       >
@@ -55,12 +55,12 @@ const SidebarNavItem: React.FC<SidebarNavItemProps> = ({
       
       {/* Render sub-items if expanded */}
       {!collapsed && hasSubItems && isExpanded && (
-        <div className="ml-4 mt-1 border-l border-ice-600 pl-2">
+        <div className="ml-2 mt-1 border-l border-ice-600 pl-1">
           {item.subItems?.map((subItem) => (
             <button
               key={subItem.section}
               onClick={() => onSelectSection(subItem.section, subItem.path)}
-              className={`flex items-center w-full space-x-2 px-4 py-2 transition-colors duration-200 text-sm
+              className={`flex items-center w-full space-x-2 px-3 py-2 rounded transition-colors duration-200 text-sm
                 ${activeSection === subItem.section ? 'bg-ice-800 text-white' : 'text-ice-300 hover:text-white hover:bg-ice-700/50'}`}
             >
               <subItem.icon size={16} />

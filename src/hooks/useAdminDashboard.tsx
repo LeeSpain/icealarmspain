@@ -114,7 +114,16 @@ export const useAdminDashboard = () => {
   const handleSectionChange = (section: string) => {
     console.log("Changing section to:", section);
     setActiveSection(section);
-    navigate(`/admin/${section === 'dashboard' ? '' : section}`);
+    
+    // Navigate to the appropriate URL
+    if (section === 'dashboard') {
+      navigate('/admin');
+    } else {
+      navigate(`/admin/${section}`);
+    }
+    
+    // Add activity
+    addActivity("Navigation", `Navigated to ${section.replace('-', ' ')}`);
   };
 
   return {

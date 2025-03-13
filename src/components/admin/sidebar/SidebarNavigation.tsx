@@ -42,7 +42,7 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({
   
   return (
     <nav className="py-4 overflow-y-auto max-h-[calc(100vh-200px)]">
-      <div className="space-y-1 px-3">
+      <div className="space-y-1 px-1">
         {navItems.map((item) => (
           <SidebarNavItem
             key={item.section}
