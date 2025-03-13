@@ -12,6 +12,8 @@ import PermissionsManagement from '../PermissionsManagement';
 import ClientOnboarding from '../ClientOnboarding';
 import DeviceManagement from '../DeviceManagement';
 import AlertsManagement from '../AlertsManagement';
+import CallCenterSection from '../CallCenterSection';
+import ProductsSection from '../ProductsSection';
 
 const SectionRenderer: React.FC<SectionRendererProps> = ({ 
   activeSection,
@@ -26,6 +28,12 @@ const SectionRenderer: React.FC<SectionRendererProps> = ({
       case 'clients': return 'Client Management';
       case 'admin-users': return 'Admin Users';
       case 'client-onboarding': return 'Client Onboarding';
+      case 'call-center': return 'Call Center';
+      case 'call-logs': return 'Call Logs';
+      case 'agent-performance': return 'Agent Performance';
+      case 'products': return 'Products';
+      case 'product-catalog': return 'Product Catalog';
+      case 'product-pricing': return 'Product Pricing';
       default: return section.charAt(0).toUpperCase() + section.slice(1).replace('-', ' ');
     }
   };
@@ -39,6 +47,12 @@ const SectionRenderer: React.FC<SectionRendererProps> = ({
       case 'clients': return 'Manage client accounts and their information.';
       case 'admin-users': return 'Manage administrator accounts and permissions.';
       case 'client-onboarding': return 'Onboard new clients to the IceAlarm platform.';
+      case 'call-center': return 'Manage call center operations and agent assignments.';
+      case 'call-logs': return 'View and analyze call center interaction logs.';
+      case 'agent-performance': return 'Monitor and evaluate call center agent performance metrics.';
+      case 'products': return 'Manage product inventory and details.';
+      case 'product-catalog': return 'Maintain the product catalog and categories.';
+      case 'product-pricing': return 'Configure product pricing and discount structures.';
       default: return 'This section provides management capabilities.';
     }
   };
@@ -67,6 +81,14 @@ const SectionRenderer: React.FC<SectionRendererProps> = ({
       return <DeviceManagement onAction={onAction} />;
     case 'alerts':
       return <AlertsManagement onAction={onAction} />;
+    case 'call-center':
+    case 'call-logs':
+    case 'agent-performance':
+      return <CallCenterSection onAction={onAction} />;
+    case 'products':
+    case 'product-catalog':
+    case 'product-pricing':
+      return <ProductsSection onAction={onAction} />;
     default:
       return (
         <PlaceholderSection 
