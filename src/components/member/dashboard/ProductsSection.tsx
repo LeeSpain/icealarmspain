@@ -42,8 +42,8 @@ export const ProductsSection: React.FC<ProductsSectionProps> = ({ onCloseProduct
           {devices.map((device) => (
             <div key={device.id} className="border rounded-lg p-4 flex flex-col h-full">
               <div className="flex-grow">
-                <div className="flex items-center justify-center mb-3 h-28">
-                  <img src={device.image} alt={device.name} className="max-h-full max-w-full object-contain" />
+                <div className="flex items-center justify-center mb-3 h-20">
+                  <img src={device.image} alt={device.name} className="max-h-full max-w-full object-contain" style={{ maxWidth: '80px' }} />
                 </div>
                 <h3 className="font-medium text-center mb-1">{device.name}</h3>
                 <p className="text-sm text-muted-foreground mb-2 text-center">{device.description}</p>

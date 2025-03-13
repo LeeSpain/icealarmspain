@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import MemberSidebar from "@/components/member/MemberSidebar";
 import MemberDashboard from "@/components/member/MemberDashboard";
-import { useLocation } from "react-router-dom";
+import { useLocation, Routes, Route, Navigate } from "react-router-dom";
 import { QuestionnaireProvider } from "@/components/questionnaire/QuestionnaireContext";
 import QuestionnaireForm from "@/components/questionnaire/QuestionnaireForm";
 
@@ -14,6 +14,9 @@ const DashboardPage: React.FC = () => {
   
   // Check if we're on the questionnaire path
   const isQuestionnairePage = location.pathname === '/dashboard/questionnaire';
+  
+  // Check if we're on the medical info path - redirect to personal details
+  const isMedicalInfoPage = location.pathname === '/dashboard/health/info';
   
   // Force dev user role to member
   useEffect(() => {
@@ -35,6 +38,11 @@ const DashboardPage: React.FC = () => {
     localStorage.setItem('userRole', 'member');
     localStorage.setItem('forceDevMode', 'true');
   }, []);
+
+  // Redirect medical info to personal details
+  if (isMedicalInfoPage) {
+    return <Navigate to="/dashboard/personal-details" />;
+  }
   
   return (
     <div className="flex h-screen bg-ice-50/30">

@@ -91,7 +91,7 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({
         <SidebarItem 
           icon={<FileText size={18} />} 
           label={language === 'en' ? "Personal Details" : "Datos Personales"} 
-          active={isActive("/dashboard/personal-details")} 
+          active={isActive("/dashboard/personal-details") || isActive("/dashboard/health/info")} 
           collapsed={collapsed}
           onClick={() => handleNavigation("/dashboard/personal-details")}
         />
@@ -137,13 +137,6 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({
           active={isActive("/dashboard/health/metrics")} 
           collapsed={collapsed}
           onClick={() => handleNavigation("/dashboard/health/metrics")}
-        />
-        <SidebarItem 
-          icon={<Heart size={18} />} 
-          label={language === 'en' ? "Medical Info" : "Info Médica"} 
-          active={isActive("/dashboard/health/info")} 
-          collapsed={collapsed}
-          onClick={() => handleNavigation("/dashboard/health/info")}
         />
         <SidebarItem 
           icon={<CalendarCheck size={18} />} 
