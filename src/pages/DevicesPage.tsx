@@ -6,8 +6,6 @@ import CallCenterServices from "@/components/devices/CallCenterServices";
 import GuardianAISection from "@/components/devices/GuardianAISection";
 import DeviceCTA from "@/components/devices/DeviceCTA";
 import SectionWrapper from "@/components/layout/SectionWrapper";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
 import SectionDivider from "@/components/layout/SectionDivider";
 import DecorativeElements from "@/components/layout/DecorativeElements";
 import DeviceShowcaseVertical from "@/components/devices/DeviceShowcaseVertical";
@@ -24,8 +22,6 @@ const DevicesPage: React.FC = () => {
     <div className="flex flex-col min-h-screen bg-gradient-to-b from-white via-ice-50/30 to-white">
       {/* Enhanced Decorative Elements */}
       <DecorativeElements />
-      
-      <Navbar />
       
       <main className="flex-grow relative">
         {/* Hero section */}
@@ -61,9 +57,6 @@ const DevicesPage: React.FC = () => {
         {/* CTA section */}
         <DeviceCTA language={language} />
       </main>
-      
-      {/* Single footer */}
-      <Footer />
     </div>
   );
 };
