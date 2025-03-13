@@ -2,7 +2,9 @@
 import React from 'react';
 
 export interface DashboardMetricsProps {
-  data: any;
+  data?: {
+    onAction?: (action: string) => void;
+  };
 }
 
 declare const DashboardMetrics: React.FC<DashboardMetricsProps>;
