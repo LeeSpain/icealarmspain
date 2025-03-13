@@ -1,6 +1,7 @@
 
 import React from "react";
 import { Shield, Sparkles } from "lucide-react";
+import HeroBackground from "../hero/HeroBackground";
 
 interface JoinHeroProps {
   language: string;
@@ -8,16 +9,9 @@ interface JoinHeroProps {
 
 const JoinHero: React.FC<JoinHeroProps> = ({ language }) => {
   return (
-    <section id="join-hero" className="relative pt-32 pb-24 overflow-hidden">
-      {/* Enhanced Background Elements */}
-      <div className="absolute top-20 right-0 w-96 h-96 bg-gradient-radial from-ice-100/70 to-transparent rounded-full filter blur-3xl opacity-70 -z-10 animate-pulse-gentle"></div>
-      <div className="absolute bottom-0 left-20 w-72 h-72 bg-gradient-radial from-guardian-100/60 to-transparent rounded-full filter blur-3xl opacity-50 -z-10"></div>
-      <div className="absolute top-40 left-1/4 w-64 h-64 rounded-full border border-ice-200/50 -z-10 animate-float"></div>
-      {/* Removed the white circle that was here */}
-      
-      {/* Decorative accent lines */}
-      <div className="absolute top-1/4 left-0 w-full h-px bg-gradient-to-r from-transparent via-ice-200/50 to-transparent -z-10"></div>
-      <div className="absolute top-2/3 left-0 w-full h-px bg-gradient-to-r from-transparent via-guardian-200/30 to-transparent -z-10"></div>
+    <section id="join-hero" className="relative pt-32 pb-24 overflow-hidden bg-white">
+      {/* Using the updated HeroBackground component instead of inline elements */}
+      <HeroBackground />
       
       <div className="container mx-auto px-4 md:px-6">
         <div className="max-w-5xl mx-auto">
@@ -50,7 +44,7 @@ const JoinHero: React.FC<JoinHeroProps> = ({ language }) => {
               <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 w-24 h-0.5 bg-gradient-to-r from-transparent via-guardian-300 to-transparent rounded-full opacity-60"></div>
             </div>
             
-            <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto backdrop-blur-sm bg-white/5 py-2 rounded-lg mt-6">
+            <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto py-2 rounded-lg mt-6">
               {language === 'en' 
                 ? 'Choose your devices and create a personalized health monitoring package for you and your loved ones.' 
                 : 'Elija sus dispositivos y cree un paquete de monitoreo de salud personalizado para usted y sus seres queridos.'}
@@ -59,12 +53,7 @@ const JoinHero: React.FC<JoinHeroProps> = ({ language }) => {
         </div>
       </div>
       
-      {/* Enhanced Bottom Decorative Wave */}
-      <div className="absolute bottom-0 left-0 right-0 h-16 overflow-hidden">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320" className="absolute bottom-0 w-full h-auto">
-          <path fill="rgba(255, 245, 235, 0.5)" fillOpacity="1" d="M0,224L48,213.3C96,203,192,181,288,181.3C384,181,480,203,576,224C672,245,768,267,864,250.7C960,235,1056,181,1152,165.3C1248,149,1344,171,1392,181.3L1440,192L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
-        </svg>
-      </div>
+      {/* Removed the bottom wave entirely */}
     </section>
   );
 };

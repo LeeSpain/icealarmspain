@@ -75,12 +75,12 @@ const Index: React.FC = () => {
           <meta property="og:type" content="website" />
         </Helmet>
         
-        {/* Simplified Decorative Elements */}
-        <DecorativeElements />
+        {/* Simplified Decorative Elements - Remove if still causing shadowing */}
+        {/* <DecorativeElements /> */}
         
-        <main className="flex-grow relative">
+        <main className="flex-grow relative bg-white">
           {/* Wrapping Hero in error boundary */}
-          <div className="relative">
+          <div className="relative bg-white">
             <Hero />
           </div>
           
