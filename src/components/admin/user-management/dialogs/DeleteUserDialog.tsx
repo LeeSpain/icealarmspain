@@ -26,17 +26,20 @@ export const DeleteUserDialog: React.FC<DeleteUserDialogProps> = ({
 }) => {
   return (
     <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
-      <AlertDialogContent className="bg-white">
+      <AlertDialogContent className="bg-white max-w-md mx-auto">
         <AlertDialogHeader>
-          <AlertDialogTitle className="text-ice-900">Are you sure?</AlertDialogTitle>
-          <AlertDialogDescription>
+          <AlertDialogTitle className="text-xl font-semibold text-gray-900">Are you sure?</AlertDialogTitle>
+          <AlertDialogDescription className="text-gray-600">
             This will permanently delete the user {selectedUser?.displayName || selectedUser?.email}. 
             This action cannot be undone.
           </AlertDialogDescription>
         </AlertDialogHeader>
-        <AlertDialogFooter>
-          <AlertDialogCancel className="border-ice-200 text-ice-700">Cancel</AlertDialogCancel>
-          <AlertDialogAction onClick={onDeleteUser} className="bg-red-600 hover:bg-red-700">
+        <AlertDialogFooter className="flex space-x-2 pt-4">
+          <AlertDialogCancel className="border-gray-300 text-gray-700 hover:bg-gray-100">Cancel</AlertDialogCancel>
+          <AlertDialogAction 
+            onClick={onDeleteUser} 
+            className="bg-red-600 text-white hover:bg-red-700 focus:ring-red-500"
+          >
             Delete
           </AlertDialogAction>
         </AlertDialogFooter>

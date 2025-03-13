@@ -1,6 +1,8 @@
 
 import React from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import Logo from '@/components/Logo';
 
 interface SidebarHeaderProps {
   userData?: any;
@@ -14,7 +16,28 @@ const SidebarHeader: React.FC<SidebarHeaderProps> = ({
   setCollapsed 
 }) => {
   return (
-    <>
+    <div className="flex flex-col">
+      <div className="p-4 border-b border-gray-200 flex items-center justify-between">
+        {!collapsed ? (
+          <Logo className="scale-75 origin-left" />
+        ) : (
+          <div className="w-8 h-8 relative">
+            <div className="absolute inset-0 bg-ice-500 rounded-lg rotate-45 transform origin-center"></div>
+            <div className="absolute inset-1 bg-white rounded-md rotate-45 transform origin-center"></div>
+            <div className="absolute inset-[5px] bg-ice-500 rounded-sm rotate-45 transform origin-center"></div>
+          </div>
+        )}
+        <Button 
+          variant="ghost" 
+          size="icon" 
+          onClick={() => setCollapsed(!collapsed)}
+          className="text-gray-500 hover:bg-ice-100"
+          aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+        >
+          {collapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
+        </Button>
+      </div>
+
       {!collapsed && userData && (
         <div className="p-4 border-b border-gray-200">
           <div className="flex items-center mb-2">
@@ -28,17 +51,7 @@ const SidebarHeader: React.FC<SidebarHeaderProps> = ({
           </div>
         </div>
       )}
-      
-      <div className="p-4 border-b border-gray-200 flex justify-between items-center">
-        {!collapsed && <span className="font-semibold text-lg text-ice-800">IceAlarm Admin</span>}
-        <button 
-          onClick={() => setCollapsed(!collapsed)} 
-          className="text-ice-600 hover:text-ice-800 bg-ice-50 p-1 rounded-md"
-        >
-          {collapsed ? <ChevronRight size={20} /> : <ChevronLeft size={20} />}
-        </button>
-      </div>
-    </>
+    </div>
   );
 };
 

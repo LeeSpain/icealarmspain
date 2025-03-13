@@ -8,6 +8,7 @@ import { DeleteUserDialog } from "./dialogs/DeleteUserDialog";
 import { UserManagementHeader } from "./UserManagementHeader";
 import { UserFilters } from "./UserFilters";
 import { useUserManagement } from "./hooks/useUserManagement";
+import { Card } from "@/components/ui/card";
 
 interface UserManagementProps {
   onAction?: (action: string) => void;
@@ -127,49 +128,51 @@ const UserManagement: React.FC<UserManagementProps> = ({ onAction }) => {
   };
 
   return (
-    <div className="space-y-6 bg-white p-6 rounded-lg shadow-sm">
-      <UserManagementHeader onCreateUser={() => setIsCreateDialogOpen(true)} />
-      
-      <UserFilters 
-        searchQuery={searchQuery} 
-        setSearchQuery={setSearchQuery} 
-        activeTab={activeTab} 
-        setActiveTab={setActiveTab} 
-      />
+    <Card className="overflow-hidden border border-gray-200 shadow-sm">
+      <div className="space-y-6 p-6">
+        <UserManagementHeader onCreateUser={() => setIsCreateDialogOpen(true)} />
+        
+        <UserFilters 
+          searchQuery={searchQuery} 
+          setSearchQuery={setSearchQuery} 
+          activeTab={activeTab} 
+          setActiveTab={setActiveTab} 
+        />
 
-      <UserTable 
-        loading={loading} 
-        users={getFilteredUsers()} 
-        getUserStatus={getUserStatus} 
-        formatDate={formatDate} 
-        onEditRole={openEditRoleDialog}
-        onDeleteUser={openDeleteDialog}
-      />
+        <UserTable 
+          loading={loading} 
+          users={getFilteredUsers()} 
+          getUserStatus={getUserStatus} 
+          formatDate={formatDate} 
+          onEditRole={openEditRoleDialog}
+          onDeleteUser={openDeleteDialog}
+        />
 
-      <CreateUserDialog
-        isOpen={isCreateDialogOpen}
-        setIsOpen={setIsCreateDialogOpen}
-        formData={formData}
-        setFormData={setFormData}
-        onCreateUser={handleCreateUser}
-      />
+        <CreateUserDialog
+          isOpen={isCreateDialogOpen}
+          setIsOpen={setIsCreateDialogOpen}
+          formData={formData}
+          setFormData={setFormData}
+          onCreateUser={handleCreateUser}
+        />
 
-      <EditRoleDialog
-        isOpen={isEditRoleDialogOpen}
-        setIsOpen={setIsEditRoleDialogOpen}
-        selectedUser={selectedUser}
-        newRole={newRole}
-        setNewRole={setNewRole}
-        onEditRole={handleEditRole}
-      />
+        <EditRoleDialog
+          isOpen={isEditRoleDialogOpen}
+          setIsOpen={setIsEditRoleDialogOpen}
+          selectedUser={selectedUser}
+          newRole={newRole}
+          setNewRole={setNewRole}
+          onEditRole={handleEditRole}
+        />
 
-      <DeleteUserDialog
-        isOpen={isDeleteDialogOpen}
-        setIsOpen={setIsDeleteDialogOpen}
-        selectedUser={selectedUser}
-        onDeleteUser={handleDeleteUser}
-      />
-    </div>
+        <DeleteUserDialog
+          isOpen={isDeleteDialogOpen}
+          setIsOpen={setIsDeleteDialogOpen}
+          selectedUser={selectedUser}
+          onDeleteUser={handleDeleteUser}
+        />
+      </div>
+    </Card>
   );
 };
 

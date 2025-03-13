@@ -14,7 +14,10 @@ const SectionRenderer: React.FC<SectionRendererProps> = ({
       case 'roles': return 'Role Management';
       case 'permissions': return 'Permission Management';
       case 'alerts': return 'Alerts Configuration';
-      default: return 'Section';
+      case 'devices': return 'Device Management';
+      case 'clients': return 'Client Management';
+      case 'admin-users': return 'Admin Users';
+      default: return section.charAt(0).toUpperCase() + section.slice(1).replace('-', ' ');
     }
   };
 
@@ -23,42 +26,31 @@ const SectionRenderer: React.FC<SectionRendererProps> = ({
       case 'roles': return 'Manage user roles and their capabilities within the system.';
       case 'permissions': return 'Configure granular permissions for different roles and users.';
       case 'alerts': return 'Set up and customize system alerts and notifications.';
+      case 'devices': return 'Manage connected devices and their status.';
+      case 'clients': return 'Manage client accounts and their information.';
+      case 'admin-users': return 'Manage administrator accounts and permissions.';
       default: return 'This section provides management capabilities.';
     }
   };
+
+  // Display dashboard content if on the main dashboard
+  if (activeSection === 'dashboard' || !activeSection) {
+    return null; // This will be handled by the parent component
+  }
 
   switch (activeSection) {
     case 'users':
       return <UserManagement onAction={onAction} />;
     case 'inventory':
-      // Note: If InventoryManagement doesn't accept onAction, we need to update its interface
       return <InventoryManagement />;
-    case 'roles':  
-      return (
-        <PlaceholderSection 
-          title={getSectionTitle('roles')} 
-          description={getSectionDescription('roles')}
-          onAction={onAction} 
-        />
-      );
-    case 'permissions':
-      return (
-        <PlaceholderSection 
-          title={getSectionTitle('permissions')} 
-          description={getSectionDescription('permissions')}
-          onAction={onAction} 
-        />
-      );
-    case 'alerts':
-      return (
-        <PlaceholderSection 
-          title={getSectionTitle('alerts')} 
-          description={getSectionDescription('alerts')}
-          onAction={onAction} 
-        />
-      );
     default:
-      return null;
+      return (
+        <PlaceholderSection 
+          title={getSectionTitle(activeSection)} 
+          description={getSectionDescription(activeSection)}
+          onAction={onAction} 
+        />
+      );
   }
 };
 

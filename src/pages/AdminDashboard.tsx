@@ -49,6 +49,7 @@ const AdminDashboard: React.FC = () => {
         setCollapsed={setSidebarCollapsed}
         userData={{
           name: 'Admin User',
+          displayName: 'Admin User',
           email: 'admin@example.com',
           role: 'admin'
         }}
