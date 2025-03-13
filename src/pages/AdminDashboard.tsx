@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 // Admin components
 import Sidebar from "@/components/admin/Sidebar";
@@ -17,6 +17,7 @@ interface AdminDashboardProps {
 const AdminDashboard: React.FC<AdminDashboardProps> = ({ initialSection }) => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
   
   const {
     activeSection,
@@ -42,25 +43,31 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ initialSection }) => {
     }
   }, [location.pathname, initialSection]);
 
-  // Force dev user role to admin
+  // Check for authenticated user on mount - only set admin user if none exists
   React.useEffect(() => {
-    const devUser = {
-      uid: `dev-admin-${Date.now()}`,
-      id: `dev-admin-${Date.now()}`,
-      email: `admin@example.com`,
-      name: 'Admin User',
-      displayName: 'Admin User',
-      role: 'admin',
-      status: 'active',
-      profileCompleted: true,
-      language: 'en',
-      lastLogin: new Date().toISOString(),
-      createdAt: new Date().toISOString()
-    };
+    const storedUser = localStorage.getItem('currentUser');
+    const userRole = localStorage.getItem('userRole');
     
-    localStorage.setItem('currentUser', JSON.stringify(devUser));
-    localStorage.setItem('userRole', 'admin');
-    localStorage.setItem('forceDevMode', 'true');
+    // Only create dev admin user if no user exists or role is not admin
+    if (!storedUser || userRole !== 'admin') {
+      const devUser = {
+        uid: `dev-admin-${Date.now()}`,
+        id: `dev-admin-${Date.now()}`,
+        email: `admin@example.com`,
+        name: 'Admin User',
+        displayName: 'Admin User',
+        role: 'admin',
+        status: 'active',
+        profileCompleted: true,
+        language: 'en',
+        lastLogin: new Date().toISOString(),
+        createdAt: new Date().toISOString()
+      };
+      
+      localStorage.setItem('currentUser', JSON.stringify(devUser));
+      localStorage.setItem('userRole', 'admin');
+      localStorage.setItem('forceDevMode', 'true');
+    }
   }, []);
 
   return (

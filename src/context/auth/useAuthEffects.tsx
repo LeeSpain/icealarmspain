@@ -26,6 +26,16 @@ export const useAuthEffects = ({ setUser, setIsLoading }: UseAuthEffectsProps) =
     // Set loading to true initially
     setIsLoading(true);
     
+    // Check for recently logged out flag to prevent auto-login after logout
+    const recentlyLoggedOut = sessionStorage.getItem('recentlyLoggedOut');
+    if (recentlyLoggedOut) {
+      console.log('Recently logged out, not restoring from localStorage');
+      sessionStorage.removeItem('recentlyLoggedOut');
+      setUser(null);
+      setIsLoading(false);
+      return;
+    }
+    
     // Try to load user from localStorage first (for faster initial load)
     try {
       const storedUser = localStorage.getItem('currentUser');

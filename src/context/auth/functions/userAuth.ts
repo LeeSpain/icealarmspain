@@ -64,7 +64,12 @@ export const logout = async (): Promise<void> => {
   // Remove user data from localStorage
   localStorage.removeItem('currentUser');
   localStorage.removeItem('userRole');
+  localStorage.removeItem('activeSection');
+  localStorage.removeItem('forceDevMode');
   
-  // Use window.location.href for reliable page reload
-  window.location.href = '/login';
+  // Wait for storage changes to take effect
+  await new Promise(resolve => setTimeout(resolve, 100));
+  
+  // Let the component handle navigation after logout completes
+  console.log('Logout complete - storage cleared');
 };

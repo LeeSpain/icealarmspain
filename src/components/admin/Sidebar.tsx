@@ -7,6 +7,7 @@ import SidebarHeader from './sidebar/SidebarHeader';
 import { Button } from '@/components/ui/button';
 import { LogOut } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useToast } from '@/components/ui/use-toast';
 
 interface SidebarProps {
   activeSection: string;
@@ -25,13 +26,31 @@ const Sidebar: React.FC<SidebarProps> = ({
 }) => {
   const { logout } = useAuth();
   const navigate = useNavigate();
+  const { toast } = useToast();
 
   const handleLogout = async () => {
     try {
+      // Show toast notification before logging out
+      toast({
+        title: "Logging out",
+        description: "You are being logged out of the admin dashboard"
+      });
+      
+      // Clear any session/local storage related to user preferences
+      localStorage.removeItem('activeSection');
+      
+      // Call the auth logout function
       await logout();
-      navigate('/');
+      
+      // Force navigation to login page and prevent automatic redirects
+      window.location.href = '/login';
     } catch (error) {
       console.error('Logout error:', error);
+      toast({
+        variant: "destructive",
+        title: "Logout failed",
+        description: "There was a problem logging you out. Please try again."
+      });
     }
   };
 
