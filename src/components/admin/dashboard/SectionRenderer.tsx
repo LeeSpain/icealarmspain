@@ -10,6 +10,8 @@ import AdminUsersManagement from '../AdminUsersManagement';
 import RolesManagement from '../RolesManagement';
 import PermissionsManagement from '../PermissionsManagement';
 import ClientOnboarding from '../ClientOnboarding';
+import DeviceManagement from '../DeviceManagement';
+import AlertsManagement from '../AlertsManagement';
 
 const SectionRenderer: React.FC<SectionRendererProps> = ({ 
   activeSection,
@@ -61,6 +63,10 @@ const SectionRenderer: React.FC<SectionRendererProps> = ({
       return <ClientOnboarding onAction={onAction} />;
     case 'inventory':
       return <InventoryManagement />;
+    case 'devices':
+      return <DeviceManagement onAction={onAction} />;
+    case 'alerts':
+      return <AlertsManagement onAction={onAction} />;
     default:
       return (
         <PlaceholderSection 
