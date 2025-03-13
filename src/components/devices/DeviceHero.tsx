@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Shield, ArrowRight, Sparkles } from "lucide-react";
 import { ButtonCustom } from "@/components/ui/button-custom";
@@ -46,19 +47,14 @@ const DeviceHero: React.FC<DeviceHeroProps> = ({ language }) => {
                 : 'Explore nuestra gama de dispositivos de salud conectados diseñados para viajeros y expatriados, con monitoreo 24/7 y soporte de emergencia en múltiples idiomas.'}
             </p>
             
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-6">
-              <Link to="/join">
+            <div className="flex items-center justify-center pt-6">
+              <Link to="/pricing">
                 <ButtonCustom size="lg" className="group relative overflow-hidden shadow-md">
                   <span className="relative z-10 flex items-center">
-                    {language === 'en' ? 'View All Devices' : 'Ver Todos los Dispositivos'}
+                    {language === 'en' ? 'Join today' : 'Únete hoy'}
                     <ArrowRight size={18} className="ml-2 transition-transform group-hover:translate-x-1" />
                   </span>
                   <span className="absolute inset-0 bg-gradient-to-r from-ice-500 to-ice-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-0"></span>
-                </ButtonCustom>
-              </Link>
-              <Link to="/contact">
-                <ButtonCustom variant="outline" size="lg" className="border-ice-200 hover:border-ice-300 shadow-sm">
-                  {language === 'en' ? 'Contact Sales' : 'Contactar Ventas'}
                 </ButtonCustom>
               </Link>
             </div>

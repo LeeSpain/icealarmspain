@@ -34,6 +34,11 @@ const DeviceCTA: React.FC<DeviceCTAProps> = ({ language }) => {
             : "Elija los dispositivos que mejor se adapten a sus necesidades y comience su camino hacia un mejor monitoreo de la salud hoy."}
         </p>
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+          <Link to="/pricing">
+            <ButtonCustom variant="outline" size="lg">
+              {language === 'en' ? "View Pricing" : "Ver Precios"}
+            </ButtonCustom>
+          </Link>
           <ButtonCustom 
             size="lg" 
             onClick={handleCheckoutClick}
@@ -41,11 +46,6 @@ const DeviceCTA: React.FC<DeviceCTAProps> = ({ language }) => {
           >
             {language === 'en' ? "Start Checkout Process" : "Iniciar Proceso de Compra"}
           </ButtonCustom>
-          <Link to="/pricing">
-            <ButtonCustom variant="outline" size="lg">
-              {language === 'en' ? "View Pricing" : "Ver Precios"}
-            </ButtonCustom>
-          </Link>
         </div>
       </div>
     </section>
