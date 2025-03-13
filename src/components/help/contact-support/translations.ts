@@ -39,6 +39,7 @@ export const contactInfo: ContactInfoTranslations = {
     submittingButton: "Enviando...",
     phoneTitle: "Soporte Telefónico",
     phoneDescription: "Disponible de lunes a viernes, 9AM a 6PM CET",
+    phoneNumber: "+34 900 123 456",
     emailTitle: "Soporte por Correo",
     emailDescription: "Para consultas no urgentes",
     emailAddress: "soporte@icealarm.es",
