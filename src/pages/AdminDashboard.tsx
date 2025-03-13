@@ -1,5 +1,6 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 
 // Admin components
 import Sidebar from "@/components/admin/Sidebar";
@@ -11,6 +12,7 @@ import { useAdminDashboard } from "@/hooks/useAdminDashboard";
 
 const AdminDashboard: React.FC = () => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const location = useLocation();
   
   const {
     activeSection,
@@ -18,6 +20,19 @@ const AdminDashboard: React.FC = () => {
     handleSectionChange,
     addActivity
   } = useAdminDashboard();
+  
+  // Update active section based on URL path when component mounts or URL changes
+  useEffect(() => {
+    const path = location.pathname;
+    // Extract section from path
+    const pathParts = path.split('/');
+    const section = pathParts.length > 2 ? pathParts[2] : 'dashboard';
+    
+    // Only update if different from current section to avoid infinite loops
+    if (activeSection !== section) {
+      handleSectionChange(section);
+    }
+  }, [location.pathname]);
 
   // Force dev user role to admin
   React.useEffect(() => {

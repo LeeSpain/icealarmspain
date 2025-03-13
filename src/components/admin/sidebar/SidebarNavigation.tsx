@@ -31,9 +31,12 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({
   
   // Handle navigation
   const handleNavigation = (section: string, path: string) => {
-    setActiveSection(section);
-    if (path !== '#') {
-      navigate(path);
+    // Check if we're already on this section to avoid unnecessary navigation
+    if (activeSection !== section) {
+      setActiveSection(section);
+      if (path !== '#') {
+        navigate(path);
+      }
     }
   };
   

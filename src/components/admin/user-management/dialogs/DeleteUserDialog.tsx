@@ -31,7 +31,7 @@ export const DeleteUserDialog: React.FC<DeleteUserDialogProps> = ({
           <AlertDialogTitle className="text-xl font-semibold text-gray-900">Are you sure?</AlertDialogTitle>
           <AlertDialogDescription className="text-gray-600">
             This will permanently delete the user {selectedUser?.displayName || selectedUser?.email}. 
-            This action cannot be undone.
+            This action cannot be undone and may affect linked data throughout the system.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter className="flex space-x-2 pt-4">
@@ -40,7 +40,7 @@ export const DeleteUserDialog: React.FC<DeleteUserDialogProps> = ({
             onClick={onDeleteUser} 
             className="bg-red-600 text-white hover:bg-red-700 focus:ring-red-500"
           >
-            Delete
+            Delete User
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

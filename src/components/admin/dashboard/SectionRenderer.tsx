@@ -4,6 +4,7 @@ import { SectionRendererProps } from './SectionRenderer.d';
 import UserManagement from '../user-management/UserManagement';
 import InventoryManagement from '../InventoryManagement';
 import PlaceholderSection from '../PlaceholderSection';
+import DashboardMetrics from '../DashboardMetrics';
 
 const SectionRenderer: React.FC<SectionRendererProps> = ({ 
   activeSection,
@@ -33,9 +34,9 @@ const SectionRenderer: React.FC<SectionRendererProps> = ({
     }
   };
 
-  // Display dashboard content if on the main dashboard
+  // Display dashboard content for the main dashboard
   if (activeSection === 'dashboard' || !activeSection) {
-    return null; // This will be handled by the parent component
+    return <DashboardMetrics data={onAction ? { onAction } : {}} />;
   }
 
   switch (activeSection) {

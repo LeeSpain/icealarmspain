@@ -3,6 +3,7 @@ import React from 'react';
 import SectionRenderer from './SectionRenderer';
 import { AdminDashboardContentProps } from './AdminDashboardContent.d';
 import ActivityManager from './ActivityManager';
+import DashboardMetrics from '../DashboardMetrics';
 
 const AdminDashboardContent: React.FC<AdminDashboardContentProps> = ({ 
   activeSection,
@@ -20,10 +21,14 @@ const AdminDashboardContent: React.FC<AdminDashboardContentProps> = ({
     <div className="w-full">
       <div className="grid grid-cols-1 xl:grid-cols-4 gap-6">
         <div className="xl:col-span-3">
-          <SectionRenderer 
-            activeSection={activeSection} 
-            onAction={handleComponentAction}
-          />
+          {activeSection === 'dashboard' ? (
+            <DashboardMetrics data={dashboardData} />
+          ) : (
+            <SectionRenderer 
+              activeSection={activeSection} 
+              onAction={handleComponentAction}
+            />
+          )}
         </div>
         
         <div className="hidden xl:block">
