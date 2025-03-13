@@ -155,27 +155,9 @@ const DashboardHealthMetricsPage: React.FC = () => {
                             </div>
                           </div>
                           <div className="text-right">
-                            <p className="text-sm">Today, 10:15 AM</p>
+                            <p className="text-sm">Today, 9:15 AM</p>
                             <p className="text-xs text-muted-foreground">
                               {language === 'en' ? 'Normal range' : 'Rango normal'}
-                            </p>
-                          </div>
-                        </div>
-                        
-                        <div className="p-3 border rounded-lg flex justify-between items-center">
-                          <div className="flex items-center">
-                            <Weight className="h-5 w-5 text-green-500 mr-2" />
-                            <div>
-                              <h4 className="font-medium">
-                                {language === 'en' ? 'Weight' : 'Peso'}
-                              </h4>
-                              <p className="text-sm text-muted-foreground">68 kg</p>
-                            </div>
-                          </div>
-                          <div className="text-right">
-                            <p className="text-sm">Yesterday, 8:00 AM</p>
-                            <p className="text-xs text-muted-foreground">
-                              {language === 'en' ? '-0.5 kg from last week' : '-0.5 kg desde la semana pasada'}
                             </p>
                           </div>
                         </div>
@@ -189,20 +171,17 @@ const DashboardHealthMetricsPage: React.FC = () => {
             <TabsContent value="glucose">
               <Card>
                 <CardHeader>
-                  <CardTitle className="flex items-center">
-                    <Activity className="h-5 w-5 mr-2 text-blue-500" />
+                  <CardTitle>
                     {language === 'en' ? 'Glucose Readings' : 'Lecturas de Glucosa'}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="space-y-4">
-                    <div className="h-64 bg-gray-100 rounded-lg flex items-center justify-center">
-                      <p className="text-muted-foreground">
-                        {language === 'en' 
-                          ? 'Glucose readings chart will appear here' 
-                          : 'El gráfico de lecturas de glucosa aparecerá aquí'}
-                      </p>
-                    </div>
+                  <div className="h-64 bg-gray-100 rounded-lg flex items-center justify-center">
+                    <p className="text-muted-foreground">
+                      {language === 'en' 
+                        ? 'Glucose chart will appear here' 
+                        : 'El gráfico de glucosa aparecerá aquí'}
+                    </p>
                   </div>
                 </CardContent>
               </Card>
@@ -211,20 +190,17 @@ const DashboardHealthMetricsPage: React.FC = () => {
             <TabsContent value="heart">
               <Card>
                 <CardHeader>
-                  <CardTitle className="flex items-center">
-                    <Heart className="h-5 w-5 mr-2 text-red-500" />
+                  <CardTitle>
                     {language === 'en' ? 'Heart Rate Readings' : 'Lecturas de Ritmo Cardíaco'}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="space-y-4">
-                    <div className="h-64 bg-gray-100 rounded-lg flex items-center justify-center">
-                      <p className="text-muted-foreground">
-                        {language === 'en' 
-                          ? 'Heart rate readings chart will appear here' 
-                          : 'El gráfico de lecturas de ritmo cardíaco aparecerá aquí'}
-                      </p>
-                    </div>
+                  <div className="h-64 bg-gray-100 rounded-lg flex items-center justify-center">
+                    <p className="text-muted-foreground">
+                      {language === 'en' 
+                        ? 'Heart rate chart will appear here' 
+                        : 'El gráfico de ritmo cardíaco aparecerá aquí'}
+                    </p>
                   </div>
                 </CardContent>
               </Card>
@@ -233,20 +209,17 @@ const DashboardHealthMetricsPage: React.FC = () => {
             <TabsContent value="bp">
               <Card>
                 <CardHeader>
-                  <CardTitle className="flex items-center">
-                    <Activity className="h-5 w-5 mr-2 text-purple-500" />
+                  <CardTitle>
                     {language === 'en' ? 'Blood Pressure Readings' : 'Lecturas de Presión Arterial'}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="space-y-4">
-                    <div className="h-64 bg-gray-100 rounded-lg flex items-center justify-center">
-                      <p className="text-muted-foreground">
-                        {language === 'en' 
-                          ? 'Blood pressure readings chart will appear here' 
-                          : 'El gráfico de lecturas de presión arterial aparecerá aquí'}
-                      </p>
-                    </div>
+                  <div className="h-64 bg-gray-100 rounded-lg flex items-center justify-center">
+                    <p className="text-muted-foreground">
+                      {language === 'en' 
+                        ? 'Blood pressure chart will appear here' 
+                        : 'El gráfico de presión arterial aparecerá aquí'}
+                    </p>
                   </div>
                 </CardContent>
               </Card>

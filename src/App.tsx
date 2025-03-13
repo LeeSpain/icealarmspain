@@ -22,23 +22,23 @@ import NotFound from "./pages/NotFound";
 import DevicesPage from "./pages/DevicesPage";
 import ProductDetail from "./pages/ProductDetail";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
-import ProfilePage from "./pages/ProfilePage";
-import SettingsPage from "./pages/SettingsPage";
-import EmergencyContactsPage from "./pages/EmergencyContactsPage";
 import HelpSupportPage from "./pages/HelpSupportPage";
 import AdminDashboard from "./pages/AdminDashboard";
-import DeviceSettingsPage from "./pages/DeviceSettingsPage";
-import SOSPendantPage from "./pages/SOSPendantPage";
-import GlucoseMonitorPage from "./pages/GlucoseMonitorPage";
-import MedicalDispenserPage from "./pages/MedicalDispenserPage";
-import HealthMetricsPage from "./pages/HealthMetricsPage";
-import MedicationsPage from "./pages/MedicationsPage";
+import SOSPendantPage from "./pages/member/SOSPendantPage";
+import GlucoseMonitorPage from "./pages/member/GlucoseMonitorPage";
+import MedicalDispenserPage from "./pages/member/MedicalDispenserPage";
 import Checkout from "./pages/Checkout";
 import CallCenterDashboard from "./pages/CallCenterDashboard";
 
-// New imports for internal dashboard pages
-import ChatSupportPage from "./components/member/chat/ChatSupportPage";
-import PersonalDetailsPage from "./components/member/personal-details/PersonalDetailsPage";
+// New imports for properly structured dashboard pages
+import DashboardChatPage from "./pages/dashboard/DashboardChatPage";
+import DashboardPersonalDetailsPage from "./pages/dashboard/DashboardPersonalDetailsPage";
+import DashboardEmergencyContactsPage from "./pages/dashboard/DashboardEmergencyContactsPage";
+import DashboardHealthMetricsPage from "./pages/dashboard/DashboardHealthMetricsPage";
+import DashboardMedicalInfoPage from "./pages/dashboard/DashboardMedicalInfoPage";
+import DashboardMedicationsPage from "./pages/dashboard/DashboardMedicationsPage";
+import DashboardProfilePage from "./pages/dashboard/DashboardProfilePage";
+import DashboardSettingsPage from "./pages/dashboard/DashboardSettingsPage";
 import QuestionnairePage from "./components/member/questionnaire/QuestionnairePage";
 
 // Landing page component
@@ -88,33 +88,29 @@ function App() {
                 <Route path="/products/:id" element={<Layout><ProductDetail /></Layout>} />
                 <Route path="/checkout" element={<Layout><Checkout /></Layout>} />
                 
-                <Route path="/devices/sos-pendant" element={<Layout><SOSPendantPage /></Layout>} />
-                <Route path="/devices/glucose-monitor" element={<Layout><GlucoseMonitorPage /></Layout>} />
-                <Route path="/devices/medical-dispenser" element={<Layout><MedicalDispenserPage /></Layout>} />
-                
                 {/* User Dashboard Routes */}
                 <Route path="/dashboard" element={
                   <ProtectedRoute>
-                    <Layout>
-                      <DashboardPage />
-                    </Layout>
+                    <DashboardPage />
                   </ProtectedRoute>
                 } />
                 
-                {/* New Internal Dashboard Routes */}
+                {/* Dashboard Internal Pages - All with proper dashboard layout */}
                 <Route path="/dashboard/chat" element={
                   <ProtectedRoute>
-                    <Layout>
-                      <ChatSupportPage />
-                    </Layout>
+                    <DashboardChatPage />
                   </ProtectedRoute>
                 } />
                 
                 <Route path="/dashboard/personal-details" element={
                   <ProtectedRoute>
-                    <Layout>
-                      <PersonalDetailsPage />
-                    </Layout>
+                    <DashboardPersonalDetailsPage />
+                  </ProtectedRoute>
+                } />
+                
+                <Route path="/dashboard/emergency-contacts" element={
+                  <ProtectedRoute>
+                    <DashboardEmergencyContactsPage />
                   </ProtectedRoute>
                 } />
                 
@@ -128,26 +124,16 @@ function App() {
                 
                 <Route path="/dashboard/profile" element={
                   <ProtectedRoute>
-                    <Layout>
-                      <ProfilePage />
-                    </Layout>
+                    <DashboardProfilePage />
                   </ProtectedRoute>
                 } />
                 
                 <Route path="/dashboard/settings" element={
                   <ProtectedRoute>
-                    <Layout>
-                      <SettingsPage />
-                    </Layout>
+                    <DashboardSettingsPage />
                   </ProtectedRoute>
                 } />
-                <Route path="/dashboard/emergency-contacts" element={
-                  <ProtectedRoute>
-                    <Layout>
-                      <EmergencyContactsPage />
-                    </Layout>
-                  </ProtectedRoute>
-                } />
+                
                 <Route path="/dashboard/help" element={
                   <ProtectedRoute>
                     <Layout>
@@ -155,46 +141,42 @@ function App() {
                     </Layout>
                   </ProtectedRoute>
                 } />
-                <Route path="/dashboard/devices/:type" element={
-                  <ProtectedRoute>
-                    <Layout>
-                      <DeviceSettingsPage />
-                    </Layout>
-                  </ProtectedRoute>
-                } />
+                
+                {/* Device pages */}
                 <Route path="/dashboard/devices/sos-pendant" element={
                   <ProtectedRoute>
-                    <Layout>
-                      <SOSPendantPage />
-                    </Layout>
+                    <SOSPendantPage />
                   </ProtectedRoute>
                 } />
+                
                 <Route path="/dashboard/devices/glucose-monitor" element={
                   <ProtectedRoute>
-                    <Layout>
-                      <GlucoseMonitorPage />
-                    </Layout>
+                    <GlucoseMonitorPage />
                   </ProtectedRoute>
                 } />
+                
                 <Route path="/dashboard/devices/medical-dispenser" element={
                   <ProtectedRoute>
-                    <Layout>
-                      <MedicalDispenserPage />
-                    </Layout>
+                    <MedicalDispenserPage />
                   </ProtectedRoute>
                 } />
+                
+                {/* Health pages */}
                 <Route path="/dashboard/health/metrics" element={
                   <ProtectedRoute>
-                    <Layout>
-                      <HealthMetricsPage />
-                    </Layout>
+                    <DashboardHealthMetricsPage />
                   </ProtectedRoute>
                 } />
+                
                 <Route path="/dashboard/health/medications" element={
                   <ProtectedRoute>
-                    <Layout>
-                      <MedicationsPage />
-                    </Layout>
+                    <DashboardMedicationsPage />
+                  </ProtectedRoute>
+                } />
+                
+                <Route path="/dashboard/health/info" element={
+                  <ProtectedRoute>
+                    <DashboardMedicalInfoPage />
                   </ProtectedRoute>
                 } />
                 
