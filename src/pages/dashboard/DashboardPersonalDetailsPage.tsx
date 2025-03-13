@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import MemberSidebar from "@/components/member/MemberSidebar";
 import { useLanguage } from "@/context/LanguageContext";
@@ -6,7 +5,7 @@ import { useAuth } from "@/context/auth";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { User, PillIcon, PhoneCall, Edit, Save, X, Clock, Heart } from "lucide-react";
+import { User, PillIcon, PhoneCall, Edit, Save, X, Clock, Heart, Clipboard } from "lucide-react";
 import PersonalDetailsTabContent from "@/components/personal-details/PersonalDetailsTabContent";
 import MedicationsTabContent from "@/components/personal-details/MedicationsTabContent";
 import EmergencyContactsTabContent from "@/components/personal-details/EmergencyContactsTabContent";
@@ -275,7 +274,7 @@ const DashboardPersonalDetailsPage: React.FC = () => {
                         onClick={() => navigate('/dashboard/questionnaire')}
                         className="flex items-center gap-2"
                       >
-                        <ClipboardList className="h-4 w-4" />
+                        <Clipboard className="h-4 w-4" />
                         {language === 'en' 
                           ? 'Complete Questionnaire' 
                           : 'Completar Cuestionario'}

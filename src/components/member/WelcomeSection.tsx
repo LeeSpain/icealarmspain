@@ -3,7 +3,7 @@ import React from 'react';
 import { useLanguage } from '@/context/LanguageContext';
 import { useAuth } from '@/context/auth';
 import { useNavigate } from 'react-router-dom';
-import { Shield, Calendar, CheckCircle, ClipboardList, FileText } from 'lucide-react';
+import { Shield, Calendar, CheckCircle, Clipboard, FileText } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 
@@ -81,7 +81,7 @@ const WelcomeSection: React.FC = () => {
                 className="flex items-center gap-1.5 bg-white"
                 onClick={handleNavigateToQuestionnaire}
               >
-                <ClipboardList className="h-3.5 w-3.5" />
+                <Clipboard className="h-3.5 w-3.5" />
                 {language === 'en' ? 'Complete Questionnaire' : 'Completar Cuestionario'}
               </Button>
               
