@@ -7,6 +7,7 @@ import { ButtonCustom } from "@/components/ui/button-custom";
 import { useLanguage } from "@/context/LanguageContext";
 import { ArrowRight, CheckCircle, Shield, Sparkles } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
+import SectionWrapper from "@/components/layout/SectionWrapper";
 
 const Products: React.FC = () => {
   const { t, language } = useLanguage();
@@ -49,7 +50,7 @@ const Products: React.FC = () => {
     <div className="flex flex-col min-h-screen">
       <Navbar />
       <main className="flex-grow">
-        {/* Hero section - Updated to match other pages styling */}
+        {/* Hero section - Updated to match homepage spacing */}
         <section 
           id="products-hero" 
           className="relative pt-32 pb-24 overflow-hidden"
@@ -133,11 +134,13 @@ const Products: React.FC = () => {
           </div>
         </section>
         
-        {/* Showcase our devices */}
-        <DeviceShowcase />
+        {/* Showcase our devices - wrapped in SectionWrapper for consistent spacing */}
+        <SectionWrapper>
+          <DeviceShowcase />
+        </SectionWrapper>
         
-        {/* Features Section */}
-        <section className="py-16 bg-white">
+        {/* Features Section - updated spacing to match homepage */}
+        <SectionWrapper className="bg-white">
           <div className="container mx-auto px-4 md:px-6">
             <div className="max-w-3xl mx-auto text-center mb-12">
               <h2 className="text-3xl font-bold mb-4">
@@ -159,10 +162,10 @@ const Products: React.FC = () => {
               ))}
             </div>
           </div>
-        </section>
+        </SectionWrapper>
         
-        {/* CTA section */}
-        <section className="bg-ice-600 text-white py-16">
+        {/* CTA section - maintained with consistent spacing */}
+        <section className="bg-ice-600 text-white py-14">
           <div className="container mx-auto px-4 md:px-6 text-center">
             <h2 className="text-3xl font-bold mb-6">
               {language === 'en' ? "Ready to experience peace of mind?" : "¿Listo para experimentar tranquilidad?"}
