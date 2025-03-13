@@ -59,17 +59,20 @@ export const signIn = login;
 
 // Logout function (sign out a user)
 export const logout = async (): Promise<void> => {
-  console.log('Logging out');
+  console.log('Logging out - clearing all auth data');
   
-  // Remove user data from localStorage
+  // Remove ALL auth-related data from localStorage
   localStorage.removeItem('currentUser');
   localStorage.removeItem('userRole');
   localStorage.removeItem('activeSection');
   localStorage.removeItem('forceDevMode');
+  localStorage.removeItem('rememberedEmail');
+  
+  // Flag to prevent automatic login after logout
+  sessionStorage.setItem('recentlyLoggedOut', 'true');
   
   // Wait for storage changes to take effect
   await new Promise(resolve => setTimeout(resolve, 100));
   
-  // Let the component handle navigation after logout completes
-  console.log('Logout complete - storage cleared');
+  console.log('Logout complete - all storage cleared');
 };

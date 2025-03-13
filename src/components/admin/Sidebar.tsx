@@ -39,11 +39,11 @@ const Sidebar: React.FC<SidebarProps> = ({
       // Clear any session/local storage related to user preferences
       localStorage.removeItem('activeSection');
       
-      // Call the auth logout function
+      // Call the auth logout function which will clear all auth data
       await logout();
       
-      // Force navigation to login page and prevent automatic redirects
-      window.location.href = '/login';
+      // Force navigation to login page with a full page reload to prevent automatic redirects
+      window.location.href = '/login?redirect=none';
     } catch (error) {
       console.error('Logout error:', error);
       toast({

@@ -14,6 +14,7 @@ export const useLoginPage = () => {
   
   const searchParams = new URLSearchParams(location.search);
   const redirectParam = searchParams.get('redirect') || '/dashboard';
+  const isPostLogout = redirectParam === 'none'; // Check if this is after a logout
 
   // Set up dev mode and direct access
   useEffect(() => {
@@ -21,8 +22,22 @@ export const useLoginPage = () => {
     localStorage.setItem('forceDevMode', 'true');
     console.log("Development mode forced in login page");
     
-    // If we're accessing the login page directly, simulate auto-login to dashboard
-    if (location.pathname === '/login') {
+    // Check if user just logged out - don't auto-login in that case
+    const recentlyLoggedOut = sessionStorage.getItem('recentlyLoggedOut');
+    if (recentlyLoggedOut) {
+      console.log("Recently logged out, preventing auto-login");
+      sessionStorage.removeItem('recentlyLoggedOut');
+      return;
+    }
+    
+    // Skip auto-login if redirectParam is 'none' (coming from logout)
+    if (isPostLogout) {
+      console.log("Post-logout login page, skipping auto-login");
+      return;
+    }
+    
+    // If we're accessing the login page directly and not after logout, simulate auto-login to dashboard
+    if (location.pathname === '/login' && !isPostLogout) {
       const devUser = {
         uid: `dev-member-${Date.now()}`,
         id: `dev-member-${Date.now()}`,
@@ -43,7 +58,7 @@ export const useLoginPage = () => {
       // Navigate directly to dashboard
       navigate('/dashboard', { replace: true });
     }
-  }, [location.pathname, navigate]);
+  }, [location.pathname, navigate, isPostLogout]);
 
   // Simplified login handler that just creates a dev user and redirects
   const handleLoginSuccess = async (email: string, password: string, rememberMe: boolean) => {
