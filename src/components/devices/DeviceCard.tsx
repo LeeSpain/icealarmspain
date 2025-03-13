@@ -56,7 +56,7 @@ const DeviceCard: React.FC<DeviceCardProps> = ({
       ></div>
       
       <div className="p-6">
-        <div className="flex flex-col md:flex-row md:items-center gap-8">
+        <div className="flex flex-col md:flex-row md:items-start gap-8">
           {/* Left: Description and features */}
           <div className="md:w-2/3">
             <div className="flex items-center justify-center md:justify-start mb-4">
