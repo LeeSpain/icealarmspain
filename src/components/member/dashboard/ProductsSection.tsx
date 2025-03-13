@@ -1,112 +1,71 @@
 
-import React from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { useLanguage } from "@/context/LanguageContext";
-import { ShoppingCart, X } from "lucide-react";
-import { ProductCard } from "./ProductCard";
-import { Button } from "@/components/ui/button";
-import { useCart } from "@/components/payment/CartContext";
-
-interface Product {
-  id: string;
-  name: string;
-  price: string;
-  description: string;
-}
+import React from 'react';
+import { X } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { useLanguage } from '@/context/LanguageContext';
+import { getDevices } from '@/components/join/deviceData';
+import { useCart } from '@/components/payment/CartContext';
 
 interface ProductsSectionProps {
-  products?: Product[];
-  onAddToCart?: (product: Product) => void;
-  onStartSetup?: (deviceType: 'pendant' | 'monitor' | 'dispenser') => void;
-  onCloseProducts?: () => void;
+  onCloseProducts: () => void;
 }
 
-export const ProductsSection: React.FC<ProductsSectionProps> = ({ 
-  products = [], 
-  onAddToCart = () => {}, 
-  onStartSetup = () => {}, 
-  onCloseProducts
-}) => {
+export const ProductsSection: React.FC<ProductsSectionProps> = ({ onCloseProducts }) => {
   const { language } = useLanguage();
   const { addToCart } = useCart();
+  const devices = getDevices(language);
   
-  // Sample products if none are provided
-  const defaultProducts = [
-    {
-      id: "prod-1",
-      name: language === 'en' ? "ICE Alarm Hub" : "Hub de ICE Alarm",
-      price: "$199.99",
-      description: language === 'en' ? "Central hub for your ICE Alarm system" : "Centro de control para tu sistema ICE Alarm"
-    },
-    {
-      id: "prod-2",
-      name: language === 'en' ? "SOS Pendant" : "Colgante SOS",
-      price: "$89.99",
-      description: language === 'en' ? "Emergency pendant with fall detection" : "Colgante de emergencia con detección de caídas"
-    },
-    {
-      id: "prod-3",
-      name: language === 'en' ? "Medication Dispenser" : "Dispensador de Medicamentos",
-      price: "$149.99",
-      description: language === 'en' ? "Smart medication reminder and dispenser" : "Dispensador inteligente de medicamentos"
-    },
-    {
-      id: "prod-4",
-      name: language === 'en' ? "Health Monitor" : "Monitor de Salud",
-      price: "$129.99",
-      description: language === 'en' ? "Vital signs monitoring device" : "Dispositivo de monitoreo de signos vitales"
-    }
-  ];
-  
-  const displayProducts = products.length > 0 ? products : defaultProducts;
-  
-  const handleAddToCart = (product: Product) => {
-    if (onAddToCart) {
-      onAddToCart(product);
-    } else {
-      addToCart(product);
-    }
+  const handleAddToCart = (device: any) => {
+    addToCart({
+      id: device.id,
+      name: device.name,
+      price: device.price,
+      description: device.description,
+      image: device.image,
+      monthlyPrice: device.monthlyPrice
+    });
   };
   
   return (
-    <div className="mb-8">
-      <Card>
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <ShoppingCart className="h-5 w-5 text-ice-500" />
-              <CardTitle>{language === 'en' ? 'Add New Products' : 'Añadir Nuevos Productos'}</CardTitle>
-            </div>
-            {onCloseProducts && (
-              <Button variant="ghost" size="icon" onClick={onCloseProducts}>
-                <X className="h-5 w-5" />
+    <Card className="mb-6 animate-fade-in">
+      <CardHeader className="pb-2 flex flex-row items-center justify-between">
+        <CardTitle className="text-lg font-semibold">
+          {language === 'en' ? 'Available Devices' : 'Dispositivos Disponibles'}
+        </CardTitle>
+        <Button variant="ghost" size="icon" onClick={onCloseProducts} aria-label="Close">
+          <X className="h-4 w-4" />
+        </Button>
+      </CardHeader>
+      <CardContent>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {devices.map((device) => (
+            <div key={device.id} className="border rounded-lg p-4 flex flex-col h-full">
+              <div className="flex-grow">
+                <div className="flex items-center justify-center mb-3 h-28">
+                  <img src={device.image} alt={device.name} className="max-h-full max-w-full object-contain" />
+                </div>
+                <h3 className="font-medium text-center mb-1">{device.name}</h3>
+                <p className="text-sm text-muted-foreground mb-2 text-center">{device.description}</p>
+                <div className="flex justify-between items-center mt-auto text-sm mb-3">
+                  <span>
+                    {language === 'en' ? 'One-time' : 'Pago único'}: <span className="font-semibold">€{device.price.toFixed(2)}</span>
+                  </span>
+                  <span>
+                    {language === 'en' ? 'Monthly' : 'Mensual'}: <span className="font-semibold">€{device.monthlyPrice.toFixed(2)}</span>
+                  </span>
+                </div>
+              </div>
+              <Button 
+                className="w-full"
+                onClick={() => handleAddToCart(device)}
+              >
+                {language === 'en' ? 'Add to Cart' : 'Añadir al Carrito'}
               </Button>
-            )}
-          </div>
-          <CardDescription>
-            {language === 'en' 
-              ? 'Expand your ICE Alarm ecosystem with our products' 
-              : 'Amplía tu ecosistema ICE Alarm con nuestros productos'}
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {displayProducts.map(product => (
-              <ProductCard 
-                key={product.id} 
-                product={product} 
-                onAddToCart={() => handleAddToCart(product)}
-                showSetupGuide={["prod-2", "prod-3", "prod-4"].includes(product.id)}
-                onSetup={() => {
-                  if (product.id === "prod-2") onStartSetup("pendant");
-                  if (product.id === "prod-3") onStartSetup("dispenser");
-                  if (product.id === "prod-4") onStartSetup("monitor");
-                }}
-              />
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-    </div>
+            </div>
+          ))}
+        </div>
+      </CardContent>
+    </Card>
   );
 };

@@ -11,6 +11,8 @@ import RegularQuestionSection from './RegularQuestionSection';
 import { useLanguage } from '@/context/LanguageContext';
 import { useAuth } from '@/context/auth';
 import { toast } from 'sonner';
+import { ArrowLeft } from 'lucide-react';
+import { Button } from '../ui/button';
 
 const QuestionnaireForm: React.FC = () => {
   const { language } = useLanguage();
@@ -45,6 +47,10 @@ const QuestionnaireForm: React.FC = () => {
     }
   };
 
+  const handleBackToDashboard = () => {
+    navigate('/dashboard');
+  };
+
   const handleSubmit = () => {
     // Process and save answers
     const formattedAnswers = {
@@ -77,7 +83,19 @@ const QuestionnaireForm: React.FC = () => {
   const isLastQuestion = currentQuestionIndex === questions.length - 1;
 
   return (
-    <div className="container mx-auto px-4 py-12">
+    <div className="container mx-auto px-4 py-6">
+      <div className="mb-6">
+        <Button 
+          variant="ghost" 
+          size="sm"
+          onClick={handleBackToDashboard}
+          className="flex items-center gap-1.5 text-ice-600"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          {language === 'en' ? 'Back to Dashboard' : 'Volver al Panel'}
+        </Button>
+      </div>
+      
       <QuestionCard question={currentQuestion} language={language}>
         <ProgressIndicator 
           currentStep={currentQuestionIndex + 1} 

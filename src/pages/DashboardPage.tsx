@@ -39,13 +39,13 @@ const DashboardPage: React.FC = () => {
   return (
     <div className="flex h-screen bg-ice-50/30">
       <MemberSidebar 
-        activePage="dashboard"
+        activePage={isQuestionnairePage ? "questionnaire" : "dashboard"}
         collapsed={sidebarCollapsed}
         setCollapsed={setSidebarCollapsed}
       />
       
       <div className="flex-1 overflow-auto transition-all duration-300">
-        <div className="p-6 w-full max-w-7xl mx-auto">
+        <div className="p-4 lg:p-6 w-full max-w-7xl mx-auto">
           {isQuestionnairePage ? (
             <QuestionnaireProvider>
               <QuestionnaireForm />
