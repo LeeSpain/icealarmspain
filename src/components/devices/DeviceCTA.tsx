@@ -1,6 +1,7 @@
 
 import React from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
+import { ArrowRight } from "lucide-react";
 import { ButtonCustom } from "@/components/ui/button-custom";
 
 interface DeviceCTAProps {
@@ -8,44 +9,36 @@ interface DeviceCTAProps {
 }
 
 const DeviceCTA: React.FC<DeviceCTAProps> = ({ language }) => {
-  const navigate = useNavigate();
+  console.log("Rendering DeviceCTA component");
   
-  const handleCheckoutClick = (e: React.MouseEvent) => {
-    console.log("DeviceCTA: Checkout button clicked");
-    e.preventDefault();
-    e.stopPropagation();
-    
-    // Use React Router for navigation with state flag to prevent redirect
-    console.log("DeviceCTA: Navigating to /checkout");
-    navigate("/checkout", { state: { fromCheckoutButton: true } });
-  };
-
   return (
-    <section className="py-14 bg-gradient-to-b from-ice-50 to-white text-center">
-      <div className="container mx-auto px-4">
-        <h2 className="text-3xl md:text-4xl font-bold mb-6 font-playfair">
-          {language === 'en' 
-            ? "Ready to Experience Complete Health Monitoring?" 
-            : "¿Listo para Experimentar un Monitoreo de Salud Completo?"}
-        </h2>
-        <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-8">
-          {language === 'en'
-            ? "Choose the devices that best suit your needs and start your journey to better health monitoring today."
-            : "Elija los dispositivos que mejor se adapten a sus necesidades y comience su camino hacia un mejor monitoreo de la salud hoy."}
-        </p>
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-          <Link to="/pricing">
-            <ButtonCustom variant="outline" size="lg">
-              {language === 'en' ? "View Pricing" : "Ver Precios"}
-            </ButtonCustom>
-          </Link>
-          <ButtonCustom 
-            size="lg" 
-            onClick={handleCheckoutClick}
-            data-testid="device-cta-checkout-button"
-          >
-            {language === 'en' ? "Start Checkout Process" : "Iniciar Proceso de Compra"}
-          </ButtonCustom>
+    <section className="bg-white py-16">
+      <div className="container mx-auto px-4 md:px-6">
+        <div className="bg-gradient-to-br from-ice-50 to-ice-100 rounded-2xl p-8 md:p-12 shadow-sm border border-ice-200 max-w-5xl mx-auto">
+          <div className="text-center space-y-6">
+            <h2 className="text-3xl md:text-4xl font-bold font-playfair text-gray-900">
+              {language === 'en' 
+                ? 'Ready to Experience Peace of Mind?' 
+                : '¿Listo para Experimentar Tranquilidad?'}
+            </h2>
+            
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              {language === 'en'
+                ? 'Join ICE Alarm today and enjoy the security of our smart health monitoring devices and 24/7 support.'
+                : 'Únase a ICE Alarm hoy y disfrute de la seguridad de nuestros dispositivos inteligentes de monitoreo de salud y soporte 24/7.'}
+            </p>
+            
+            <div className="pt-4">
+              <Link to="/join">
+                <ButtonCustom size="lg" className="group">
+                  <span className="flex items-center">
+                    {language === 'en' ? 'Join Now' : 'Únase Ahora'}
+                    <ArrowRight size={18} className="ml-2 transition-transform group-hover:translate-x-1" />
+                  </span>
+                </ButtonCustom>
+              </Link>
+            </div>
+          </div>
         </div>
       </div>
     </section>
