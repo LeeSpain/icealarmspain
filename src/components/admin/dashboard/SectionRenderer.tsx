@@ -19,6 +19,11 @@ const SectionRenderer: React.FC<SectionRendererProps> = ({
   activeSection,
   onAction 
 }) => {
+  // Create a dummy no-op function if onAction is not provided
+  const handleAction = onAction || ((action: string) => {
+    console.log('Action performed but no handler provided:', action);
+  });
+  
   const getSectionTitle = (section: string): string => {
     switch (section) {
       case 'roles': return 'Role Management';
@@ -59,17 +64,12 @@ const SectionRenderer: React.FC<SectionRendererProps> = ({
 
   // Display dashboard content for the main dashboard
   if (activeSection === 'dashboard' || !activeSection) {
-    // Create a dummy no-op function if onAction is not provided
-    const handleAction = onAction || ((action: string) => {
-      console.log('Action performed but no handler provided:', action);
-    });
-    
     return <DashboardMetrics data={{ onAction: handleAction }} />;
   }
 
   switch (activeSection) {
     case 'users':
-      return <UserManagement onAction={onAction} />;
+      return <UserManagement onAction={handleAction} />;
     case 'clients':
       return <ClientManagement />;
     case 'admin-users':
@@ -99,7 +99,7 @@ const SectionRenderer: React.FC<SectionRendererProps> = ({
         <PlaceholderSection 
           title={getSectionTitle(activeSection)} 
           description={getSectionDescription(activeSection)}
-          onAction={onAction} 
+          onAction={handleAction} 
         />
       );
   }
