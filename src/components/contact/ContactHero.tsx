@@ -33,7 +33,7 @@ const ContactHero: React.FC = () => {
             
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto mb-8">
               {language === 'en' 
-                ? 'We're here to answer your questions about our services and how we can help protect you and your loved ones.' 
+                ? 'We\'re here to answer your questions about our services and how we can help protect you and your loved ones.' 
                 : 'Estamos aquí para responder sus preguntas sobre nuestros servicios y cómo podemos ayudar a protegerlo a usted y a sus seres queridos.'}
             </p>
           </div>
