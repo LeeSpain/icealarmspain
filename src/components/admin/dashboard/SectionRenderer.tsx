@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { SectionRendererProps } from './SectionRenderer.d';
 import UserManagement from '../user-management/UserManagement';
@@ -58,7 +59,7 @@ const SectionRenderer: React.FC<SectionRendererProps> = ({
 
   // Display dashboard content for the main dashboard
   if (activeSection === 'dashboard' || !activeSection) {
-    return <DashboardMetrics data={onAction ? { onAction } : {}} />;
+    return <DashboardMetrics data={{ onAction }} />;
   }
 
   switch (activeSection) {
