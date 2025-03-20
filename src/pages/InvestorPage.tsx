@@ -8,6 +8,7 @@ import ROICalculator from '../components/investors/ROICalculator';
 import InvestmentOpportunity from '../components/investors/InvestmentOpportunity';
 import ContactSection from '../components/investors/ContactSection';
 import SEO from '../components/layout/SEO';
+import { ArrowDownCircle } from 'lucide-react';
 
 const InvestorPage: React.FC = () => {
   return (
@@ -24,8 +25,11 @@ const InvestorPage: React.FC = () => {
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold mb-4">Investment ROI Calculator</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              Use the interactive calculator below to estimate potential returns on your investment in ICE Alarm.
+              Use our interactive calculator to estimate potential returns on your investment based on our projections and growth trajectory.
             </p>
+            <div className="flex justify-center mt-4 mb-8">
+              <ArrowDownCircle className="h-8 w-8 text-ice-600 animate-bounce" />
+            </div>
           </div>
           <ROICalculator />
         </div>

@@ -8,8 +8,8 @@ import { Button } from '@/components/ui/button';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 const ROICalculator: React.FC = () => {
-  const [investment, setInvestment] = useState(300000);
-  const [equity, setEquity] = useState(20);
+  const [investment, setInvestment] = useState(50000);
+  const [equity, setEquity] = useState(5);
   const [yearsToExit, setYearsToExit] = useState(5);
   const [growthRate, setGrowthRate] = useState(30);
   const [projections, setProjections] = useState<any[]>([]);
@@ -49,13 +49,20 @@ const ROICalculator: React.FC = () => {
     }
     return `€${value}`;
   };
+
+  const handleInvestmentInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = Number(e.target.value);
+    if (value >= 10000 && value <= 300000) {
+      setInvestment(value);
+    }
+  };
   
   return (
     <Card className="w-full max-w-4xl mx-auto">
       <CardHeader>
         <CardTitle>Investment ROI Calculator</CardTitle>
         <CardDescription>
-          Estimate your potential returns from investing in ICE Alarm
+          Estimate your potential returns based on investment amount, equity stake, and exit timeline
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -68,18 +75,21 @@ const ROICalculator: React.FC = () => {
               </div>
               <Slider 
                 id="investment"
-                min={50000} 
-                max={1000000} 
-                step={10000} 
+                min={10000} 
+                max={300000} 
+                step={5000} 
                 value={[investment]} 
                 onValueChange={(value) => setInvestment(value[0])} 
               />
-              <Input
-                type="number"
-                value={investment}
-                onChange={(e) => setInvestment(Number(e.target.value))}
-                className="mt-2"
-              />
+              <div className="flex items-center mt-2 gap-2">
+                <Input
+                  type="number"
+                  value={investment}
+                  onChange={handleInvestmentInput}
+                  className="max-w-[200px]"
+                />
+                <span className="text-sm text-muted-foreground">Min: €10K, Max: €300K</span>
+              </div>
             </div>
             
             <div className="space-y-2">
@@ -90,11 +100,14 @@ const ROICalculator: React.FC = () => {
               <Slider 
                 id="equity"
                 min={1} 
-                max={40} 
-                step={1} 
+                max={20} 
+                step={0.5} 
                 value={[equity]} 
                 onValueChange={(value) => setEquity(value[0])} 
               />
+              <div className="mt-1 text-sm text-muted-foreground">
+                The €300K funding target represents 20% equity. Your stake will be proportional to your investment.
+              </div>
             </div>
             
             <div className="space-y-2">
@@ -104,8 +117,8 @@ const ROICalculator: React.FC = () => {
               </div>
               <Slider 
                 id="exit"
-                min={1} 
-                max={10} 
+                min={3} 
+                max={8} 
                 step={1} 
                 value={[yearsToExit]} 
                 onValueChange={(value) => setYearsToExit(value[0])} 
@@ -120,11 +133,14 @@ const ROICalculator: React.FC = () => {
               <Slider 
                 id="growth"
                 min={10} 
-                max={100} 
+                max={60} 
                 step={5} 
                 value={[growthRate]} 
                 onValueChange={(value) => setGrowthRate(value[0])} 
               />
+              <div className="mt-1 text-sm text-muted-foreground">
+                Based on our business model and market opportunity, we project 30-40% annual growth.
+              </div>
             </div>
             
             <div className="bg-muted p-4 rounded-md">
@@ -135,12 +151,13 @@ const ROICalculator: React.FC = () => {
                   <p>Projected exit value: <span className="font-semibold">{formatCurrency(projections[projections.length - 1]?.investmentValue)}</span></p>
                   <p>Total ROI: <span className="font-semibold">{projections[projections.length - 1]?.roi}%</span></p>
                   <p>Annualized ROI: <span className="font-semibold">{Math.round(projections[projections.length - 1]?.roi / yearsToExit)}% per year</span></p>
+                  <Button className="w-full mt-4 bg-ice-600 hover:bg-ice-700">Download Detailed Projections</Button>
                 </div>
               )}
             </div>
           </div>
           
-          <div className="h-80">
+          <div className="h-96">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart
                 data={projections}
@@ -151,8 +168,8 @@ const ROICalculator: React.FC = () => {
                 <YAxis tickFormatter={(value) => formatCurrency(value)} />
                 <Tooltip formatter={(value) => formatCurrency(Number(value))} labelFormatter={(label) => `Year ${label}`} />
                 <Legend />
-                <Line type="monotone" dataKey="investmentValue" name="Investment Value" stroke="#2563eb" activeDot={{ r: 8 }} />
-                <Line type="monotone" dataKey="companyValue" name="Company Value" stroke="#10b981" activeDot={{ r: 8 }} />
+                <Line type="monotone" dataKey="investmentValue" name="Your Investment Value" stroke="#2563eb" strokeWidth={2} activeDot={{ r: 8 }} />
+                <Line type="monotone" dataKey="companyValue" name="Company Value" stroke="#10b981" strokeWidth={1.5} activeDot={{ r: 6 }} />
               </LineChart>
             </ResponsiveContainer>
           </div>
