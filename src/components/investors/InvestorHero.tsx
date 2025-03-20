@@ -8,8 +8,8 @@ const InvestorHero: React.FC = () => {
     <div className="relative overflow-hidden bg-white py-16">
       <div className="absolute inset-0 bg-gradient-to-r from-blue-50 to-ice-50 opacity-50"></div>
       <div className="container mx-auto px-4 md:px-6 relative z-10">
-        <div className="flex flex-col md:flex-row items-center justify-between">
-          <div className="md:w-1/2 mb-10 md:mb-0 md:pr-10">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
+          <div className="md:col-span-5">
             <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
               ICE Alarm 
               <span className="block text-ice-600">Investor Overview</span>
@@ -28,28 +28,30 @@ const InvestorHero: React.FC = () => {
             </div>
           </div>
           
-          <div className="md:w-1/2 grid grid-cols-2 gap-4 w-full">
-            <div className="bg-white p-6 rounded-lg shadow-md">
-              <TrendingUp className="h-10 w-10 text-ice-600 mb-4" />
-              <h3 className="text-lg font-semibold mb-2">€1.5M</h3>
-              <p className="text-muted-foreground">Pre-Money Valuation</p>
-            </div>
-            <div className="bg-white p-6 rounded-lg shadow-md">
-              <Users className="h-10 w-10 text-ice-600 mb-4" />
-              <h3 className="text-lg font-semibold mb-2">20%</h3>
-              <p className="text-muted-foreground">Equity Offering</p>
-            </div>
-            <div className="bg-white p-6 rounded-lg shadow-md">
-              <LineChart className="h-10 w-10 text-ice-600 mb-4" />
-              <h3 className="text-lg font-semibold mb-2">€300K</h3>
-              <p className="text-muted-foreground">Investment Target</p>
-            </div>
-            <div className="bg-white p-6 rounded-lg shadow-md">
-              <div className="h-10 w-10 flex items-center justify-center text-ice-600 mb-4">
-                <span className="text-3xl font-bold">€</span>
+          <div className="md:col-span-7">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="bg-white p-6 rounded-lg shadow-md transform transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
+                <TrendingUp className="h-10 w-10 text-ice-600 mb-4" />
+                <h3 className="text-lg font-semibold mb-2">€1.5M</h3>
+                <p className="text-muted-foreground">Pre-Money Valuation</p>
               </div>
-              <h3 className="text-lg font-semibold mb-2">Q4 2025</h3>
-              <p className="text-muted-foreground">International Expansion</p>
+              <div className="bg-white p-6 rounded-lg shadow-md transform transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
+                <Users className="h-10 w-10 text-ice-600 mb-4" />
+                <h3 className="text-lg font-semibold mb-2">20%</h3>
+                <p className="text-muted-foreground">Equity Offering</p>
+              </div>
+              <div className="bg-white p-6 rounded-lg shadow-md transform transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
+                <LineChart className="h-10 w-10 text-ice-600 mb-4" />
+                <h3 className="text-lg font-semibold mb-2">€300K</h3>
+                <p className="text-muted-foreground">Investment Target</p>
+              </div>
+              <div className="bg-white p-6 rounded-lg shadow-md transform transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
+                <div className="h-10 w-10 flex items-center justify-center text-ice-600 mb-4">
+                  <span className="text-3xl font-bold">€</span>
+                </div>
+                <h3 className="text-lg font-semibold mb-2">Q4 2025</h3>
+                <p className="text-muted-foreground">International Expansion</p>
+              </div>
             </div>
           </div>
         </div>

@@ -9,10 +9,17 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsi
 
 const ROICalculator: React.FC = () => {
   const [investment, setInvestment] = useState(50000);
-  const [equity, setEquity] = useState(5);
-  const [yearsToExit, setYearsToExit] = useState(5);
+  const [equity, setEquity] = useState(3.33); // Starting equity based on investment ratio
+  const [yearsToExit, setYearsToExit] = useState(3);
   const [growthRate, setGrowthRate] = useState(30);
   const [projections, setProjections] = useState<any[]>([]);
+  
+  // Auto-calculate equity based on investment amount (€300K = 20% equity)
+  useEffect(() => {
+    // Calculate equity percentage based on investment amount
+    const newEquity = (investment / 300000) * 20;
+    setEquity(parseFloat(newEquity.toFixed(2)));
+  }, [investment]);
   
   // Calculate the projections when inputs change
   useEffect(() => {
@@ -97,16 +104,11 @@ const ROICalculator: React.FC = () => {
                 <Label htmlFor="equity">Equity Stake (%)</Label>
                 <span>{equity}%</span>
               </div>
-              <Slider 
-                id="equity"
-                min={1} 
-                max={20} 
-                step={0.5} 
-                value={[equity]} 
-                onValueChange={(value) => setEquity(value[0])} 
-              />
+              <div className="h-6 flex items-center px-2 bg-gray-100 rounded text-sm text-muted-foreground">
+                Auto-calculated based on investment amount (€300K = 20% equity)
+              </div>
               <div className="mt-1 text-sm text-muted-foreground">
-                The €300K funding target represents 20% equity. Your stake will be proportional to your investment.
+                Your equity stake is proportional to your investment relative to our €300K funding target (20% total equity).
               </div>
             </div>
             
@@ -118,11 +120,14 @@ const ROICalculator: React.FC = () => {
               <Slider 
                 id="exit"
                 min={3} 
-                max={8} 
+                max={5} 
                 step={1} 
                 value={[yearsToExit]} 
                 onValueChange={(value) => setYearsToExit(value[0])} 
               />
+              <div className="mt-1 text-sm text-muted-foreground">
+                Our projected exit timeline is between 3-5 years.
+              </div>
             </div>
             
             <div className="space-y-2">
