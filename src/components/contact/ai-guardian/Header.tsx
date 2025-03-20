@@ -14,10 +14,10 @@ const Header: React.FC = () => {
           {language === 'en' ? 'ICE AI Guardian' : 'ICE AI Guardian'}
         </span>
       </div>
-      <h2 className="text-2xl md:text-3xl font-bold mb-3">
+      <h2 className="text-3xl font-bold text-gray-900 mb-3">
         {language === 'en' ? 'Connect With Our Enhanced AI Assistant' : 'Conéctate Con Nuestro Asistente IA Mejorado'}
       </h2>
-      <p className="text-muted-foreground max-w-2xl mx-auto">
+      <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
         {language === 'en' 
           ? 'Our advanced AI assistant is integrated with all our business systems. Get instant answers about our services, create support tickets, or request specialized assistance from our team.' 
           : 'Nuestro asistente de IA avanzado está integrado con todos nuestros sistemas de negocio. Obtenga respuestas instantáneas sobre nuestros servicios, cree tickets de soporte o solicite asistencia especializada de nuestro equipo.'}

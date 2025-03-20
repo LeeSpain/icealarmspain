@@ -6,7 +6,6 @@ import HeroHeader from "./hero/HeroHeader";
 import FeatureCards from "./hero/FeatureCards";
 import DashboardPreview from "./hero/DashboardPreview";
 import HeroBackground from "./hero/HeroBackground";
-import Testimonials from "./Testimonials";
 
 const Hero: React.FC = () => {
   const { language } = useLanguage();
@@ -45,8 +44,6 @@ const Hero: React.FC = () => {
           </div>
         </div>
       </div>
-      
-      {/* Removed the bottom decorative wave completely */}
     </section>
   );
 };
