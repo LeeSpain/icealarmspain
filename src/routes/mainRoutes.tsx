@@ -18,6 +18,7 @@ import Testimonials from "../components/Testimonials";
 import SOSPendantPage from "../pages/SOSPendantPage";
 import MedicalDispenserPage from "../pages/MedicalDispenserPage";
 import GlucoseMonitorPage from "../pages/GlucoseMonitorPage";
+import InvestorPage from "../pages/InvestorPage";
 
 // Landing page component
 const Landing = () => {
@@ -76,6 +77,10 @@ export const mainRoutes: RouteConfig[] = [
   {
     path: "/glucose-monitor",
     element: <Layout><GlucoseMonitorPage /></Layout>
+  },
+  {
+    path: "/investors",
+    element: <InvestorPage />
   },
   {
     path: "*",
