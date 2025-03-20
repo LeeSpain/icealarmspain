@@ -59,7 +59,12 @@ const SectionRenderer: React.FC<SectionRendererProps> = ({
 
   // Display dashboard content for the main dashboard
   if (activeSection === 'dashboard' || !activeSection) {
-    return <DashboardMetrics data={{ onAction }} />;
+    // Create a dummy no-op function if onAction is not provided
+    const handleAction = onAction || ((action: string) => {
+      console.log('Action performed but no handler provided:', action);
+    });
+    
+    return <DashboardMetrics data={{ onAction: handleAction }} />;
   }
 
   switch (activeSection) {
