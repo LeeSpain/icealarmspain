@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { AreaChart, Area, LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { TrendingUp, Users, BadgeDollarSign, PieChart, Landmark, Calendar } from 'lucide-react';
@@ -6,27 +7,33 @@ import { ChartContainer, ChartTooltipContent } from "@/components/ui/chart";
 const data = [
   {
     name: 'Year 1',
-    users: 1000,
-    revenue: 300000,
-    profit: 50000
+    users: 500,
+    revenue: 150000,
+    profit: 30000
   },
   {
     name: 'Year 2',
-    users: 5000,
-    revenue: 1500000,
-    profit: 400000
+    users: 2000,
+    revenue: 600000,
+    profit: 180000
   },
   {
     name: 'Year 3',
-    users: 20000,
-    revenue: 6000000,
-    profit: 2000000
+    users: 5000,
+    revenue: 1500000,
+    profit: 500000
   },
   {
     name: 'Year 4',
-    users: 50000,
-    revenue: 15000000,
-    profit: 5500000
+    users: 10000,
+    revenue: 3000000,
+    profit: 1100000
+  },
+  {
+    name: 'Year 5',
+    users: 25000,
+    revenue: 7500000,
+    profit: 3000000
   },
 ];
 
@@ -203,33 +210,40 @@ const FinancialForecast: React.FC = () => {
             </div>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
             <div className="bg-white p-6 rounded-lg shadow-sm border-l-4 border-indigo-500 transition-transform hover:-translate-y-1 hover:shadow-md duration-300">
               <div className="text-indigo-600 font-semibold mb-2">Year 1</div>
-              <div className="text-2xl font-bold mb-1">1,000+ users</div>
-              <div className="text-muted-foreground">€300K revenue</div>
-              <div className="text-emerald-600 text-sm mt-1">€50K profit</div>
+              <div className="text-2xl font-bold mb-1">500 users</div>
+              <div className="text-muted-foreground">€150K revenue</div>
+              <div className="text-emerald-600 text-sm mt-1">€30K profit</div>
             </div>
             
             <div className="bg-white p-6 rounded-lg shadow-sm border-l-4 border-blue-500 transition-transform hover:-translate-y-1 hover:shadow-md duration-300">
               <div className="text-blue-600 font-semibold mb-2">Year 2</div>
-              <div className="text-2xl font-bold mb-1">5,000+ users</div>
-              <div className="text-muted-foreground">€1.5M revenue</div>
-              <div className="text-emerald-600 text-sm mt-1">€400K profit</div>
+              <div className="text-2xl font-bold mb-1">2,000 users</div>
+              <div className="text-muted-foreground">€600K revenue</div>
+              <div className="text-emerald-600 text-sm mt-1">€180K profit</div>
             </div>
             
             <div className="bg-white p-6 rounded-lg shadow-sm border-l-4 border-purple-500 transition-transform hover:-translate-y-1 hover:shadow-md duration-300">
               <div className="text-purple-600 font-semibold mb-2">Year 3</div>
-              <div className="text-2xl font-bold mb-1">20,000+ users</div>
-              <div className="text-muted-foreground">€6M revenue</div>
-              <div className="text-emerald-600 text-sm mt-1">€2M profit</div>
+              <div className="text-2xl font-bold mb-1">5,000 users</div>
+              <div className="text-muted-foreground">€1.5M revenue</div>
+              <div className="text-emerald-600 text-sm mt-1">€500K profit</div>
             </div>
             
             <div className="bg-white p-6 rounded-lg shadow-sm border-l-4 border-emerald-500 transition-transform hover:-translate-y-1 hover:shadow-md duration-300">
               <div className="text-emerald-600 font-semibold mb-2">Year 4</div>
-              <div className="text-2xl font-bold mb-1">50,000+ users</div>
-              <div className="text-muted-foreground">€15M revenue</div>
-              <div className="text-emerald-600 text-sm mt-1">€5.5M profit</div>
+              <div className="text-2xl font-bold mb-1">10,000 users</div>
+              <div className="text-muted-foreground">€3M revenue</div>
+              <div className="text-emerald-600 text-sm mt-1">€1.1M profit</div>
+            </div>
+            
+            <div className="bg-white p-6 rounded-lg shadow-sm border-l-4 border-amber-500 transition-transform hover:-translate-y-1 hover:shadow-md duration-300">
+              <div className="text-amber-600 font-semibold mb-2">Year 5</div>
+              <div className="text-2xl font-bold mb-1">25,000 users</div>
+              <div className="text-muted-foreground">€7.5M revenue</div>
+              <div className="text-emerald-600 text-sm mt-1">€3M profit</div>
             </div>
           </div>
         </div>
