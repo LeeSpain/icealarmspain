@@ -1,7 +1,7 @@
-
 import React from 'react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { AreaChart, Area, LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { TrendingUp, Users, BadgeDollarSign, PieChart, Landmark, Calendar } from 'lucide-react';
+import { ChartContainer, ChartTooltipContent } from "@/components/ui/chart";
 
 const data = [
   {
@@ -103,69 +103,134 @@ const FinancialForecast: React.FC = () => {
           </div>
         </div>
         
-        <div className="bg-white p-6 rounded-lg shadow-sm mb-12">
-          <h3 className="text-xl font-semibold mb-6 text-center">Financial Projection (5-Year Growth)</h3>
-          <div className="h-96">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart
-                data={data}
-                margin={{
-                  top: 20,
-                  right: 30,
-                  left: 20,
-                  bottom: 5,
-                }}
-              >
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
-                <YAxis yAxisId="left" orientation="left" stroke="#10b981" />
-                <YAxis yAxisId="right" orientation="right" stroke="#2563eb" />
-                <Tooltip 
-                  formatter={(value, name) => {
-                    if (name === 'revenue') {
-                      return [`€${(Number(value)/1000000).toFixed(1)}M`, 'Revenue'];
-                    } else if (name === 'profit') {
-                      return [`€${(Number(value)/1000000).toFixed(1)}M`, 'Profit'];
-                    }
-                    return [value, 'Active Users'];
+        <div className="bg-white p-8 rounded-xl shadow-sm mb-16">
+          <h3 className="text-2xl font-semibold mb-6 text-center text-gray-800">Financial Projection (5-Year Growth)</h3>
+          <p className="text-center text-muted-foreground mb-8 max-w-3xl mx-auto">
+            Our scalable business model projects exponential growth in users, revenue, and profit margins over the next 5 years.
+          </p>
+          
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+            <div className="bg-gray-50 p-6 rounded-lg">
+              <h4 className="text-lg font-medium mb-4 flex items-center">
+                <TrendingUp className="h-5 w-5 text-ice-600 mr-2" />
+                Revenue & Profit Growth
+              </h4>
+              <div className="h-80">
+                <ChartContainer
+                  config={{
+                    revenue: { color: "#2563eb" },
+                    profit: { color: "#8b5cf6" }
                   }}
-                />
-                <Legend />
-                <Bar yAxisId="left" dataKey="users" name="Active Users" fill="#10b981" />
-                <Bar yAxisId="right" dataKey="revenue" name="Revenue (€)" fill="#2563eb" />
-                <Bar yAxisId="right" dataKey="profit" name="Profit (€)" fill="#8b5cf6" />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <div className="bg-white p-6 rounded-lg shadow-sm border-l-4 border-ice-600">
-            <div className="text-ice-600 font-semibold mb-2">Year 1</div>
-            <div className="text-2xl font-bold mb-1">1,000+ users</div>
-            <div className="text-muted-foreground">€300K revenue</div>
-            <div className="text-emerald-600 text-sm mt-1">€50K profit</div>
+                >
+                  <AreaChart
+                    data={data}
+                    margin={{ top: 20, right: 30, left: 20, bottom: 10 }}
+                  >
+                    <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                    <XAxis dataKey="name" />
+                    <YAxis 
+                      tickFormatter={(value) => 
+                        value >= 1000000 
+                          ? `€${(value/1000000).toFixed(1)}M` 
+                          : `€${(value/1000).toFixed(0)}K`
+                      } 
+                    />
+                    <Tooltip content={<ChartTooltipContent />} />
+                    <Legend />
+                    <Area 
+                      type="monotone" 
+                      dataKey="revenue" 
+                      name="Revenue" 
+                      stroke="#2563eb" 
+                      fill="#2563eb" 
+                      fillOpacity={0.2} 
+                      strokeWidth={2} 
+                      activeDot={{ r: 6 }} 
+                    />
+                    <Area 
+                      type="monotone" 
+                      dataKey="profit" 
+                      name="Profit" 
+                      stroke="#8b5cf6" 
+                      fill="#8b5cf6" 
+                      fillOpacity={0.3} 
+                      strokeWidth={2} 
+                      activeDot={{ r: 6 }} 
+                    />
+                  </AreaChart>
+                </ChartContainer>
+              </div>
+            </div>
+            
+            <div className="bg-gray-50 p-6 rounded-lg">
+              <h4 className="text-lg font-medium mb-4 flex items-center">
+                <Users className="h-5 w-5 text-ice-600 mr-2" />
+                User Growth
+              </h4>
+              <div className="h-80">
+                <ChartContainer
+                  config={{
+                    users: { color: "#10b981" }
+                  }}
+                >
+                  <LineChart
+                    data={data}
+                    margin={{ top: 20, right: 30, left: 20, bottom: 10 }}
+                  >
+                    <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                    <XAxis dataKey="name" />
+                    <YAxis 
+                      tickFormatter={(value) => 
+                        value >= 1000 
+                          ? `${(value/1000).toFixed(0)}K` 
+                          : value
+                      } 
+                    />
+                    <Tooltip content={<ChartTooltipContent />} />
+                    <Legend />
+                    <Line 
+                      type="monotone" 
+                      dataKey="users" 
+                      name="Active Users" 
+                      stroke="#10b981" 
+                      strokeWidth={3} 
+                      dot={{ r: 6, strokeWidth: 2, fill: "white" }} 
+                      activeDot={{ r: 8 }} 
+                    />
+                  </LineChart>
+                </ChartContainer>
+              </div>
+            </div>
           </div>
           
-          <div className="bg-white p-6 rounded-lg shadow-sm border-l-4 border-ice-600">
-            <div className="text-ice-600 font-semibold mb-2">Year 2</div>
-            <div className="text-2xl font-bold mb-1">5,000+ users</div>
-            <div className="text-muted-foreground">€1.5M revenue</div>
-            <div className="text-emerald-600 text-sm mt-1">€400K profit</div>
-          </div>
-          
-          <div className="bg-white p-6 rounded-lg shadow-sm border-l-4 border-ice-600">
-            <div className="text-ice-600 font-semibold mb-2">Year 3</div>
-            <div className="text-2xl font-bold mb-1">20,000+ users</div>
-            <div className="text-muted-foreground">€6M revenue</div>
-            <div className="text-emerald-600 text-sm mt-1">€2M profit</div>
-          </div>
-          
-          <div className="bg-white p-6 rounded-lg shadow-sm border-l-4 border-ice-600">
-            <div className="text-ice-600 font-semibold mb-2">Year 4</div>
-            <div className="text-2xl font-bold mb-1">50,000+ users</div>
-            <div className="text-muted-foreground">€15M revenue</div>
-            <div className="text-emerald-600 text-sm mt-1">€5.5M profit</div>
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div className="bg-white p-6 rounded-lg shadow-sm border-l-4 border-indigo-500 transition-transform hover:-translate-y-1 hover:shadow-md duration-300">
+              <div className="text-indigo-600 font-semibold mb-2">Year 1</div>
+              <div className="text-2xl font-bold mb-1">1,000+ users</div>
+              <div className="text-muted-foreground">€300K revenue</div>
+              <div className="text-emerald-600 text-sm mt-1">€50K profit</div>
+            </div>
+            
+            <div className="bg-white p-6 rounded-lg shadow-sm border-l-4 border-blue-500 transition-transform hover:-translate-y-1 hover:shadow-md duration-300">
+              <div className="text-blue-600 font-semibold mb-2">Year 2</div>
+              <div className="text-2xl font-bold mb-1">5,000+ users</div>
+              <div className="text-muted-foreground">€1.5M revenue</div>
+              <div className="text-emerald-600 text-sm mt-1">€400K profit</div>
+            </div>
+            
+            <div className="bg-white p-6 rounded-lg shadow-sm border-l-4 border-purple-500 transition-transform hover:-translate-y-1 hover:shadow-md duration-300">
+              <div className="text-purple-600 font-semibold mb-2">Year 3</div>
+              <div className="text-2xl font-bold mb-1">20,000+ users</div>
+              <div className="text-muted-foreground">€6M revenue</div>
+              <div className="text-emerald-600 text-sm mt-1">€2M profit</div>
+            </div>
+            
+            <div className="bg-white p-6 rounded-lg shadow-sm border-l-4 border-emerald-500 transition-transform hover:-translate-y-1 hover:shadow-md duration-300">
+              <div className="text-emerald-600 font-semibold mb-2">Year 4</div>
+              <div className="text-2xl font-bold mb-1">50,000+ users</div>
+              <div className="text-muted-foreground">€15M revenue</div>
+              <div className="text-emerald-600 text-sm mt-1">€5.5M profit</div>
+            </div>
           </div>
         </div>
       </div>
