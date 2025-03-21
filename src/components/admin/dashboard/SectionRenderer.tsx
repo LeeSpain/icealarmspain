@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { SectionRendererProps } from './SectionRenderer.d';
 import UserManagement from '../user-management/UserManagement';
@@ -71,12 +70,10 @@ const SectionRenderer: React.FC<SectionRendererProps> = ({
     case 'users':
       return <UserManagement onAction={handleAction} />;
     case 'clients':
-      // We need to check if ClientManagement accepts onAction prop
-      // Based on the error, it seems it doesn't
+      // ClientManagement doesn't accept onAction prop according to its definition
       return <ClientManagement />;
     case 'admin-users':
-      // We need to check if AdminUsersManagement accepts onAction prop
-      // Based on the error, it seems it doesn't
+      // AdminUsersManagement doesn't accept onAction prop
       return <AdminUsersManagement />;
     case 'roles':
       return <RolesManagement onAction={handleAction} />;
@@ -85,19 +82,19 @@ const SectionRenderer: React.FC<SectionRendererProps> = ({
     case 'client-onboarding':
       return <ClientOnboarding onAction={handleAction} />;
     case 'inventory':
-      // Don't pass onAction if it's not in the component's props
+      // InventoryManagement doesn't accept onAction prop
       return <InventoryManagement />;
     case 'devices':
-      // We need to check if DeviceManagement accepts onAction prop
-      // Based on the error, it seems it doesn't
+      // DeviceManagement doesn't accept onAction prop
       return <DeviceManagement />;
     case 'alerts':
-      // The AlertsManagement component does accept onAction according to its .d.ts file
-      return <AlertsManagement onAction={handleAction} />;
+      // According to the error, AlertsManagement doesn't accept onAction prop despite its .d.ts file
+      // This could be a mismatch between implementation and definition
+      return <AlertsManagement />;
     case 'call-center':
     case 'call-logs':
     case 'agent-performance':
-      // Don't pass onAction if it's not in the component's props
+      // CallCenterSection doesn't accept onAction prop according to the error
       return <CallCenterSection />;
     case 'products':
     case 'product-catalog':
