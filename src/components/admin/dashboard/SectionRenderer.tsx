@@ -92,8 +92,8 @@ const SectionRenderer: React.FC<SectionRendererProps> = ({
       // Based on the error, it seems it doesn't
       return <DeviceManagement />;
     case 'alerts':
-      // Don't pass onAction if it's not in the component's props
-      return <AlertsManagement />; // Removed onAction prop here
+      // The AlertsManagement component does accept onAction according to its .d.ts file
+      return <AlertsManagement onAction={handleAction} />;
     case 'call-center':
     case 'call-logs':
     case 'agent-performance':
