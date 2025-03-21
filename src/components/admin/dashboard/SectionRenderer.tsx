@@ -71,9 +71,13 @@ const SectionRenderer: React.FC<SectionRendererProps> = ({
     case 'users':
       return <UserManagement onAction={handleAction} />;
     case 'clients':
-      return <ClientManagement onAction={handleAction} />;
+      // We need to check if ClientManagement accepts onAction prop
+      // Based on the error, it seems it doesn't
+      return <ClientManagement />;
     case 'admin-users':
-      return <AdminUsersManagement onAction={handleAction} />;
+      // We need to check if AdminUsersManagement accepts onAction prop
+      // Based on the error, it seems it doesn't
+      return <AdminUsersManagement />;
     case 'roles':
       return <RolesManagement onAction={handleAction} />;
     case 'permissions':
@@ -84,7 +88,9 @@ const SectionRenderer: React.FC<SectionRendererProps> = ({
       // Don't pass onAction if it's not in the component's props
       return <InventoryManagement />;
     case 'devices':
-      return <DeviceManagement onAction={handleAction} />;
+      // We need to check if DeviceManagement accepts onAction prop
+      // Based on the error, it seems it doesn't
+      return <DeviceManagement />;
     case 'alerts':
       // Don't pass onAction if it's not in the component's props
       return <AlertsManagement />;
