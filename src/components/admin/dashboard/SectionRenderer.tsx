@@ -71,29 +71,29 @@ const SectionRenderer: React.FC<SectionRendererProps> = ({
     case 'users':
       return <UserManagement onAction={handleAction} />;
     case 'clients':
-      return <ClientManagement />;
+      return <ClientManagement onAction={handleAction} />;
     case 'admin-users':
-      return <AdminUsersManagement />;
+      return <AdminUsersManagement onAction={handleAction} />;
     case 'roles':
-      return <RolesManagement />;
+      return <RolesManagement onAction={handleAction} />;
     case 'permissions':
-      return <PermissionsManagement />;
+      return <PermissionsManagement onAction={handleAction} />;
     case 'client-onboarding':
-      return <ClientOnboarding />;
+      return <ClientOnboarding onAction={handleAction} />;
     case 'inventory':
-      return <InventoryManagement />;
+      return <InventoryManagement onAction={handleAction} />;
     case 'devices':
-      return <DeviceManagement />;
+      return <DeviceManagement onAction={handleAction} />;
     case 'alerts':
-      return <AlertsManagement />;
+      return <AlertsManagement onAction={handleAction} />;
     case 'call-center':
     case 'call-logs':
     case 'agent-performance':
-      return <CallCenterSection />;
+      return <CallCenterSection onAction={handleAction} />;
     case 'products':
     case 'product-catalog':
     case 'product-pricing':
-      return <ProductsSection />;
+      return <ProductsSection onAction={handleAction} />;
     default:
       return (
         <PlaceholderSection 
