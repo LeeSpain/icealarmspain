@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { SectionRendererProps } from './SectionRenderer.d';
 import UserManagement from '../user-management/UserManagement';
@@ -80,7 +81,8 @@ const SectionRenderer: React.FC<SectionRendererProps> = ({
     case 'permissions':
       return <PermissionsManagement onAction={handleAction} />;
     case 'client-onboarding':
-      return <ClientOnboarding onAction={handleAction} />;
+      // ClientOnboarding doesn't accept onAction prop according to the error
+      return <ClientOnboarding />;
     case 'inventory':
       // InventoryManagement doesn't accept onAction prop
       return <InventoryManagement />;
