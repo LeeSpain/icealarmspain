@@ -81,7 +81,7 @@ const SectionRenderer: React.FC<SectionRendererProps> = ({
     case 'permissions':
       return <PermissionsManagement onAction={handleAction} />;
     case 'client-onboarding':
-      // ClientOnboarding doesn't accept onAction prop according to the error
+      // ClientOnboarding doesn't accept onAction prop
       return <ClientOnboarding />;
     case 'inventory':
       // InventoryManagement doesn't accept onAction prop
@@ -90,13 +90,12 @@ const SectionRenderer: React.FC<SectionRendererProps> = ({
       // DeviceManagement doesn't accept onAction prop
       return <DeviceManagement />;
     case 'alerts':
-      // According to the error, AlertsManagement doesn't accept onAction prop despite its .d.ts file
-      // This could be a mismatch between implementation and definition
+      // AlertsManagement doesn't accept onAction prop
       return <AlertsManagement />;
     case 'call-center':
     case 'call-logs':
     case 'agent-performance':
-      // CallCenterSection doesn't accept onAction prop according to the error
+      // CallCenterSection doesn't accept onAction prop
       return <CallCenterSection />;
     case 'products':
     case 'product-catalog':

@@ -12,24 +12,24 @@ interface HeroHeaderProps {
 const HeroHeader: React.FC<HeroHeaderProps> = ({ language, handleClick }) => {
   return (
     <div className="text-center space-y-6 animate-slide-down">
-      <div className="inline-flex items-center px-3 py-1.5 rounded-full bg-gradient-to-r from-ice-50/80 to-ice-100/80 border border-ice-200 text-ice-600 text-sm font-medium mb-6 shadow-sm backdrop-blur-sm">
+      <div className="inline-flex items-center px-3 py-1.5 rounded-full bg-gradient-to-r from-guardian-400/20 to-guardian-600/20 border border-guardian-400/30 text-guardian-600 text-sm font-medium mb-6 shadow-sm backdrop-blur-sm">
         <Shield size={16} className="mr-2" />
-        <span className="relative">
+        <span className="relative font-playfair">
           {language === 'en' ? 'AI-Powered Health Protection' : 'Protección de Salud con IA'}
           <Sparkles size={14} className="absolute -top-1 -right-4 text-ice-500 animate-pulse-gentle" />
         </span>
       </div>
       
-      <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-4">
+      <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold bg-gradient-to-r from-gray-900 via-ice-900 to-guardian-800 bg-clip-text text-transparent font-playfair mb-4">
         ICE Alarm
-        <span className="block text-ice-600">
+        <span className="block">
           {language === 'en' 
             ? 'Intelligent Health Monitoring' 
             : 'Monitoreo Inteligente de Salud'}
         </span>
       </h1>
       
-      <p className="text-xl text-muted-foreground max-w-3xl mx-auto mb-8">
+      <p className="text-xl text-muted-foreground max-w-3xl mx-auto mb-8 font-playfair">
         {language === 'en' 
           ? 'Join us in revolutionizing emergency response and health monitoring through AI-powered technology.' 
           : 'Únase a nosotros para revolucionar la respuesta de emergencia y el monitoreo de salud a través de tecnología impulsada por IA.'}
@@ -37,7 +37,7 @@ const HeroHeader: React.FC<HeroHeaderProps> = ({ language, handleClick }) => {
       
       <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-6">
         <Link to="/products" onClick={handleClick}>
-          <ButtonCustom size="lg" className="group relative overflow-hidden shadow-md">
+          <ButtonCustom size="lg" className="group relative overflow-hidden shadow-md font-playfair">
             <span className="relative z-10 flex items-center">
               {language === 'en' ? 'Explore Solutions' : 'Explorar Soluciones'}
               <ArrowRight size={18} className="ml-2 transition-transform group-hover:translate-x-1" />

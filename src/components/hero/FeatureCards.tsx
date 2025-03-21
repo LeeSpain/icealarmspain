@@ -48,8 +48,8 @@ const FeatureCards: React.FC<FeatureCardsProps> = ({ language }) => {
           <div className="mb-4 p-3 bg-gradient-to-br from-white to-gray-50 rounded-full shadow-subtle">
             {feature.icon}
           </div>
-          <h3 className="text-xl font-semibold mb-2 font-playfair">{feature.title}</h3>
-          <p className="text-muted-foreground">{feature.description}</p>
+          <h3 className="text-xl font-semibold mb-2 font-playfair bg-gradient-to-r from-gray-900 via-ice-900 to-guardian-800 bg-clip-text text-transparent">{feature.title}</h3>
+          <p className="text-muted-foreground font-playfair">{feature.description}</p>
         </div>
       ))}
     </div>
