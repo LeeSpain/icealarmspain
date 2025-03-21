@@ -93,7 +93,7 @@ const SectionRenderer: React.FC<SectionRendererProps> = ({
       return <DeviceManagement />;
     case 'alerts':
       // Don't pass onAction if it's not in the component's props
-      return <AlertsManagement />;
+      return <AlertsManagement />; // Removed onAction prop here
     case 'call-center':
     case 'call-logs':
     case 'agent-performance':
