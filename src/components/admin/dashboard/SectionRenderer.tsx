@@ -81,19 +81,23 @@ const SectionRenderer: React.FC<SectionRendererProps> = ({
     case 'client-onboarding':
       return <ClientOnboarding onAction={handleAction} />;
     case 'inventory':
-      return <InventoryManagement onAction={handleAction} />;
+      // Don't pass onAction if it's not in the component's props
+      return <InventoryManagement />;
     case 'devices':
       return <DeviceManagement onAction={handleAction} />;
     case 'alerts':
-      return <AlertsManagement onAction={handleAction} />;
+      // Don't pass onAction if it's not in the component's props
+      return <AlertsManagement />;
     case 'call-center':
     case 'call-logs':
     case 'agent-performance':
-      return <CallCenterSection onAction={handleAction} />;
+      // Don't pass onAction if it's not in the component's props
+      return <CallCenterSection />;
     case 'products':
     case 'product-catalog':
     case 'product-pricing':
-      return <ProductsSection onAction={handleAction} />;
+      // Don't pass onAction if it's not in the component's props
+      return <ProductsSection />;
     default:
       return (
         <PlaceholderSection 
