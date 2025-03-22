@@ -33,7 +33,7 @@ const ProductsHero: React.FC = () => {
           <div className="text-center space-y-6 animate-slide-down">
             <div className="inline-flex items-center px-3 py-1.5 rounded-full bg-gradient-to-r from-ice-50/80 to-ice-100/80 border border-ice-200 text-ice-600 text-sm font-medium mb-6 shadow-sm backdrop-blur-sm">
               <Shield size={16} className="mr-2" />
-              <span className="relative">
+              <span className="relative font-playfair">
                 {language === 'en' ? 'INNOVATIVE SOLUTIONS' : 'SOLUCIONES INNOVADORAS'}
                 <Sparkles size={14} className="absolute -top-1 -right-4 text-ice-500 animate-pulse-gentle" />
               </span>
@@ -59,7 +59,7 @@ const ProductsHero: React.FC = () => {
               <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 w-24 h-0.5 bg-gradient-to-r from-transparent via-guardian-300 to-transparent rounded-full opacity-60"></div>
             </div>
             
-            <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto py-2 rounded-lg mt-6">
+            <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto py-2 rounded-lg mt-6 font-playfair">
               {language === 'en' 
                 ? 'Experience peace of mind with our integrated ecosystem of protection devices and 24/7 emergency monitoring for independent living.' 
                 : 'Experimente tranquilidad con nuestro ecosistema integrado de dispositivos de protección y monitoreo de emergencia 24/7 para una vida independiente.'}
@@ -67,7 +67,7 @@ const ProductsHero: React.FC = () => {
             
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-6">
               <Link to="/devices">
-                <ButtonCustom size="lg" className="group relative overflow-hidden shadow-md">
+                <ButtonCustom size="lg" className="group relative overflow-hidden shadow-md font-playfair">
                   <span className="relative z-10 flex items-center">
                     {language === 'en' ? 'Explore Devices' : 'Explorar Dispositivos'}
                     <ArrowRight size={18} className="ml-2 transition-transform group-hover:translate-x-1" />
@@ -78,7 +78,7 @@ const ProductsHero: React.FC = () => {
               <ButtonCustom 
                 variant="outline" 
                 size="lg" 
-                className="border-ice-200 hover:border-ice-300 shadow-sm"
+                className="border-ice-200 hover:border-ice-300 shadow-sm font-playfair"
                 onClick={handleCheckoutClick}
                 data-testid="products-checkout-button"
               >
@@ -88,8 +88,6 @@ const ProductsHero: React.FC = () => {
           </div>
         </div>
       </div>
-      
-      {/* Removed bottom wave entirely */}
     </section>
   );
 };

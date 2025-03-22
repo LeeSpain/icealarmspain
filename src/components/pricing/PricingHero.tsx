@@ -17,7 +17,7 @@ const PricingHero: React.FC<PricingHeroProps> = ({ language }) => {
           <div className="text-center space-y-6 animate-slide-down">
             <div className="inline-flex items-center px-3 py-1.5 rounded-full bg-gradient-to-r from-ice-50/80 to-ice-100/80 border border-ice-200 text-ice-600 text-sm font-medium mb-6 shadow-sm backdrop-blur-sm">
               <CreditCard size={16} className="mr-2" />
-              <span className="relative">
+              <span className="relative font-playfair">
                 {language === 'en' ? 'FLEXIBLE PRICING' : 'PRECIOS FLEXIBLES'}
                 <Sparkles size={14} className="absolute -top-1 -right-4 text-ice-500 animate-pulse-gentle" />
               </span>
@@ -37,7 +37,7 @@ const PricingHero: React.FC<PricingHeroProps> = ({ language }) => {
               <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 w-24 h-0.5 bg-gradient-to-r from-transparent via-guardian-300 to-transparent rounded-full opacity-60"></div>
             </div>
             
-            <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto py-2 rounded-lg mt-6">
+            <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto py-2 rounded-lg mt-6 font-playfair">
               {language === 'en'
                 ? "Select the plan that best fits your needs with our flexible device options and monitoring services."
                 : "Seleccione el plan que mejor se adapte a sus necesidades con nuestras opciones flexibles de dispositivos y servicios de monitoreo."}

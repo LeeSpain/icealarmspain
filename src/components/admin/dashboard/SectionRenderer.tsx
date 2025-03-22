@@ -81,7 +81,7 @@ const SectionRenderer: React.FC<SectionRendererProps> = ({
     case 'permissions':
       return <PermissionsManagement onAction={handleAction} />;
     case 'client-onboarding':
-      // ClientOnboarding doesn't accept onAction prop
+      // Fixed: ClientOnboarding doesn't accept onAction prop
       return <ClientOnboarding />;
     case 'inventory':
       // InventoryManagement doesn't accept onAction prop

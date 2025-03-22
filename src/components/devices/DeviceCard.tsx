@@ -63,27 +63,27 @@ const DeviceCard: React.FC<DeviceCardProps> = ({
               <div className="bg-ice-50/50 p-3 rounded-full inline-block mr-3">
                 {icon}
               </div>
-              <h3 className="text-2xl font-semibold">{name}</h3>
+              <h3 className="text-2xl font-semibold font-playfair">{name}</h3>
             </div>
             
             <div className="mb-6 text-center md:text-left">
-              <p className="text-muted-foreground mb-4">
+              <p className="text-muted-foreground mb-4 font-playfair">
                 {description}
               </p>
-              <p className="text-muted-foreground">
+              <p className="text-muted-foreground font-playfair">
                 {longDescription}
               </p>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
               <div className="bg-ice-50/30 p-4 rounded-lg">
-                <h4 className="font-medium mb-3 text-ice-600 flex items-center">
+                <h4 className="font-medium mb-3 text-ice-600 flex items-center font-playfair">
                   <Check size={18} className="mr-2" />
                   {language === 'en' ? "Key Features" : "Características Principales"}
                 </h4>
                 <ul className="space-y-2">
                   {features.map((feature, idx) => (
-                    <li key={idx} className="flex items-start text-sm">
+                    <li key={idx} className="flex items-start text-sm font-playfair">
                       <div className="bg-green-50 rounded-full p-0.5 flex-shrink-0 mt-0.5 mr-2">
                         <Check size={14} className="text-green-500" />
                       </div>
@@ -94,13 +94,13 @@ const DeviceCard: React.FC<DeviceCardProps> = ({
               </div>
               
               <div className="bg-orange-50/30 p-4 rounded-lg">
-                <h4 className="font-medium mb-3 text-orange-600 flex items-center">
+                <h4 className="font-medium mb-3 text-orange-600 flex items-center font-playfair">
                   <Shield size={18} className="mr-2" />
                   {language === 'en' ? "Technical Specifications" : "Especificaciones Técnicas"}
                 </h4>
                 <ul className="space-y-2">
                   {techSpecs.map((spec, idx) => (
-                    <li key={idx} className="flex items-start text-sm">
+                    <li key={idx} className="flex items-start text-sm font-playfair">
                       <div className="bg-orange-50 rounded-full p-0.5 flex-shrink-0 mt-0.5 mr-2">
                         <Clock size={14} className="text-orange-500" />
                       </div>
@@ -124,10 +124,10 @@ const DeviceCard: React.FC<DeviceCardProps> = ({
               </div>
               
               <div className="text-center">
-                <p className="text-2xl font-bold text-orange-600 mb-1">
+                <p className="text-2xl font-bold text-orange-600 mb-1 font-playfair">
                   {language === 'en' ? "Starting from" : "Desde"} {price}
                 </p>
-                <p className="text-xs text-muted-foreground mb-4">
+                <p className="text-xs text-muted-foreground mb-4 font-playfair">
                   {language === 'en' ? "+ " : "+ "}{monthlyPrice} {language === 'en' ? "monthly monitoring" : "monitoreo mensual"}
                 </p>
                 
@@ -135,7 +135,7 @@ const DeviceCard: React.FC<DeviceCardProps> = ({
                   <Link to={path} className="flex-1">
                     <ButtonCustom 
                       variant="primary" 
-                      className="w-full group"
+                      className="w-full group font-playfair"
                     >
                       {language === 'en' ? "Learn More" : "Más Información"}
                       <ArrowRight size={16} className="ml-2 group-hover:translate-x-1 transition-transform" />
@@ -144,7 +144,7 @@ const DeviceCard: React.FC<DeviceCardProps> = ({
                   <Link to="/join" className="flex-1">
                     <ButtonCustom 
                       variant="outline" 
-                      className="w-full hover:bg-ice-50"
+                      className="w-full hover:bg-ice-50 font-playfair"
                     >
                       {language === 'en' ? "Add to Order" : "Añadir al Pedido"}
                     </ButtonCustom>
