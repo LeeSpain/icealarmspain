@@ -21,10 +21,10 @@ const ProductsCTA: React.FC = () => {
   return (
     <section className="bg-ice-600 text-white py-14">
       <div className="container mx-auto px-4 md:px-6 text-center">
-        <h2 className="text-3xl font-bold mb-6 font-playfair">
+        <h2 className="text-3xl font-bold mb-6">
           {language === 'en' ? "Ready to experience peace of mind?" : "¿Listo para experimentar tranquilidad?"}
         </h2>
-        <p className="text-lg mb-8 max-w-2xl mx-auto font-playfair">
+        <p className="text-lg mb-8 max-w-2xl mx-auto">
           {language === 'en'
             ? "Join thousands of satisfied customers who trust ICE Alarm España for their health monitoring and emergency response needs."
             : "Únase a miles de clientes satisfechos que confían en ICE Alarm España para sus necesidades de monitoreo de salud y respuesta de emergencia."}
@@ -35,12 +35,11 @@ const ProductsCTA: React.FC = () => {
             size="lg"
             onClick={handleCheckoutClick}
             data-testid="products-cta-checkout-button"
-            className="font-playfair"
           >
             {language === 'en' ? "Start Checkout Process" : "Iniciar Proceso de Compra"}
           </ButtonCustom>
           <Link to="/contact">
-            <ButtonCustom variant="outline" size="lg" className="text-white border-white hover:bg-white/10 font-playfair">
+            <ButtonCustom variant="outline" size="lg" className="text-white border-white hover:bg-white/10">
               {language === 'en' ? "Contact Our Team" : "Contactar a Nuestro Equipo"}
             </ButtonCustom>
           </Link>

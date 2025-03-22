@@ -11,8 +11,8 @@ export default {
 	theme: {
 		extend: {
 			fontFamily: {
-				inter: ['Inter', 'sans-serif'],
-				playfair: ['Playfair Display', 'serif']
+				sans: ['"SF Pro Display"', 'Inter', 'system-ui', 'sans-serif'],
+				inter: ['Inter', 'system-ui', 'sans-serif']
 			},
 			colors: {
 				background: "hsl(var(--background) / <alpha-value>)",
