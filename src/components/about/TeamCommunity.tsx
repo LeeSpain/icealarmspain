@@ -15,7 +15,7 @@ const TeamCommunity: React.FC<TeamCommunityProps> = ({ language }) => {
           <div className="glass-panel p-8 mb-16 transform transition-all duration-300 hover:translate-y-[-5px]">
             <div className="mb-4 text-ice-500 flex items-center">
               <Users size={24} className="mr-2" />
-              <h2 className="text-2xl md:text-3xl font-semibold text-ice-700 font-playfair">
+              <h2 className="text-2xl md:text-3xl font-semibold text-ice-700">
                 {language === 'en' ? 'Our Team' : 'Nuestro Equipo'}
               </h2>
             </div>
@@ -37,7 +37,7 @@ const TeamCommunity: React.FC<TeamCommunityProps> = ({ language }) => {
             
             <div className="mb-4 text-guardian-500 flex items-center relative z-10">
               <Globe size={24} className="mr-2" />
-              <h2 className="text-2xl md:text-3xl font-semibold text-guardian-700 font-playfair">
+              <h2 className="text-2xl md:text-3xl font-semibold text-guardian-700">
                 {language === 'en' ? 'Our Community' : 'Nuestra Comunidad'}
               </h2>
             </div>

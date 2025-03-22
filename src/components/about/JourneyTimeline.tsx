@@ -12,7 +12,7 @@ const JourneyTimeline: React.FC<JourneyTimelineProps> = ({ language }) => {
       <div className="container mx-auto px-4 md:px-6">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-semibold text-guardian-700 font-playfair mb-4">
+            <h2 className="text-3xl md:text-4xl font-semibold text-guardian-700 mb-4">
               {language === 'en' ? 'Our Journey' : 'Nuestro Camino'}
             </h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
@@ -28,7 +28,7 @@ const JourneyTimeline: React.FC<JourneyTimelineProps> = ({ language }) => {
             {/* 2018 - Foundation */}
             <div className="relative z-10 flex flex-col md:flex-row items-center mb-16">
               <div className="order-2 md:order-1 md:w-1/2 p-6 md:pr-12 text-right">
-                <h3 className="text-xl font-semibold text-ice-700 mb-2 font-playfair">2018</h3>
+                <h3 className="text-xl font-semibold text-ice-700 mb-2">2018</h3>
                 <h4 className="text-lg font-medium mb-3">
                   {language === 'en' ? 'Foundation' : 'Fundación'}
                 </h4>
@@ -49,7 +49,7 @@ const JourneyTimeline: React.FC<JourneyTimelineProps> = ({ language }) => {
             {/* 2020 - Expansion */}
             <div className="relative z-10 flex flex-col md:flex-row items-center mb-16">
               <div className="order-3 md:w-1/2 p-6 md:pl-12">
-                <h3 className="text-xl font-semibold text-guardian-700 mb-2 font-playfair">2020</h3>
+                <h3 className="text-xl font-semibold text-guardian-700 mb-2">2020</h3>
                 <h4 className="text-lg font-medium mb-3">
                   {language === 'en' ? 'Technology Expansion' : 'Expansión Tecnológica'}
                 </h4>
@@ -70,7 +70,7 @@ const JourneyTimeline: React.FC<JourneyTimelineProps> = ({ language }) => {
             {/* 2024 - Innovation (updated from 2022) */}
             <div className="relative z-10 flex flex-col md:flex-row items-center">
               <div className="order-2 md:order-1 md:w-1/2 p-6 md:pr-12 text-right">
-                <h3 className="text-xl font-semibold text-ice-700 mb-2 font-playfair">2024</h3>
+                <h3 className="text-xl font-semibold text-ice-700 mb-2">2024</h3>
                 <h4 className="text-lg font-medium mb-3">
                   {language === 'en' ? 'AI Integration' : 'Integración de IA'}
                 </h4>

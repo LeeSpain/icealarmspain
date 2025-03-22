@@ -15,7 +15,7 @@ const MissionVision: React.FC<MissionVisionProps> = ({ language }) => {
             <div className="glass-panel p-8 transform transition-all duration-300 hover:translate-y-[-5px]">
               <div className="mb-4 text-ice-500 flex items-center">
                 <Award size={24} className="mr-2" />
-                <h2 className="text-2xl md:text-3xl font-semibold text-ice-700 font-playfair">
+                <h2 className="text-2xl md:text-3xl font-semibold text-ice-700">
                   {language === 'en' ? 'Our Mission' : 'Nuestra Misión'}
                 </h2>
               </div>
@@ -34,7 +34,7 @@ const MissionVision: React.FC<MissionVisionProps> = ({ language }) => {
             <div className="glass-panel p-8 transform transition-all duration-300 hover:translate-y-[-5px]">
               <div className="mb-4 text-guardian-500 flex items-center">
                 <HeartHandshake size={24} className="mr-2" />
-                <h2 className="text-2xl md:text-3xl font-semibold text-guardian-700 font-playfair">
+                <h2 className="text-2xl md:text-3xl font-semibold text-guardian-700">
                   {language === 'en' ? 'Our Vision' : 'Nuestra Visión'}
                 </h2>
               </div>

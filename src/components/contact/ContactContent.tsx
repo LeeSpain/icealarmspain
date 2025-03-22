@@ -30,7 +30,7 @@ const ContactContent: React.FC = () => {
             
             <div className="relative z-10">
               <div className="text-center mb-8">
-                <h2 className="text-2xl md:text-3xl font-bold mb-3 font-playfair bg-gradient-to-r from-gray-900 via-ice-900 to-guardian-800 bg-clip-text text-transparent">
+                <h2 className="text-2xl md:text-3xl font-bold mb-3 bg-gradient-to-r from-gray-900 via-ice-900 to-guardian-800 bg-clip-text text-transparent">
                   {language === 'en' ? 'Send Us a Message' : 'Envíenos un Mensaje'}
                 </h2>
                 <p className="text-muted-foreground max-w-2xl mx-auto">
