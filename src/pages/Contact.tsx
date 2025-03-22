@@ -1,16 +1,21 @@
 
-import React from "react";
+import React, { useEffect } from "react";
 import { Helmet } from "react-helmet-async";
 import { useLanguage } from "@/context/LanguageContext";
 import ContactHero from "@/components/contact/ContactHero";
 import ContactContent from "@/components/contact/ContactContent";
+import Layout from "@/components/layout/Layout";
 
 const Contact: React.FC = () => {
   const { language } = useLanguage();
   const pageTitle = language === 'en' ? 'Contact Us' : 'Contáctanos';
   
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+  
   return (
-    <div className="flex flex-col min-h-screen bg-gradient-to-b from-gray-50 to-white">
+    <Layout>
       <Helmet>
         <title>{`ICE Alarm - ${pageTitle}`}</title>
         <meta 
@@ -23,14 +28,9 @@ const Contact: React.FC = () => {
         />
       </Helmet>
       
-      <main className="flex-grow">
-        {/* Hero Section */}
-        <ContactHero />
-        
-        {/* Content Section */}
-        <ContactContent />
-      </main>
-    </div>
+      <ContactHero />
+      <ContactContent />
+    </Layout>
   );
 };
 

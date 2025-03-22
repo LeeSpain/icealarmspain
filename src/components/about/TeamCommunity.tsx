@@ -2,6 +2,7 @@
 import React from "react";
 import { Users, Globe, Clock } from "lucide-react";
 import { ButtonCustom } from "@/components/ui/button-custom";
+import { Link } from "react-router-dom";
 
 interface TeamCommunityProps {
   language: string;
@@ -53,10 +54,12 @@ const TeamCommunity: React.FC<TeamCommunityProps> = ({ language }) => {
             </p>
 
             <div className="flex justify-center mt-4 relative z-10">
-              <ButtonCustom>
-                <Clock size={16} className="mr-2" />
-                {language === 'en' ? 'Contact Us Today' : 'Contáctenos Hoy'}
-              </ButtonCustom>
+              <Link to="/contact">
+                <ButtonCustom>
+                  <Clock size={16} className="mr-2" />
+                  {language === 'en' ? 'Contact Us Today' : 'Contáctenos Hoy'}
+                </ButtonCustom>
+              </Link>
             </div>
           </div>
         </div>
