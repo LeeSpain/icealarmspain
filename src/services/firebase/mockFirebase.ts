@@ -25,6 +25,11 @@ class MockUser implements Partial<User> {
   displayName: string | null;
   photoURL: string | null;
   emailVerified: boolean;
+  isAnonymous: boolean = false;
+  providerData: any[] = [];
+  refreshToken: string = '';
+  tenantId: string | null = null;
+  phoneNumber: string | null = null;
   
   constructor(email: string, displayName?: string) {
     this.uid = `mock-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
@@ -39,6 +44,19 @@ class MockUser implements Partial<User> {
     creationTime: new Date().toISOString(),
     lastSignInTime: new Date().toISOString()
   };
+  
+  // Add stub methods required by the User interface
+  getIdToken(): Promise<string> {
+    return Promise.resolve('mock-id-token');
+  }
+  
+  delete(): Promise<void> {
+    return Promise.resolve();
+  }
+  
+  reload(): Promise<void> {
+    return Promise.resolve();
+  }
 }
 
 // Mock Auth

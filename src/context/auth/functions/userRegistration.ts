@@ -1,5 +1,5 @@
 
-import { auth, createUserWithEmailAndPassword, updateProfile } from '@/services/firebase/auth';
+import { auth, createUserWithEmailAndPassword, updateProfile, FirebaseUser } from '@/services/firebase/auth';
 import { User } from '../types';
 import { determineUserRole } from '../utils';
 import { isMockAuthEnabled, isDevelopment } from '@/utils/environment';
@@ -64,7 +64,7 @@ export const signUp = async (
     try {
       // Create user with Firebase
       const userCredential = await createUserWithEmailAndPassword(email, password);
-      const firebaseUser = userCredential.user;
+      const firebaseUser = userCredential.user as FirebaseUser;
       
       // Update display name if provided
       if (userData?.display_name) {

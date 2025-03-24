@@ -1,4 +1,3 @@
-
 // Firebase authentication service
 import { mockAuth } from './mockFirebase';
 import { hasValidFirebaseConfig } from '@/utils/environment';
@@ -66,7 +65,7 @@ export const createUserWithEmailAndPassword = async (email: string, password: st
 
 export const onAuthStateChanged = (callback: (user: FirebaseUser | null) => void) => {
   if (!hasValidFirebaseConfig()) {
-    return mockAuth.onAuthStateChanged(callback);
+    return mockAuth.onAuthStateChanged(callback as (user: any) => void);
   }
   return firebaseOnAuthStateChanged(auth, callback);
 };
