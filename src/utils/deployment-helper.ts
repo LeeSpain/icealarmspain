@@ -19,6 +19,22 @@ import { getEnvironmentDiagnostics, hasValidFirebaseConfig } from './environment
     console.error('DEPLOYMENT ERROR: Invalid Firebase configuration');
     console.error('Please ensure VITE_FIREBASE_API_KEY and VITE_FIREBASE_PROJECT_ID are correctly set');
     console.error('Current values may be missing or using placeholder values');
+    
+    // Check if running in browser
+    if (typeof window !== 'undefined') {
+      // Set global flag for HTML fallback
+      window.missingFirebaseConfig = true;
+      
+      // Add detailed error information to console for administrators
+      console.error('===== HOW TO FIX THIS ERROR =====');
+      console.error('1. Go to your Vercel project dashboard');
+      console.error('2. Navigate to Settings > Environment Variables');
+      console.error('3. Add the following variables:');
+      console.error('   - VITE_FIREBASE_API_KEY: (copy from your .env file)');
+      console.error('   - VITE_FIREBASE_PROJECT_ID: (copy from your .env file)');
+      console.error('4. Redeploy your application');
+      console.error('================================');
+    }
   } else {
     console.log('Firebase configuration appears valid');
   }

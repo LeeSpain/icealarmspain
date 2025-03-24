@@ -6,7 +6,7 @@ import './styles/index.css'
 import { getEnvironment, isDevelopment, hasValidFirebaseConfig } from './utils/environment'
 import './utils/build-verification';
 import './utils/deployment-verification'; // Add our new verification utility
-import './utils/deployment-helper';
+import './utils/deployment-helper'; // Import our new helper
 
 // Display environment info in console
 console.log('Application starting...');
