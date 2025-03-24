@@ -4,6 +4,12 @@ interface Window {
   appRendered?: boolean;
   appRenderFailed?: boolean;
   renderApp?: () => void;
+  buildVerified?: boolean;
+  buildInfo?: {
+    timestamp: string;
+    environment: string;
+    firebaseConfigComplete: boolean;
+  };
   appDiagnostics?: {
     startTime: string;
     environment?: string;
