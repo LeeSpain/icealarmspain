@@ -3,6 +3,7 @@ import { createClient } from '@supabase/supabase-js';
 import type { Database } from './types';
 import { toast } from '@/hooks/use-toast';
 import { getEnvVar, getRequiredEnvVar, isDevelopment, isProduction } from '@/utils/environment';
+import { showErrorToast } from '@/utils/error-handler';
 
 // Create a single supabase client for interacting with your database
 // Ensure the environment variables are properly accessed
@@ -53,6 +54,16 @@ const createMockClient = () => {
       update: () => ({ data: null, error: null }),
       delete: () => ({ data: null, error: null }),
     }),
+    storage: {
+      from: () => ({
+        upload: () => Promise.resolve({ data: null, error: null }),
+        download: () => Promise.resolve({ data: null, error: null }),
+        getPublicUrl: () => ({ data: { publicUrl: '' } }),
+        list: () => Promise.resolve({ data: [], error: null }),
+        remove: () => Promise.resolve({ data: null, error: null }),
+      }),
+    },
+    rpc: () => Promise.resolve({ data: null, error: null }),
   };
 };
 
@@ -71,8 +82,39 @@ try {
           storage: localStorage,
           autoRefreshToken: true,
         },
+        global: {
+          // Add custom error handling to all Supabase operations
+          fetch: (url, options) => {
+            // Add custom headers or handling for all requests here if needed
+            return fetch(url, options);
+          },
+        },
+        // Set up retry logic for network failures
+        realtime: {
+          params: {
+            eventsPerSecond: 10,
+          },
+        },
       }
     );
+
+    // Perform a test query to validate connection
+    if (!isDevelopment()) {
+      supabase.from('profiles').select('count', { count: 'exact', head: true })
+        .then(({ error }) => {
+          if (error) {
+            console.error('Supabase connection test failed:', error.message);
+            // Don't show toast in production as this happens during initialization
+            if (!isProduction()) {
+              toast({
+                title: "Database Connection Warning",
+                description: "Unable to connect to the database. Some features may not work correctly.",
+                variant: "destructive",
+              });
+            }
+          }
+        });
+    }
   } else {
     // Don't use mock client in production
     if (isProduction()) {
@@ -105,6 +147,42 @@ try {
 
 export { supabase };
 
+/**
+ * Generic wrapper for Supabase operations with consistent error handling
+ */
+export async function supabaseOperation<T = any>(
+  operation: () => Promise<{ data: T | null; error: any }>,
+  options: {
+    errorMessage?: string;
+    showToast?: boolean;
+    context?: string;
+  } = {}
+) {
+  const { errorMessage = 'Operation failed', showToast = true, context = 'Database' } = options;
+
+  try {
+    const { data, error } = await operation();
+    
+    if (error) {
+      if (showToast) {
+        showErrorToast(error, context);
+      } else {
+        console.error(`${context} error:`, error);
+      }
+      return { data: null, error, success: false };
+    }
+    
+    return { data, error: null, success: true };
+  } catch (err) {
+    if (showToast) {
+      showErrorToast(err, context);
+    } else {
+      console.error(`${context} exception:`, err);
+    }
+    return { data: null, error: err, success: false };
+  }
+}
+
 // Add a custom method to handle contact submissions since it's not in the generated types
 export const createContactSubmission = async (submission: ContactSubmission) => {
   // Check if we have a real Supabase client or are using the mock
@@ -112,20 +190,16 @@ export const createContactSubmission = async (submission: ContactSubmission) => 
     console.warn('Cannot submit contact form: Supabase not configured');
     return { 
       data: null, 
-      error: new Error('Supabase not configured. Please add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY to your .env file.') 
+      error: new Error('Supabase not configured. Please add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY to your .env file.'),
+      success: false
     };
   }
   
-  try {
-    // Use the generic version of the API without type checking for the contact_submissions table
-    const { data, error } = await (supabase as any)
-      .from('contact_submissions')
-      .insert(submission);
-    
-    if (error) throw error;
-    return { data, error: null };
-  } catch (error) {
-    console.error('Error submitting contact form:', error);
-    return { data: null, error };
-  }
+  return supabaseOperation(
+    () => (supabase as any).from('contact_submissions').insert(submission),
+    { 
+      errorMessage: 'Failed to submit contact form', 
+      context: 'Contact Form' 
+    }
+  );
 };

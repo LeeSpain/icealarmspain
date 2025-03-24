@@ -1,128 +1,135 @@
 
-import { Contact, AlertType, TestResult, TestLog } from '@/components/emergency-contacts/types';
+import { supabase, supabaseOperation } from '@/integrations/supabase/client';
+import { Contact, TestResult } from "@/components/emergency-contacts/types";
+import { getEnvVar, isProduction } from '@/utils/environment';
 
-// In-memory storage for development mode
-let contacts: Contact[] = [
-  {
-    id: '1',
-    name: 'María García',
-    relationship: 'Spouse',
-    phone: '+34 612 345 678',
-    email: 'maria@example.com',
-    priority: 1,
-    receivesAlerts: true,
-    receivesUpdates: true
-  },
-  {
-    id: '2',
-    name: 'Carlos Rodríguez',
-    relationship: 'Son',
-    phone: '+34 623 456 789',
-    email: 'carlos@example.com',
-    priority: 2,
-    receivesAlerts: true,
-    receivesUpdates: false
-  },
-  {
-    id: '3',
-    name: 'Dr. Ana Martínez',
-    relationship: 'Doctor',
-    phone: '+34 634 567 890',
-    email: 'dr.martinez@hospital.es',
-    priority: 3,
-    receivesAlerts: false,
-    receivesUpdates: true
-  }
-];
-
-let testLogs: TestLog[] = [];
-
-export const getContacts = async (): Promise<Contact[]> => {
-  // Simulate API delay
-  await new Promise(resolve => setTimeout(resolve, 500));
-  return [...contacts];
-};
-
-export const addContact = async (contact: Omit<Contact, 'id'>): Promise<Contact> => {
-  // Simulate API delay
-  await new Promise(resolve => setTimeout(resolve, 800));
-  
-  const newContact: Contact = {
-    ...contact,
-    id: Date.now().toString()
-  };
-  
-  contacts.push(newContact);
-  return newContact;
-};
-
-export const updateContact = async (id: string, updatedContact: Partial<Contact>): Promise<Contact> => {
-  // Simulate API delay
-  await new Promise(resolve => setTimeout(resolve, 600));
-  
-  const index = contacts.findIndex(c => c.id === id);
-  if (index === -1) {
-    throw new Error('Contact not found');
+/**
+ * Fetches emergency contacts for the current user
+ */
+export async function getContacts(): Promise<Contact[]> {
+  const { data, error } = await supabase
+    .from('emergency_contacts')
+    .select('*')
+    .order('is_primary', { ascending: false })
+    .order('created_at', { ascending: true });
+    
+  if (error) {
+    console.error('Error fetching contacts:', error);
+    throw error;
   }
   
-  // Update contact
-  contacts[index] = { ...contacts[index], ...updatedContact };
-  return contacts[index];
-};
+  return data || [];
+}
 
-export const deleteContact = async (id: string): Promise<void> => {
-  // Simulate API delay
-  await new Promise(resolve => setTimeout(resolve, 400));
+/**
+ * Adds a new emergency contact
+ */
+export async function addContact(contact: Omit<Contact, 'id'>): Promise<Contact> {
+  const { data, error, success } = await supabaseOperation(
+    () => supabase.from('emergency_contacts').insert(contact).select('*').single(),
+    { context: 'Emergency Contacts' }
+  );
   
-  const index = contacts.findIndex(c => c.id === id);
-  if (index === -1) {
-    throw new Error('Contact not found');
+  if (!success || error || !data) {
+    throw error || new Error('Failed to add contact');
   }
   
-  contacts.splice(index, 1);
-};
+  return data as Contact;
+}
 
-export const testAlert = async (alertType: AlertType, contactIds: string[]): Promise<TestResult> => {
-  // Simulate API delay
-  await new Promise(resolve => setTimeout(resolve, 1500));
+/**
+ * Updates an existing emergency contact
+ */
+export async function updateContact(id: string, updatedContact: Partial<Contact>): Promise<Contact> {
+  const { data, error, success } = await supabaseOperation(
+    () => supabase
+      .from('emergency_contacts')
+      .update({ ...updatedContact, updated_at: new Date().toISOString() })
+      .eq('id', id)
+      .select('*')
+      .single(),
+    { context: 'Emergency Contacts' }
+  );
   
-  // Validate contacts exist
-  const selectedContacts = contacts.filter(c => contactIds.includes(c.id));
-  if (selectedContacts.length !== contactIds.length) {
-    throw new Error('One or more contacts not found');
+  if (!success || error || !data) {
+    throw error || new Error('Failed to update contact');
   }
   
-  const timestamp = new Date();
-  const success = Math.random() > 0.1; // 90% success rate for demo
+  return data as Contact;
+}
+
+/**
+ * Deletes an emergency contact
+ */
+export async function deleteContact(id: string): Promise<void> {
+  const { error, success } = await supabaseOperation(
+    () => supabase.from('emergency_contacts').delete().eq('id', id),
+    { context: 'Emergency Contacts' }
+  );
   
-  // Create test logs for each contact
-  selectedContacts.forEach(contact => {
-    const deliveryMethod = Math.random() > 0.5 ? 'sms' : 'email';
-    testLogs.push({
-      contactId: contact.id,
-      timestamp: new Date(timestamp),
-      alertType,
-      delivered: success,
-      deliveryMethod,
-      message: `Test ${alertType} alert to ${contact.name}`
+  if (!success || error) {
+    throw error || new Error('Failed to delete contact');
+  }
+}
+
+/**
+ * Sends a test alert to specified emergency contacts
+ */
+export async function testAlert(
+  alertType: 'emergency' | 'medical' | 'activity' | 'all', 
+  contactIds: string[]
+): Promise<TestResult> {
+  try {
+    // In development, mock the alert test
+    if (!isProduction()) {
+      // Simulate API delay
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // Get contact details to return recipient information
+      const { data: contacts } = await supabase
+        .from('emergency_contacts')
+        .select('name')
+        .in('id', contactIds);
+      
+      const recipients = contacts?.map(c => c.name) || [];
+      
+      return {
+        success: true,
+        alertType,
+        timestamp: new Date().toISOString(),
+        recipients,
+        message: `Test ${alertType} alert sent successfully`,
+      };
+    }
+    
+    // In production, use the real API
+    const apiUrl = getEnvVar('VITE_API_URL', '') + '/api/alert/test';
+    
+    const response = await fetch(apiUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        alertType,
+        contactIds,
+      }),
     });
-  });
-  
-  const result: TestResult = {
-    id: `test-${Date.now()}`,
-    timestamp: timestamp,
-    type: alertType,
-    success,
-    recipients: selectedContacts.map(c => c.name),
-    errorMessage: success ? undefined : 'Simulated test failure'
-  };
-  
-  return result;
-};
-
-export const getTestLogs = async (): Promise<TestLog[]> => {
-  // Simulate API delay
-  await new Promise(resolve => setTimeout(resolve, 300));
-  return [...testLogs];
-};
-
+    
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Failed to send test alert');
+    }
+    
+    return await response.json();
+  } catch (error) {
+    console.error('Error testing alert:', error);
+    return {
+      success: false,
+      alertType,
+      timestamp: new Date().toISOString(),
+      recipients: [],
+      errorMessage: error.message || 'Failed to send test alert',
+    };
+  }
+}
