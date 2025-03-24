@@ -78,122 +78,60 @@
   </head>
 
   <body>
-    <div id="root">
-      <!-- This content will only show if JavaScript fails to load or initialize -->
+    <div id="root"></div>
+
+    <!-- This content will show if React app doesn't load -->
+    <div id="fallback-content" class="fallback-content">
+      <div class="loading-spinner"></div>
+      <h1>Loading Ice Guardian Alert...</h1>
+      <p>If this message persists, please ensure JavaScript is enabled and refresh the page.</p>
+      <div id="env-error" class="env-error">
+        <strong>Missing environment variables detected.</strong><br>
+        Make sure VITE_FIREBASE_API_KEY and VITE_FIREBASE_PROJECT_ID are set in your hosting environment.
+      </div>
+      <div id="firebase-config-missing" class="firebase-config-missing">
+        <h3>Firebase Configuration Error</h3>
+        <p>This site requires Firebase configuration to function properly.</p>
+        <p>If you are the site administrator, please add the following environment variables to your hosting platform:</p>
+        <ul style="text-align: left; margin-top: 10px;">
+          <li>VITE_FIREBASE_API_KEY</li>
+          <li>VITE_FIREBASE_PROJECT_ID</li>
+        </ul>
+      </div>
+      <div id="troubleshooting-guide" class="troubleshooting-guide">
+        <h3>Troubleshooting Steps:</h3>
+        <ol>
+          <li>Check if your Vercel environment variables are set correctly</li>
+          <li>Clear your browser cache and refresh</li>
+          <li>Try using an incognito/private browser window</li>
+          <li>Check browser console for specific errors (F12 or right-click → Inspect → Console)</li>
+        </ol>
+        <p>If you are the administrator, <a href="https://vercel.com/docs/concepts/projects/environment-variables" target="_blank">visit Vercel docs</a> for help with environment variables.</p>
+      </div>
+      <p id="debug-info" style="font-size: 12px; margin-top: 20px; color: #666;"></p>
     </div>
+
     <script src="https://cdn.gpteng.co/gptengineer.js" type="module"></script>
     <script type="module" src="/src/main.tsx"></script>
     <script>
-      // Show fallback content only if React doesn't load after a delay
-      window.addEventListener('load', function() {
-        setTimeout(function() {
-          const root = document.getElementById('root');
-          if (!root || root.children.length === 0) {
-            // React hasn't loaded, show fallback
-            const fallback = document.createElement('div');
-            fallback.className = 'fallback-content';
-            fallback.style.display = 'block';
-            fallback.innerHTML = `
-              <div class="loading-spinner"></div>
-              <h1>Loading Ice Guardian Alert...</h1>
-              <p>If this message persists, please ensure JavaScript is enabled and refresh the page.</p>
-              <div id="env-error" class="env-error">
-                <strong>Missing environment variables detected.</strong><br>
-                Make sure VITE_FIREBASE_API_KEY and VITE_FIREBASE_PROJECT_ID are set in your hosting environment.
-              </div>
-              <div id="firebase-config-missing" class="firebase-config-missing">
-                <h3>Firebase Configuration Error</h3>
-                <p>This site requires Firebase configuration to function properly.</p>
-                <p>If you are the site administrator, please add the following environment variables to your hosting platform:</p>
-                <ul style="text-align: left; margin-top: 10px;">
-                  <li>VITE_FIREBASE_API_KEY</li>
-                  <li>VITE_FIREBASE_PROJECT_ID</li>
-                </ul>
-              </div>
-              <div id="troubleshooting-guide" class="troubleshooting-guide" style="display: block;">
-                <h3>Troubleshooting Steps:</h3>
-                <ol>
-                  <li>Check if your Vercel environment variables are set correctly</li>
-                  <li>Clear your browser cache and refresh</li>
-                  <li>Try using an incognito/private browser window</li>
-                  <li>Check browser console for specific errors (F12 or right-click → Inspect → Console)</li>
-                </ol>
-                <p>If you are the administrator, <a href="https://vercel.com/docs/concepts/projects/environment-variables" target="_blank">visit Vercel docs</a> for help with environment variables.</p>
-              </div>
-              <p id="debug-info" style="font-size: 12px; margin-top: 20px; color: #666;"></p>
-            `;
-            
-            // Add some debug info that might help troubleshoot
-            const debugInfo = fallback.querySelector('#debug-info');
-            if (debugInfo) {
-              debugInfo.textContent = `Browser: ${navigator.userAgent}, Time: ${new Date().toISOString()}`;
-              
-              // Show troubleshooting guide
-              const troubleshootingGuide = fallback.querySelector('#troubleshooting-guide');
-              if (troubleshootingGuide) {
-                troubleshootingGuide.style.display = 'block';
-              }
-              
-              // Try to detect if Firebase config is missing
-              if (window.missingFirebaseConfig) {
-                const envError = fallback.querySelector('#env-error');
-                if (envError) {
-                  envError.style.display = 'block';
-                }
-                
-                const firebaseError = fallback.querySelector('#firebase-config-missing');
-                if (firebaseError) {
-                  firebaseError.style.display = 'block';
-                }
-              }
-            }
-            
-            if (root.children.length === 0) {
-              root.appendChild(fallback);
-            }
-          }
-        }, 2000); // Reduced to 2 seconds for faster feedback
-      });
-      
-      // Add a global variable that our app can set if Firebase config is missing
+      // Global variables for app state
       window.missingFirebaseConfig = false;
+      window.appRendered = false;
+      window.appRenderFailed = false;
       
-      // Immediately check for environment variable issues
-      // This will run before our React app has a chance to set the flag
-      (function checkEnvVars() {
-        try {
-          // Simple check for any localStorage items that might indicate a previous error
-          const previousError = localStorage.getItem('firebaseConfigError');
-          if (previousError) {
-            window.missingFirebaseConfig = true;
-            console.warn('Previous Firebase config error detected');
-          }
-        } catch (e) {
-          // Ignore localStorage errors
-        }
-      })();
-      
-      // More robust error handling
-      window.addEventListener('error', function(e) {
-        console.error('Global error caught:', e.error || e.message);
-        const debugInfo = document.getElementById('debug-info');
-        if (debugInfo) {
-          debugInfo.textContent += `\nError: ${e.error?.message || e.message || 'Unknown error'}`;
-        }
-        
-        // Check if this is a Firebase config error
-        if ((e.error?.message || e.message || '').includes('Firebase') || 
-            (e.error?.message || e.message || '').includes('API_KEY')) {
-          window.missingFirebaseConfig = true;
+      // Function to show fallback content
+      function showFallbackContent(error) {
+        const fallback = document.getElementById('fallback-content');
+        if (fallback) {
+          fallback.style.display = 'block';
           
-          const envError = document.getElementById('env-error');
-          if (envError) {
-            envError.style.display = 'block';
-          }
-          
-          const firebaseError = document.getElementById('firebase-config-missing');
-          if (firebaseError) {
-            firebaseError.style.display = 'block';
+          // Show debug info
+          const debugInfo = document.getElementById('debug-info');
+          if (debugInfo) {
+            debugInfo.textContent = `Browser: ${navigator.userAgent}, Time: ${new Date().toISOString()}`;
+            if (error) {
+              debugInfo.textContent += `\nError: ${error.message || 'Unknown error'}`;
+            }
           }
           
           // Show troubleshooting guide
@@ -202,13 +140,91 @@
             troubleshootingGuide.style.display = 'block';
           }
           
+          // If Firebase config is missing, show related errors
+          if (window.missingFirebaseConfig) {
+            const envError = document.getElementById('env-error');
+            if (envError) {
+              envError.style.display = 'block';
+            }
+            
+            const firebaseError = document.getElementById('firebase-config-missing');
+            if (firebaseError) {
+              firebaseError.style.display = 'block';
+            }
+          }
+        }
+      }
+      
+      // Show fallback content if React doesn't load after a delay
+      let appInitTimeout = setTimeout(function() {
+        if (!window.appRendered && !window.appRenderFailed) {
+          console.warn('App initialization timeout reached');
+          showFallbackContent({ message: 'App initialization timed out' });
+        }
+      }, 4000);
+      
+      // Clear the timeout if app renders successfully
+      document.addEventListener('react-rendered', function() {
+        clearTimeout(appInitTimeout);
+        const fallback = document.getElementById('fallback-content');
+        if (fallback) {
+          fallback.style.display = 'none';
+        }
+      });
+      
+      // Listen for app start event
+      document.addEventListener('app-init-started', function() {
+        console.log('App initialization started');
+      });
+      
+      // Immediately check for environment variable issues
+      (function checkEnvVars() {
+        try {
+          // Check for any localStorage items that might indicate a previous error
+          const previousError = localStorage.getItem('firebaseConfigError');
+          if (previousError) {
+            window.missingFirebaseConfig = true;
+            console.warn('Previous Firebase config error detected');
+            showFallbackContent();
+          }
+        } catch (e) {
+          // Ignore localStorage errors
+        }
+      })();
+      
+      // Global error handling
+      window.addEventListener('error', function(e) {
+        console.error('Global error caught:', e.error || e.message);
+        
+        // Check if this is a Firebase config error
+        if ((e.error?.message || e.message || '').includes('Firebase') || 
+            (e.error?.message || e.message || '').includes('API_KEY')) {
+          window.missingFirebaseConfig = true;
+          showFallbackContent(e);
+          
           // Store the error in localStorage for future page loads
           try {
             localStorage.setItem('firebaseConfigError', 'true');
           } catch (e) {
             // Ignore localStorage errors
           }
+        } else {
+          // For non-Firebase errors, still show fallback but without the Firebase-specific errors
+          showFallbackContent(e);
         }
+      });
+      
+      // Add a special fallback for if the module script fails to load
+      window.addEventListener('DOMContentLoaded', function() {
+        const root = document.getElementById('root');
+        
+        // After a short delay, check if the root is still empty
+        setTimeout(function() {
+          if (root && (!root.children || root.children.length === 0)) {
+            console.warn('Root element is empty after DOMContentLoaded + delay');
+            showFallbackContent({ message: 'Application failed to initialize' });
+          }
+        }, 2000);
       });
     </script>
   </body>

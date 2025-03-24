@@ -11,6 +11,7 @@ import ErrorBoundary from "@/components/layout/ErrorBoundary";
 import { isDevelopment, isDebugBuild, hasValidFirebaseConfig } from "./utils/environment";
 import LoadingSpinner from "@/components/ui/loading-spinner";
 
+// Standalone error component for Firebase configuration issues
 function ConfigErrorDisplay() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
@@ -43,62 +44,115 @@ function ConfigErrorDisplay() {
   );
 }
 
+// Simplified app for development with missing Firebase config
+function MinimalApp() {
+  return (
+    <HelmetProvider>
+      <LanguageProvider>
+        <Router>
+          <div className="min-h-screen p-8">
+            <div className="max-w-4xl mx-auto">
+              <h1 className="text-3xl font-bold mb-6">Ice Guardian Alert (Development Mode)</h1>
+              <div className="bg-amber-50 border border-amber-200 p-4 rounded-md mb-6">
+                <p className="font-medium">⚠️ Running with missing Firebase configuration</p>
+                <p className="mt-2 text-sm">
+                  The app is running in a minimal mode because Firebase configuration is missing.
+                  Only basic UI components will work. Add the required environment variables to enable full functionality.
+                </p>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="bg-white p-6 rounded-lg shadow">
+                  <h2 className="text-xl font-semibold mb-4">Navigation Demo</h2>
+                  <p className="mb-4">Public routes that don't require authentication</p>
+                  <nav className="space-y-2">
+                    <a href="/" className="block text-blue-600 hover:underline">Home</a>
+                    <a href="/about" className="block text-blue-600 hover:underline">About</a>
+                    <a href="/contact" className="block text-blue-600 hover:underline">Contact</a>
+                    <a href="/products" className="block text-blue-600 hover:underline">Products</a>
+                  </nav>
+                </div>
+                <div className="bg-white p-6 rounded-lg shadow">
+                  <h2 className="text-xl font-semibold mb-4">Configuration Help</h2>
+                  <p className="mb-4">To fix this issue:</p>
+                  <ol className="list-decimal pl-5 space-y-2">
+                    <li>Create a .env file with Firebase values</li>
+                    <li>Add VITE_FIREBASE_API_KEY and VITE_FIREBASE_PROJECT_ID</li>
+                    <li>Restart the development server</li>
+                  </ol>
+                </div>
+              </div>
+            </div>
+          </div>
+        </Router>
+      </LanguageProvider>
+    </div>
+  );
+}
+
 function App() {
   // Log that App component is rendering (helps with debugging)
   console.log("App component rendering");
   
   // Check Firebase configuration before rendering
   const validFirebaseConfig = hasValidFirebaseConfig();
+  
+  console.log("Firebase config valid:", validFirebaseConfig);
+  console.log("API_KEY defined:", !!import.meta.env.VITE_FIREBASE_API_KEY);
+  console.log("PROJECT_ID defined:", !!import.meta.env.VITE_FIREBASE_PROJECT_ID);
+  
+  // Use different approaches based on environment and config
   if (!validFirebaseConfig) {
-    console.error("Invalid Firebase configuration detected in App component");
-    console.log("API_KEY defined:", !!import.meta.env.VITE_FIREBASE_API_KEY);
-    console.log("PROJECT_ID defined:", !!import.meta.env.VITE_FIREBASE_PROJECT_ID);
+    console.warn("Missing Firebase configuration");
+    
+    // In production, show the config error
+    if (!isDevelopment()) {
+      return <ConfigErrorDisplay />;
+    }
+    
+    // In development, show a minimal app
+    return <MinimalApp />;
   }
   
-  // Always render the app, but show a config error component if needed
+  // Normal app with valid config
   return (
     <ErrorBoundary>
-      {!validFirebaseConfig ? (
-        <ConfigErrorDisplay />
-      ) : (
-        <HelmetProvider>
-          <AuthProvider>
-            <LanguageProvider>
-              <Router>
-                <Routes>
-                  {routes.map((route) => {
-                    console.log(`Registering route: ${route.path}`);
-                    
-                    // Protected routes with optional role restrictions
-                    if (route.protected) {
-                      return (
-                        <Route
-                          key={route.path}
-                          path={route.path}
-                          element={
-                            <AuthGuard allowedRoles={route.allowedRoles}>
-                              {route.element}
-                            </AuthGuard>
-                          }
-                        />
-                      );
-                    }
-                    // Regular routes
+      <HelmetProvider>
+        <AuthProvider>
+          <LanguageProvider>
+            <Router>
+              <Routes>
+                {routes.map((route) => {
+                  console.log(`Registering route: ${route.path}`);
+                  
+                  // Protected routes with optional role restrictions
+                  if (route.protected) {
                     return (
                       <Route
                         key={route.path}
                         path={route.path}
-                        element={route.element}
+                        element={
+                          <AuthGuard allowedRoles={route.allowedRoles}>
+                            {route.element}
+                          </AuthGuard>
+                        }
                       />
                     );
-                  })}
-                </Routes>
-              </Router>
-              <Toaster />
-            </LanguageProvider>
-          </AuthProvider>
-        </HelmetProvider>
-      )}
+                  }
+                  // Regular routes
+                  return (
+                    <Route
+                      key={route.path}
+                      path={route.path}
+                      element={route.element}
+                    />
+                  );
+                })}
+              </Routes>
+            </Router>
+            <Toaster />
+          </LanguageProvider>
+        </AuthProvider>
+      </HelmetProvider>
     </ErrorBoundary>
   );
 }

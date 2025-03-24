@@ -85,17 +85,45 @@ export const isMockAuthEnabled = (): boolean => {
 
 /**
  * Check if Firebase configuration is valid
+ * This is a more robust check that handles various edge cases
  */
 export const hasValidFirebaseConfig = (): boolean => {
-  const apiKey = import.meta.env.VITE_FIREBASE_API_KEY;
-  const projectId = import.meta.env.VITE_FIREBASE_PROJECT_ID;
-  
-  return Boolean(
-    apiKey && 
-    projectId && 
-    apiKey !== 'your_api_key_here' && 
-    projectId !== 'your_project_id_here'
-  );
+  try {
+    const apiKey = import.meta.env.VITE_FIREBASE_API_KEY;
+    const projectId = import.meta.env.VITE_FIREBASE_PROJECT_ID;
+    
+    // Check for missing values
+    if (!apiKey || !projectId) {
+      console.warn(`Firebase config incomplete: apiKey=${!!apiKey}, projectId=${!!projectId}`);
+      return false;
+    }
+    
+    // Check for placeholder values
+    const placeholderPatterns = [
+      'your_', 'YOUR_', 'placeholder', 'example', 
+      'undefined', 'null', 'REPLACE_WITH', '${', '{{'
+    ];
+    
+    const isPlaceholder = (value: string): boolean => {
+      return placeholderPatterns.some(pattern => value.includes(pattern));
+    };
+    
+    if (isPlaceholder(apiKey) || isPlaceholder(projectId)) {
+      console.warn('Firebase config contains placeholder values');
+      return false;
+    }
+    
+    // Additional validation for API key format
+    if (apiKey.length < 10) {
+      console.warn('Firebase API key appears to be invalid (too short)');
+      return false;
+    }
+    
+    return true;
+  } catch (error) {
+    console.error('Error checking Firebase config:', error);
+    return false;
+  }
 };
 
 /**
@@ -181,3 +209,17 @@ export const getEnvironmentDiagnostics = (): Record<string, unknown> => {
   };
 };
 
+/**
+ * Clear any stored error flags in localStorage
+ * Useful for resetting after fixing environment issues
+ */
+export const clearStoredErrors = (): void => {
+  if (typeof window !== 'undefined' && window.localStorage) {
+    try {
+      localStorage.removeItem('firebaseConfigError');
+      console.log('Cleared stored error flags');
+    } catch (e) {
+      // Ignore localStorage errors
+    }
+  }
+};
