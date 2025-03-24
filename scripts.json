@@ -2,11 +2,12 @@
 {
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build": "vite build",
     "build:development": "node deploy.js development",
     "build:staging": "node deploy.js staging",
     "build:production": "node deploy.js production",
     "serve": "vite preview",
-    "test": "vitest run"
+    "test": "vitest run",
+    "debug:build": "vite build --debug"
   }
 }

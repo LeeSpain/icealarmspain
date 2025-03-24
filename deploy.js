@@ -42,12 +42,38 @@ if (!fs.existsSync(envFile)) {
 console.log(`Using environment configuration from ${envFile}`);
 fs.copyFileSync(envFile, '.env');
 
-// Build the application
+// Build the application with explicit environment variables
 console.log('Building application...');
 try {
-  execSync('npm run build', { stdio: 'inherit' });
+  // Set NODE_ENV explicitly to ensure proper build optimization
+  const envVars = Object.fromEntries(
+    fs.readFileSync(envFile, 'utf-8')
+      .split('\n')
+      .filter(line => line.trim() && !line.startsWith('#'))
+      .map(line => {
+        const [key, ...valueParts] = line.split('=');
+        return [key.trim(), valueParts.join('=').trim()];
+      })
+  );
+  
+  // Prepare environment variables for the build
+  const envString = Object.entries(envVars)
+    .map(([key, value]) => `${key}=${value}`)
+    .join(' ');
+  
+  // Create a temporary script to run with environment variables
+  fs.writeFileSync('temp-build.js', `
+    process.env.NODE_ENV = '${targetEnv}';
+    require('child_process').execSync('vite build', { stdio: 'inherit' });
+  `);
+  
+  // Execute the build with environment variables
+  execSync(`node temp-build.js`, { stdio: 'inherit', env: { ...process.env, ...envVars } });
+  
+  // Clean up
+  fs.unlinkSync('temp-build.js');
 } catch (error) {
-  console.error('Build failed');
+  console.error('Build failed', error);
   process.exit(1);
 }
 

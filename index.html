@@ -9,6 +9,8 @@
     <meta name="author" content="Ice Guardian" />
     <meta property="og:image" content="/og-image.png" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&display=swap">
+    <!-- Preload critical assets -->
+    <link rel="preload" href="/src/styles/index.css" as="style">
     <style>
       /* Critical rendering styles */
       html, body {
@@ -29,5 +31,15 @@
     <div id="root"></div>
     <script src="https://cdn.gpteng.co/gptengineer.js" type="module"></script>
     <script type="module" src="/src/main.tsx"></script>
+    <!-- Add error handling script -->
+    <script>
+      window.addEventListener('error', function(e) {
+        console.error('Global error caught:', e.error || e.message);
+        // Check if the page is completely blank and show a fallback message
+        if (document.body.children.length <= 2) {
+          document.body.innerHTML += '<div style="padding: 20px; font-family: sans-serif;"><h1>Something went wrong</h1><p>Please try refreshing the page. If the problem persists, contact support.</p></div>';
+        }
+      });
+    </script>
   </body>
 </html>
