@@ -58,11 +58,11 @@ export const mainRoutes: RouteConfig[] = [
   },
   {
     path: "/products",
-    element: <Products />
+    element: <Layout><Products /></Layout>
   },
   {
     path: "/devices",
-    element: <Products />
+    element: <Layout><Products /></Layout>
   },
   {
     path: "/products/:id",
