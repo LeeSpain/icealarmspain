@@ -101,7 +101,7 @@ const EmailLogs: React.FC = () => {
                 <TableCell>{log.recipient}</TableCell>
                 <TableCell>{log.subject}</TableCell>
                 <TableCell>
-                  <Badge variant={log.email_type === 'welcome' ? "success" : "default"}>
+                  <Badge variant={log.email_type === 'welcome' ? "secondary" : "default"}>
                     {log.email_type === 'welcome' 
                       ? (language === 'en' ? "Welcome" : "Bienvenida") 
                       : log.email_type === 'notification' 

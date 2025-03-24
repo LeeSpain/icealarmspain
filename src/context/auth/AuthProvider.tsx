@@ -17,11 +17,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           isLoading,
           login: authFunctions.login,
           signIn: authFunctions.signIn,
-          signUp: authFunctions.signUp,
+          signUp: async (email, password, userData) => {
+            const result = await authFunctions.signUp(email, password, userData);
+            if (result.error) throw result.error;
+            if (!result.user) throw new Error('Failed to create user');
+            return result.user;
+          },
           logout: authFunctions.logout,
           updateUserProfile: wrappedUpdateUserProfile,
           // Admin functions
-          createUser: authFunctions.createUser,
+          createUser: async (email, password, userData) => {
+            const result = await authFunctions.createUser(email, password, userData);
+            if (result.error) throw result.error;
+            if (!result.user) throw new Error('Failed to create user');
+            return result.user;
+          },
           getAllUsers: authFunctions.getAllUsers,
           updateUserRole: authFunctions.updateUserRole,
           deleteUser: authFunctions.deleteUser,
