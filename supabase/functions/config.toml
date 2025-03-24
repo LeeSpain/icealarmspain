@@ -1,0 +1,6 @@
+
+project_id = "fagrvwgaajajhvygffea"
+
+[global.env]
+RESEND_API_KEY = "re_Nb9rUN3L_HLYQu6pciJWdP1nkWtT7cEk6"
+SUPABASE_URL = "https://fagrvwgaajajhvygffea.supabase.co"
