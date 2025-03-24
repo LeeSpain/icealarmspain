@@ -85,7 +85,7 @@ function MinimalApp() {
           </div>
         </Router>
       </LanguageProvider>
-    </div>
+    </HelmetProvider>
   );
 }
 
