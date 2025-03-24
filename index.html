@@ -24,21 +24,48 @@
         min-height: 100vh;
         width: 100%;
       }
+      /* Fallback content in case of JS/React failure */
+      .fallback-content {
+        padding: 20px;
+        font-family: sans-serif;
+        max-width: 600px;
+        margin: 0 auto;
+        text-align: center;
+      }
     </style>
   </head>
 
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <!-- Fallback content that will be replaced by React -->
+      <div class="fallback-content">
+        <h1>Loading Ice Guardian Alert...</h1>
+        <p>If this message persists, please ensure JavaScript is enabled and refresh the page.</p>
+      </div>
+    </div>
     <script src="https://cdn.gpteng.co/gptengineer.js" type="module"></script>
     <script type="module" src="/src/main.tsx"></script>
     <!-- Add error handling script -->
     <script>
+      // Global error handler
       window.addEventListener('error', function(e) {
         console.error('Global error caught:', e.error || e.message);
         // Check if the page is completely blank and show a fallback message
         if (document.body.children.length <= 2) {
           document.body.innerHTML += '<div style="padding: 20px; font-family: sans-serif;"><h1>Something went wrong</h1><p>Please try refreshing the page. If the problem persists, contact support.</p></div>';
         }
+      });
+      
+      // Initial page load check
+      document.addEventListener('DOMContentLoaded', function() {
+        console.log('DOMContentLoaded fired');
+        setTimeout(function() {
+          // Check if React has replaced the fallback content
+          const root = document.getElementById('root');
+          if (root && root.innerHTML.includes('Loading Ice Guardian Alert')) {
+            console.warn('React did not initialize within expected timeframe');
+          }
+        }, 5000);
       });
     </script>
   </body>
