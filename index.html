@@ -110,7 +110,7 @@
                   <li>VITE_FIREBASE_PROJECT_ID</li>
                 </ul>
               </div>
-              <div id="troubleshooting-guide" class="troubleshooting-guide">
+              <div id="troubleshooting-guide" class="troubleshooting-guide" style="display: block;">
                 <h3>Troubleshooting Steps:</h3>
                 <ol>
                   <li>Check if your Vercel environment variables are set correctly</li>
@@ -152,11 +152,26 @@
               root.appendChild(fallback);
             }
           }
-        }, 3000); // 3 seconds
+        }, 2000); // Reduced to 2 seconds for faster feedback
       });
       
       // Add a global variable that our app can set if Firebase config is missing
       window.missingFirebaseConfig = false;
+      
+      // Immediately check for environment variable issues
+      // This will run before our React app has a chance to set the flag
+      (function checkEnvVars() {
+        try {
+          // Simple check for any localStorage items that might indicate a previous error
+          const previousError = localStorage.getItem('firebaseConfigError');
+          if (previousError) {
+            window.missingFirebaseConfig = true;
+            console.warn('Previous Firebase config error detected');
+          }
+        } catch (e) {
+          // Ignore localStorage errors
+        }
+      })();
       
       // More robust error handling
       window.addEventListener('error', function(e) {
@@ -185,6 +200,13 @@
           const troubleshootingGuide = document.getElementById('troubleshooting-guide');
           if (troubleshootingGuide) {
             troubleshootingGuide.style.display = 'block';
+          }
+          
+          // Store the error in localStorage for future page loads
+          try {
+            localStorage.setItem('firebaseConfigError', 'true');
+          } catch (e) {
+            // Ignore localStorage errors
           }
         }
       });

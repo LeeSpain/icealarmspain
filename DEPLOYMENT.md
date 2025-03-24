@@ -1,97 +1,65 @@
 
-# Deployment Instructions
+# Deployment Guide for Ice Guardian Alert
 
-This document contains information on how to deploy the Ice Guardian Alert application to various environments.
+This document contains detailed instructions for deploying the Ice Guardian Alert application to Vercel and other hosting platforms.
 
-## Prerequisites
+## Required Environment Variables
 
-- Node.js 16+ and npm
-- Access to the Firebase console for the deployment target
-- Environment variable files (.env.development, .env.staging, .env.production)
+The following environment variables **MUST** be set in your deployment environment:
 
-## Environment Variables
+```
+VITE_FIREBASE_API_KEY=your_firebase_api_key
+VITE_FIREBASE_PROJECT_ID=your_firebase_project_id
+```
 
-The application requires the following environment variables to be set:
+These values can be found in your Firebase project settings in the Firebase console.
 
-### Required for all environments:
-- `VITE_FIREBASE_API_KEY` - Firebase API key
-- `VITE_FIREBASE_AUTH_DOMAIN` - Firebase auth domain
-- `VITE_FIREBASE_PROJECT_ID` - Firebase project ID
-- `VITE_FIREBASE_STORAGE_BUCKET` - Firebase storage bucket
-- `VITE_FIREBASE_MESSAGING_SENDER_ID` - Firebase messaging sender ID
-- `VITE_FIREBASE_APP_ID` - Firebase app ID
-- `VITE_ENVIRONMENT` - One of: development, staging, production
+## Deployment Instructions for Vercel
 
-### Optional:
-- `VITE_SUPABASE_URL` - Supabase URL (if using Supabase)
-- `VITE_SUPABASE_ANON_KEY` - Supabase anonymous key (if using Supabase)
-- `VITE_AUTH_REDIRECT_URL` - URL to redirect to after authentication
-- `VITE_API_URL` - API URL for backend services
-- `VITE_ENABLE_MOCK_AUTH` - Enable mock authentication (true/false)
-- `VITE_ENABLE_ANALYTICS` - Enable analytics (true/false)
-- `VITE_DEBUG_BUILD` - Enable extra debugging (true/false)
+1. Go to your Vercel dashboard and select your project
+2. Navigate to "Settings" tab 
+3. Click on "Environment Variables" section
+4. Add the following variables:
+   - `VITE_FIREBASE_API_KEY`: Your Firebase API key
+   - `VITE_FIREBASE_PROJECT_ID`: Your Firebase project ID
+5. Click "Save" to apply the changes
+6. Trigger a new deployment from the "Deployments" tab
 
-## Build Commands
+The values for these environment variables can be found in your local `.env` file or in the Firebase console.
 
-- `npm run build` - Standard build
-- `npm run build:development` - Build for development environment
-- `npm run build:staging` - Build for staging environment
-- `npm run build:production` - Build for production environment
-- `npm run build:debug` - Build for production with extra debugging enabled
+## Common Deployment Issues
 
-## Troubleshooting Deployment Issues
+### Blank Screen or Loading Message
 
-### Blank Screen After Deployment
+If you see a loading message that doesn't go away, this is typically caused by missing environment variables. Check that:
 
-If the application shows a blank screen after deployment, check the following:
+1. You've set all required environment variables in your Vercel project settings
+2. The values are correct (copied exactly from your Firebase console)
+3. You've redeployed the application after setting the variables
 
-1. **Environment Variables**:
-   - Ensure all required environment variables are set in the deployment environment.
-   - For Firebase Hosting, set them in the Firebase console under Project Settings > Environment Variables.
+### Verifying Environment Variables
 
-2. **Console Errors**:
-   - Check the browser console for JavaScript errors.
-   - Common issues include missing environment variables or API connectivity problems.
+To check if your environment variables are being correctly injected:
 
-3. **Network Issues**:
-   - Check the Network tab in browser dev tools to see if any requests are failing.
-   - Verify that APIs and services are accessible from the deployed environment.
+1. Open the deployed site in a browser
+2. Open the browser's developer console (F12 or right-click → Inspect → Console)
+3. Look for messages related to Firebase configuration
+4. If you see "Firebase config valid: false", your environment variables are not correctly set
 
-4. **Debug Build**:
-   - Try deploying with the debug build: `npm run build:debug`
-   - This adds extra logging and more verbose error messages.
+## Local Development
 
-### Firebase Deployment
+For local development, copy the `.env.example` file to `.env` and fill in the required values:
 
-When deploying to Firebase Hosting:
+```bash
+cp .env.example .env
+# Then edit the .env file with your values
+```
 
-1. Ensure the correct Firebase project is selected in `.firebaserc`
-2. Make sure your environment variables are set in the Firebase console
-3. Deploy with `firebase deploy` or `firebase deploy --only hosting`
+## Getting Help
 
-### Invalid Environment Variables
+If you continue to experience deployment issues, please contact the development team with:
 
-If environment variables are not being properly injected during build:
-
-1. Check that you're using the correct prefix (`VITE_` for client-side variables)
-2. Verify that the deploy script is reading the variables correctly
-3. For CI/CD pipelines, ensure secrets are properly configured
-
-## Post-Deployment Verification
-
-After deploying, always verify:
-
-1. The application loads correctly
-2. Authentication works as expected
-3. API calls are successful
-4. No console errors appear
-
-## Support
-
-If deployment issues persist, contact the development team with:
-- Environment name
-- Build command used
-- Console error logs
-- Network request logs
-- Build output logs
+1. The URL of your deployment
+2. Screenshots of any error messages
+3. Console logs from the browser developer tools
 

@@ -20,6 +20,22 @@ import { getEnvironmentDiagnostics, hasValidFirebaseConfig } from './environment
     console.error('Please ensure VITE_FIREBASE_API_KEY and VITE_FIREBASE_PROJECT_ID are correctly set');
     console.error('Current values may be missing or using placeholder values');
     
+    // Output actual values for debugging (masked for security)
+    console.error('Firebase API Key defined:', !!import.meta.env.VITE_FIREBASE_API_KEY);
+    console.error('Firebase Project ID defined:', !!import.meta.env.VITE_FIREBASE_PROJECT_ID);
+    
+    // Check if API key or Project ID are using placeholder values
+    const apiKey = import.meta.env.VITE_FIREBASE_API_KEY || '';
+    const projectId = import.meta.env.VITE_FIREBASE_PROJECT_ID || '';
+    
+    if (apiKey.includes('your_') || apiKey.includes('${')) {
+      console.error('Firebase API Key appears to be a placeholder or template variable');
+    }
+    
+    if (projectId.includes('your_') || projectId.includes('${')) {
+      console.error('Firebase Project ID appears to be a placeholder or template variable');
+    }
+    
     // Check if running in browser
     if (typeof window !== 'undefined') {
       // Set global flag for HTML fallback
@@ -66,13 +82,13 @@ function checkForCommonDeploymentIssues(): string[] {
   
   if (!firebaseApiKey) {
     issues.push('VITE_FIREBASE_API_KEY is not set');
-  } else if (firebaseApiKey.includes('your_') || firebaseApiKey.includes('placeholder')) {
+  } else if (firebaseApiKey.includes('your_') || firebaseApiKey.includes('placeholder') || firebaseApiKey.includes('${')) {
     issues.push('VITE_FIREBASE_API_KEY appears to be a placeholder value');
   }
   
   if (!firebaseProjectId) {
     issues.push('VITE_FIREBASE_PROJECT_ID is not set');
-  } else if (firebaseProjectId.includes('your_') || firebaseProjectId.includes('placeholder')) {
+  } else if (firebaseProjectId.includes('your_') || firebaseProjectId.includes('placeholder') || firebaseProjectId.includes('${')) {
     issues.push('VITE_FIREBASE_PROJECT_ID appears to be a placeholder value');
   }
   

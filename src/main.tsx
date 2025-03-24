@@ -15,10 +15,13 @@ console.log('Mode:', import.meta.env.MODE);
 console.log('Dev:', import.meta.env.DEV);
 console.log('Prod:', import.meta.env.PROD);
 console.log('Firebase config valid:', hasValidFirebaseConfig());
+console.log('API_KEY defined:', !!import.meta.env.VITE_FIREBASE_API_KEY);
+console.log('PROJECT_ID defined:', !!import.meta.env.VITE_FIREBASE_PROJECT_ID);
 
 // Set global variable that HTML can check
 if (typeof window !== 'undefined') {
   window.missingFirebaseConfig = !hasValidFirebaseConfig();
+  console.log('Set window.missingFirebaseConfig =', window.missingFirebaseConfig);
 }
 
 // Enhanced function to render the app
