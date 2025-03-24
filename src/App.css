@@ -11,7 +11,8 @@ html, body {
 }
 
 body {
-  display: block;
+  display: flex;
+  flex-direction: column;
 }
 
 /* App container */
@@ -30,3 +31,4 @@ main {
   color: black;
   padding-top: 4rem;
 }
+
