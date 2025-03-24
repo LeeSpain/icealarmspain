@@ -15,8 +15,7 @@ import { calculateTotals } from "@/utils/joinUtils";
 import { useAuth } from "@/context/auth";
 import { toast, ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
+import Layout from "@/components/layout/Layout";
 
 const Join: React.FC = () => {
   const { language } = useLanguage();
@@ -129,50 +128,46 @@ const Join: React.FC = () => {
   };
   
   return (
-    <div className="flex flex-col min-h-screen">
-      <Navbar />
-      <main className="flex-grow">
-        <JoinBackgroundEffects />
-        <JoinHero language={language} />
+    <Layout>
+      <JoinBackgroundEffects />
+      <JoinHero language={language} />
 
-        <div className="container mx-auto px-4 py-12">
-          {showSignup ? (
-            <JoinSignup language={language} onSuccess={handleSignupSuccess} />
-          ) : (
-            <>
-              <MembershipTypeSelector 
-                membershipTypes={membershipTypes}
-                selectedType={membershipType}
-                onSelect={setMembershipType}
-                language={language}
-              />
-              
-              <DeviceSelection 
-                devices={devices}
-                selectedDevices={selectedDevices}
-                toggleDeviceSelection={toggleDeviceSelection}
-                updateDeviceQuantity={updateDeviceQuantity}
-                language={language}
-              />
-              
-              <OrderSummary 
-                totals={totals}
-                selectedDevices={selectedDevices}
-                devices={devices}
-                membershipType={membershipType}
-                membershipTypes={membershipTypes}
-                onCheckout={() => handleCheckout(false)}
-                language={language}
-              />
-              
-              <BenefitsSection language={language} />
-            </>
-          )}
-        </div>
-      </main>
-      <Footer />
+      <div className="container mx-auto px-4 py-12">
+        {showSignup ? (
+          <JoinSignup language={language} onSuccess={handleSignupSuccess} />
+        ) : (
+          <>
+            <MembershipTypeSelector 
+              membershipTypes={membershipTypes}
+              selectedType={membershipType}
+              onSelect={setMembershipType}
+              language={language}
+            />
+            
+            <DeviceSelection 
+              devices={devices}
+              selectedDevices={selectedDevices}
+              toggleDeviceSelection={toggleDeviceSelection}
+              updateDeviceQuantity={updateDeviceQuantity}
+              language={language}
+            />
+            
+            <OrderSummary 
+              totals={totals}
+              selectedDevices={selectedDevices}
+              devices={devices}
+              membershipType={membershipType}
+              membershipTypes={membershipTypes}
+              onCheckout={() => handleCheckout(false)}
+              language={language}
+            />
+            
+            <BenefitsSection language={language} />
+          </>
+        )}
+      </div>
       <ToastContainer />
-    </div>
+    </Layout>
   );
 };
 

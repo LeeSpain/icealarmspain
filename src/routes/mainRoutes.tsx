@@ -54,7 +54,7 @@ export const mainRoutes: RouteConfig[] = [
   },
   {
     path: "/join",
-    element: <Layout><Join /></Layout>
+    element: <Join />
   },
   {
     path: "/products",
