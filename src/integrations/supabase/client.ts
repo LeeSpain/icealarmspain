@@ -2,15 +2,23 @@
 import { createClient } from '@supabase/supabase-js';
 import type { Database } from './types';
 import { toast } from '@/hooks/use-toast';
+import { getEnvVar, getRequiredEnvVar, isDevelopment, isProduction } from '@/utils/environment';
 
 // Create a single supabase client for interacting with your database
 // Ensure the environment variables are properly accessed
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || '';
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
+const supabaseUrl = isDevelopment() 
+  ? getEnvVar('VITE_SUPABASE_URL', '') 
+  : getRequiredEnvVar('VITE_SUPABASE_URL');
 
-// Log the URL and key for debugging (remove in production)
-console.log('Supabase URL:', supabaseUrl ? 'Defined' : 'Undefined');
-console.log('Supabase Anon Key:', supabaseAnonKey ? 'Defined' : 'Undefined');
+const supabaseAnonKey = isDevelopment()
+  ? getEnvVar('VITE_SUPABASE_ANON_KEY', '')
+  : getRequiredEnvVar('VITE_SUPABASE_ANON_KEY');
+
+// Log the URL and key for debugging (only in development)
+if (isDevelopment()) {
+  console.log('Supabase URL:', supabaseUrl ? 'Defined' : 'Undefined');
+  console.log('Supabase Anon Key:', supabaseAnonKey ? 'Defined' : 'Undefined');
+}
 
 // Define contact_submissions table type for TypeScript since it's not in the auto-generated types
 export type ContactSubmission = {
@@ -26,7 +34,11 @@ export type ContactSubmission = {
 
 // Create a mock client that provides stub methods to prevent runtime errors
 const createMockClient = () => {
-  console.warn('Creating mock Supabase client. Add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY to your .env file for full functionality.');
+  // Only show warning in development mode
+  if (isDevelopment()) {
+    console.warn('Creating mock Supabase client. Add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY to your .env file for full functionality.');
+  }
+  
   return {
     auth: {
       onAuthStateChange: () => ({ data: { subscription: { unsubscribe: () => {} } } }),
@@ -49,13 +61,34 @@ let supabase;
 try {
   // Only create the real client if URL and key are defined
   if (supabaseUrl && supabaseAnonKey) {
-    // Create the Supabase client with proper typing
-    supabase = createClient<Database>(supabaseUrl, supabaseAnonKey);
+    // Create the Supabase client with proper typing and configuration based on environment
+    supabase = createClient<Database>(
+      supabaseUrl, 
+      supabaseAnonKey,
+      {
+        auth: {
+          persistSession: true,
+          storage: localStorage,
+          autoRefreshToken: true,
+        },
+      }
+    );
   } else {
+    // Don't use mock client in production
+    if (isProduction()) {
+      throw new Error('Supabase configuration is required in production');
+    }
     supabase = createMockClient();
   }
 } catch (error) {
   console.error('Failed to initialize Supabase client:', error);
+  
+  // In development, use a mock client, but in production this is a critical error
+  if (isProduction()) {
+    // In production, this is a serious error that should prevent the app from working
+    throw new Error('Fatal: Could not initialize Supabase client in production');
+  }
+  
   supabase = createMockClient();
   
   // Show a toast notification about the Supabase initialization failure
