@@ -3,7 +3,8 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App'
 import './styles/index.css'
-import BasicDebug from './components/debug/BasicDebug'
+// Import but don't use BasicDebug
+// import BasicDebug from './components/debug/BasicDebug'
 import { getEnvironment, isDevelopment } from './utils/environment'
 
 // Display environment info in console
@@ -51,7 +52,8 @@ if (missingVars.length > 0) {
       const root = ReactDOM.createRoot(rootElement);
       root.render(
         <React.StrictMode>
-          {isDevelopment() && <BasicDebug />}
+          {/* Remove BasicDebug component */}
+          {/* {isDevelopment() && <BasicDebug />} */}
           <App />
         </React.StrictMode>
       );

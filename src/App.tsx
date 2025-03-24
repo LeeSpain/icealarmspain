@@ -9,7 +9,8 @@ import { AuthProvider } from "@/context/AuthContext";
 import AuthGuard from "@/components/auth/AuthGuard";
 import ErrorBoundary from "@/components/layout/ErrorBoundary";
 import { isDevelopment, isDebugBuild } from "./utils/environment";
-import EnhancedDebug from "./components/debug/EnhancedDebug";
+// Import EnhancedDebug but we won't use it by default
+// import EnhancedDebug from "./components/debug/EnhancedDebug";
 
 function App() {
   // Log that App component is rendering (helps with debugging)
@@ -20,8 +21,8 @@ function App() {
       <HelmetProvider>
         <AuthProvider>
           <LanguageProvider>
-            {/* Show enhanced debug component in development or if debug build is enabled */}
-            {(isDevelopment() || isDebugBuild()) && <EnhancedDebug />}
+            {/* Removed debug component to fix orange box in top-right */}
+            {/* {(isDevelopment() || isDebugBuild()) && <EnhancedDebug />} */}
             
             <Router>
               <Routes>
