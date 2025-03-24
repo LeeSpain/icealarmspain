@@ -145,12 +145,32 @@
       window.appRenderFailed = false;
       window.appDiagnostics = {
         startTime: new Date().toISOString(),
-        events: []
+        events: [], // Ensure events array is properly initialized
+        renderAttempted: false,
+        errors: []
       };
       
       // Track important events
       function logAppEvent(event) {
-        if (window.appDiagnostics) {
+        if (window.appDiagnostics && window.appDiagnostics.events) {
+          window.appDiagnostics.events.push({
+            time: new Date().toISOString(),
+            event: event
+          });
+        } else {
+          console.warn("Could not log event: appDiagnostics or events array is undefined");
+          // Initialize if missing
+          if (!window.appDiagnostics) {
+            window.appDiagnostics = {
+              startTime: new Date().toISOString(),
+              events: [],
+              errors: []
+            };
+          }
+          if (!window.appDiagnostics.events) {
+            window.appDiagnostics.events = [];
+          }
+          // Try again after initialization
           window.appDiagnostics.events.push({
             time: new Date().toISOString(),
             event: event

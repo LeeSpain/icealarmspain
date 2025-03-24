@@ -31,13 +31,25 @@ if (typeof window !== 'undefined') {
   });
   
   // Add detailed diagnostics for troubleshooting
-  window.appDiagnostics = {
-    startTime: new Date().toISOString(),
-    environment: getEnvironment(),
-    firebaseConfigValid: hasValidFirebaseConfig(),
-    renderAttempted: false,
-    errors: []
-  };
+  if (!window.appDiagnostics) {
+    window.appDiagnostics = {
+      startTime: new Date().toISOString(),
+      environment: getEnvironment(),
+      firebaseConfigValid: hasValidFirebaseConfig(),
+      renderAttempted: false,
+      errors: [],
+      events: []
+    };
+  } else {
+    // Update existing diagnostics
+    window.appDiagnostics.environment = getEnvironment();
+    window.appDiagnostics.firebaseConfigValid = hasValidFirebaseConfig();
+    
+    // Ensure events array exists
+    if (!window.appDiagnostics.events) {
+      window.appDiagnostics.events = [];
+    }
+  }
 }
 
 // Enhanced function to render the app - ALWAYS renders something
