@@ -21,7 +21,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           logout: authFunctions.logout,
           updateUserProfile: wrappedUpdateUserProfile,
           // Admin functions
-          createUser: authFunctions.createUser,
+          createUser: authFunctions.signUp, // Use signUp directly to match types
           getAllUsers: authFunctions.getAllUsers,
           updateUserRole: authFunctions.updateUserRole,
           deleteUser: authFunctions.deleteUser,

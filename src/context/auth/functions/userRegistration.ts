@@ -10,14 +10,11 @@ export const signUp = async (
   email: string, 
   password: string, 
   userData?: any
-): Promise<{ user: User | null; error: any | null }> => {
+): Promise<User> => {
   console.log('Signup attempt:', { email });
   
   if (!email || !password) {
-    return { 
-      user: null, 
-      error: new Error('Email and password are required') 
-    };
+    throw new Error('Email and password are required');
   }
   
   // In mock auth mode for development, use the mock implementation
@@ -57,7 +54,7 @@ export const signUp = async (
       // Continue even if email fails
     }
     
-    return { user, error: null };
+    return user;
   } 
   // In production, use the real Firebase auth
   else {
@@ -97,11 +94,25 @@ export const signUp = async (
         // Continue even if email fails
       }
       
-      return { user, error: null };
+      return user;
     } catch (error) {
       console.error('Firebase authentication error during signup:', error);
-      return { user: null, error };
+      throw error;
     }
+  }
+};
+
+// Internal implementation for backward compatibility
+export const _createUserImpl = async (
+  email: string,
+  password: string,
+  userData?: any
+): Promise<{ user: User | null; error: any | null }> => {
+  try {
+    const user = await signUp(email, password, userData);
+    return { user, error: null };
+  } catch (error) {
+    return { user: null, error };
   }
 };
 
