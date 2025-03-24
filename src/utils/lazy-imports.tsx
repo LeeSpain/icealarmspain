@@ -27,19 +27,21 @@ export const LazyComponent: React.FC<LazyComponentProps> = ({
 };
 
 // Create a higher-order component for lazy loading page components
-// Fixed typing to properly handle component props
 export const withLazyLoading = <P extends object>(
   importFunc: () => Promise<{ default: React.ComponentType<P> }>,
   loadingMessage?: string
 ) => {
   const LazyComponent = React.lazy(importFunc);
   
-  // Return a new component that forwards props correctly
-  return function WithLazyLoading(props: P) {
+  // Use a function component with explicit casting to resolve type issues
+  const WithLazyLoading = (props: P) => {
     return (
       <Suspense fallback={<LoadingSpinner fullPage message={loadingMessage} />}>
-        <LazyComponent {...props} />
+        {/* Cast to any to resolve the type compatibility issue */}
+        <LazyComponent {...(props as any)} />
       </Suspense>
     );
   };
+  
+  return WithLazyLoading;
 };
