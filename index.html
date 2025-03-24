@@ -139,27 +139,28 @@
     <script src="https://cdn.gpteng.co/gptengineer.js" type="module"></script>
     <script type="module" src="/src/main.tsx"></script>
     <script>
-      // Global variables for app state
+      // Global variables for app state - Initialize everything properly
       window.missingFirebaseConfig = false;
       window.appRendered = false;
       window.appRenderFailed = false;
+      
+      // Ensure diagnostics object is completely initialized with all properties
       window.appDiagnostics = {
         startTime: new Date().toISOString(),
-        events: [], // Ensure events array is properly initialized
+        events: [],
         renderAttempted: false,
-        errors: []
+        errors: [],
+        environment: '',
+        firebaseConfigValid: false,
+        renderCompleted: false,
+        renderTime: null,
+        secondAttempt: false
       };
       
-      // Track important events
+      // Track important events with error handling
       function logAppEvent(event) {
-        if (window.appDiagnostics && window.appDiagnostics.events) {
-          window.appDiagnostics.events.push({
-            time: new Date().toISOString(),
-            event: event
-          });
-        } else {
-          console.warn("Could not log event: appDiagnostics or events array is undefined");
-          // Initialize if missing
+        try {
+          // Defensive check to make sure appDiagnostics exists
           if (!window.appDiagnostics) {
             window.appDiagnostics = {
               startTime: new Date().toISOString(),
@@ -167,149 +168,165 @@
               errors: []
             };
           }
+          
+          // Defensive check to make sure events array exists
           if (!window.appDiagnostics.events) {
             window.appDiagnostics.events = [];
           }
-          // Try again after initialization
+          
+          // Now it's safe to push
           window.appDiagnostics.events.push({
             time: new Date().toISOString(),
             event: event
           });
+        } catch (e) {
+          console.warn("Error logging app event:", e);
         }
       }
       
       // Function to show fallback content
       function showFallbackContent(error) {
-        logAppEvent('showFallbackContent called');
-        const fallback = document.getElementById('fallback-content');
-        if (fallback) {
-          fallback.style.display = 'block';
-          
-          // Show debug info
-          const debugInfo = document.getElementById('debug-info');
-          if (debugInfo) {
-            debugInfo.textContent = `Browser: ${navigator.userAgent}, Time: ${new Date().toISOString()}`;
-            if (error) {
-              debugInfo.textContent += `\nError: ${error.message || 'Unknown error'}`;
-            }
-          }
-          
-          // Show troubleshooting guide
-          const troubleshootingGuide = document.getElementById('troubleshooting-guide');
-          if (troubleshootingGuide) {
-            troubleshootingGuide.style.display = 'block';
-          }
-          
-          // If Firebase config is missing, show related errors
-          if (window.missingFirebaseConfig) {
-            const envError = document.getElementById('env-error');
-            if (envError) {
-              envError.style.display = 'block';
+        try {
+          logAppEvent('showFallbackContent called');
+          const fallback = document.getElementById('fallback-content');
+          if (fallback) {
+            fallback.style.display = 'block';
+            
+            // Show debug info
+            const debugInfo = document.getElementById('debug-info');
+            if (debugInfo) {
+              debugInfo.textContent = `Browser: ${navigator.userAgent}, Time: ${new Date().toISOString()}`;
+              if (error) {
+                debugInfo.textContent += `\nError: ${error.message || 'Unknown error'}`;
+              }
             }
             
-            const firebaseError = document.getElementById('firebase-config-missing');
-            if (firebaseError) {
-              firebaseError.style.display = 'block';
+            // Show troubleshooting guide
+            const troubleshootingGuide = document.getElementById('troubleshooting-guide');
+            if (troubleshootingGuide) {
+              troubleshootingGuide.style.display = 'block';
             }
             
-            const firebaseFix = document.getElementById('firebase-config-fix');
-            if (firebaseFix) {
-              firebaseFix.style.display = 'block';
+            // If Firebase config is missing, show related errors
+            if (window.missingFirebaseConfig) {
+              const envError = document.getElementById('env-error');
+              if (envError) {
+                envError.style.display = 'block';
+              }
+              
+              const firebaseError = document.getElementById('firebase-config-missing');
+              if (firebaseError) {
+                firebaseError.style.display = 'block';
+              }
+              
+              const firebaseFix = document.getElementById('firebase-config-fix');
+              if (firebaseFix) {
+                firebaseFix.style.display = 'block';
+              }
             }
           }
+        } catch (e) {
+          console.error("Error showing fallback content:", e);
         }
       }
       
-      // Show fallback content if React doesn't load after a delay
-      let appInitTimeout = setTimeout(function() {
-        if (!window.appRendered && !window.appRenderFailed) {
-          console.warn('App initialization timeout reached');
-          logAppEvent('initializationTimeout');
-          showFallbackContent({ message: 'App initialization timed out' });
-        }
-      }, 4000);
-      
-      // Add a shorter timeout to show the loading spinner quickly
-      setTimeout(function() {
-        if (!window.appRendered && !window.appRenderFailed) {
-          document.getElementById('fallback-content').style.display = 'block';
-          logAppEvent('showingLoadingSpinner');
-        }
-      }, 1000);
-      
-      // Clear the timeout if app renders successfully
-      document.addEventListener('react-rendered', function() {
-        clearTimeout(appInitTimeout);
-        logAppEvent('reactRendered');
-        const fallback = document.getElementById('fallback-content');
-        if (fallback) {
-          fallback.style.display = 'none';
-        }
-      });
-      
-      // Listen for app start event
-      document.addEventListener('app-init-started', function() {
-        console.log('App initialization started');
-        logAppEvent('appInitStarted');
-      });
-      
-      // Immediately check for environment variable issues
-      (function checkEnvVars() {
-        try {
-          // Add initialization event
-          logAppEvent('htmlInitialized');
-          
-          // Check for any localStorage items that might indicate a previous error
-          const previousError = localStorage.getItem('firebaseConfigError');
-          if (previousError) {
-            window.missingFirebaseConfig = true;
-            console.warn('Previous Firebase config error detected');
-            logAppEvent('previousErrorDetected');
-            showFallbackContent();
-          }
-        } catch (e) {
-          // Ignore localStorage errors
-          logAppEvent('localStorageError');
-        }
-      })();
-      
-      // Global error handling
-      window.addEventListener('error', function(e) {
-        console.error('Global error caught:', e.error || e.message);
-        logAppEvent('globalError: ' + (e.error?.message || e.message || 'Unknown'));
+      try {
+        // Add initialization event
+        logAppEvent('htmlInitialized');
         
-        // Check if this is a Firebase config error
-        if ((e.error?.message || e.message || '').includes('Firebase') || 
-            (e.error?.message || e.message || '').includes('API_KEY')) {
-          window.missingFirebaseConfig = true;
-          showFallbackContent(e);
-          
-          // Store the error in localStorage for future page loads
+        // Show fallback content if React doesn't load after a delay
+        let appInitTimeout = setTimeout(function() {
+          if (!window.appRendered && !window.appRenderFailed) {
+            console.warn('App initialization timeout reached');
+            logAppEvent('initializationTimeout');
+            showFallbackContent({ message: 'App initialization timed out' });
+          }
+        }, 4000);
+        
+        // Add a shorter timeout to show the loading spinner quickly
+        setTimeout(function() {
+          if (!window.appRendered && !window.appRenderFailed) {
+            document.getElementById('fallback-content').style.display = 'block';
+            logAppEvent('showingLoadingSpinner');
+          }
+        }, 1000);
+        
+        // Clear the timeout if app renders successfully
+        document.addEventListener('react-rendered', function() {
+          clearTimeout(appInitTimeout);
+          logAppEvent('reactRendered');
+          const fallback = document.getElementById('fallback-content');
+          if (fallback) {
+            fallback.style.display = 'none';
+          }
+        });
+        
+        // Listen for app start event
+        document.addEventListener('app-init-started', function() {
+          console.log('App initialization started');
+          logAppEvent('appInitStarted');
+        });
+        
+        // Immediately check for environment variable issues
+        (function checkEnvVars() {
           try {
-            localStorage.setItem('firebaseConfigError', 'true');
+            // Check for any localStorage items that might indicate a previous error
+            const previousError = localStorage.getItem('firebaseConfigError');
+            if (previousError) {
+              window.missingFirebaseConfig = true;
+              console.warn('Previous Firebase config error detected');
+              logAppEvent('previousErrorDetected');
+              showFallbackContent();
+            }
           } catch (e) {
             // Ignore localStorage errors
+            console.warn("localStorage error:", e);
+            logAppEvent('localStorageError');
           }
-        } else {
-          // For non-Firebase errors, still show fallback but without the Firebase-specific errors
-          showFallbackContent(e);
-        }
-      });
-      
-      // Add a special fallback for if the module script fails to load
-      window.addEventListener('DOMContentLoaded', function() {
-        logAppEvent('DOMContentLoaded');
-        const root = document.getElementById('root');
+        })();
         
-        // After a short delay, check if the root is still empty
-        setTimeout(function() {
-          if (root && (!root.children || root.children.length === 0)) {
-            console.warn('Root element is empty after DOMContentLoaded + delay');
-            logAppEvent('emptyRootElementAfterDelay');
-            showFallbackContent({ message: 'Application failed to initialize' });
+        // Global error handling
+        window.addEventListener('error', function(e) {
+          console.error('Global error caught:', e.error || e.message);
+          logAppEvent('globalError: ' + (e.error?.message || e.message || 'Unknown'));
+          
+          // Check if this is a Firebase config error
+          if ((e.error?.message || e.message || '').includes('Firebase') || 
+              (e.error?.message || e.message || '').includes('API_KEY')) {
+            window.missingFirebaseConfig = true;
+            showFallbackContent(e);
+            
+            // Store the error in localStorage for future page loads
+            try {
+              localStorage.setItem('firebaseConfigError', 'true');
+            } catch (e) {
+              // Ignore localStorage errors
+              console.warn("localStorage error:", e);
+            }
+          } else {
+            // For non-Firebase errors, still show fallback but without the Firebase-specific errors
+            showFallbackContent(e);
           }
-        }, 2000);
-      });
+        });
+        
+        // Add a special fallback for if the module script fails to load
+        window.addEventListener('DOMContentLoaded', function() {
+          logAppEvent('DOMContentLoaded');
+          const root = document.getElementById('root');
+          
+          // After a short delay, check if the root is still empty
+          setTimeout(function() {
+            if (root && (!root.children || root.children.length === 0)) {
+              console.warn('Root element is empty after DOMContentLoaded + delay');
+              logAppEvent('emptyRootElementAfterDelay');
+              showFallbackContent({ message: 'Application failed to initialize' });
+            }
+          }, 2000);
+        });
+      } catch (e) {
+        console.error("Critical initialization error:", e);
+        showFallbackContent({ message: 'Critical initialization error: ' + e.message });
+      }
     </script>
   </body>
 </html>

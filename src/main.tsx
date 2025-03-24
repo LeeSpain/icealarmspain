@@ -38,7 +38,10 @@ if (typeof window !== 'undefined') {
       firebaseConfigValid: hasValidFirebaseConfig(),
       renderAttempted: false,
       errors: [],
-      events: []
+      events: [],
+      renderCompleted: false,
+      renderTime: null,
+      secondAttempt: false
     };
   } else {
     // Update existing diagnostics
@@ -48,6 +51,11 @@ if (typeof window !== 'undefined') {
     // Ensure events array exists
     if (!window.appDiagnostics.events) {
       window.appDiagnostics.events = [];
+    }
+    
+    // Ensure errors array exists
+    if (!window.appDiagnostics.errors) {
+      window.appDiagnostics.errors = [];
     }
   }
 }
@@ -59,6 +67,9 @@ function renderApp() {
   if (!rootElement) {
     console.error("Root element not found! Cannot render React app.");
     if (typeof window !== 'undefined' && window.appDiagnostics) {
+      if (!window.appDiagnostics.errors) {
+        window.appDiagnostics.errors = [];
+      }
       window.appDiagnostics.errors.push({
         time: new Date().toISOString(),
         error: "Root element not found"
@@ -78,7 +89,11 @@ function renderApp() {
     const root = ReactDOM.createRoot(rootElement);
     
     // Notify document that we're about to render
-    document.dispatchEvent(new CustomEvent('react-rendering'));
+    try {
+      document.dispatchEvent(new CustomEvent('react-rendering'));
+    } catch (err) {
+      console.error("Error dispatching react-rendering event:", err);
+    }
     
     root.render(
       <React.StrictMode>
@@ -87,7 +102,11 @@ function renderApp() {
     );
     
     console.log("React app rendered successfully");
-    document.dispatchEvent(new CustomEvent('react-rendered'));
+    try {
+      document.dispatchEvent(new CustomEvent('react-rendered'));
+    } catch (err) {
+      console.error("Error dispatching react-rendered event:", err);
+    }
     
     // Set a flag that the HTML can check
     if (typeof window !== 'undefined') {
@@ -110,6 +129,9 @@ function renderApp() {
     
     // Save error details
     if (typeof window !== 'undefined' && window.appDiagnostics) {
+      if (!window.appDiagnostics.errors) {
+        window.appDiagnostics.errors = [];
+      }
       window.appDiagnostics.errors.push({
         time: new Date().toISOString(),
         error: error instanceof Error ? error.message : 'Unknown error'

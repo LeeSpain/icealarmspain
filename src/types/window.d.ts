@@ -10,7 +10,7 @@ interface Window {
     firebaseConfigValid?: boolean;
     renderAttempted?: boolean;
     renderCompleted?: boolean;
-    renderTime?: string;
+    renderTime?: string | null;
     secondAttempt?: boolean;
     errors: Array<{time: string, error: string}>;
     events: Array<{time: string, event: string}>;
