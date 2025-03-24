@@ -1,8 +1,9 @@
 
 import React from "react";
-import Navbar from "@/components/Navbar";
+import { Helmet } from "react-helmet-async";
 import { LoginContent } from "./LoginContent";
 import { useLoginPage } from "./useLoginPage";
+import Layout from "@/components/layout/Layout";
 
 const Login: React.FC = () => {
   const {
@@ -14,9 +15,20 @@ const Login: React.FC = () => {
   } = useLoginPage();
 
   return (
-    <div className="flex flex-col min-h-screen">
-      <Navbar />
-      <main className="flex-grow pt-28 pb-16">
+    <Layout>
+      <Helmet>
+        <title>{language === 'en' ? 'Login - ICE Alarm' : 'Inicio de Sesión - ICE Alarm'}</title>
+        <meta
+          name="description"
+          content={
+            language === 'en'
+              ? "Sign in to your ICE Alarm account to access your health monitoring dashboard."
+              : "Inicia sesión en tu cuenta de ICE Alarm para acceder a tu panel de monitoreo de salud."
+          }
+        />
+      </Helmet>
+      
+      <main className="pt-28 pb-16">
         <LoginContent
           handleLoginSuccess={handleLoginSuccess}
           loginInProgress={loginInProgress}
@@ -25,7 +37,7 @@ const Login: React.FC = () => {
           language={language}
         />
       </main>
-    </div>
+    </Layout>
   );
 };
 

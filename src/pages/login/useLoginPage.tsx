@@ -3,12 +3,14 @@ import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
 import { useLanguage } from "@/context/LanguageContext";
+import { useAuth } from "@/context/AuthContext";
 
 export const useLoginPage = () => {
   const { language } = useLanguage();
   const navigate = useNavigate();
   const location = useLocation();
   const { toast } = useToast();
+  const { signIn, user, profile } = useAuth();
   const [loginInProgress, setLoginInProgress] = useState(false);
   const [loginError, setLoginError] = useState<string | null>(null);
   
@@ -16,98 +18,47 @@ export const useLoginPage = () => {
   const redirectParam = searchParams.get('redirect') || '/dashboard';
   const isPostLogout = redirectParam === 'none'; // Check if this is after a logout
 
-  // Set up dev mode and direct access
+  // Redirect authenticated users
   useEffect(() => {
-    // Set development mode
-    localStorage.setItem('forceDevMode', 'true');
-    console.log("Development mode forced in login page");
-    
-    // Check if user just logged out - don't auto-login in that case
-    const recentlyLoggedOut = sessionStorage.getItem('recentlyLoggedOut');
-    if (recentlyLoggedOut) {
-      console.log("Recently logged out, preventing auto-login");
-      sessionStorage.removeItem('recentlyLoggedOut');
-      return;
+    if (user && !isPostLogout) {
+      const targetPath = determineRedirectPath(profile?.role);
+      navigate(redirectParam !== 'none' ? redirectParam : targetPath, { replace: true });
     }
-    
-    // Skip auto-login if redirectParam is 'none' (coming from logout)
-    if (isPostLogout) {
-      console.log("Post-logout login page, skipping auto-login");
-      return;
-    }
-    
-    // If we're accessing the login page directly and not after logout, simulate auto-login to dashboard
-    if (location.pathname === '/login' && !isPostLogout) {
-      const devUser = {
-        uid: `dev-member-${Date.now()}`,
-        id: `dev-member-${Date.now()}`,
-        email: `member@example.com`,
-        name: 'Member User',
-        displayName: 'Member User',
-        role: 'member',
-        status: 'active',
-        profileCompleted: true,
-        language: 'en',
-        lastLogin: new Date().toISOString(),
-        createdAt: new Date().toISOString()
-      };
-      
-      localStorage.setItem('currentUser', JSON.stringify(devUser));
-      localStorage.setItem('userRole', 'member');
-      
-      // Navigate directly to dashboard
-      navigate('/dashboard', { replace: true });
-    }
-  }, [location.pathname, navigate, isPostLogout]);
+  }, [user, navigate, redirectParam, isPostLogout, profile]);
 
-  // Simplified login handler that just creates a dev user and redirects
+  const determineRedirectPath = (role?: string): string => {
+    switch(role) {
+      case 'admin': return '/admin';
+      case 'callcenter': return '/call-center';
+      default: return '/dashboard';
+    }
+  };
+
   const handleLoginSuccess = async (email: string, password: string, rememberMe: boolean) => {
     setLoginInProgress(true);
+    setLoginError(null);
     
     try {
-      // Create a dev user based on email
-      const role = email.includes('admin') ? 'admin' : 
-                  email.includes('callcenter') ? 'callcenter' : 'member';
+      const { error } = await signIn(email, password);
       
-      const devUser = {
-        uid: `dev-${role}-${Date.now()}`,
-        id: `dev-${role}-${Date.now()}`,
-        email: email,
-        name: email.split('@')[0],
-        displayName: email.split('@')[0],
-        role: role,
-        status: 'active',
-        profileCompleted: true,
-        language: 'en',
-        lastLogin: new Date().toISOString(),
-        createdAt: new Date().toISOString()
-      };
+      if (error) {
+        setLoginError(error.message);
+        return;
+      }
       
-      // Store in localStorage
-      localStorage.setItem('currentUser', JSON.stringify(devUser));
-      localStorage.setItem('userRole', role);
-      localStorage.setItem('forceDevMode', 'true');
-      
-      // Success toast
+      // Authentication successful - redirects will be handled by the useEffect
       toast({
         title: language === 'en' ? "Login Successful" : "Inicio de sesión exitoso",
         description: language === 'en' 
-          ? `Welcome, ${devUser.displayName}!` 
-          : `Bienvenido, ${devUser.displayName}!`,
+          ? `Welcome back!` 
+          : `¡Bienvenido de nuevo!`,
         duration: 3000
       });
-      
-      // Determine redirect path
-      const targetUrl = role === 'admin' ? '/admin' : 
-                        role === 'callcenter' ? '/call-center' : 
-                        '/dashboard';
-      
-      // Navigate to appropriate dashboard
-      navigate(targetUrl, { replace: true });
-      
     } catch (error) {
       console.error("Login error:", error);
-      setLoginError("An error occurred during login");
+      setLoginError(language === 'en' 
+        ? "An error occurred during login" 
+        : "Ocurrió un error durante el inicio de sesión");
     } finally {
       setLoginInProgress(false);
     }

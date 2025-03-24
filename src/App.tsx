@@ -1,37 +1,50 @@
 
-import React from 'react';
-import './App.css';
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { HelmetProvider } from "react-helmet-async";
-import { LanguageProvider } from "./context/LanguageContext";
-import { AuthProvider } from "./context/auth";
-import ScrollToTop from "./components/layout/ScrollToTop";
 import { routes } from "./routes";
+import { Toaster } from "@/components/ui/toaster";
+import { LanguageProvider } from "@/context/LanguageContext";
+import { HelmetProvider } from "react-helmet-async";
+import './App.css';
+import { AuthProvider } from "@/context/AuthContext";
+import AuthGuard from "@/components/auth/AuthGuard";
 
 function App() {
-  console.log("App rendering");
-  
   return (
-    <Router>
-      <HelmetProvider>
-        <LanguageProvider>
-          <AuthProvider>
-            <ScrollToTop />
-            <div className="App">
-              <Routes>
-                {routes.map((route, index) => (
-                  <Route 
-                    key={`route-${index}`}
+    <HelmetProvider>
+      <LanguageProvider>
+        <AuthProvider>
+          <Router>
+            <Routes>
+              {routes.map((route) => {
+                // Protected routes with optional role restrictions
+                if (route.protected) {
+                  return (
+                    <Route
+                      key={route.path}
+                      path={route.path}
+                      element={
+                        <AuthGuard allowedRoles={route.allowedRoles}>
+                          {route.element}
+                        </AuthGuard>
+                      }
+                    />
+                  );
+                }
+                // Regular routes
+                return (
+                  <Route
+                    key={route.path}
                     path={route.path}
                     element={route.element}
                   />
-                ))}
-              </Routes>
-            </div>
-          </AuthProvider>
-        </LanguageProvider>
-      </HelmetProvider>
-    </Router>
+                );
+              })}
+            </Routes>
+          </Router>
+          <Toaster />
+        </AuthProvider>
+      </LanguageProvider>
+    </HelmetProvider>
   );
 }
 

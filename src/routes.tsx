@@ -1,8 +1,10 @@
+
 import React from "react";
 import { RouteConfig } from "./routes/types";
 import SOSPendantPage from "./pages/SOSPendantPage";
 import MedicalDispenserPage from "./pages/MedicalDispenserPage";
 import GlucoseMonitorPage from "./pages/GlucoseMonitorPage";
+import Signup from "./pages/signup";
 
 // Import routes from the routes directory
 import { routes as allRoutes } from "./routes/index";
@@ -21,10 +23,33 @@ const customRoutes: RouteConfig[] = [
     path: "/glucose-monitor",
     element: <GlucoseMonitorPage />,
   },
+  {
+    path: "/signup",
+    element: <Signup />,
+  }
 ];
+
+// Mark protected routes
+const protectedRoutes = allRoutes.map(route => {
+  // Mark dashboard and admin routes as protected
+  if (route.path.startsWith('/dashboard') || 
+      route.path.startsWith('/admin') || 
+      route.path.startsWith('/call-center')) {
+    return {
+      ...route,
+      protected: true,
+      allowedRoles: route.path.startsWith('/admin') 
+        ? ['admin'] 
+        : route.path.startsWith('/call-center')
+          ? ['callcenter', 'admin']
+          : undefined
+    };
+  }
+  return route;
+});
 
 // Combine the imported routes with our custom routes
 export const routes = [
-  ...allRoutes,
+  ...protectedRoutes,
   ...customRoutes
 ];

@@ -1,10 +1,19 @@
 
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { LogOut } from "lucide-react";
+import { LogOut, User } from "lucide-react";
 import { ButtonCustom } from "@/components/ui/button-custom";
 import { useLanguage } from "@/context/LanguageContext";
 import { useToast } from "@/components/ui/use-toast";
+import { useAuth } from "@/context/AuthContext";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface AuthButtonsProps {
   isMobile?: boolean;
@@ -15,89 +24,17 @@ const AuthButtons: React.FC<AuthButtonsProps> = ({ isMobile = false, onClose }) 
   const { language } = useLanguage();
   const { toast } = useToast();
   const navigate = useNavigate();
+  const { user, profile, signOut } = useAuth();
   
   const loginText = language === 'en' ? "Login" : "Iniciar Sesión";
   const signupText = language === 'en' ? "Sign Up" : "Registrarse";
-  const logoutText = language === 'en' ? "Logout" : "Cerrar Sesión";
   const dashboardText = language === 'en' ? "Dashboard" : "Panel";
   
-  // Check if user is in a dashboard
-  const isInDashboard = window.location.pathname.includes('/admin') || 
-                       window.location.pathname.includes('/call-center') || 
-                       window.location.pathname.includes('/dashboard');
-  
-  // Handle direct navigation to dashboard
-  const handleGoToDashboard = (e: React.MouseEvent) => {
+  // Handle logout
+  const handleLogout = async (e: React.MouseEvent) => {
     e.preventDefault();
     
-    // Create a dev user 
-    const devUser = {
-      uid: `dev-member-${Date.now()}`,
-      id: `dev-member-${Date.now()}`,
-      email: `member@example.com`,
-      name: 'Member User',
-      displayName: 'Member User',
-      role: 'member',
-      status: 'active',
-      profileCompleted: true,
-      language: 'en',
-      lastLogin: new Date().toISOString(),
-      createdAt: new Date().toISOString()
-    };
-    
-    localStorage.setItem('currentUser', JSON.stringify(devUser));
-    localStorage.setItem('userRole', 'member');
-    localStorage.setItem('forceDevMode', 'true');
-    
-    // Close mobile menu if open
-    if (onClose) onClose();
-    
-    // Navigate to dashboard
-    navigate('/dashboard');
-  };
-  
-  // Handle direct navigation to admin dashboard
-  const handleGoToAdmin = (e: React.MouseEvent) => {
-    e.preventDefault();
-    
-    // Create a dev admin user
-    const devUser = {
-      uid: `dev-admin-${Date.now()}`,
-      id: `dev-admin-${Date.now()}`,
-      email: `admin@example.com`,
-      name: 'Admin User',
-      displayName: 'Admin User',
-      role: 'admin',
-      status: 'active',
-      profileCompleted: true,
-      language: 'en',
-      lastLogin: new Date().toISOString(),
-      createdAt: new Date().toISOString()
-    };
-    
-    localStorage.setItem('currentUser', JSON.stringify(devUser));
-    localStorage.setItem('userRole', 'admin');
-    localStorage.setItem('forceDevMode', 'true');
-    
-    // Close mobile menu if open
-    if (onClose) onClose();
-    
-    // Navigate to admin dashboard
-    navigate('/admin');
-  };
-  
-  // Simplified logout that just clears local storage
-  const handleLogout = (e: React.MouseEvent) => {
-    e.preventDefault();
-    
-    // Clear localStorage
-    localStorage.removeItem('currentUser');
-    localStorage.removeItem('userRole');
-    
-    toast({
-      title: language === 'en' ? "Logged Out" : "Sesión Cerrada",
-      description: language === 'en' ? "You have been logged out" : "Ha cerrado sesión con éxito",
-    });
+    await signOut();
     
     // Close mobile menu if open
     if (onClose) onClose();
@@ -106,29 +43,77 @@ const AuthButtons: React.FC<AuthButtonsProps> = ({ isMobile = false, onClose }) 
     navigate('/');
   };
   
-  if (isInDashboard) {
+  // Get profile display name or email
+  const getDisplayName = () => {
+    if (profile && profile.display_name) {
+      return profile.display_name;
+    }
+    
+    if (user && user.email) {
+      return user.email.split('@')[0];
+    }
+    
+    return language === 'en' ? 'User' : 'Usuario';
+  };
+  
+  // Get dashboard link based on role
+  const getDashboardLink = () => {
+    if (profile && profile.role === 'admin') {
+      return '/admin';
+    }
+    
+    if (profile && profile.role === 'callcenter') {
+      return '/call-center';
+    }
+    
+    return '/dashboard';
+  };
+  
+  if (user) {
     return isMobile ? (
-      // Mobile view for dashboard users
+      // Mobile view for authenticated users
       <>
         <ButtonCustom 
+          variant="outline" 
+          className="w-full justify-start"
+          onClick={() => {
+            if (onClose) onClose();
+            navigate(getDashboardLink());
+          }}
+        >
+          <User className="w-4 h-4 mr-2" />
+          {dashboardText}
+        </ButtonCustom>
+        <ButtonCustom 
           onClick={handleLogout} 
-          className="w-full"
+          className="w-full justify-start"
         >
           <LogOut className="w-4 h-4 mr-2" />
-          {logoutText}
+          {language === 'en' ? "Logout" : "Cerrar Sesión"}
         </ButtonCustom>
       </>
     ) : (
-      // Desktop view for dashboard users
+      // Desktop view for authenticated users
       <div className="flex items-center space-x-2">
-        <ButtonCustom 
-          variant="ghost" 
-          size="sm" 
-          onClick={handleLogout}
-        >
-          <LogOut className="w-4 h-4 mr-1" />
-          {logoutText}
-        </ButtonCustom>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <ButtonCustom variant="ghost" size="sm">
+              <User className="w-4 h-4 mr-1" />
+              {getDisplayName()}
+            </ButtonCustom>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuLabel>{getDisplayName()}</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={() => navigate(getDashboardLink())}>
+              {dashboardText}
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={handleLogout}>
+              <LogOut className="w-4 h-4 mr-2" />
+              {language === 'en' ? "Logout" : "Cerrar Sesión"}
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
     );
   }
@@ -140,13 +125,19 @@ const AuthButtons: React.FC<AuthButtonsProps> = ({ isMobile = false, onClose }) 
         variant="outline" 
         size="sm" 
         className="w-full" 
-        onClick={handleGoToDashboard}
+        onClick={() => {
+          if (onClose) onClose();
+          navigate('/login');
+        }}
       >
         {loginText}
       </ButtonCustom>
       <ButtonCustom 
         className="w-full"
-        onClick={handleGoToAdmin}
+        onClick={() => {
+          if (onClose) onClose();
+          navigate('/signup');
+        }}
       >
         {signupText}
       </ButtonCustom>
@@ -157,12 +148,12 @@ const AuthButtons: React.FC<AuthButtonsProps> = ({ isMobile = false, onClose }) 
       <ButtonCustom 
         variant="ghost" 
         size="sm"
-        onClick={handleGoToDashboard}
+        onClick={() => navigate('/login')}
       >
         {loginText}
       </ButtonCustom>
       <ButtonCustom
-        onClick={handleGoToAdmin}
+        onClick={() => navigate('/signup')}
       >
         {signupText}
       </ButtonCustom>

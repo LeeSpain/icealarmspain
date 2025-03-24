@@ -1,202 +1,171 @@
-import React, { useState, useEffect } from "react";
-import { useToast } from "@/components/ui/use-toast";
-import { ButtonCustom } from "@/components/ui/button-custom";
-import { Mail, User, ArrowRight, Phone, AlertCircle } from "lucide-react";
+
+import React, { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { useLanguage } from "@/context/LanguageContext";
-import { useAuth } from "@/providers/AuthProvider";
-import { useNavigate } from "react-router-dom";
-import AuthInput from "./AuthInput";
-import PasswordInput from "./PasswordInput";
-import { validateForm, SocialSignIn, AuthFormFooter } from "./AuthFormUtils";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { AlertCircle, Loader2 } from "lucide-react";
 
 interface SignupFormProps {
-  onSuccess?: (email: string, password: string) => void;
+  onSuccess: (email: string, password: string, displayName: string) => Promise<void>;
   isLoading?: boolean;
   error?: string | null;
-  redirectTo?: string;
 }
 
 const SignupForm: React.FC<SignupFormProps> = ({ 
   onSuccess, 
-  isLoading: externalLoading,
-  error: externalError,
-  redirectTo 
+  isLoading = false,
+  error = null
 }) => {
   const { language } = useLanguage();
-  const { toast } = useToast();
-  const { signUp } = useAuth();
-  const navigate = useNavigate();
-  
   const [formData, setFormData] = useState({
     email: "",
     password: "",
-    name: "",
     confirmPassword: "",
-    phone: "",
+    displayName: ""
   });
-  const [internalLoading, setInternalLoading] = useState(false);
-  const [internalError, setInternalError] = useState<string | null>(null);
-  const [errors, setErrors] = useState<{[key: string]: string}>({});
-  
-  const isLoading = externalLoading !== undefined ? externalLoading : internalLoading;
-
-  // When external error changes, update internal error state
-  useEffect(() => {
-    if (externalError) {
-      setInternalError(externalError);
-    }
-  }, [externalError]);
+  const [formErrors, setFormErrors] = useState<Record<string, string>>({});
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
     
-    // Clear field-specific errors when user types
-    if (errors[name]) {
-      setErrors(prev => ({ ...prev, [name]: "" }));
+    // Clear field-specific error when editing
+    if (formErrors[name]) {
+      setFormErrors(prev => {
+        const newErrors = { ...prev };
+        delete newErrors[name];
+        return newErrors;
+      });
+    }
+  };
+
+  const validateForm = () => {
+    const errors: Record<string, string> = {};
+    
+    if (!formData.displayName.trim()) {
+      errors.displayName = language === 'en' ? "Name is required" : "El nombre es obligatorio";
     }
     
-    // Clear general error when user starts typing
-    if (internalError) {
-      setInternalError(null);
+    if (!formData.email.trim()) {
+      errors.email = language === 'en' ? "Email is required" : "El correo electrónico es obligatorio";
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      errors.email = language === 'en' ? "Invalid email format" : "Formato de correo electrónico inválido";
     }
+    
+    if (!formData.password) {
+      errors.password = language === 'en' ? "Password is required" : "La contraseña es obligatoria";
+    } else if (formData.password.length < 6) {
+      errors.password = language === 'en' ? "Password must be at least 6 characters" : "La contraseña debe tener al menos 6 caracteres";
+    }
+    
+    if (formData.password !== formData.confirmPassword) {
+      errors.confirmPassword = language === 'en' ? "Passwords do not match" : "Las contraseñas no coinciden";
+    }
+    
+    return errors;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Validate form
-    const newErrors = validateForm(formData, "signup", language);
-    setErrors(newErrors);
-    if (Object.keys(newErrors).length > 0) return;
-    
-    // Clear any previous errors
-    setInternalError(null);
-    
-    // Set loading state if we're managing it internally
-    if (externalLoading === undefined) {
-      setInternalLoading(true);
+    const validationErrors = validateForm();
+    if (Object.keys(validationErrors).length > 0) {
+      setFormErrors(validationErrors);
+      return;
     }
     
-    try {
-      if (onSuccess) {
-        await onSuccess(formData.email, formData.password);
-      } else {
-        // Use our AuthContext signUp function
-        await signUp(formData.email, formData.password, formData.name);
-        
-        // Navigate to redirectTo or default location
-        const redirectPath = redirectTo || '/onboarding';
-        navigate(redirectPath);
-      }
-    } catch (error) {
-      console.error("Signup error in form:", error);
-      const errorMessage = error instanceof Error ? error.message : String(error);
-      setInternalError(errorMessage);
-    } finally {
-      if (externalLoading === undefined) {
-        setInternalLoading(false);
-      }
-    }
+    await onSuccess(formData.email, formData.password, formData.displayName);
   };
 
   return (
-    <div className="w-full max-w-md mx-auto">
-      <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Display general error message if present */}
-        {internalError && (
-          <Alert variant="destructive" className="mb-4">
-            <AlertCircle className="h-4 w-4 mr-2" />
-            <AlertDescription>{internalError}</AlertDescription>
-          </Alert>
-        )}
-        
-        <AuthInput
-          id="name"
-          name={language === 'en' ? "Full Name" : "Nombre Completo"}
-          type="text"
-          value={formData.name}
+    <form onSubmit={handleSubmit} className="space-y-4">
+      {error && (
+        <Alert variant="destructive">
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
+      )}
+      
+      <div className="space-y-2">
+        <Label htmlFor="displayName">
+          {language === 'en' ? "Full Name" : "Nombre Completo"}
+        </Label>
+        <Input
+          id="displayName"
+          name="displayName"
+          value={formData.displayName}
           onChange={handleChange}
-          placeholder={language === 'en' ? "John Doe" : "Juan Pérez"}
-          autoComplete="name"
-          icon={User}
-          hasError={!!errors.name}
-          errorMessage={errors.name}
-          language={language}
+          className={formErrors.displayName ? "border-red-500" : ""}
         />
-        
-        <AuthInput
+        {formErrors.displayName && (
+          <p className="text-red-500 text-sm">{formErrors.displayName}</p>
+        )}
+      </div>
+      
+      <div className="space-y-2">
+        <Label htmlFor="email">
+          {language === 'en' ? "Email Address" : "Correo Electrónico"}
+        </Label>
+        <Input
           id="email"
-          name={language === 'en' ? "Email Address" : "Correo Electrónico"}
+          name="email"
           type="email"
           value={formData.email}
           onChange={handleChange}
-          placeholder={language === 'en' ? "your.email@example.com" : "tu.correo@ejemplo.com"}
-          autoComplete="email"
-          icon={Mail}
-          hasError={!!errors.email}
-          errorMessage={errors.email}
-          language={language}
+          className={formErrors.email ? "border-red-500" : ""}
         />
-        
-        <PasswordInput
+        {formErrors.email && (
+          <p className="text-red-500 text-sm">{formErrors.email}</p>
+        )}
+      </div>
+      
+      <div className="space-y-2">
+        <Label htmlFor="password">
+          {language === 'en' ? "Password" : "Contraseña"}
+        </Label>
+        <Input
           id="password"
-          name={language === 'en' ? "Password" : "Contraseña"}
+          name="password"
+          type="password"
           value={formData.password}
           onChange={handleChange}
-          placeholder={language === 'en' ? "••••••••" : "••••••••"}
-          autoComplete="new-password"
-          hasError={!!errors.password}
-          errorMessage={errors.password}
-          language={language}
+          className={formErrors.password ? "border-red-500" : ""}
         />
-        
-        <PasswordInput
+        {formErrors.password && (
+          <p className="text-red-500 text-sm">{formErrors.password}</p>
+        )}
+      </div>
+      
+      <div className="space-y-2">
+        <Label htmlFor="confirmPassword">
+          {language === 'en' ? "Confirm Password" : "Confirmar Contraseña"}
+        </Label>
+        <Input
           id="confirmPassword"
-          name={language === 'en' ? "Confirm Password" : "Confirmar Contraseña"}
+          name="confirmPassword"
+          type="password"
           value={formData.confirmPassword}
           onChange={handleChange}
-          placeholder={language === 'en' ? "••••••••" : "••••••••"}
-          hasError={!!errors.confirmPassword}
-          errorMessage={errors.confirmPassword}
-          language={language}
+          className={formErrors.confirmPassword ? "border-red-500" : ""}
         />
-        
-        <AuthInput
-          id="phone"
-          name={language === 'en' ? "Phone Number" : "Número de Teléfono"}
-          type="tel"
-          value={formData.phone}
-          onChange={handleChange}
-          placeholder={language === 'en' ? "+34 612 345 678" : "+34 612 345 678"}
-          autoComplete="tel"
-          icon={Phone}
-          hasError={false}
-          language={language}
-        />
-        
-        <div>
-          <ButtonCustom
-            type="submit"
-            className="w-full flex justify-center"
-            isLoading={isLoading}
-            disabled={isLoading}
-          >
-            {!isLoading && (
-              <>
-                {language === 'en' ? "Create Account" : "Crear Cuenta"}
-                <ArrowRight className="ml-2 h-5 w-5" />
-              </>
-            )}
-            {isLoading && (language === 'en' ? "Processing..." : "Procesando...")}
-          </ButtonCustom>
-        </div>
-      </form>
+        {formErrors.confirmPassword && (
+          <p className="text-red-500 text-sm">{formErrors.confirmPassword}</p>
+        )}
+      </div>
       
-      <SocialSignIn language={language} />
-      <AuthFormFooter mode="signup" language={language} />
-    </div>
+      <Button type="submit" className="w-full" disabled={isLoading}>
+        {isLoading ? (
+          <>
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            {language === 'en' ? "Creating Account..." : "Creando Cuenta..."}
+          </>
+        ) : (
+          language === 'en' ? "Create Account" : "Crear Cuenta"
+        )}
+      </Button>
+    </form>
   );
 };
 

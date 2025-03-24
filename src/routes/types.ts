@@ -1,7 +1,9 @@
 
-import { ReactNode } from 'react';
+import React from "react";
 
 export interface RouteConfig {
   path: string;
-  element: ReactNode;
+  element: React.ReactNode;
+  protected?: boolean;
+  allowedRoles?: string[];
 }

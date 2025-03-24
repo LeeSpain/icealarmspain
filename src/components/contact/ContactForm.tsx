@@ -5,25 +5,69 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { toast } from "@/components/ui/use-toast";
-import { Mail } from "lucide-react";
+import { useToast } from "@/components/ui/use-toast";
+import { Mail, Loader2 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/context/AuthContext";
 
 const ContactForm: React.FC = () => {
   const { language } = useLanguage();
+  const { toast } = useToast();
+  const { user } = useAuth();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [subject, setSubject] = useState("");
   const [message, setMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const validate = () => {
+    const newErrors: Record<string, string> = {};
+    
+    if (!name.trim()) {
+      newErrors.name = language === 'en' ? "Name is required" : "El nombre es obligatorio";
+    }
+    
+    if (!email.trim()) {
+      newErrors.email = language === 'en' ? "Email is required" : "El correo electrónico es obligatorio";
+    } else if (!/\S+@\S+\.\S+/.test(email)) {
+      newErrors.email = language === 'en' ? "Invalid email format" : "Formato de correo electrónico inválido";
+    }
+    
+    if (!subject.trim()) {
+      newErrors.subject = language === 'en' ? "Subject is required" : "El asunto es obligatorio";
+    }
+    
+    if (!message.trim()) {
+      newErrors.message = language === 'en' ? "Message is required" : "El mensaje es obligatorio";
+    }
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!validate()) {
+      return;
+    }
+    
     setIsSubmitting(true);
 
-    // In a real implementation, this would send the form data to a server
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      const { error } = await supabase.from('contact_submissions').insert({
+        name,
+        email,
+        subject,
+        message,
+        user_id: user?.id,
+        status: 'pending'
+      });
+
+      if (error) {
+        throw error;
+      }
       
       toast({
         title: language === 'en' ? "Message Sent" : "Mensaje Enviado",
@@ -37,7 +81,9 @@ const ContactForm: React.FC = () => {
       setEmail("");
       setSubject("");
       setMessage("");
+      setErrors({});
     } catch (error) {
+      console.error("Error submitting contact form:", error);
       toast({
         title: language === 'en' ? "Error" : "Error",
         description: language === 'en' 
@@ -66,8 +112,9 @@ const ContactForm: React.FC = () => {
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder={language === 'en' ? 'Enter your name' : 'Ingrese su nombre'}
-            required
+            className={errors.name ? "border-red-500" : ""}
           />
+          {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
         </div>
         
         <div>
@@ -78,8 +125,9 @@ const ContactForm: React.FC = () => {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder={language === 'en' ? 'Enter your email' : 'Ingrese su correo'}
-            required
+            className={errors.email ? "border-red-500" : ""}
           />
+          {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
         </div>
         
         <div>
@@ -89,8 +137,9 @@ const ContactForm: React.FC = () => {
             value={subject}
             onChange={(e) => setSubject(e.target.value)}
             placeholder={language === 'en' ? 'What is this regarding?' : '¿De qué se trata?'}
-            required
+            className={errors.subject ? "border-red-500" : ""}
           />
+          {errors.subject && <p className="text-red-500 text-sm mt-1">{errors.subject}</p>}
         </div>
         
         <div>
@@ -101,8 +150,9 @@ const ContactForm: React.FC = () => {
             onChange={(e) => setMessage(e.target.value)}
             placeholder={language === 'en' ? 'How can we help you?' : '¿Cómo podemos ayudarte?'}
             rows={5}
-            required
+            className={errors.message ? "border-red-500" : ""}
           />
+          {errors.message && <p className="text-red-500 text-sm mt-1">{errors.message}</p>}
         </div>
       </div>
       
@@ -113,7 +163,7 @@ const ContactForm: React.FC = () => {
       >
         {isSubmitting ? (
           <span className="flex items-center">
-            <span className="animate-spin mr-2">⏳</span>
+            <Loader2 className="animate-spin mr-2 h-4 w-4" />
             {language === 'en' ? 'Sending...' : 'Enviando...'}
           </span>
         ) : (

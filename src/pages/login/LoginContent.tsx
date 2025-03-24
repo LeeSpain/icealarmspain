@@ -2,6 +2,7 @@
 import React from "react";
 import LoginForm from "@/components/auth/LoginForm";
 import { Card, CardContent } from "@/components/ui/card";
+import { Link } from "react-router-dom";
 
 interface LoginContentProps {
   handleLoginSuccess: (email: string, password: string, rememberMe: boolean) => Promise<void>;
@@ -18,8 +19,6 @@ export const LoginContent: React.FC<LoginContentProps> = ({
   redirectParam,
   language
 }) => {
-  console.log("LoginContent rendering with:", { loginInProgress, loginError, redirectParam });
-
   return (
     <div className="container mx-auto px-4 py-12">
       <Card className="max-w-md mx-auto p-8 shadow-xl bg-white dark:bg-gray-900">
@@ -40,6 +39,15 @@ export const LoginContent: React.FC<LoginContentProps> = ({
             redirectTo={redirectParam || undefined}
             language={language}
           />
+          
+          <div className="mt-6 text-center">
+            <p className="text-sm text-muted-foreground">
+              {language === 'en' ? "Don't have an account?" : "¿No tienes una cuenta?"}{' '}
+              <Link to="/signup" className="text-ice-600 hover:text-ice-700 font-medium">
+                {language === 'en' ? "Sign Up" : "Regístrate"}
+              </Link>
+            </p>
+          </div>
         </CardContent>
       </Card>
     </div>
