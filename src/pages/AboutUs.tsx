@@ -7,7 +7,6 @@ import MissionVision from "@/components/about/MissionVision";
 import JourneyTimeline from "@/components/about/JourneyTimeline";
 import TeamCommunity from "@/components/about/TeamCommunity";
 import SectionDivider from "@/components/layout/SectionDivider";
-import Layout from "@/components/layout/Layout";
 
 const AboutUs: React.FC = () => {
   const { language } = useLanguage();
@@ -18,7 +17,7 @@ const AboutUs: React.FC = () => {
   }, []);
   
   return (
-    <Layout>
+    <>
       <Helmet>
         <title>{`ICE Alarm - ${pageTitle}`}</title>
         <meta 
@@ -37,7 +36,7 @@ const AboutUs: React.FC = () => {
       <JourneyTimeline language={language} />
       <SectionDivider />
       <TeamCommunity language={language} />
-    </Layout>
+    </>
   );
 };
 
