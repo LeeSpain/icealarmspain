@@ -1,11 +1,15 @@
 
 import React from "react";
 import { RouteConfig } from "./routes/types";
-import SOSPendantPage from "./pages/SOSPendantPage";
-import MedicalDispenserPage from "./pages/MedicalDispenserPage";
-import GlucoseMonitorPage from "./pages/GlucoseMonitorPage";
-import Signup from "./pages/signup";
+import { withLazyLoading } from "./utils/lazy-imports";
 import TestingPanel from "./components/test/TestingPanel";
+
+// Use lazy loading for better performance
+const SOSPendantPage = withLazyLoading(() => import("./pages/SOSPendantPage"), "Loading SOS Pendant page...");
+const MedicalDispenserPage = withLazyLoading(() => import("./pages/MedicalDispenserPage"), "Loading Medical Dispenser page...");
+const GlucoseMonitorPage = withLazyLoading(() => import("./pages/GlucoseMonitorPage"), "Loading Glucose Monitor page...");
+const Signup = withLazyLoading(() => import("./pages/signup"), "Loading Signup page...");
+const Checkout = withLazyLoading(() => import("./pages/Checkout"), "Loading Checkout page...");
 
 // Import routes from the routes directory
 import { routes as allRoutes } from "./routes/index";
@@ -29,7 +33,11 @@ const customRoutes: RouteConfig[] = [
     element: <Signup />,
   },
   {
-    path: "/testing", // Add testing route
+    path: "/checkout",
+    element: <Checkout />,
+  },
+  {
+    path: "/testing", // Testing route
     element: <TestingPanel />,
   }
 ];
