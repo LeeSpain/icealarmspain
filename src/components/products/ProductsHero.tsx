@@ -46,7 +46,9 @@ const ProductsHero: React.FC = () => {
               
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mx-auto max-w-4xl relative">
                 <span className="relative z-10 bg-gradient-to-r from-gray-900 via-ice-900 to-guardian-800 bg-clip-text text-transparent inline-block">
-                  Smart Devices For Health & Safety
+                  {language === 'en' 
+                    ? 'Smart Devices For Health & Safety' 
+                    : 'Dispositivos Inteligentes Para Salud y Seguridad'}
                 </span>
                 
                 {/* Accent decorations */}
