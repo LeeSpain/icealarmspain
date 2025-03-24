@@ -49,6 +49,41 @@ export const isDevelopment = (): boolean => {
 };
 
 /**
+ * Check if we're in debug build mode
+ */
+export const isDebugBuild = (): boolean => {
+  return import.meta.env.VITE_DEBUG_BUILD === 'true' || import.meta.env.VITE_DEBUG_BUILD === true;
+};
+
+/**
+ * Check if mock authentication is enabled
+ * This is typically only used during development
+ */
+export const isMockAuthEnabled = (): boolean => {
+  // First check for explicit mock auth setting
+  const mockAuth = import.meta.env.VITE_MOCK_AUTH;
+  if (mockAuth === 'true' || mockAuth === true) {
+    return true;
+  }
+  
+  // If force dev mode is set in localStorage, enable mock auth
+  if (typeof window !== 'undefined' && window.localStorage) {
+    const forceDevMode = localStorage.getItem('forceDevMode');
+    if (forceDevMode === 'true') {
+      return true;
+    }
+  }
+  
+  // In development, enable mock auth by default unless explicitly disabled
+  if (isDevelopment()) {
+    return import.meta.env.VITE_MOCK_AUTH !== 'false';
+  }
+  
+  // Disabled in production and staging by default
+  return false;
+};
+
+/**
  * Check if Firebase configuration is valid
  */
 export const hasValidFirebaseConfig = (): boolean => {
@@ -135,6 +170,7 @@ export const getEnvironmentDiagnostics = (): Record<string, unknown> => {
     isStaging: isStaging(),
     isDevelopment: isDevelopment(),
     hasValidFirebaseConfig: hasValidFirebaseConfig(),
+    isMockAuthEnabled: isMockAuthEnabled(),
     mode: import.meta.env.MODE,
     base: import.meta.env.BASE_URL,
     userAgent: navigator.userAgent,
@@ -144,3 +180,4 @@ export const getEnvironmentDiagnostics = (): Record<string, unknown> => {
       .map(key => `${key}: ${import.meta.env[key] ? 'set' : 'not set'}`)
   };
 };
+
