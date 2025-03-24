@@ -2,7 +2,6 @@
 import React, { useEffect, useCallback, useRef } from "react";
 import Hero from "@/components/Hero";
 import DeviceShowcase from "@/components/DeviceShowcase";
-import Pricing from "@/components/Pricing";
 import ExpatInfo from "@/components/ExpatInfo";
 import { useLanguage } from "@/context/LanguageContext";
 import DashboardPreview from "@/components/dashboard/DashboardPreview";
@@ -89,9 +88,6 @@ const Index: React.FC = () => {
         <SectionWrapper>
           <DeviceShowcase />
         </SectionWrapper>
-        
-        {/* Pricing section is already handled in the Pricing component */}
-        <Pricing />
         
         {/* Section Divider with enhanced styling */}
         <SectionDivider variant="white-to-ice" />
