@@ -13,65 +13,71 @@ console.log('Mode:', import.meta.env.MODE);
 console.log('Dev:', import.meta.env.DEV);
 console.log('Prod:', import.meta.env.PROD);
 
-// Simple function to render the app
-function renderApp() {
+// Check for required environment variables before attempting to render
+const requiredEnvVars = ['VITE_FIREBASE_API_KEY', 'VITE_FIREBASE_PROJECT_ID'];
+const missingVars = requiredEnvVars.filter(varName => !import.meta.env[varName]);
+
+if (missingVars.length > 0) {
+  console.error(`Missing required environment variables: ${missingVars.join(', ')}`);
+  // Show error in a more user-friendly way
   const rootElement = document.getElementById('root');
-  
-  if (!rootElement) {
-    console.error("Root element not found! Cannot render React app.");
+  if (rootElement) {
+    rootElement.innerHTML = `
+      <div style="padding: 20px; font-family: sans-serif; max-width: 600px; margin: 0 auto; text-align: center;">
+        <h1>Configuration Error</h1>
+        <p>The application could not be initialized due to missing configuration.</p>
+        ${isDevelopment() ? `<p>Missing: ${missingVars.join(', ')}</p>` : ''}
+        <p>Please contact support if this issue persists.</p>
+      </div>
+    `;
+  }
+} else {
+  // Simple function to render the app with improved error handling
+  function renderApp() {
+    const rootElement = document.getElementById('root');
     
-    // Create a fallback root element if missing
-    const fallbackRoot = document.createElement('div');
-    fallbackRoot.id = 'root';
-    document.body.appendChild(fallbackRoot);
+    if (!rootElement) {
+      console.error("Root element not found! Cannot render React app.");
+      return;
+    }
     
-    // Try rendering again with the fallback
     try {
-      ReactDOM.createRoot(fallbackRoot).render(
+      console.log("Rendering React app to DOM...");
+      // Clear any existing content first
+      while (rootElement.firstChild) {
+        rootElement.removeChild(rootElement.firstChild);
+      }
+      
+      const root = ReactDOM.createRoot(rootElement);
+      root.render(
         <React.StrictMode>
+          {isDevelopment() && <BasicDebug />}
           <App />
         </React.StrictMode>
       );
+      console.log("React app rendered successfully");
     } catch (error) {
-      console.error("Failed to render with fallback root:", error);
-      fallbackRoot.innerHTML = '<div style="padding: 20px; font-family: sans-serif;"><h1>Something went wrong</h1><p>Please try refreshing the page. If the problem persists, contact support.</p></div>';
+      console.error("Error rendering React app:", error);
+      rootElement.innerHTML = `
+        <div style="padding: 20px; font-family: sans-serif; max-width: 600px; margin: 0 auto; text-align: center;">
+          <h1>Something went wrong</h1>
+          <p>The application encountered an error during initialization.</p>
+          <p>Error: ${error instanceof Error ? error.message : 'Unknown error'}</p>
+          <p>Please try refreshing the page. If the problem persists, contact support.</p>
+        </div>
+      `;
     }
-    return;
   }
-  
-  // Normal rendering path
-  try {
-    console.log("Attempting to render React app...");
-    const root = ReactDOM.createRoot(rootElement);
-    root.render(
-      <React.StrictMode>
-        {isDevelopment() && <BasicDebug />}
-        <App />
-      </React.StrictMode>
-    );
-    console.log("React app rendered successfully");
-  } catch (error) {
-    console.error("Error rendering React app:", error);
-    rootElement.innerHTML = '<div style="padding: 20px; font-family: sans-serif;"><h1>Something went wrong</h1><p>Please try refreshing the page. If the problem persists, contact support.</p></div>';
-  }
+
+  // Initial render
+  renderApp();
+
+  // Fallback timeout render attempt (last resort)
+  setTimeout(() => {
+    const rootElement = document.getElementById('root');
+    if (rootElement && (!rootElement.hasChildNodes() || rootElement.children.length === 0)) {
+      console.log("Root element is empty after timeout, attempting re-render");
+      renderApp();
+    }
+  }, 1000);
 }
-
-// Initial render
-renderApp();
-
-// Add event listeners for potential recovery
-window.addEventListener('DOMContentLoaded', () => {
-  console.log("DOMContentLoaded event fired");
-  if (!document.getElementById('root')?.hasChildNodes()) {
-    console.log("Root element exists but is empty, attempting re-render");
-    renderApp();
-  }
-});
-
-// Fallback timeout render attempt (last resort)
-setTimeout(() => {
-  if (!document.getElementById('root')?.hasChildNodes()) {
-    console.log("Timeout triggered re-render attempt");
-    renderApp();
-  }
-}, 1000);

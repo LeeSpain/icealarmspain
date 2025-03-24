@@ -24,58 +24,73 @@
         min-height: 100vh;
         width: 100%;
       }
-      /* Fallback content in case of JS/React failure */
       .fallback-content {
         padding: 20px;
         font-family: sans-serif;
         max-width: 600px;
         margin: 0 auto;
         text-align: center;
+        display: none; /* Hide by default, show if loading takes too long */
+      }
+      .loading-spinner {
+        display: inline-block;
+        width: 50px;
+        height: 50px;
+        border: 3px solid rgba(0, 0, 0, 0.1);
+        border-radius: 50%;
+        border-top-color: #0070f3;
+        animation: spin 1s ease-in-out infinite;
+        margin-bottom: 20px;
+      }
+      @keyframes spin {
+        to { transform: rotate(360deg); }
       }
     </style>
   </head>
 
   <body>
     <div id="root">
-      <!-- Fallback content that will be replaced by React -->
-      <div class="fallback-content">
-        <h1>Loading Ice Guardian Alert...</h1>
-        <p>If this message persists, please ensure JavaScript is enabled and refresh the page.</p>
-      </div>
+      <!-- This content will only show if JavaScript fails to load or initialize -->
     </div>
     <script src="https://cdn.gpteng.co/gptengineer.js" type="module"></script>
     <script type="module" src="/src/main.tsx"></script>
-    <!-- Add error handling script -->
     <script>
-      // Global error handler
-      window.addEventListener('error', function(e) {
-        console.error('Global error caught:', e.error || e.message);
-        const errorMsg = e.error ? e.error.toString() : e.message;
-        
-        // Check if the page is completely blank and show a fallback message
-        if (document.body.children.length <= 2) {
-          document.body.innerHTML += '<div style="padding: 20px; font-family: sans-serif;"><h1>Something went wrong</h1><p>Error: ' + errorMsg + '</p><p>Please try refreshing the page. If the problem persists, contact support.</p></div>';
-        }
-      });
-      
-      // Initial page load check
-      document.addEventListener('DOMContentLoaded', function() {
-        console.log('DOMContentLoaded fired');
+      // Show fallback content only if React doesn't load after a delay
+      window.addEventListener('load', function() {
         setTimeout(function() {
-          // Check if React has replaced the fallback content
           const root = document.getElementById('root');
-          if (root && root.innerHTML.includes('Loading Ice Guardian Alert')) {
-            console.warn('React did not initialize within expected timeframe');
-            // Display more detailed troubleshooting info
-            const troubleshootDiv = document.createElement('div');
-            troubleshootDiv.className = 'fallback-content';
-            troubleshootDiv.innerHTML = '<h2>Troubleshooting Information</h2><p>The application is taking longer than expected to load. This might be due to:</p><ul><li>Network connectivity issues</li><li>JavaScript errors during initialization</li><li>Missing environment variables</li></ul><p>Check your browser console for errors.</p>';
+          if (!root || root.children.length === 0) {
+            // React hasn't loaded, show fallback
+            const fallback = document.createElement('div');
+            fallback.className = 'fallback-content';
+            fallback.style.display = 'block';
+            fallback.innerHTML = `
+              <div class="loading-spinner"></div>
+              <h1>Loading Ice Guardian Alert...</h1>
+              <p>If this message persists, please ensure JavaScript is enabled and refresh the page.</p>
+              <p id="debug-info" style="font-size: 12px; margin-top: 20px; color: #666;"></p>
+            `;
             
-            if (root.children.length === 1) {
-              root.appendChild(troubleshootDiv);
+            // Add some debug info that might help troubleshoot
+            const debugInfo = fallback.querySelector('#debug-info');
+            if (debugInfo) {
+              debugInfo.textContent = `Browser: ${navigator.userAgent}, Time: ${new Date().toISOString()}`;
+            }
+            
+            if (root.children.length === 0) {
+              root.appendChild(fallback);
             }
           }
-        }, 5000);
+        }, 3000); // 3 seconds
+      });
+      
+      // More robust error handling
+      window.addEventListener('error', function(e) {
+        console.error('Global error caught:', e.error || e.message);
+        const debugInfo = document.getElementById('debug-info');
+        if (debugInfo) {
+          debugInfo.textContent += `\nError: ${e.error?.message || e.message || 'Unknown error'}`;
+        }
       });
     </script>
   </body>
