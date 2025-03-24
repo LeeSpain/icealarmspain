@@ -9,8 +9,8 @@ interface JoinHeroProps {
 
 const JoinHero: React.FC<JoinHeroProps> = ({ language }) => {
   return (
-    <section id="join-hero" className="relative pt-32 pb-24 overflow-hidden bg-white">
-      {/* Using the updated HeroBackground component instead of inline elements */}
+    <section id="join-hero" className="relative pt-24 pb-24 overflow-hidden bg-white">
+      {/* Using the updated HeroBackground component for consistent styling */}
       <HeroBackground />
       
       <div className="container mx-auto px-4 md:px-6">
@@ -24,16 +24,23 @@ const JoinHero: React.FC<JoinHeroProps> = ({ language }) => {
               </span>
             </div>
             
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-4">
-              ICE Alarm
-              <span className="block text-ice-600">
-                {language === 'en' 
-                  ? 'Join Today' 
-                  : 'Únase Hoy'}
-              </span>
-            </h1>
+            <div className="relative mb-12">
+              <div className="absolute -top-10 left-1/2 transform -translate-x-1/2 w-32 h-1 bg-gradient-to-r from-transparent via-ice-400 to-transparent rounded-full opacity-70"></div>
+              
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mx-auto max-w-4xl relative">
+                <span className="relative z-10 bg-gradient-to-r from-gray-900 via-ice-900 to-guardian-800 bg-clip-text text-transparent inline-block">
+                  {language === 'en' 
+                    ? 'Join ICE Alarm Today' 
+                    : 'Únase a ICE Alarm Hoy'}
+                </span>
+                
+                <span className="absolute -bottom-3 left-1/2 transform -translate-x-1/2 w-48 h-1 bg-gradient-to-r from-ice-400 to-guardian-600 rounded-full"></span>
+              </h1>
+              
+              <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 w-24 h-0.5 bg-gradient-to-r from-transparent via-guardian-300 to-transparent rounded-full opacity-60"></div>
+            </div>
             
-            <p className="text-xl text-muted-foreground max-w-3xl mx-auto mb-8">
+            <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto py-2 rounded-lg mt-6">
               {language === 'en' 
                 ? 'Choose your devices and create a personalized health monitoring package for you and your loved ones.' 
                 : 'Elija sus dispositivos y cree un paquete de monitoreo de salud personalizado para usted y sus seres queridos.'}

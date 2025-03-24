@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { useLanguage } from "@/context/LanguageContext";
 import { useNavigate } from "react-router-dom";
@@ -14,6 +15,8 @@ import { calculateTotals } from "@/utils/joinUtils";
 import { useAuth } from "@/context/auth";
 import { toast, ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 
 const Join: React.FC = () => {
   const { language } = useLanguage();
@@ -22,6 +25,11 @@ const Join: React.FC = () => {
   const [showSignup, setShowSignup] = useState(false);
   const [membershipType, setMembershipType] = useState("individual");
   const [selectedDevices, setSelectedDevices] = useState<DeviceWithQuantity[]>([]);
+  
+  // Effect for scrolling to top on mount
+  React.useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
   
   const membershipTypes = getMembershipTypes(language);
   const devices = getDevices(language);
@@ -121,9 +129,10 @@ const Join: React.FC = () => {
   };
   
   return (
-    <div className="flex flex-col min-h-screen bg-gradient-to-b from-white via-ice-50/30 to-white">
-      <JoinBackgroundEffects />
+    <div className="flex flex-col min-h-screen">
+      <Navbar />
       <main className="flex-grow">
+        <JoinBackgroundEffects />
         <JoinHero language={language} />
 
         <div className="container mx-auto px-4 py-12">
@@ -161,6 +170,7 @@ const Join: React.FC = () => {
           )}
         </div>
       </main>
+      <Footer />
       <ToastContainer />
     </div>
   );
