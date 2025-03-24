@@ -94,14 +94,16 @@ const ContactForm: React.FC = () => {
     setIsSubmitting(true);
     
     try {
-      const { error } = await supabase.from('contact_submissions').insert({
-        name: formData.name,
-        email: formData.email,
-        subject: formData.category,
-        message: formData.message,
-        user_id: user?.id,
-        status: 'pending'
-      });
+      const { error } = await supabase
+        .from('contact_submissions')
+        .insert({
+          name: formData.name,
+          email: formData.email,
+          subject: formData.category,
+          message: formData.message,
+          user_id: user?.id,
+          status: 'pending'
+        });
 
       if (error) {
         throw error;

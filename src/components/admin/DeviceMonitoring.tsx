@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { 
   Monitor, 
@@ -103,7 +102,7 @@ const DeviceMonitoring: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [typeFilter, setTypeFilter] = useState("all");
-  const { t } = useLanguage();
+  const { language } = useLanguage();
 
   useEffect(() => {
     // Simulate loading data from API
@@ -155,11 +154,19 @@ const DeviceMonitoring: React.FC = () => {
 
     const config = statusConfig[status];
     const Icon = config.icon;
+    
+    // Use a direct translation instead of t()
+    const statusText = {
+      online: language === 'en' ? 'Online' : 'En línea',
+      offline: language === 'en' ? 'Offline' : 'Desconectado',
+      warning: language === 'en' ? 'Warning' : 'Advertencia',
+      error: language === 'en' ? 'Error' : 'Error'
+    }[status];
 
     return (
       <Badge className={`${config.color} flex items-center gap-1`}>
         <Icon size={12} />
-        {t(`adminDashboard.deviceStatus.${status}`)}
+        {statusText}
       </Badge>
     );
   };
@@ -202,20 +209,20 @@ const DeviceMonitoring: React.FC = () => {
       <div className="flex justify-between items-center">
         <div>
           <h2 className="text-2xl font-bold text-ice-800">
-            {t("adminDashboard.deviceMonitoring")}
+            {language === 'en' ? "Device Monitoring" : "Monitoreo de Dispositivos"}
           </h2>
           <p className="text-muted-foreground">
-            {t("adminDashboard.deviceMonitoringDescription")}
+            {language === 'en' ? "Overview of all connected devices" : "Descripción general de todos los dispositivos conectados"}
           </p>
         </div>
         <div className="flex gap-2">
           <Button variant="outline">
             <BarChart3 className="h-4 w-4 mr-2" />
-            {t("adminDashboard.viewReports")}
+            {language === 'en' ? "View Reports" : "Ver Informes"}
           </Button>
           <Button variant="outline">
             <Settings className="h-4 w-4 mr-2" />
-            {t("adminDashboard.settings")}
+            {language === 'en' ? "Settings" : "Ajustes"}
           </Button>
         </div>
       </div>
@@ -226,7 +233,7 @@ const DeviceMonitoring: React.FC = () => {
             <div className="text-center">
               <Monitor className="h-8 w-8 mx-auto mb-2 text-ice-600" />
               <div className="text-2xl font-bold">{totalDevices}</div>
-              <p className="text-sm text-muted-foreground">{t("adminDashboard.totalDevices")}</p>
+              <p className="text-sm text-muted-foreground">{language === 'en' ? "Total Devices" : "Dispositivos Totales"}</p>
             </div>
           </CardContent>
         </Card>
@@ -235,7 +242,7 @@ const DeviceMonitoring: React.FC = () => {
             <div className="text-center">
               <CheckCircle className="h-8 w-8 mx-auto mb-2 text-green-500" />
               <div className="text-2xl font-bold">{onlineDevices}</div>
-              <p className="text-sm text-muted-foreground">{t("adminDashboard.onlineDevices")}</p>
+              <p className="text-sm text-muted-foreground">{language === 'en' ? "Online Devices" : "Dispositivos En Línea"}</p>
             </div>
           </CardContent>
         </Card>
@@ -244,7 +251,7 @@ const DeviceMonitoring: React.FC = () => {
             <div className="text-center">
               <AlertTriangle className="h-8 w-8 mx-auto mb-2 text-yellow-500" />
               <div className="text-2xl font-bold">{warningDevices}</div>
-              <p className="text-sm text-muted-foreground">{t("adminDashboard.warningDevices")}</p>
+              <p className="text-sm text-muted-foreground">{language === 'en' ? "Warning Devices" : "Dispositivos en Advertencia"}</p>
             </div>
           </CardContent>
         </Card>
@@ -253,7 +260,7 @@ const DeviceMonitoring: React.FC = () => {
             <div className="text-center">
               <AlertTriangle className="h-8 w-8 mx-auto mb-2 text-red-500" />
               <div className="text-2xl font-bold">{errorDevices}</div>
-              <p className="text-sm text-muted-foreground">{t("adminDashboard.errorDevices")}</p>
+              <p className="text-sm text-muted-foreground">{language === 'en' ? "Error Devices" : "Dispositivos con Error"}</p>
             </div>
           </CardContent>
         </Card>
@@ -262,7 +269,7 @@ const DeviceMonitoring: React.FC = () => {
             <div className="text-center">
               <XCircle className="h-8 w-8 mx-auto mb-2 text-gray-500" />
               <div className="text-2xl font-bold">{offlineDevices}</div>
-              <p className="text-sm text-muted-foreground">{t("adminDashboard.offlineDevices")}</p>
+              <p className="text-sm text-muted-foreground">{language === 'en' ? "Offline Devices" : "Dispositivos Desconectados"}</p>
             </div>
           </CardContent>
         </Card>
@@ -270,8 +277,8 @@ const DeviceMonitoring: React.FC = () => {
 
       <Card>
         <CardHeader>
-          <CardTitle>{t("adminDashboard.deviceList")}</CardTitle>
-          <CardDescription>{t("adminDashboard.deviceListDescription")}</CardDescription>
+          <CardTitle>{language === 'en' ? "Device List" : "Lista de Dispositivos"}</CardTitle>
+          <CardDescription>{language === 'en' ? "Detailed overview of each device" : "Descripción detallada de cada dispositivo"}</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="flex flex-col md:flex-row gap-4 mb-6">
@@ -279,7 +286,7 @@ const DeviceMonitoring: React.FC = () => {
               <div className="relative">
                 <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
                 <Input
-                  placeholder={t("adminDashboard.searchDevices")}
+                  placeholder={language === 'en' ? "Search devices..." : "Buscar dispositivos..."}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="pl-8"
@@ -289,26 +296,26 @@ const DeviceMonitoring: React.FC = () => {
             <div className="flex gap-4">
               <Select value={statusFilter} onValueChange={setStatusFilter}>
                 <SelectTrigger className="w-[180px]">
-                  <SelectValue placeholder={t("adminDashboard.filterByStatus")} />
+                  <SelectValue placeholder={language === 'en' ? "Filter by status" : "Filtrar por estado"} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">{t("adminDashboard.allStatuses")}</SelectItem>
-                  <SelectItem value="online">{t("adminDashboard.deviceStatus.online")}</SelectItem>
-                  <SelectItem value="offline">{t("adminDashboard.deviceStatus.offline")}</SelectItem>
-                  <SelectItem value="warning">{t("adminDashboard.deviceStatus.warning")}</SelectItem>
-                  <SelectItem value="error">{t("adminDashboard.deviceStatus.error")}</SelectItem>
+                  <SelectItem value="all">{language === 'en' ? "All statuses" : "Todos los estados"}</SelectItem>
+                  <SelectItem value="online">{language === 'en' ? "Online" : "En línea"}</SelectItem>
+                  <SelectItem value="offline">{language === 'en' ? "Offline" : "Desconectado"}</SelectItem>
+                  <SelectItem value="warning">{language === 'en' ? "Warning" : "Advertencia"}</SelectItem>
+                  <SelectItem value="error">{language === 'en' ? "Error" : "Error"}</SelectItem>
                 </SelectContent>
               </Select>
               
               <Select value={typeFilter} onValueChange={setTypeFilter}>
                 <SelectTrigger className="w-[180px]">
-                  <SelectValue placeholder={t("adminDashboard.filterByType")} />
+                  <SelectValue placeholder={language === 'en' ? "Filter by type" : "Filtrar por tipo"} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">{t("adminDashboard.allTypes")}</SelectItem>
-                  <SelectItem value="SOS Pendant">{t("adminDashboard.deviceTypes.sosPendant")}</SelectItem>
-                  <SelectItem value="Medical Dispenser">{t("adminDashboard.deviceTypes.medicalDispenser")}</SelectItem>
-                  <SelectItem value="Health Monitor">{t("adminDashboard.deviceTypes.healthMonitor")}</SelectItem>
+                  <SelectItem value="all">{language === 'en' ? "All types" : "Todos los tipos"}</SelectItem>
+                  <SelectItem value="SOS Pendant">{language === 'en' ? "SOS Pendant" : "Colgante SOS"}</SelectItem>
+                  <SelectItem value="Medical Dispenser">{language === 'en' ? "Medical Dispenser" : "Dispensador Médico"}</SelectItem>
+                  <SelectItem value="Health Monitor">{language === 'en' ? "Health Monitor" : "Monitor de Salud"}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -318,14 +325,14 @@ const DeviceMonitoring: React.FC = () => {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>{t("adminDashboard.deviceName")}</TableHead>
-                  <TableHead>{t("adminDashboard.owner")}</TableHead>
-                  <TableHead>{t("adminDashboard.status")}</TableHead>
-                  <TableHead>{t("adminDashboard.battery")}</TableHead>
-                  <TableHead>{t("adminDashboard.signal")}</TableHead>
-                  <TableHead>{t("adminDashboard.lastPing")}</TableHead>
-                  <TableHead>{t("adminDashboard.location")}</TableHead>
-                  <TableHead className="text-right">{t("adminDashboard.actions")}</TableHead>
+                  <TableHead>{language === 'en' ? "Device Name" : "Nombre del Dispositivo"}</TableHead>
+                  <TableHead>{language === 'en' ? "Owner" : "Propietario"}</TableHead>
+                  <TableHead>{language === 'en' ? "Status" : "Estado"}</TableHead>
+                  <TableHead>{language === 'en' ? "Battery" : "Batería"}</TableHead>
+                  <TableHead>{language === 'en' ? "Signal" : "Señal"}</TableHead>
+                  <TableHead>{language === 'en' ? "Last Ping" : "Último Ping"}</TableHead>
+                  <TableHead>{language === 'en' ? "Location" : "Ubicación"}</TableHead>
+                  <TableHead className="text-right">{language === 'en' ? "Actions" : "Acciones"}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -345,7 +352,7 @@ const DeviceMonitoring: React.FC = () => {
                     <TableCell>{device.location}</TableCell>
                     <TableCell className="text-right">
                       <Button variant="outline" size="sm">
-                        {t("adminDashboard.viewDetails")}
+                        {language === 'en' ? "View Details" : "Ver Detalles"}
                       </Button>
                     </TableCell>
                   </TableRow>
