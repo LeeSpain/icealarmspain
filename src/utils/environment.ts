@@ -17,7 +17,7 @@ export const getEnvironment = (): Environment => {
     return envVar;
   }
   
-  // Fallback to NODE_ENV if VITE_ENVIRONMENT isn't set
+  // Fallback to MODE if VITE_ENVIRONMENT isn't set
   if (import.meta.env.MODE === 'production') {
     console.warn('Using MODE=production as fallback for missing VITE_ENVIRONMENT');
     return 'production';
@@ -46,6 +46,21 @@ export const isStaging = (): boolean => {
  */
 export const isDevelopment = (): boolean => {
   return getEnvironment() === 'development' || import.meta.env.DEV === true;
+};
+
+/**
+ * Check if Firebase configuration is valid
+ */
+export const hasValidFirebaseConfig = (): boolean => {
+  const apiKey = import.meta.env.VITE_FIREBASE_API_KEY;
+  const projectId = import.meta.env.VITE_FIREBASE_PROJECT_ID;
+  
+  return Boolean(
+    apiKey && 
+    projectId && 
+    apiKey !== 'your_api_key_here' && 
+    projectId !== 'your_project_id_here'
+  );
 };
 
 /**
@@ -78,8 +93,7 @@ export const getEnvVar = (key: string, fallback: string = ''): string => {
 };
 
 /**
- * Check if all required environment variables are present
- * Useful for validation during app initialization
+ * Validate all required environment variables
  */
 export const validateRequiredEnvVars = (keys: string[]): {valid: boolean, missing: string[]} => {
   const missing: string[] = [];
@@ -105,51 +119,28 @@ export const getApiUrl = (path: string = ''): string => {
 };
 
 /**
- * Get redirect URL for authentication
+ * Get auth redirect URL
  */
 export const getAuthRedirectUrl = (): string => {
   return getEnvVar('VITE_AUTH_REDIRECT_URL', window.location.origin);
 };
 
 /**
- * Check if mock authentication should be enabled
- */
-export const isMockAuthEnabled = (): boolean => {
-  const mockAuth = getEnvVar('VITE_ENABLE_MOCK_AUTH', 'false');
-  return mockAuth === 'true';
-};
-
-/**
- * Check if analytics should be enabled
- */
-export const isAnalyticsEnabled = (): boolean => {
-  const enableAnalytics = getEnvVar('VITE_ENABLE_ANALYTICS', 'false');
-  return enableAnalytics === 'true' || isProduction();
-};
-
-/**
- * Check if debug build is enabled
- */
-export const isDebugBuild = (): boolean => {
-  const debugBuild = getEnvVar('VITE_DEBUG_BUILD', 'false');
-  return debugBuild === 'true';
-};
-
-/**
- * Get a diagnostic report of the current environment
- * Useful for troubleshooting
+ * Get environment diagnostic information
  */
 export const getEnvironmentDiagnostics = (): Record<string, unknown> => {
   return {
     environment: getEnvironment(),
     isProduction: isProduction(),
-    isStaging: isStaging(), 
+    isStaging: isStaging(),
     isDevelopment: isDevelopment(),
+    hasValidFirebaseConfig: hasValidFirebaseConfig(),
     mode: import.meta.env.MODE,
     base: import.meta.env.BASE_URL,
     userAgent: navigator.userAgent,
     timestamp: new Date().toISOString(),
     availableEnvVars: Object.keys(import.meta.env)
       .filter(key => !key.includes('KEY') && !key.includes('SECRET'))
+      .map(key => `${key}: ${import.meta.env[key] ? 'set' : 'not set'}`)
   };
 };

@@ -8,13 +8,18 @@ import './App.css';
 import { AuthProvider } from "@/context/AuthContext";
 import AuthGuard from "@/components/auth/AuthGuard";
 import ErrorBoundary from "@/components/layout/ErrorBoundary";
-import { isDevelopment, isDebugBuild } from "./utils/environment";
-// Import EnhancedDebug but we won't use it by default
+import { isDevelopment, isDebugBuild, hasValidFirebaseConfig } from "./utils/environment";
+// Import but don't use EnhancedDebug
 // import EnhancedDebug from "./components/debug/EnhancedDebug";
 
 function App() {
   // Log that App component is rendering (helps with debugging)
   console.log("App component rendering");
+  
+  // Check Firebase configuration before rendering
+  if (!hasValidFirebaseConfig()) {
+    console.error("Invalid Firebase configuration detected in App component");
+  }
   
   return (
     <ErrorBoundary>
