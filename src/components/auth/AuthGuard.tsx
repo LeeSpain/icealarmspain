@@ -1,6 +1,7 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
+import { useAuth } from '@/context/AuthContext';
 
 interface AuthGuardProps {
   children: React.ReactNode;
@@ -8,29 +9,8 @@ interface AuthGuardProps {
 }
 
 const AuthGuard: React.FC<AuthGuardProps> = ({ children, allowedRoles }) => {
+  const { user, profile, isLoading } = useAuth();
   const location = useLocation();
-  
-  // Safely try to use auth context
-  let user = null;
-  let profile = null;
-  let isLoading = false;
-  
-  try {
-    // Only import and use the auth context if it's available
-    const { useAuth } = require('@/context/AuthContext');
-    try {
-      const authContext = useAuth();
-      user = authContext?.user;
-      profile = authContext?.profile;
-      isLoading = authContext?.isLoading || false;
-    } catch (error) {
-      console.error("Auth context not available in AuthGuard", error);
-      // Continue to redirect to login below
-    }
-  } catch (error) {
-    console.error("Could not import auth module in AuthGuard", error);
-    // Continue to redirect to login below
-  }
 
   const checkRoleAccess = () => {
     if (!allowedRoles || !profile) return true;

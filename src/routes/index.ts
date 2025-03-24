@@ -11,12 +11,3 @@ export const routes = [
   ...adminRoutes,
   ...callCenterRoutes
 ];
-
-// Add a debug log to check routes loading
-console.log("Routes loaded:", { 
-  mainCount: mainRoutes.length,
-  dashboardCount: dashboardRoutes.length, 
-  adminCount: adminRoutes.length,
-  callCenterCount: callCenterRoutes.length,
-  totalCount: mainRoutes.length + dashboardRoutes.length + adminRoutes.length + callCenterRoutes.length
-});

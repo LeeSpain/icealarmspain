@@ -5,18 +5,17 @@ import { Toaster } from "@/components/ui/toaster";
 import { LanguageProvider } from "@/context/LanguageContext";
 import { HelmetProvider } from "react-helmet-async";
 import './App.css';
-import { AuthProvider } from "@/context/auth/AuthProvider";
+import { AuthProvider } from "@/context/AuthContext";
 import AuthGuard from "@/components/auth/AuthGuard";
 import ErrorBoundary from "@/components/layout/ErrorBoundary";
 
 function App() {
-  console.log("App component rendering");
   return (
     <ErrorBoundary>
       <HelmetProvider>
-        <Router>
-          <AuthProvider>
-            <LanguageProvider>
+        <AuthProvider>
+          <LanguageProvider>
+            <Router>
               <Routes>
                 {routes.map((route) => {
                   // Protected routes with optional role restrictions
@@ -43,10 +42,10 @@ function App() {
                   );
                 })}
               </Routes>
-              <Toaster />
-            </LanguageProvider>
-          </AuthProvider>
-        </Router>
+            </Router>
+            <Toaster />
+          </LanguageProvider>
+        </AuthProvider>
       </HelmetProvider>
     </ErrorBoundary>
   );
