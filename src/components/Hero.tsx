@@ -25,11 +25,14 @@ const Hero: React.FC = () => {
   return (
     <section 
       id="home" 
-      className={`relative ${isHomepage ? 'pt-24' : 'pt-20'} overflow-hidden bg-white`}
+      className="relative bg-white overflow-hidden pt-24"
     >
-      <HeroBackground />
+      {/* Positioning the background with z-index to ensure it doesn't interfere with text */}
+      <div className="absolute inset-0 -z-20">
+        <HeroBackground />
+      </div>
       
-      <div className="container mx-auto px-4 md:px-6">
+      <div className="container mx-auto px-4 md:px-6 relative z-10">
         <div className="max-w-5xl mx-auto">
           <HeroHeader language={language} handleClick={handleClick} />
           
