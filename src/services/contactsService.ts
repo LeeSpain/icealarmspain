@@ -1,6 +1,6 @@
 
 import { supabase, supabaseOperation } from '@/integrations/supabase/client';
-import { Contact, TestResult } from "@/components/emergency-contacts/types";
+import { Contact, TestResult, AlertType } from "@/components/emergency-contacts/types";
 import { getEnvVar, isProduction } from '@/utils/environment';
 
 /**
@@ -76,7 +76,7 @@ export async function deleteContact(id: string): Promise<void> {
  * Sends a test alert to specified emergency contacts
  */
 export async function testAlert(
-  alertType: 'emergency' | 'medical' | 'activity' | 'all', 
+  alertType: AlertType, 
   contactIds: string[]
 ): Promise<TestResult> {
   try {
@@ -93,14 +93,14 @@ export async function testAlert(
       
       const recipients = contacts?.map(c => c.name) || [];
       
-      // Fix: Create a proper TestResult with a Date object
+      // Create a proper TestResult matching the type definition
       return {
+        id: Math.random().toString(36).substring(2, 9),
         success: true,
-        alertType,
-        // Convert string to Date object
         timestamp: new Date(),
+        type: alertType,
         recipients,
-        message: `Test ${alertType} alert sent successfully`,
+        errorMessage: undefined
       };
     }
     
@@ -124,20 +124,21 @@ export async function testAlert(
     }
     
     const result = await response.json();
-    // Ensure timestamp is a Date object
+    // Ensure timestamp is a Date object and properly convert the response
     return {
       ...result,
-      timestamp: new Date(result.timestamp)
+      timestamp: new Date(result.timestamp),
+      type: result.type || alertType, // Ensure type is set
     };
   } catch (error) {
     console.error('Error testing alert:', error);
     return {
+      id: Math.random().toString(36).substring(2, 9),
       success: false,
-      alertType,
-      // Fix: Create a proper Date object
       timestamp: new Date(),
+      type: alertType,
       recipients: [],
-      errorMessage: error.message || 'Failed to send test alert',
+      errorMessage: error.message || 'Failed to send test alert'
     };
   }
 }
