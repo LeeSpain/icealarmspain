@@ -33,15 +33,18 @@ export const withLazyLoading = <P extends object>(
 ) => {
   const LazyComponent = React.lazy(importFunc);
   
-  // Use a function component with explicit casting to resolve type issues
-  const WithLazyLoading = (props: P) => {
+  // Create a proper React function component that will properly handle the props
+  function WithLazyLoading(props: P) {
     return (
       <Suspense fallback={<LoadingSpinner fullPage message={loadingMessage} />}>
-        {/* Cast to any to resolve the type compatibility issue */}
-        <LazyComponent {...(props as any)} />
+        {/* Use React.createElement to avoid TypeScript spread props issues */}
+        {React.createElement(LazyComponent, props)}
       </Suspense>
     );
-  };
+  }
+  
+  // Set display name for better debugging
+  WithLazyLoading.displayName = `withLazyLoading(${importFunc.toString().split('(')[0]})`;
   
   return WithLazyLoading;
 };

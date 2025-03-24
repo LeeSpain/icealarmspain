@@ -7,6 +7,7 @@ interface NavLink {
   name: string;
   href: string;
   isAnchor: boolean;
+  testId?: string;
 }
 
 interface NavLinksProps {
@@ -16,16 +17,28 @@ interface NavLinksProps {
 const NavLinks: React.FC<NavLinksProps> = ({ onClick }) => {
   const { language } = useLanguage();
   const location = useLocation();
+  const isDevMode = localStorage.getItem('devMode') === 'true' || 
+                   process.env.NODE_ENV === 'development';
   
   console.log("NavLinks - Current path:", location.pathname);
   
   const navLinks: NavLink[] = [
-    { name: language === 'en' ? "Home" : "Inicio", href: "/", isAnchor: false },
-    { name: language === 'en' ? "Devices" : "Dispositivos", href: "/products", isAnchor: false },
-    { name: language === 'en' ? "Pricing" : "Precios", href: "/join", isAnchor: false },
-    { name: language === 'en' ? "About Us" : "Sobre Nosotros", href: "/about", isAnchor: false },
-    { name: language === 'en' ? "Contact" : "Contacto", href: "/contact", isAnchor: false },
+    { name: language === 'en' ? "Home" : "Inicio", href: "/", isAnchor: false, testId: "nav-home" },
+    { name: language === 'en' ? "Devices" : "Dispositivos", href: "/products", isAnchor: false, testId: "nav-devices" },
+    { name: language === 'en' ? "Pricing" : "Precios", href: "/join", isAnchor: false, testId: "nav-pricing" },
+    { name: language === 'en' ? "About Us" : "Sobre Nosotros", href: "/about", isAnchor: false, testId: "nav-about" },
+    { name: language === 'en' ? "Contact" : "Contacto", href: "/contact", isAnchor: false, testId: "nav-contact" },
   ];
+  
+  // Add testing link in development mode
+  if (isDevMode) {
+    navLinks.push({
+      name: "Testing",
+      href: "/testing",
+      isAnchor: false,
+      testId: "nav-testing"
+    });
+  }
 
   // Determine if a link is active - simplified logic
   const isActive = (path: string) => {
@@ -33,7 +46,7 @@ const NavLinks: React.FC<NavLinksProps> = ({ onClick }) => {
   };
 
   return (
-    <nav className="flex items-center space-x-1">
+    <nav className="flex items-center space-x-1" aria-label="Main Navigation">
       {navLinks.map((link) => (
         <Link
           key={link.name}
@@ -44,6 +57,7 @@ const NavLinks: React.FC<NavLinksProps> = ({ onClick }) => {
               : "text-gray-700 hover:text-ice-600"
           }`}
           onClick={onClick}
+          data-testid={link.testId}
         >
           {link.name}
         </Link>

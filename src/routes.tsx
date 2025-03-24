@@ -5,6 +5,7 @@ import SOSPendantPage from "./pages/SOSPendantPage";
 import MedicalDispenserPage from "./pages/MedicalDispenserPage";
 import GlucoseMonitorPage from "./pages/GlucoseMonitorPage";
 import Signup from "./pages/signup";
+import TestingPanel from "./components/test/TestingPanel";
 
 // Import routes from the routes directory
 import { routes as allRoutes } from "./routes/index";
@@ -26,6 +27,10 @@ const customRoutes: RouteConfig[] = [
   {
     path: "/signup",
     element: <Signup />,
+  },
+  {
+    path: "/testing", // Add testing route
+    element: <TestingPanel />,
   }
 ];
 

@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from "react";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, Menu } from "lucide-react";
 import Logo from "@/components/Logo";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
@@ -127,8 +127,9 @@ const NavbarContainer: React.FC = () => {
             type="button"
             className="p-2 rounded-md text-gray-700"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            aria-label="Toggle mobile menu"
           >
-            {/* Menu icon removed as requested */}
+            <Menu className="h-6 w-6" />
           </button>
         </div>
       </div>
