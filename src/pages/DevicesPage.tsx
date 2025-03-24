@@ -21,14 +21,14 @@ const DevicesPage: React.FC = () => {
 
   return (
     <Layout>
-      {/* Hero section with pt-44 matching homepage */}
+      {/* Update hero section spacing to match homepage */}
       <DeviceHero language={language} />
       
       {/* Section Divider with enhanced styling */}
       <SectionDivider />
       
-      {/* Use the specialized vertical DeviceShowcase component with py-14 spacing */}
-      <SectionWrapper className="py-14">
+      {/* Update to match homepage py-10 spacing */}
+      <SectionWrapper className="py-10">
         <div className="container mx-auto px-4 md:px-6">
           <DeviceShowcaseVertical />
         </div>
@@ -37,8 +37,8 @@ const DevicesPage: React.FC = () => {
       {/* Section Divider for consistent spacing */}
       <SectionDivider variant="white-to-ice" />
       
-      {/* Service sections with py-14 spacing */}
-      <SectionWrapper className="py-14 bg-ice-50/30">
+      {/* Update to match homepage py-10 spacing */}
+      <SectionWrapper className="py-10 bg-ice-50/30">
         <div className="container mx-auto px-4 md:px-6 max-w-5xl">
           {/* 24/7 Support Center section */}
           <CallCenterServices language={language} />
