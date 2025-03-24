@@ -58,7 +58,11 @@ export const mainRoutes: RouteConfig[] = [
   },
   {
     path: "/products",
-    element: <Layout><DevicesPage /></Layout>
+    element: <DevicesPage />
+  },
+  {
+    path: "/devices",
+    element: <DevicesPage />
   },
   {
     path: "/products/:id",

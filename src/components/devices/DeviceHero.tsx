@@ -11,7 +11,7 @@ interface DeviceHeroProps {
 
 const DeviceHero: React.FC<DeviceHeroProps> = ({ language }) => {
   return (
-    <section id="devices-hero" className="relative pt-44 pb-24 overflow-hidden bg-white">
+    <section id="devices-hero" className="relative pt-24 pb-24 overflow-hidden bg-white">
       <HeroBackground />
       
       <div className="container mx-auto px-4 md:px-6">

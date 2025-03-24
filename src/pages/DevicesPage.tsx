@@ -7,7 +7,6 @@ import GuardianAISection from "@/components/devices/GuardianAISection";
 import SectionWrapper from "@/components/layout/SectionWrapper";
 import SectionDivider from "@/components/layout/SectionDivider";
 import DeviceShowcaseVertical from "@/components/devices/DeviceShowcaseVertical";
-import Layout from "@/components/layout/Layout";
 
 const DevicesPage: React.FC = () => {
   const { language } = useLanguage();
@@ -20,7 +19,7 @@ const DevicesPage: React.FC = () => {
   console.log("DevicesPage rendering");
 
   return (
-    <Layout>
+    <>
       {/* Update hero section spacing to match homepage */}
       <DeviceHero language={language} />
       
@@ -50,7 +49,7 @@ const DevicesPage: React.FC = () => {
           <GuardianAISection language={language} />
         </div>
       </SectionWrapper>
-    </Layout>
+    </>
   );
 };
 
