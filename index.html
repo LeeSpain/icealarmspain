@@ -74,6 +74,15 @@
         text-align: left;
         display: none;
       }
+      .firebase-config-fix {
+        margin-top: 20px;
+        background-color: #e8f5e9;
+        border: 1px solid #c8e6c9;
+        padding: 15px;
+        border-radius: 4px;
+        text-align: left;
+        display: none;
+      }
     </style>
   </head>
 
@@ -98,6 +107,22 @@
           <li>VITE_FIREBASE_PROJECT_ID</li>
         </ul>
       </div>
+      <div id="firebase-config-fix" class="firebase-config-fix">
+        <h3>How to Fix This Issue:</h3>
+        <ol style="text-align: left;">
+          <li>Go to your <a href="https://vercel.com/dashboard" target="_blank">Vercel Dashboard</a></li>
+          <li>Select your Ice Guardian project</li>
+          <li>Click on "Settings" in the top navigation</li>
+          <li>Select "Environment Variables" from the left menu</li>
+          <li>Add these required variables:
+            <ul>
+              <li><strong>VITE_FIREBASE_API_KEY</strong> - Your Firebase API key</li>
+              <li><strong>VITE_FIREBASE_PROJECT_ID</strong> - Your Firebase project ID</li>
+            </ul>
+          </li>
+          <li>Click "Save" and redeploy your application</li>
+        </ol>
+      </div>
       <div id="troubleshooting-guide" class="troubleshooting-guide">
         <h3>Troubleshooting Steps:</h3>
         <ol>
@@ -118,9 +143,24 @@
       window.missingFirebaseConfig = false;
       window.appRendered = false;
       window.appRenderFailed = false;
+      window.appDiagnostics = {
+        startTime: new Date().toISOString(),
+        events: []
+      };
+      
+      // Track important events
+      function logAppEvent(event) {
+        if (window.appDiagnostics) {
+          window.appDiagnostics.events.push({
+            time: new Date().toISOString(),
+            event: event
+          });
+        }
+      }
       
       // Function to show fallback content
       function showFallbackContent(error) {
+        logAppEvent('showFallbackContent called');
         const fallback = document.getElementById('fallback-content');
         if (fallback) {
           fallback.style.display = 'block';
@@ -151,6 +191,11 @@
             if (firebaseError) {
               firebaseError.style.display = 'block';
             }
+            
+            const firebaseFix = document.getElementById('firebase-config-fix');
+            if (firebaseFix) {
+              firebaseFix.style.display = 'block';
+            }
           }
         }
       }
@@ -159,13 +204,23 @@
       let appInitTimeout = setTimeout(function() {
         if (!window.appRendered && !window.appRenderFailed) {
           console.warn('App initialization timeout reached');
+          logAppEvent('initializationTimeout');
           showFallbackContent({ message: 'App initialization timed out' });
         }
       }, 4000);
       
+      // Add a shorter timeout to show the loading spinner quickly
+      setTimeout(function() {
+        if (!window.appRendered && !window.appRenderFailed) {
+          document.getElementById('fallback-content').style.display = 'block';
+          logAppEvent('showingLoadingSpinner');
+        }
+      }, 1000);
+      
       // Clear the timeout if app renders successfully
       document.addEventListener('react-rendered', function() {
         clearTimeout(appInitTimeout);
+        logAppEvent('reactRendered');
         const fallback = document.getElementById('fallback-content');
         if (fallback) {
           fallback.style.display = 'none';
@@ -175,26 +230,33 @@
       // Listen for app start event
       document.addEventListener('app-init-started', function() {
         console.log('App initialization started');
+        logAppEvent('appInitStarted');
       });
       
       // Immediately check for environment variable issues
       (function checkEnvVars() {
         try {
+          // Add initialization event
+          logAppEvent('htmlInitialized');
+          
           // Check for any localStorage items that might indicate a previous error
           const previousError = localStorage.getItem('firebaseConfigError');
           if (previousError) {
             window.missingFirebaseConfig = true;
             console.warn('Previous Firebase config error detected');
+            logAppEvent('previousErrorDetected');
             showFallbackContent();
           }
         } catch (e) {
           // Ignore localStorage errors
+          logAppEvent('localStorageError');
         }
       })();
       
       // Global error handling
       window.addEventListener('error', function(e) {
         console.error('Global error caught:', e.error || e.message);
+        logAppEvent('globalError: ' + (e.error?.message || e.message || 'Unknown'));
         
         // Check if this is a Firebase config error
         if ((e.error?.message || e.message || '').includes('Firebase') || 
@@ -216,12 +278,14 @@
       
       // Add a special fallback for if the module script fails to load
       window.addEventListener('DOMContentLoaded', function() {
+        logAppEvent('DOMContentLoaded');
         const root = document.getElementById('root');
         
         // After a short delay, check if the root is still empty
         setTimeout(function() {
           if (root && (!root.children || root.children.length === 0)) {
             console.warn('Root element is empty after DOMContentLoaded + delay');
+            logAppEvent('emptyRootElementAfterDelay');
             showFallbackContent({ message: 'Application failed to initialize' });
           }
         }, 2000);

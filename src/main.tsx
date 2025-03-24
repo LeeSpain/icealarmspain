@@ -3,7 +3,7 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App'
 import './styles/index.css'
-import { getEnvironment, isDevelopment, hasValidFirebaseConfig } from './utils/environment'
+import { getEnvironment, isDevelopment, hasValidFirebaseConfig, areAllEnvVarsSet, generateConfigReport } from './utils/environment'
 import './utils/build-verification';
 import './utils/deployment-verification';
 import './utils/deployment-helper';
@@ -17,6 +17,7 @@ console.log('Prod:', import.meta.env.PROD);
 console.log('Firebase config valid:', hasValidFirebaseConfig());
 console.log('API_KEY defined:', !!import.meta.env.VITE_FIREBASE_API_KEY);
 console.log('PROJECT_ID defined:', !!import.meta.env.VITE_FIREBASE_PROJECT_ID);
+console.log('All env vars correctly set:', areAllEnvVarsSet());
 
 // Set global variable that HTML can check
 if (typeof window !== 'undefined') {
@@ -28,6 +29,15 @@ if (typeof window !== 'undefined') {
     console.log('DOMContentLoaded event fired');
     document.dispatchEvent(new CustomEvent('app-init-started'));
   });
+  
+  // Add detailed diagnostics for troubleshooting
+  window.appDiagnostics = {
+    startTime: new Date().toISOString(),
+    environment: getEnvironment(),
+    firebaseConfigValid: hasValidFirebaseConfig(),
+    renderAttempted: false,
+    errors: []
+  };
 }
 
 // Enhanced function to render the app - ALWAYS renders something
@@ -36,11 +46,20 @@ function renderApp() {
   
   if (!rootElement) {
     console.error("Root element not found! Cannot render React app.");
+    if (typeof window !== 'undefined' && window.appDiagnostics) {
+      window.appDiagnostics.errors.push({
+        time: new Date().toISOString(),
+        error: "Root element not found"
+      });
+    }
     return;
   }
   
   try {
     console.log("Rendering React app to DOM...");
+    if (typeof window !== 'undefined' && window.appDiagnostics) {
+      window.appDiagnostics.renderAttempted = true;
+    }
     
     // Always render the app regardless of Firebase config
     // We'll handle the error display within the App component
@@ -61,9 +80,29 @@ function renderApp() {
     // Set a flag that the HTML can check
     if (typeof window !== 'undefined') {
       window.appRendered = true;
+      
+      // Update diagnostics
+      if (window.appDiagnostics) {
+        window.appDiagnostics.renderCompleted = true;
+        window.appDiagnostics.renderTime = new Date().toISOString();
+      }
+      
+      // Remove any error message that might be showing
+      const fallbackContent = document.getElementById('fallback-content');
+      if (fallbackContent) {
+        fallbackContent.style.display = 'none';
+      }
     }
   } catch (error) {
     console.error("Error rendering React app:", error);
+    
+    // Save error details
+    if (typeof window !== 'undefined' && window.appDiagnostics) {
+      window.appDiagnostics.errors.push({
+        time: new Date().toISOString(),
+        error: error instanceof Error ? error.message : 'Unknown error'
+      });
+    }
     
     // Attempt to show a fallback UI if React fails to render
     if (rootElement) {
@@ -74,6 +113,10 @@ function renderApp() {
           <p>Error: ${error instanceof Error ? error.message : 'Unknown error'}</p>
           <p>Please try refreshing the page. If the problem persists, contact support.</p>
           ${!hasValidFirebaseConfig() ? '<p style="color: #d32f2f; font-weight: bold;">Missing Firebase configuration: Please set VITE_FIREBASE_API_KEY and VITE_FIREBASE_PROJECT_ID in your hosting environment.</p>' : ''}
+          <div style="margin-top: 20px; padding: 10px; background-color: #f5f5f5; border-radius: 4px; text-align: left;">
+            <h3>Diagnostic Information</h3>
+            ${generateConfigReport()}
+          </div>
         </div>
       `;
     }
@@ -81,6 +124,12 @@ function renderApp() {
     // Set a flag that the HTML can check
     if (typeof window !== 'undefined') {
       window.appRenderFailed = true;
+      
+      // Show the fallback content
+      const fallbackContent = document.getElementById('fallback-content');
+      if (fallbackContent) {
+        fallbackContent.style.display = 'block';
+      }
     }
   }
 }
@@ -94,6 +143,12 @@ renderApp();
 setTimeout(() => {
   if (typeof window !== 'undefined' && !window.appRendered) {
     console.log("No render detected after timeout, attempting to render again...");
+    
+    // Update diagnostics
+    if (window.appDiagnostics) {
+      window.appDiagnostics.secondAttempt = true;
+    }
+    
     renderApp();
   }
 }, 3000);

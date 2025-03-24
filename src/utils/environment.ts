@@ -45,7 +45,9 @@ export const getEnvironmentDiagnostics = (): Record<string, any> => {
     isDebugBuild: isDebugBuild(),
     firebaseConfigValid: hasValidFirebaseConfig(),
     apiKeyDefined: !!import.meta.env.VITE_FIREBASE_API_KEY,
-    projectIdDefined: !!import.meta.env.VITE_FIREBASE_PROJECT_ID
+    projectIdDefined: !!import.meta.env.VITE_FIREBASE_PROJECT_ID,
+    buildTime: import.meta.env.VITE_BUILD_TIME || 'unknown',
+    buildId: import.meta.env.VITE_BUILD_ID || 'unknown'
   };
 };
 
@@ -92,4 +94,50 @@ export const isMockAuthEnabled = (): boolean => {
   }
   
   return false;
+};
+
+// New function to check if all environment variables are correctly set
+export const areAllEnvVarsSet = (): boolean => {
+  try {
+    const requiredVars = [
+      'VITE_FIREBASE_API_KEY', 
+      'VITE_FIREBASE_PROJECT_ID'
+    ];
+    
+    return requiredVars.every(key => {
+      const value = import.meta.env[key];
+      return value !== undefined && value !== '' && 
+             !value.includes('your_') && !value.includes('${');
+    });
+  } catch (error) {
+    console.error('Error checking environment variables:', error);
+    return false;
+  }
+};
+
+// New function to generate an HTML report for configuration issues
+export const generateConfigReport = (): string => {
+  const config = {
+    environment: getEnvironment(),
+    isDevelopment: isDevelopment(),
+    isProduction: isProduction(),
+    firebaseConfigValid: hasValidFirebaseConfig(),
+    apiKeyDefined: !!import.meta.env.VITE_FIREBASE_API_KEY,
+    projectIdDefined: !!import.meta.env.VITE_FIREBASE_PROJECT_ID
+  };
+  
+  let report = '<h2>Environment Configuration Report</h2>';
+  report += '<ul>';
+  for (const [key, value] of Object.entries(config)) {
+    report += `<li>${key}: ${value}</li>`;
+  }
+  report += '</ul>';
+  
+  if (!hasValidFirebaseConfig()) {
+    report += `<div style="color: red; font-weight: bold;">
+      Missing Firebase configuration - check your environment variables
+    </div>`;
+  }
+  
+  return report;
 };

@@ -1,4 +1,3 @@
-
 # Troubleshooting Guide for Ice Guardian Alert
 
 This document provides solutions for common issues encountered when building, deploying, or running the Ice Guardian Alert application.
@@ -7,43 +6,54 @@ This document provides solutions for common issues encountered when building, de
 
 If you encounter a blank screen or the loading message doesn't disappear:
 
-### 1. Check Environment Variables
+### 1. Check Environment Variables in Vercel
 
 Missing environment variables are the most common cause of blank screens in production:
 
-```bash
-# Required variables for Firebase:
-VITE_FIREBASE_API_KEY=your_firebase_api_key
-VITE_FIREBASE_PROJECT_ID=your_firebase_project_id
-```
-
-### 2. Vercel Deployment Instructions
-
 1. Go to your [Vercel Dashboard](https://vercel.com/dashboard)
 2. Select your Ice Guardian Alert project
-3. Click on "Settings" tab
-4. Navigate to "Environment Variables" section
-5. Add both required variables:
-   - `VITE_FIREBASE_API_KEY`
-   - `VITE_FIREBASE_PROJECT_ID`
-6. Click "Save" and redeploy your application
+3. Click on "Settings" in the top navigation
+4. Click on "Environment Variables" in the left sidebar
+5. Verify these required variables are set:
+   - `VITE_FIREBASE_API_KEY` - Your Firebase API key
+   - `VITE_FIREBASE_PROJECT_ID` - Your Firebase project ID
+6. If any are missing, add them with the values from your Firebase project
+7. Click "Save" and redeploy your application
 
-### 3. Check Browser Console
+### 2. How to Get Your Firebase Configuration Values
 
-Open your browser's developer tools (F12) and check the console tab for errors.
+If you need to find your Firebase configuration values:
 
-Common error patterns:
-- "Firebase not initialized" - Environment variables issue
-- "ChunkLoadError" - Build configuration issue
-- "TypeError: Cannot read property of undefined" - Initialization sequence issue
+1. Go to the [Firebase Console](https://console.firebase.google.com/)
+2. Select your project
+3. Click on the web app icon (</>) in the Project Overview 
+4. Select your app from the list
+5. Click on "Config" in the SDK setup options
+6. Copy the values from the displayed configuration object:
+   ```javascript
+   const firebaseConfig = {
+     apiKey: "YOUR_API_KEY", // Use this for VITE_FIREBASE_API_KEY
+     projectId: "YOUR_PROJECT_ID", // Use this for VITE_FIREBASE_PROJECT_ID
+     // other values...
+   };
+   ```
 
-### 4. Clear Cache and Try Again
+### 3. Clear Browser Cache and Try Again
 
 Sometimes browser caching can cause issues with new deploys:
 
 1. Clear your browser cache (Ctrl+Shift+Delete or ⌘+Shift+Delete on Mac)
 2. Try loading the site in an incognito/private browsing window
 3. Try a different browser entirely
+
+### 4. Check Browser Console for Specific Errors
+
+1. Open your browser's developer tools (F12 or right-click → Inspect)
+2. Go to the Console tab
+3. Look for error messages:
+   - "Firebase not initialized" - Environment variables issue
+   - "ChunkLoadError" - Build configuration issue
+   - "TypeError: Cannot read property of undefined" - Initialization sequence issue
 
 ### 5. Verify Firebase Project Settings
 
@@ -70,11 +80,29 @@ This indicates a Firebase Authentication or Database permission issue:
 2. Ensure all required sign-in methods are enabled
 3. Verify Security Rules in Firebase Console if using Firestore or Realtime Database
 
+## Vercel-Specific Deployment Issues
+
+### Environment Variables Not Loading
+
+If your environment variables appear to be set but aren't working:
+
+1. Check for typos in the variable names
+2. Make sure you've selected the right environment (Production, Preview, Development)
+3. Try redeploying with "Clear cache and redeploy" option
+
+### Cold Start Issues
+
+If the app works after a few refreshes but initially shows a blank screen:
+
+1. Check if there's a long initialization process in your code
+2. Consider adding a pre-rendering step to your build process
+3. Implement a better loading state that appears immediately
+
 ## Getting Help
 
 If you're still experiencing issues:
 
 1. Capture the full console output with errors
-2. Note which environment you're deploying to
+2. Take a screenshot of your Vercel environment variables (with sensitive data redacted)
 3. Document the steps to reproduce the issue
 4. Contact support at support@iceguardian.com
