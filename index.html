@@ -45,6 +45,16 @@
       @keyframes spin {
         to { transform: rotate(360deg); }
       }
+      .env-error {
+        margin-top: 10px;
+        padding: 8px;
+        background-color: #fff8e1;
+        border: 1px solid #ffe082;
+        border-radius: 4px;
+        font-size: 12px;
+        text-align: left;
+        display: none;
+      }
     </style>
   </head>
 
@@ -68,6 +78,10 @@
               <div class="loading-spinner"></div>
               <h1>Loading Ice Guardian Alert...</h1>
               <p>If this message persists, please ensure JavaScript is enabled and refresh the page.</p>
+              <div id="env-error" class="env-error">
+                <strong>Missing environment variables detected.</strong><br>
+                Make sure VITE_FIREBASE_API_KEY and VITE_FIREBASE_PROJECT_ID are set in your hosting environment.
+              </div>
               <p id="debug-info" style="font-size: 12px; margin-top: 20px; color: #666;"></p>
             `;
             
@@ -75,6 +89,14 @@
             const debugInfo = fallback.querySelector('#debug-info');
             if (debugInfo) {
               debugInfo.textContent = `Browser: ${navigator.userAgent}, Time: ${new Date().toISOString()}`;
+              
+              // Try to detect if Firebase config is missing
+              if (window.missingFirebaseConfig) {
+                const envError = fallback.querySelector('#env-error');
+                if (envError) {
+                  envError.style.display = 'block';
+                }
+              }
             }
             
             if (root.children.length === 0) {
@@ -84,12 +106,25 @@
         }, 3000); // 3 seconds
       });
       
+      // Add a global variable that our app can set if Firebase config is missing
+      window.missingFirebaseConfig = false;
+      
       // More robust error handling
       window.addEventListener('error', function(e) {
         console.error('Global error caught:', e.error || e.message);
         const debugInfo = document.getElementById('debug-info');
         if (debugInfo) {
           debugInfo.textContent += `\nError: ${e.error?.message || e.message || 'Unknown error'}`;
+        }
+        
+        // Check if this is a Firebase config error
+        if ((e.error?.message || e.message || '').includes('Firebase') || 
+            (e.error?.message || e.message || '').includes('API_KEY')) {
+          window.missingFirebaseConfig = true;
+          const envError = document.getElementById('env-error');
+          if (envError) {
+            envError.style.display = 'block';
+          }
         }
       });
     </script>

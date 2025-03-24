@@ -15,7 +15,7 @@ console.log('Dev:', import.meta.env.DEV);
 console.log('Prod:', import.meta.env.PROD);
 console.log('Firebase config valid:', hasValidFirebaseConfig());
 
-// Simple function to render the app
+// Enhanced function to render the app
 function renderApp() {
   const rootElement = document.getElementById('root');
   
@@ -26,24 +26,9 @@ function renderApp() {
   
   try {
     console.log("Rendering React app to DOM...");
-    // Clear any existing content first
-    while (rootElement.firstChild) {
-      rootElement.removeChild(rootElement.firstChild);
-    }
     
-    // In production, verify that we have required configuration
-    if (!isDevelopment() && !hasValidFirebaseConfig()) {
-      console.error("Missing or invalid Firebase configuration");
-      rootElement.innerHTML = `
-        <div style="padding: 20px; font-family: sans-serif; max-width: 600px; margin: 0 auto; text-align: center;">
-          <h1>Configuration Error</h1>
-          <p>The application could not be initialized due to missing configuration.</p>
-          <p>If you are the site administrator, please ensure environment variables are correctly set.</p>
-        </div>
-      `;
-      return;
-    }
-    
+    // Always render the app even with missing Firebase config
+    // We'll handle the error display within the App component
     const root = ReactDOM.createRoot(rootElement);
     root.render(
       <React.StrictMode>
@@ -67,11 +52,4 @@ function renderApp() {
 // Initial render
 renderApp();
 
-// Fallback timeout render attempt (last resort)
-setTimeout(() => {
-  const rootElement = document.getElementById('root');
-  if (rootElement && (!rootElement.hasChildNodes() || rootElement.children.length === 0)) {
-    console.log("Root element is empty after timeout, attempting re-render");
-    renderApp();
-  }
-}, 1000);
+// Remove the fallback timeout as it may cause double rendering

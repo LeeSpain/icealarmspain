@@ -6,6 +6,7 @@
 
 // Import React properly so we can check for its existence
 import * as React from 'react';
+import { hasValidFirebaseConfig } from './environment';
 
 // Self-executing function for immediate checking
 (function verifyBuild() {
@@ -21,6 +22,20 @@ import * as React from 'react';
       }, {} as Record<string, unknown>);
     
     console.log('Environment variables available:', envVars);
+    
+    // Check for Firebase configuration
+    const firebaseConfigValid = hasValidFirebaseConfig();
+    console.log('Firebase config valid:', firebaseConfigValid);
+    
+    if (!firebaseConfigValid) {
+      console.error('Firebase configuration is missing or invalid!');
+      console.error('Make sure VITE_FIREBASE_API_KEY and VITE_FIREBASE_PROJECT_ID are set.');
+      
+      // Set global flag that can be used by the HTML fallback
+      if (typeof window !== 'undefined') {
+        (window as any).missingFirebaseConfig = true;
+      }
+    }
     
     // Check for common issues
     const checks = {
