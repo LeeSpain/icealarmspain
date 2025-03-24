@@ -10,9 +10,15 @@ const HeroSection: React.FC = () => {
   const { language } = useLanguage();
   
   return (
-    <div className="container mx-auto px-4 mb-16">
+    <div className="container mx-auto px-4 pt-16 mb-16">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
         <div>
+          <Link to="/products" className="inline-flex items-center text-muted-foreground hover:text-ice-600 mb-4">
+            <span className="text-sm font-medium">
+              {language === 'en' ? '← Back to Products' : '← Volver a Productos'}
+            </span>
+          </Link>
+          
           <h1 className="text-3xl md:text-4xl font-bold mb-4">
             {language === 'en' ? 'Medical Dispenser' : 'Dispensador Médico'}
           </h1>
