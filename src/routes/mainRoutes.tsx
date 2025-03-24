@@ -19,6 +19,8 @@ import SOSPendantPage from "../pages/SOSPendantPage";
 import MedicalDispenserPage from "../pages/MedicalDispenserPage";
 import GlucoseMonitorPage from "../pages/GlucoseMonitorPage";
 import InvestorPage from "../pages/InvestorPage";
+import HelpSupportPage from "../pages/HelpSupportPage";
+import Commercial from "../pages/Commercial";
 
 // Landing page component
 const Landing = () => {
@@ -44,7 +46,7 @@ export const mainRoutes: RouteConfig[] = [
   },
   {
     path: "/contact",
-    element: <Layout><Contact /></Layout>
+    element: <Contact />
   },
   {
     path: "/login",
@@ -81,6 +83,14 @@ export const mainRoutes: RouteConfig[] = [
   {
     path: "/investors",
     element: <InvestorPage />
+  },
+  {
+    path: "/help-support",
+    element: <HelpSupportPage />
+  },
+  {
+    path: "/commercial",
+    element: <Commercial />
   },
   {
     path: "*",
