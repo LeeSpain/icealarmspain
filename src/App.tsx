@@ -21,12 +21,20 @@ function ConfigErrorDisplay() {
     }}>
       <h1>Configuration Error</h1>
       <p>The application could not be initialized due to missing Firebase configuration.</p>
-      <p>If you are the site administrator, please ensure the following environment variables are correctly set:</p>
-      <ul style={{ listStyle: 'none', padding: '10px', background: '#f5f5f5', display: 'inline-block', textAlign: 'left' }}>
-        <li>VITE_FIREBASE_API_KEY</li>
-        <li>VITE_FIREBASE_PROJECT_ID</li>
+      <p>If you are the site administrator, please ensure the following environment variables are correctly set in your hosting environment:</p>
+      <ul style={{ listStyle: 'none', padding: '15px', background: '#f5f5f5', display: 'inline-block', textAlign: 'left', borderRadius: '4px', margin: '10px 0' }}>
+        <li><strong>VITE_FIREBASE_API_KEY</strong></li>
+        <li><strong>VITE_FIREBASE_PROJECT_ID</strong></li>
       </ul>
       <p>For more information, please check the deployment documentation.</p>
+      <div style={{ marginTop: '20px', padding: '10px', backgroundColor: '#e3f2fd', borderRadius: '4px', textAlign: 'left' }}>
+        <p><strong>Troubleshooting:</strong></p>
+        <ol style={{ paddingLeft: '20px' }}>
+          <li>Add these variables to your hosting platform's environment settings</li>
+          <li>Redeploy your application after adding the variables</li>
+          <li>If using Vercel or Netlify, you can add these in the project settings</li>
+        </ol>
+      </div>
     </div>
   );
 }
@@ -39,6 +47,8 @@ function App() {
   const validFirebaseConfig = hasValidFirebaseConfig();
   if (!validFirebaseConfig) {
     console.error("Invalid Firebase configuration detected in App component");
+    console.log("API_KEY defined:", !!import.meta.env.VITE_FIREBASE_API_KEY);
+    console.log("PROJECT_ID defined:", !!import.meta.env.VITE_FIREBASE_PROJECT_ID);
   }
   
   // Always render the app, but show a config error component if needed

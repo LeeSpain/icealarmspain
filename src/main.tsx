@@ -15,6 +15,11 @@ console.log('Dev:', import.meta.env.DEV);
 console.log('Prod:', import.meta.env.PROD);
 console.log('Firebase config valid:', hasValidFirebaseConfig());
 
+// Set global variable that HTML can check
+if (typeof window !== 'undefined') {
+  window.missingFirebaseConfig = !hasValidFirebaseConfig();
+}
+
 // Enhanced function to render the app
 function renderApp() {
   const rootElement = document.getElementById('root');
@@ -44,6 +49,7 @@ function renderApp() {
         <p>The application encountered an error during initialization.</p>
         <p>Error: ${error instanceof Error ? error.message : 'Unknown error'}</p>
         <p>Please try refreshing the page. If the problem persists, contact support.</p>
+        ${!hasValidFirebaseConfig() ? '<p style="color: #d32f2f; font-weight: bold;">Missing Firebase configuration: Please set VITE_FIREBASE_API_KEY and VITE_FIREBASE_PROJECT_ID in your hosting environment.</p>' : ''}
       </div>
     `;
   }
@@ -51,5 +57,3 @@ function renderApp() {
 
 // Initial render
 renderApp();
-
-// Remove the fallback timeout as it may cause double rendering

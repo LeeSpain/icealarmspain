@@ -15,7 +15,7 @@ import { hasValidFirebaseConfig } from './environment';
     
     // Log environment variables (non-sensitive only)
     const envVars = Object.keys(import.meta.env)
-      .filter(key => !key.includes('KEY') && !key.includes('SECRET'))
+      .filter(key => !key.includes('KEY') && !key.includes('SECRET') && !key.includes('PASSWORD'))
       .reduce((acc, key) => {
         acc[key] = import.meta.env[key];
         return acc;
@@ -28,12 +28,18 @@ import { hasValidFirebaseConfig } from './environment';
     console.log('Firebase config valid:', firebaseConfigValid);
     
     if (!firebaseConfigValid) {
+      console.error('===== CRITICAL ERROR =====');
       console.error('Firebase configuration is missing or invalid!');
-      console.error('Make sure VITE_FIREBASE_API_KEY and VITE_FIREBASE_PROJECT_ID are set.');
+      console.error('Make sure VITE_FIREBASE_API_KEY and VITE_FIREBASE_PROJECT_ID are set in your hosting environment.');
+      console.error('===========================');
+      
+      // Print diagnostic information (with masked values)
+      console.log('API_KEY defined:', !!import.meta.env.VITE_FIREBASE_API_KEY);
+      console.log('PROJECT_ID defined:', !!import.meta.env.VITE_FIREBASE_PROJECT_ID);
       
       // Set global flag that can be used by the HTML fallback
       if (typeof window !== 'undefined') {
-        (window as any).missingFirebaseConfig = true;
+        window.missingFirebaseConfig = true;
       }
     }
     
@@ -41,7 +47,7 @@ import { hasValidFirebaseConfig } from './environment';
     const checks = {
       documentExists: typeof document !== 'undefined',
       windowExists: typeof window !== 'undefined',
-      rootElementExists: document.getElementById('root') !== null,
+      rootElementExists: typeof document !== 'undefined' && document.getElementById('root') !== null,
       reactExists: typeof React !== 'undefined'
     };
     
@@ -49,6 +55,18 @@ import { hasValidFirebaseConfig } from './environment';
     
     if (!checks.rootElementExists) {
       console.error('Root element not found! This will prevent the app from rendering.');
+    }
+    
+    // Add information about fixing the Firebase configuration issue
+    if (!firebaseConfigValid) {
+      console.info('=== HOW TO FIX ===');
+      console.info('1. Go to your hosting platform (Vercel, Netlify, etc.)');
+      console.info('2. Navigate to the environment variables or settings section');
+      console.info('3. Add the following variables:');
+      console.info('   - VITE_FIREBASE_API_KEY');
+      console.info('   - VITE_FIREBASE_PROJECT_ID');
+      console.info('4. Redeploy your application');
+      console.info('==================');
     }
     
     console.log('Build verification completed');
