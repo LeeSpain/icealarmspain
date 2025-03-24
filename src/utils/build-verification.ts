@@ -4,6 +4,9 @@
  * It should run immediately when imported and log to console
  */
 
+// Import React properly so we can check for its existence
+import * as React from 'react';
+
 // Self-executing function for immediate checking
 (function verifyBuild() {
   try {
