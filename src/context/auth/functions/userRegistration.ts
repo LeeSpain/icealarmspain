@@ -63,7 +63,7 @@ export const signUp = async (
   else {
     try {
       // Create user with Firebase
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const userCredential = await createUserWithEmailAndPassword(email, password);
       const firebaseUser = userCredential.user;
       
       // Update display name if provided

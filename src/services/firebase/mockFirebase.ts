@@ -6,6 +6,7 @@
  */
 
 import { getEnvironment, isDevelopment } from '@/utils/environment';
+import { User } from 'firebase/auth';
 
 // Log that we're using mock Firebase
 console.warn('Using mock Firebase implementation due to missing configuration');
@@ -17,24 +18,76 @@ if (isDevelopment()) {
   console.error('Please configure proper Firebase credentials in your hosting environment');
 }
 
+// Define a mock user class that matches Firebase's User interface
+class MockUser implements Partial<User> {
+  uid: string;
+  email: string | null;
+  displayName: string | null;
+  photoURL: string | null;
+  emailVerified: boolean;
+  
+  constructor(email: string, displayName?: string) {
+    this.uid = `mock-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+    this.email = email;
+    this.displayName = displayName || email.split('@')[0];
+    this.photoURL = null;
+    this.emailVerified = true;
+  }
+  
+  // Add any other User properties needed
+  metadata = {
+    creationTime: new Date().toISOString(),
+    lastSignInTime: new Date().toISOString()
+  };
+}
+
 // Mock Auth
 export const mockAuth = {
-  currentUser: null,
-  onAuthStateChanged: (callback: (user: null) => void) => {
+  currentUser: null as (MockUser | null),
+  
+  onAuthStateChanged: (callback: (user: MockUser | null) => void) => {
     // Always return null user
     setTimeout(() => callback(null), 100);
     
     // Return mock unsubscribe function
     return () => {};
   },
+  
   signInWithEmailAndPassword: async (email: string, password: string) => {
-    throw new Error('Authentication is not available with mock Firebase');
+    console.log(`Mock signIn called with: ${email}`);
+    
+    // Create a mock user that matches Firebase's UserCredential interface
+    const mockUser = new MockUser(email);
+    
+    // Return a mock UserCredential
+    return {
+      user: mockUser,
+      providerId: null,
+      operationType: 'signIn'
+    };
   },
+  
   createUserWithEmailAndPassword: async (email: string, password: string) => {
-    throw new Error('Authentication is not available with mock Firebase');
+    console.log(`Mock createUser called with: ${email}`);
+    
+    // Create a mock user that matches Firebase's UserCredential interface
+    const mockUser = new MockUser(email);
+    
+    // Return a mock UserCredential
+    return {
+      user: mockUser,
+      providerId: null,
+      operationType: 'signUp'
+    };
   },
+  
   signOut: async () => {
     console.log('Mock sign out called');
+    return Promise.resolve();
+  },
+  
+  updateProfile: async (user: any, profile: {displayName?: string; photoURL?: string}) => {
+    console.log('Mock updateProfile called with:', profile);
     return Promise.resolve();
   }
 };

@@ -26,9 +26,27 @@ export const isDevelopment = (): boolean => {
   return import.meta.env.DEV === true || getEnvironment() === 'development';
 };
 
+// Check if running in production mode
+export const isProduction = (): boolean => {
+  return import.meta.env.PROD === true || getEnvironment() === 'production';
+};
+
 // Check if this is a debug build
 export const isDebugBuild = (): boolean => {
   return import.meta.env.VITE_DEBUG_BUILD === 'true';
+};
+
+// Get diagnostic information about the environment
+export const getEnvironmentDiagnostics = (): Record<string, any> => {
+  return {
+    mode: getEnvironment(),
+    isDevelopment: isDevelopment(),
+    isProduction: isProduction(),
+    isDebugBuild: isDebugBuild(),
+    firebaseConfigValid: hasValidFirebaseConfig(),
+    apiKeyDefined: !!import.meta.env.VITE_FIREBASE_API_KEY,
+    projectIdDefined: !!import.meta.env.VITE_FIREBASE_PROJECT_ID
+  };
 };
 
 // Check if we have the minimum required Firebase configuration

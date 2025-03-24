@@ -50,28 +50,28 @@ export { auth, analytics };
 export type { FirebaseUser };
 
 // Export wrapped versions of Firebase functions
-export const signInWithEmailAndPassword = async (auth: Auth, email: string, password: string) => {
+export const signInWithEmailAndPassword = async (email: string, password: string) => {
   if (!hasValidFirebaseConfig()) {
     return mockAuth.signInWithEmailAndPassword(email, password);
   }
   return firebaseSignIn(auth, email, password);
 };
 
-export const createUserWithEmailAndPassword = async (auth: Auth, email: string, password: string) => {
+export const createUserWithEmailAndPassword = async (email: string, password: string) => {
   if (!hasValidFirebaseConfig()) {
     return mockAuth.createUserWithEmailAndPassword(email, password);
   }
   return firebaseCreateUser(auth, email, password);
 };
 
-export const onAuthStateChanged = (auth: Auth, callback: (user: FirebaseUser | null) => void) => {
+export const onAuthStateChanged = (callback: (user: FirebaseUser | null) => void) => {
   if (!hasValidFirebaseConfig()) {
     return mockAuth.onAuthStateChanged(callback);
   }
   return firebaseOnAuthStateChanged(auth, callback);
 };
 
-export const signOut = async (auth: Auth) => {
+export const signOut = async () => {
   if (!hasValidFirebaseConfig()) {
     return mockAuth.signOut();
   }

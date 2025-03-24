@@ -1,7 +1,8 @@
+
 import { useEffect, useRef } from 'react';
 import { User } from './types';
 import { determineUserRole } from './utils';
-import { auth, onAuthStateChanged } from '../../services/firebase/auth';
+import { auth, onAuthStateChanged } from '@/services/firebase/auth';
 import { isMockAuthEnabled, isDevelopment } from '@/utils/environment';
 
 interface UseAuthEffectsProps {
@@ -77,7 +78,7 @@ export const useAuthEffects = ({ setUser, setIsLoading }: UseAuthEffectsProps) =
     }
     
     // Listen for Firebase auth state changes - this is the real authentication we always use
-    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+    const unsubscribe = onAuthStateChanged((firebaseUser) => {
       if (isDevelopment()) {
         console.log('Firebase auth state changed:', firebaseUser?.email || 'No user');
       }

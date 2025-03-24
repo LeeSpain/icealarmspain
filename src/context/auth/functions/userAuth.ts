@@ -62,7 +62,7 @@ export const login = async (email: string, password: string, rememberMe: boolean
   else {
     try {
       // Sign in with Firebase
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const userCredential = await signInWithEmailAndPassword(email, password);
       const firebaseUser = userCredential.user;
       
       if (!firebaseUser) {
@@ -123,7 +123,7 @@ export const logout = async (): Promise<void> => {
   // In production or when not using mock auth, sign out from Firebase
   if (!isMockAuthEnabled()) {
     try {
-      await signOut(auth);
+      await signOut();
     } catch (error) {
       console.error('Error signing out from Firebase:', error);
       // Still proceed with logout even if Firebase sign out fails
