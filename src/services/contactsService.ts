@@ -93,10 +93,12 @@ export async function testAlert(
       
       const recipients = contacts?.map(c => c.name) || [];
       
+      // Fix: Create a proper TestResult with a Date object
       return {
         success: true,
         alertType,
-        timestamp: new Date().toISOString(),
+        // Convert string to Date object
+        timestamp: new Date(),
         recipients,
         message: `Test ${alertType} alert sent successfully`,
       };
@@ -121,13 +123,19 @@ export async function testAlert(
       throw new Error(errorData.message || 'Failed to send test alert');
     }
     
-    return await response.json();
+    const result = await response.json();
+    // Ensure timestamp is a Date object
+    return {
+      ...result,
+      timestamp: new Date(result.timestamp)
+    };
   } catch (error) {
     console.error('Error testing alert:', error);
     return {
       success: false,
       alertType,
-      timestamp: new Date().toISOString(),
+      // Fix: Create a proper Date object
+      timestamp: new Date(),
       recipients: [],
       errorMessage: error.message || 'Failed to send test alert',
     };

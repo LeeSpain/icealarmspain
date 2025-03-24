@@ -92,7 +92,7 @@ export function startDatabaseMonitor(interval = 60000, showToasts = true) {
         description: result.status === 'degraded' 
           ? "Database is responding slowly. Some operations may take longer than usual."
           : "Cannot connect to database. Please check your connection.",
-        variant: result.status === 'degraded' ? "warning" : "destructive",
+        variant: result.status === 'degraded' ? "default" : "destructive",
       });
     }
   });
@@ -108,7 +108,7 @@ export function startDatabaseMonitor(interval = 60000, showToasts = true) {
         description: result.status === 'degraded' 
           ? "Database is responding slowly. Some operations may take longer than usual."
           : "Cannot connect to database. Please check your connection.",
-        variant: result.status === 'degraded' ? "warning" : "destructive",
+        variant: result.status === 'degraded' ? "default" : "destructive",
       });
     }
   }, interval);
