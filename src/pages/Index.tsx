@@ -10,10 +10,10 @@ import DecorativeElements from "@/components/layout/DecorativeElements";
 import SectionDivider from "@/components/layout/SectionDivider";
 import SectionWrapper from "@/components/layout/SectionWrapper";
 import { Helmet } from "react-helmet-async";
-import Layout from "@/components/layout/Layout";
+import Testimonials from "@/components/Testimonials";
 
 const Index: React.FC = () => {
-  console.log("Index component rendering - SHOULD BE VISIBLE");
+  console.log("Index component rendering");
   const { language } = useLanguage();
   
   // Reference to track if component is mounted
@@ -68,46 +68,47 @@ const Index: React.FC = () => {
     : "ICE Alarm España ofrece sistemas de alerta de emergencia confiables para personas mayores e individuos con condiciones médicas en España.";
   
   return (
-    <Layout>
-      <div className="flex flex-col min-h-screen bg-white">
-        <Helmet>
-          <meta name="description" content={seoDescription} />
-          <meta property="og:type" content="website" />
-        </Helmet>
+    <div className="flex flex-col min-h-screen bg-white">
+      <Helmet>
+        <meta name="description" content={seoDescription} />
+        <meta property="og:type" content="website" />
+      </Helmet>
+      
+      {/* Simplified Decorative Elements */}
+      {/* <DecorativeElements /> */}
+      
+      <main className="flex-grow relative bg-white">
+        {/* Wrapping Hero in error boundary */}
+        <div className="relative bg-white">
+          <Hero />
+        </div>
         
-        {/* Simplified Decorative Elements - Remove if still causing shadowing */}
-        {/* <DecorativeElements /> */}
+        {/* Section Divider with enhanced styling */}
+        <SectionDivider />
         
-        <main className="flex-grow relative bg-white">
-          {/* Wrapping Hero in error boundary */}
-          <div className="relative bg-white">
-            <Hero />
-          </div>
-          
-          {/* Section Divider with enhanced styling */}
-          <SectionDivider />
-          
-          {/* Dashboard Example Section with consistent spacing */}
-          <SectionWrapper>
-            <DashboardPreview />
-          </SectionWrapper>
-          
-          {/* Device Showcase with consistent spacing */}
-          <SectionWrapper>
-            <DeviceShowcase />
-          </SectionWrapper>
-          
-          {/* Pricing section is already handled in the Pricing component */}
-          <Pricing />
-          
-          {/* Section Divider with enhanced styling */}
-          <SectionDivider variant="white-to-ice" />
-          
-          {/* ExpatInfo has its own spacing adjustments now */}
-          <ExpatInfo />
-        </main>
-      </div>
-    </Layout>
+        {/* Dashboard Example Section with consistent spacing */}
+        <SectionWrapper>
+          <DashboardPreview />
+        </SectionWrapper>
+        
+        {/* Device Showcase with consistent spacing */}
+        <SectionWrapper>
+          <DeviceShowcase />
+        </SectionWrapper>
+        
+        {/* Pricing section is already handled in the Pricing component */}
+        <Pricing />
+        
+        {/* Section Divider with enhanced styling */}
+        <SectionDivider variant="white-to-ice" />
+        
+        {/* ExpatInfo has its own spacing adjustments now */}
+        <ExpatInfo />
+
+        {/* Testimonials section */}
+        <Testimonials />
+      </main>
+    </div>
   );
 };
 
