@@ -68,15 +68,15 @@ export const mainRoutes: RouteConfig[] = [
   },
   {
     path: "/sos-pendant",
-    element: <Layout><SOSPendantPage /></Layout>
+    element: <SOSPendantPage />
   },
   {
     path: "/medical-dispenser",
-    element: <Layout><MedicalDispenserPage /></Layout>
+    element: <MedicalDispenserPage />
   },
   {
     path: "/glucose-monitor",
-    element: <Layout><GlucoseMonitorPage /></Layout>
+    element: <GlucoseMonitorPage />
   },
   {
     path: "/investors",
