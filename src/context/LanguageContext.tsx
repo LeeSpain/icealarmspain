@@ -27,8 +27,15 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     return (localStorage.getItem('language') as Language) || 'en';
   });
   
-  // Get auth context, use optional chaining to handle case when auth context isn't ready
-  const auth = useAuth();
+  // Make auth context use optional to avoid errors when not available
+  let auth;
+  try {
+    auth = useAuth();
+  } catch (error) {
+    console.warn("Auth context not available, language preferences won't sync with user profile");
+    auth = { profile: null, isLoading: false };
+  }
+  
   const profile = auth?.profile;
   const isLoading = auth?.isLoading || false;
 

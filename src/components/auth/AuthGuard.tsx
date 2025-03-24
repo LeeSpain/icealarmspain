@@ -9,7 +9,16 @@ interface AuthGuardProps {
 }
 
 const AuthGuard: React.FC<AuthGuardProps> = ({ children, allowedRoles }) => {
-  const { user, profile, isLoading } = useAuth();
+  let authContext;
+  try {
+    authContext = useAuth();
+  } catch (error) {
+    console.error("Auth context not available in AuthGuard", error);
+    // Redirect to login if auth context is not available
+    return <Navigate to="/login" replace />;
+  }
+  
+  const { user, profile, isLoading } = authContext;
   const location = useLocation();
 
   const checkRoleAccess = () => {

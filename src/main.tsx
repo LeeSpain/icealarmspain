@@ -10,6 +10,17 @@ const rootElement = document.getElementById('root');
 
 if (rootElement) {
   console.log("Root element found, mounting React app");
+  
+  // Create a custom error handler for React errors
+  window.addEventListener('error', (event) => {
+    console.error("Global error caught:", event.error);
+    
+    // Check if it's related to our auth context error
+    if (event.error && event.error.message && event.error.message.includes("useAuth must be used within an AuthProvider")) {
+      console.error("Auth provider error detected. Please check provider order in App.tsx.");
+    }
+  });
+  
   // Create the root and render the app
   ReactDOM.createRoot(rootElement).render(
     <React.StrictMode>
