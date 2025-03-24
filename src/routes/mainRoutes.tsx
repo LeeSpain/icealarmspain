@@ -46,7 +46,7 @@ export const mainRoutes: RouteConfig[] = [
   },
   {
     path: "/contact",
-    element: <Contact />
+    element: <Layout><Contact /></Layout>
   },
   {
     path: "/login",
@@ -70,27 +70,27 @@ export const mainRoutes: RouteConfig[] = [
   },
   {
     path: "/sos-pendant",
-    element: <SOSPendantPage />
+    element: <Layout><SOSPendantPage /></Layout>
   },
   {
     path: "/medical-dispenser",
-    element: <MedicalDispenserPage />
+    element: <Layout><MedicalDispenserPage /></Layout>
   },
   {
     path: "/glucose-monitor",
-    element: <GlucoseMonitorPage />
+    element: <Layout><GlucoseMonitorPage /></Layout>
   },
   {
     path: "/investors",
-    element: <InvestorPage />
+    element: <Layout><InvestorPage /></Layout>
   },
   {
     path: "/help-support",
-    element: <HelpSupportPage />
+    element: <Layout><HelpSupportPage /></Layout>
   },
   {
     path: "/commercial",
-    element: <Commercial />
+    element: <Layout><Commercial /></Layout>
   },
   {
     path: "*",
