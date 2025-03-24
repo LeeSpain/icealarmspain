@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { useLanguage } from "@/context/LanguageContext";
 import { Button } from "@/components/ui/button";
@@ -17,7 +18,7 @@ const ProductDetail: React.FC = () => {
     isVisible: false,
     title: '',
     message: '',
-    variant: 'default'
+    variant: 'default' as 'default' | 'destructive' | 'success'
   });
 
   useEffect(() => {
@@ -43,7 +44,7 @@ const ProductDetail: React.FC = () => {
           message: language === 'en' 
             ? "Thank you for reserving the device. Our team will contact you shortly to arrange delivery." 
             : "Gracias por reservar el dispositivo. Nuestro equipo se pondrá en contacto con usted en breve para organizar la entrega.",
-          variant: "default", // Changed from "success" to "default"
+          variant: "default", 
         });
       } else {
         // Error scenario
@@ -53,7 +54,7 @@ const ProductDetail: React.FC = () => {
           message: language === 'en' 
             ? "We're sorry, but there was an error processing your reservation. Please try again later." 
             : "Lo sentimos, pero hubo un error al procesar su reserva. Por favor, inténtelo de nuevo más tarde.",
-          variant: "destructive", // Changed from "error" to "destructive"
+          variant: "destructive",
         });
       }
     }, 1500);

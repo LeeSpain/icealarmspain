@@ -23,4 +23,14 @@ export type ContactSubmission = {
   status?: string;
 };
 
+// Create the Supabase client with proper typing
 export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey);
+
+// Add a custom method to handle contact submissions since it's not in the generated types
+export const createContactSubmission = async (submission: ContactSubmission) => {
+  const { data, error } = await supabase
+    .from('contact_submissions')
+    .insert(submission as any);
+  
+  return { data, error };
+};
