@@ -23,7 +23,7 @@ const ProductsHero: React.FC = () => {
   return (
     <section 
       id="products-hero" 
-      className="relative pt-24 pb-24 overflow-hidden bg-white"
+      className="relative pt-12 pb-16 overflow-hidden bg-white"
     >
       {/* Using the updated HeroBackground component */}
       <HeroBackground />
