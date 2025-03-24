@@ -58,15 +58,26 @@ export const hasValidFirebaseConfig = (): boolean => {
     const apiKey = getEnvVar('VITE_FIREBASE_API_KEY', '');
     const projectId = getEnvVar('VITE_FIREBASE_PROJECT_ID', '');
     
+    console.log('Firebase config check:', { 
+      apiKey: apiKey ? 'Defined' : 'Undefined', 
+      projectId: projectId ? 'Defined' : 'Undefined',
+      apiKeyLength: apiKey ? apiKey.length : 0
+    });
+    
     // For production, both values must be present and not placeholder values
     if (isProduction()) {
-      return !!apiKey && !!projectId && 
-             !apiKey.includes('your_') && !apiKey.includes('${') &&
-             !projectId.includes('your_') && !projectId.includes('${');
+      const isValid = !!apiKey && !!projectId && 
+                   !apiKey.includes('your_') && !apiKey.includes('${') &&
+                   !projectId.includes('your_') && !projectId.includes('${');
+      
+      console.log('Firebase config valid (production):', isValid);
+      return isValid;
     }
     
     // For development, just check if they exist
-    return !!apiKey && !!projectId;
+    const isValid = !!apiKey && !!projectId;
+    console.log('Firebase config valid (development):', isValid);
+    return isValid;
   } catch (error) {
     console.error('Error checking Firebase config:', error);
     return false;
@@ -104,11 +115,17 @@ export const areAllEnvVarsSet = (): boolean => {
       'VITE_FIREBASE_PROJECT_ID'
     ];
     
-    return requiredVars.every(key => {
+    const result = requiredVars.every(key => {
       const value = import.meta.env[key];
-      return value !== undefined && value !== '' && 
+      const isValid = value !== undefined && value !== '' && 
              !value.includes('your_') && !value.includes('${');
+      
+      console.log(`Checking env var ${key}:`, isValid);
+      return isValid;
     });
+    
+    console.log('All required env vars set:', result);
+    return result;
   } catch (error) {
     console.error('Error checking environment variables:', error);
     return false;

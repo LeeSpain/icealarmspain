@@ -32,6 +32,7 @@ if (typeof window !== 'undefined') {
   
   // Add detailed diagnostics for troubleshooting
   if (!window.appDiagnostics) {
+    console.log('Initializing window.appDiagnostics');
     window.appDiagnostics = {
       startTime: new Date().toISOString(),
       environment: getEnvironment(),
@@ -45,24 +46,65 @@ if (typeof window !== 'undefined') {
     };
   } else {
     // Update existing diagnostics
+    console.log('Updating existing window.appDiagnostics');
     window.appDiagnostics.environment = getEnvironment();
     window.appDiagnostics.firebaseConfigValid = hasValidFirebaseConfig();
     
     // Ensure events array exists
     if (!window.appDiagnostics.events) {
+      console.log('Creating missing events array in window.appDiagnostics');
       window.appDiagnostics.events = [];
     }
     
     // Ensure errors array exists
     if (!window.appDiagnostics.errors) {
+      console.log('Creating missing errors array in window.appDiagnostics');
       window.appDiagnostics.errors = [];
     }
+  }
+
+  // Log that window.appDiagnostics has been initialized
+  console.log('window.appDiagnostics initialized:', window.appDiagnostics);
+}
+
+// Helper function to safely log app events
+function logAppEvent(event) {
+  try {
+    console.log('Main.tsx logging app event:', event);
+    
+    if (typeof window === 'undefined') {
+      console.log('Window not defined, skipping event logging');
+      return;
+    }
+    
+    if (!window.appDiagnostics) {
+      console.warn('appDiagnostics not found in window, creating it');
+      window.appDiagnostics = {
+        startTime: new Date().toISOString(),
+        events: [],
+        errors: []
+      };
+    }
+    
+    if (!window.appDiagnostics.events) {
+      console.warn('events array not found in appDiagnostics, creating it');
+      window.appDiagnostics.events = [];
+    }
+    
+    window.appDiagnostics.events.push({
+      time: new Date().toISOString(),
+      event: event
+    });
+  } catch (e) {
+    console.error('Error logging app event:', e);
   }
 }
 
 // Enhanced function to render the app - ALWAYS renders something
 function renderApp() {
   const rootElement = document.getElementById('root');
+  
+  logAppEvent('renderApp called');
   
   if (!rootElement) {
     console.error("Root element not found! Cannot render React app.");
@@ -90,7 +132,9 @@ function renderApp() {
     
     // Notify document that we're about to render
     try {
+      logAppEvent('about to dispatch react-rendering event');
       document.dispatchEvent(new CustomEvent('react-rendering'));
+      logAppEvent('react-rendering event dispatched');
     } catch (err) {
       console.error("Error dispatching react-rendering event:", err);
     }
@@ -103,7 +147,9 @@ function renderApp() {
     
     console.log("React app rendered successfully");
     try {
+      logAppEvent('about to dispatch react-rendered event');
       document.dispatchEvent(new CustomEvent('react-rendered'));
+      logAppEvent('react-rendered event dispatched');
     } catch (err) {
       console.error("Error dispatching react-rendered event:", err);
     }
@@ -111,6 +157,7 @@ function renderApp() {
     // Set a flag that the HTML can check
     if (typeof window !== 'undefined') {
       window.appRendered = true;
+      logAppEvent('set window.appRendered = true');
       
       // Update diagnostics
       if (window.appDiagnostics) {
@@ -122,6 +169,7 @@ function renderApp() {
       const fallbackContent = document.getElementById('fallback-content');
       if (fallbackContent) {
         fallbackContent.style.display = 'none';
+        logAppEvent('hide fallback-content');
       }
     }
   } catch (error) {
@@ -153,16 +201,19 @@ function renderApp() {
           </div>
         </div>
       `;
+      logAppEvent('displayed error fallback in root element');
     }
     
     // Set a flag that the HTML can check
     if (typeof window !== 'undefined') {
       window.appRenderFailed = true;
+      logAppEvent('set window.appRenderFailed = true');
       
       // Show the fallback content
       const fallbackContent = document.getElementById('fallback-content');
       if (fallbackContent) {
         fallbackContent.style.display = 'block';
+        logAppEvent('show fallback-content');
       }
     }
   }
@@ -172,11 +223,12 @@ function renderApp() {
 console.log("Calling renderApp()");
 renderApp();
 
-// Fallback mechanism - if for some reason nothing renders after 3 seconds,
+// Fallback mechanism - if for some reason nothing renders after 5 seconds,
 // let's try once more. This helps with potential race conditions.
 setTimeout(() => {
   if (typeof window !== 'undefined' && !window.appRendered) {
     console.log("No render detected after timeout, attempting to render again...");
+    logAppEvent('no render detected after timeout, attempting second render');
     
     // Update diagnostics
     if (window.appDiagnostics) {
@@ -185,9 +237,10 @@ setTimeout(() => {
     
     renderApp();
   }
-}, 3000);
+}, 5000);
 
 // Export the renderApp function so it can be called from outside if needed
 if (typeof window !== 'undefined') {
   window.renderApp = renderApp;
+  console.log('Exported renderApp to window.renderApp');
 }

@@ -160,8 +160,11 @@
       // Track important events with error handling
       function logAppEvent(event) {
         try {
+          console.log('Logging app event:', event);
+          
           // Defensive check to make sure appDiagnostics exists
           if (!window.appDiagnostics) {
+            console.warn('appDiagnostics not found, creating it');
             window.appDiagnostics = {
               startTime: new Date().toISOString(),
               events: [],
@@ -171,6 +174,7 @@
           
           // Defensive check to make sure events array exists
           if (!window.appDiagnostics.events) {
+            console.warn('events array not found, creating it');
             window.appDiagnostics.events = [];
           }
           
@@ -241,7 +245,7 @@
             logAppEvent('initializationTimeout');
             showFallbackContent({ message: 'App initialization timed out' });
           }
-        }, 4000);
+        }, 8000); // Increased timeout for slower networks
         
         // Add a shorter timeout to show the loading spinner quickly
         setTimeout(function() {
