@@ -11,4 +11,16 @@ const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
 console.log('Supabase URL:', supabaseUrl ? 'Defined' : 'Undefined');
 console.log('Supabase Anon Key:', supabaseAnonKey ? 'Defined' : 'Undefined');
 
+// Define contact_submissions table type for TypeScript since it's not in the auto-generated types
+export type ContactSubmission = {
+  id?: string;
+  created_at?: string;
+  name: string;
+  email: string;
+  subject: string;
+  message: string;
+  user_id?: string | null;
+  status?: string;
+};
+
 export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey);

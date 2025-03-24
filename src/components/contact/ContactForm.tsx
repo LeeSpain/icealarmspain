@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { useLanguage } from "@/context/LanguageContext";
 import { Input } from "@/components/ui/input";
@@ -6,7 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { Mail, Loader2 } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase, ContactSubmission } from "@/integrations/supabase/client";
 import { useAuth } from "@/context/AuthContext";
 
 const ContactForm: React.FC = () => {
@@ -55,17 +56,20 @@ const ContactForm: React.FC = () => {
     setIsSubmitting(true);
 
     try {
-      // Using the correct table name and structure
+      // Using the correct table name with proper TypeScript type
+      const submission: ContactSubmission = {
+        name,
+        email,
+        subject,
+        message,
+        user_id: user?.id,
+        status: 'pending'
+      };
+      
+      // Use the generic `from` method with any string for custom tables
       const { error } = await supabase
         .from('contact_submissions')
-        .insert({
-          name,
-          email,
-          subject,
-          message,
-          user_id: user?.id,
-          status: 'pending'
-        });
+        .insert(submission as any); // Cast to any as a workaround for TypeScript limitations
 
       if (error) {
         console.error("Supabase error:", error);

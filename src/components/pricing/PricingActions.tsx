@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Button } from "@/components/ui/button";
 import { ShoppingCart, ArrowRight } from "lucide-react";
@@ -6,10 +7,12 @@ import { useLanguage } from "@/context/LanguageContext";
 interface PricingActionsProps {
   price: number;
   planName: string;
+  language?: string;
 }
 
-export const PricingActions: React.FC<PricingActionsProps> = ({ price, planName }) => {
-  const { language } = useLanguage();
+export const PricingActions: React.FC<PricingActionsProps> = ({ price, planName, language: propLanguage }) => {
+  const { language: contextLanguage } = useLanguage();
+  const language = propLanguage || contextLanguage;
 
   return (
     <div className="space-y-4">

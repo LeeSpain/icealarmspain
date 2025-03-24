@@ -1,114 +1,164 @@
 
-import React, { useState } from "react";
-import { useLanguage } from "@/context/LanguageContext";
+import React from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { CheckCircle, AlertTriangle, Info, HelpCircle } from "lucide-react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 
-const DeviceTroubleshootingGuide: React.FC = () => {
-  const { language } = useLanguage();
-  const [showMoreTips, setShowMoreTips] = useState(false);
-  
-  // Common troubleshooting tips
-  const troubleshootingTips = [
-    {
-      title: language === 'en' ? "Device Not Powering On" : "El Dispositivo No Enciende",
-      content: language === 'en' 
-        ? "Check that the device is properly charged or has fresh batteries. Try holding the power button for 5-10 seconds to force restart." 
-        : "Verifique que el dispositivo esté correctamente cargado o tenga baterías nuevas. Intente mantener presionado el botón de encendido durante 5-10 segundos para forzar el reinicio."
-    },
-    {
-      title: language === 'en' ? "Connection Issues" : "Problemas de Conexión",
-      content: language === 'en'
-        ? "Ensure your home WiFi is working properly. Try restarting your router and the device. Make sure the device is within range of your WiFi signal."
-        : "Asegúrese de que su WiFi doméstico funcione correctamente. Intente reiniciar su router y el dispositivo. Asegúrese de que el dispositivo esté dentro del alcance de la señal WiFi."
-    },
-    {
-      title: language === 'en' ? "Alerts Not Working" : "Las Alertas No Funcionan",
-      content: language === 'en'
-        ? "Check the device settings to ensure alerts are enabled. Verify that the emergency contacts are correctly configured in your account."
-        : "Revise la configuración del dispositivo para asegurarse de que las alertas estén habilitadas. Verifique que los contactos de emergencia estén configurados correctamente en su cuenta."
+interface DeviceTroubleshootingGuideProps {
+  deviceType: string;
+  language: string;
+}
+
+const DeviceTroubleshootingGuide: React.FC<DeviceTroubleshootingGuideProps> = ({ deviceType, language }) => {
+  // Determine common issues based on device type
+  const getCommonIssues = () => {
+    switch(deviceType) {
+      case 'pendant':
+        return language === 'en' 
+          ? [
+              { 
+                title: "SOS Button Not Responding", 
+                solution: "Ensure the battery is charged. If the problem persists, try resetting the device by holding the side button for 10 seconds." 
+              },
+              { 
+                title: "False Alarm Triggers", 
+                solution: "Adjust the sensitivity settings in the mobile app. Go to Device Settings > SOS Pendant > Sensitivity and set it to a higher threshold." 
+              },
+              { 
+                title: "Not Connecting to App", 
+                solution: "Make sure Bluetooth is enabled on your phone. Try moving the pendant closer to your phone and restart the app." 
+              }
+            ]
+          : [
+              { 
+                title: "Botón SOS No Responde", 
+                solution: "Asegúrese de que la batería esté cargada. Si el problema persiste, intente reiniciar el dispositivo manteniendo presionado el botón lateral durante 10 segundos." 
+              },
+              { 
+                title: "Activaciones de Alarma Falsas", 
+                solution: "Ajuste la configuración de sensibilidad en la aplicación móvil. Vaya a Configuración del Dispositivo > Colgante SOS > Sensibilidad y establézcala en un umbral más alto." 
+              },
+              { 
+                title: "No Se Conecta a la Aplicación", 
+                solution: "Asegúrese de que el Bluetooth esté habilitado en su teléfono. Intente acercar el colgante a su teléfono y reinicie la aplicación." 
+              }
+            ];
+      case 'monitor':
+        return language === 'en' 
+          ? [
+              { 
+                title: "Inaccurate Readings", 
+                solution: "Clean the sensor area with alcohol wipe. Calibrate the device using the app's calibration wizard." 
+              },
+              { 
+                title: "Battery Drains Quickly", 
+                solution: "Check for app updates as this may be a known issue. Reduce reading frequency in settings to conserve battery." 
+              },
+              { 
+                title: "Data Not Syncing", 
+                solution: "Ensure you have internet connectivity. Open the app while the device is nearby to force a sync." 
+              }
+            ]
+          : [
+              { 
+                title: "Lecturas Inexactas", 
+                solution: "Limpie el área del sensor con una toallita con alcohol. Calibre el dispositivo usando el asistente de calibración de la aplicación." 
+              },
+              { 
+                title: "La Batería Se Agota Rápidamente", 
+                solution: "Busque actualizaciones de la aplicación, ya que este puede ser un problema conocido. Reduzca la frecuencia de lectura en la configuración para conservar la batería." 
+              },
+              { 
+                title: "Los Datos No Se Sincronizan", 
+                solution: "Asegúrese de tener conectividad a Internet. Abra la aplicación mientras el dispositivo está cerca para forzar una sincronización." 
+              }
+            ];
+      case 'dispenser':
+        return language === 'en' 
+          ? [
+              { 
+                title: "Dispenser Jams", 
+                solution: "Open the dispenser lid and check for any obstructions. Make sure pills are placed correctly in their compartments." 
+              },
+              { 
+                title: "Alarm Not Sounding", 
+                solution: "Check volume settings in the app. Ensure notifications are enabled on your phone." 
+              },
+              { 
+                title: "Incorrect Dispensing Time", 
+                solution: "Verify time zone settings in the app. Resync the schedule from the app to the device." 
+              }
+            ]
+          : [
+              { 
+                title: "Atascos del Dispensador", 
+                solution: "Abra la tapa del dispensador y compruebe si hay obstrucciones. Asegúrese de que las píldoras estén colocadas correctamente en sus compartimentos." 
+              },
+              { 
+                title: "La Alarma No Suena", 
+                solution: "Verifique la configuración de volumen en la aplicación. Asegúrese de que las notificaciones estén habilitadas en su teléfono." 
+              },
+              { 
+                title: "Hora de Dispensación Incorrecta", 
+                solution: "Verifique la configuración de zona horaria en la aplicación. Resincronice el horario desde la aplicación al dispositivo." 
+              }
+            ];
+      default:
+        return [];
     }
-  ];
+  };
   
-  // Additional tips shown when "Show More Tips" is clicked
-  const additionalTips = [
-    {
-      title: language === 'en' ? "Battery Draining Quickly" : "La Batería Se Agota Rápidamente",
-      content: language === 'en'
-        ? "Check if there are any background features running that could be draining the battery. Try lowering screen brightness or reducing alert frequency if applicable."
-        : "Verifique si hay funciones en segundo plano que podrían estar agotando la batería. Intente reducir el brillo de la pantalla o reducir la frecuencia de las alertas si corresponde."
-    },
-    {
-      title: language === 'en' ? "Inaccurate Readings" : "Lecturas Inexactas",
-      content: language === 'en'
-        ? "Ensure the device is worn or positioned correctly according to the user manual. Try recalibrating the device using the settings menu."
-        : "Asegúrese de que el dispositivo se use o se coloque correctamente según el manual del usuario. Intente recalibrar el dispositivo utilizando el menú de configuración."
-    }
-  ];
+  const commonIssues = getCommonIssues();
   
   return (
-    <div className="p-6 rounded-lg shadow-md bg-white dark:bg-gray-800">
-      <h2 className="text-2xl font-semibold mb-4">
-        {language === 'en' ? "Troubleshooting Guide" : "Guía de Solución de Problemas"}
-      </h2>
-      
-      <p className="text-gray-600 dark:text-gray-300 mb-6">
-        {language === 'en' 
-          ? "Here are some common issues and their solutions. If you continue experiencing problems, please contact our support team." 
-          : "Aquí hay algunos problemas comunes y sus soluciones. Si continúa experimentando problemas, comuníquese con nuestro equipo de soporte."}
-      </p>
-      
-      <Accordion type="single" collapsible className="mb-6">
-        {troubleshootingTips.map((tip, index) => (
-          <AccordionItem key={index} value={`item-${index}`}>
-            <AccordionTrigger className="text-lg font-medium">{tip.title}</AccordionTrigger>
-            <AccordionContent className="text-gray-600 dark:text-gray-300">
-              {tip.content}
-            </AccordionContent>
-          </AccordionItem>
-        ))}
-        
-        {showMoreTips && additionalTips.map((tip, index) => (
-          <AccordionItem key={`additional-${index}`} value={`additional-${index}`}>
-            <AccordionTrigger className="text-lg font-medium">{tip.title}</AccordionTrigger>
-            <AccordionContent className="text-gray-600 dark:text-gray-300">
-              {tip.content}
-            </AccordionContent>
-          </AccordionItem>
-        ))}
-      </Accordion>
-      
-      {!showMoreTips && (
-        <Button 
-          variant="outline" 
-          onClick={() => setShowMoreTips(true)}
-          className="mb-6"
-        >
-          {language === 'en' ? "Show More Tips" : "Mostrar Más Consejos"}
-        </Button>
-      )}
-      
-      <div className="mt-8">
-        <h3 className="text-xl font-semibold mb-4">
-          {language === 'en' ? "Contact Support" : "Contactar con Soporte"}
-        </h3>
-        <p className="text-gray-600 dark:text-gray-300 mb-4">
-          {language === 'en' 
-            ? "Still having issues? Enter your device ID below and we'll help troubleshoot your specific device." 
-            : "¿Todavía tiene problemas? Ingrese su ID de dispositivo a continuación y le ayudaremos a solucionar su dispositivo específico."}
-        </p>
-        
-        <div className="flex gap-4">
-          <Input 
-            placeholder={language === 'en' ? "Enter device ID" : "Ingrese ID del dispositivo"} 
-            className="max-w-xs"
-          />
-          <Button>
-            {language === 'en' ? "Submit" : "Enviar"}
-          </Button>
-        </div>
-      </div>
+    <div className="space-y-6">
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center">
+            <HelpCircle className="mr-2 h-5 w-5 text-primary" />
+            {language === 'en' ? 'Troubleshooting Guide' : 'Guía de Solución de Problemas'}
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Alert className="mb-4">
+            <Info className="h-4 w-4" />
+            <AlertTitle>
+              {language === 'en' ? 'Need Additional Help?' : '¿Necesita Ayuda Adicional?'}
+            </AlertTitle>
+            <AlertDescription>
+              {language === 'en' 
+                ? 'Contact our support team if these suggestions don\'t resolve your issue.' 
+                : 'Póngase en contacto con nuestro equipo de soporte si estas sugerencias no resuelven su problema.'}
+            </AlertDescription>
+          </Alert>
+          
+          <h3 className="text-lg font-medium mb-3">
+            {language === 'en' ? 'Common Issues' : 'Problemas Comunes'}
+          </h3>
+          
+          <Accordion type="single" collapsible className="w-full">
+            {commonIssues.map((issue, index) => (
+              <AccordionItem key={index} value={`item-${index}`}>
+                <AccordionTrigger className="text-left">
+                  <div className="flex items-center">
+                    <AlertTriangle className="mr-2 h-4 w-4 text-amber-500" />
+                    {issue.title}
+                  </div>
+                </AccordionTrigger>
+                <AccordionContent>
+                  <div className="pl-6 border-l-2 border-primary/20">
+                    <div className="flex items-start gap-2">
+                      <CheckCircle className="h-4 w-4 text-green-500 mt-1" />
+                      <p>{issue.solution}</p>
+                    </div>
+                  </div>
+                </AccordionContent>
+              </AccordionItem>
+            ))}
+          </Accordion>
+        </CardContent>
+      </Card>
     </div>
   );
 };

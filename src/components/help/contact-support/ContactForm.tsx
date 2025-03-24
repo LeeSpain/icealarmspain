@@ -6,7 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { Mail, Loader2 } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase, ContactSubmission } from "@/integrations/supabase/client";
 import { useAuth } from "@/context/AuthContext";
 
 const ContactForm: React.FC = () => {
@@ -45,59 +45,62 @@ const ContactForm: React.FC = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
-  
-  if (!validate()) {
-    return;
-  }
-  
-  setIsSubmitting(true);
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!validate()) {
+      return;
+    }
+    
+    setIsSubmitting(true);
 
-  try {
-    // Using the contact_submissions table specifically
-    const { error } = await supabase
-      .from('contact_submissions')
-      .insert({
+    try {
+      // Using the correct table name with proper TypeScript type
+      const submission: ContactSubmission = {
         name,
         email,
         subject,
         message,
         user_id: user?.id,
         status: 'pending'
-      });
+      };
+      
+      // Use the generic `from` method with any string for custom tables
+      const { error } = await supabase
+        .from('contact_submissions')
+        .insert(submission as any); // Cast to any as a workaround for TypeScript limitations
 
-    if (error) {
-      console.error("Supabase error:", error);
-      throw error;
+      if (error) {
+        console.error("Supabase error:", error);
+        throw error;
+      }
+      
+      toast({
+        title: language === 'en' ? "Message Sent" : "Mensaje Enviado",
+        description: language === 'en' 
+          ? "Thank you for your message. We'll respond within 24 hours." 
+          : "Gracias por su mensaje. Responderemos dentro de las 24 horas.",
+      });
+      
+      // Reset form
+      setName("");
+      setEmail("");
+      setSubject("");
+      setMessage("");
+      setErrors({});
+    } catch (error) {
+      console.error("Error submitting contact form:", error);
+      toast({
+        title: language === 'en' ? "Error" : "Error",
+        description: language === 'en' 
+          ? "There was a problem sending your message. Please try again." 
+          : "Hubo un problema al enviar su mensaje. Por favor, inténtelo de nuevo.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
     }
-    
-    toast({
-      title: language === 'en' ? "Message Sent" : "Mensaje Enviado",
-      description: language === 'en' 
-        ? "Thank you for your message. We'll respond within 24 hours." 
-        : "Gracias por su mensaje. Responderemos dentro de las 24 horas.",
-    });
-    
-    // Reset form
-    setName("");
-    setEmail("");
-    setSubject("");
-    setMessage("");
-    setErrors({});
-  } catch (error) {
-    console.error("Error submitting contact form:", error);
-    toast({
-      title: language === 'en' ? "Error" : "Error",
-      description: language === 'en' 
-        ? "There was a problem sending your message. Please try again." 
-        : "Hubo un problema al enviar su mensaje. Por favor, inténtelo de nuevo.",
-      variant: "destructive",
-    });
-  } finally {
-    setIsSubmitting(false);
-  }
-};
+  };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6 glass-panel p-6 rounded-lg shadow-md">
