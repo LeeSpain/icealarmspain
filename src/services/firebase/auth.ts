@@ -1,3 +1,4 @@
+
 // Firebase authentication service
 import { mockAuth } from './mockFirebase';
 import { hasValidFirebaseConfig } from '@/utils/environment';
@@ -9,14 +10,15 @@ import {
   onAuthStateChanged as firebaseOnAuthStateChanged,
   signOut as firebaseSignOut,
   updateProfile as firebaseUpdateProfile,
-  User as FirebaseUser
+  User as FirebaseUser,
+  Auth
 } from 'firebase/auth';
-import { getAnalytics } from 'firebase/analytics';
+import { getAnalytics, Analytics } from 'firebase/analytics';
 import { getFirebaseConfig } from './config';
 
 // Initialize Firebase if config is valid
-let auth;
-let analytics;
+let auth: Auth = mockAuth as unknown as Auth;
+let analytics: Analytics | null = null;
 
 try {
   if (hasValidFirebaseConfig()) {
@@ -32,12 +34,12 @@ try {
     }
   } else {
     console.warn('Using mock Firebase implementation');
-    auth = mockAuth;
+    auth = mockAuth as unknown as Auth;
     analytics = null;
   }
 } catch (error) {
   console.error('Error initializing Firebase:', error);
-  auth = mockAuth;
+  auth = mockAuth as unknown as Auth;
   analytics = null;
 }
 
@@ -48,35 +50,35 @@ export { auth, analytics };
 export type { FirebaseUser };
 
 // Export wrapped versions of Firebase functions
-export const signInWithEmailAndPassword = async (auth, email, password) => {
+export const signInWithEmailAndPassword = async (auth: Auth, email: string, password: string) => {
   if (!hasValidFirebaseConfig()) {
     return mockAuth.signInWithEmailAndPassword(email, password);
   }
   return firebaseSignIn(auth, email, password);
 };
 
-export const createUserWithEmailAndPassword = async (auth, email, password) => {
+export const createUserWithEmailAndPassword = async (auth: Auth, email: string, password: string) => {
   if (!hasValidFirebaseConfig()) {
     return mockAuth.createUserWithEmailAndPassword(email, password);
   }
   return firebaseCreateUser(auth, email, password);
 };
 
-export const onAuthStateChanged = (auth, callback) => {
+export const onAuthStateChanged = (auth: Auth, callback: (user: FirebaseUser | null) => void) => {
   if (!hasValidFirebaseConfig()) {
     return mockAuth.onAuthStateChanged(callback);
   }
   return firebaseOnAuthStateChanged(auth, callback);
 };
 
-export const signOut = async (auth) => {
+export const signOut = async (auth: Auth) => {
   if (!hasValidFirebaseConfig()) {
     return mockAuth.signOut();
   }
   return firebaseSignOut(auth);
 };
 
-export const updateProfile = async (user, profile) => {
+export const updateProfile = async (user: FirebaseUser, profile: { displayName?: string; photoURL?: string }) => {
   if (!hasValidFirebaseConfig()) {
     console.log('Mock update profile:', profile);
     return Promise.resolve();

@@ -27,10 +27,10 @@ export const mockAuth = {
     // Return mock unsubscribe function
     return () => {};
   },
-  signInWithEmailAndPassword: async () => {
+  signInWithEmailAndPassword: async (email: string, password: string) => {
     throw new Error('Authentication is not available with mock Firebase');
   },
-  createUserWithEmailAndPassword: async () => {
+  createUserWithEmailAndPassword: async (email: string, password: string) => {
     throw new Error('Authentication is not available with mock Firebase');
   },
   signOut: async () => {
