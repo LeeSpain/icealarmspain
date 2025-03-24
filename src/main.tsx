@@ -17,7 +17,15 @@ if (rootElement) {
     
     // Check if it's related to our auth context error
     if (event.error && event.error.message && event.error.message.includes("useAuth must be used within an AuthProvider")) {
-      console.error("Auth provider error detected. Please check provider order in App.tsx.");
+      console.error("Auth provider error detected. This is likely because a component using useAuth is rendered before or outside the AuthProvider.");
+      console.error("Check component render order and make sure AuthProvider wraps all components using auth context.");
+      
+      // Try to find the specific component causing the issue
+      const stack = event.error.stack || '';
+      const componentMatch = stack.match(/at\s+([A-Za-z0-9_]+)\s+\(/);
+      if (componentMatch && componentMatch[1]) {
+        console.error(`The error appears to be occurring in the ${componentMatch[1]} component.`);
+      }
     }
   });
   

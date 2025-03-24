@@ -5,7 +5,6 @@ import { LogOut, User } from "lucide-react";
 import { ButtonCustom } from "@/components/ui/button-custom";
 import { useLanguage } from "@/context/LanguageContext";
 import { useToast } from "@/components/ui/use-toast";
-import { useAuth } from "@/context/AuthContext";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -24,7 +23,33 @@ const AuthButtons: React.FC<AuthButtonsProps> = ({ isMobile = false, onClose }) 
   const { language } = useLanguage();
   const { toast } = useToast();
   const navigate = useNavigate();
-  const { user, profile, signOut } = useAuth();
+  
+  // Try to use auth context safely
+  let user = null;
+  let profile = null;
+  let signOut = async () => {
+    console.warn("Sign out function not available, auth context missing");
+    toast({
+      title: "Error",
+      description: "Authentication system not available",
+      variant: "destructive",
+    });
+  };
+  
+  try {
+    // Dynamically import and use auth only if the component is mounted within AuthProvider
+    const { useAuth } = require('@/context/AuthContext');
+    try {
+      const auth = useAuth();
+      user = auth?.user;
+      profile = auth?.profile;
+      signOut = auth?.signOut;
+    } catch (error) {
+      console.log("Auth context not available in AuthButtons, showing unauthenticated state");
+    }
+  } catch (error) {
+    console.log("Auth module could not be imported in AuthButtons");
+  }
   
   const loginText = language === 'en' ? "Login" : "Iniciar Sesión";
   const signupText = language === 'en' ? "Sign Up" : "Registrarse";
@@ -34,13 +59,22 @@ const AuthButtons: React.FC<AuthButtonsProps> = ({ isMobile = false, onClose }) 
   const handleLogout = async (e: React.MouseEvent) => {
     e.preventDefault();
     
-    await signOut();
-    
-    // Close mobile menu if open
-    if (onClose) onClose();
-    
-    // Navigate to home page
-    navigate('/');
+    try {
+      await signOut();
+      
+      // Close mobile menu if open
+      if (onClose) onClose();
+      
+      // Navigate to home page
+      navigate('/');
+    } catch (error) {
+      console.error("Error during logout:", error);
+      toast({
+        title: "Logout Error",
+        description: "There was a problem signing you out. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
   
   // Get profile display name or email

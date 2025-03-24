@@ -14,9 +14,9 @@ function App() {
   return (
     <ErrorBoundary>
       <HelmetProvider>
-        <AuthProvider>
-          <LanguageProvider>
-            <Router>
+        <Router>
+          <AuthProvider>
+            <LanguageProvider>
               <Routes>
                 {routes.map((route) => {
                   // Protected routes with optional role restrictions
@@ -43,10 +43,10 @@ function App() {
                   );
                 })}
               </Routes>
-            </Router>
-            <Toaster />
-          </LanguageProvider>
-        </AuthProvider>
+              <Toaster />
+            </LanguageProvider>
+          </AuthProvider>
+        </Router>
       </HelmetProvider>
     </ErrorBoundary>
   );
