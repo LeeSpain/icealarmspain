@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useLanguage } from "@/context/LanguageContext";
 import { Input } from "@/components/ui/input";
@@ -69,6 +68,7 @@ const ContactForm: React.FC = () => {
         });
 
       if (error) {
+        console.error("Supabase error:", error);
         throw error;
       }
       

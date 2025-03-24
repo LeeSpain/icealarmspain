@@ -54,7 +54,7 @@ const AuthForm: React.FC<AuthFormProps> = ({
           onSuccess={handleSignupSuccess} 
           isLoading={isLoading}
           error={error}
-          redirectTo={redirectTo} 
+          // Don't pass redirectTo as it's not in the SignupForm props
         />
       )}
     </>

@@ -4,7 +4,7 @@ import { useLanguage } from "@/context/LanguageContext";
 import { useNavigate } from "react-router-dom";
 import PricingHero from "./pricing/PricingHero";
 import PricingPlans from "./pricing/PricingPlans";
-import PricingActions from "./pricing/PricingActions";
+import { PricingActions } from "./pricing/PricingActions"; // Change from default to named import
 
 const Pricing: React.FC = () => {
   const { language } = useLanguage();

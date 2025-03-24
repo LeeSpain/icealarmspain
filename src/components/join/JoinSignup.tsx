@@ -8,6 +8,12 @@ interface JoinSignupProps {
 }
 
 const JoinSignup: React.FC<JoinSignupProps> = ({ language, onSuccess }) => {
+  // Create a Promise-based wrapper for the onSuccess callback
+  const handleAuthSuccess = async (email: string, password: string, rememberMe: boolean): Promise<void> => {
+    onSuccess();
+    return Promise.resolve();
+  };
+
   return (
     <div className="max-w-md mx-auto glass-panel p-8">
       <h1 className="text-2xl font-bold mb-6 text-center">
@@ -19,7 +25,7 @@ const JoinSignup: React.FC<JoinSignupProps> = ({ language, onSuccess }) => {
           : "Regístrate para comenzar tu viaje de monitoreo de salud con ICE Alarm España. Completarás tu perfil en el siguiente paso."}
       </p>
       
-      <AuthForm mode="signup" onSuccess={onSuccess} redirectTo="/onboarding" />
+      <AuthForm mode="signup" onSuccess={handleAuthSuccess} redirectTo="/onboarding" />
     </div>
   );
 };
