@@ -4,7 +4,7 @@
  * This file provides functions to diagnose and fix common deployment issues
  */
 
-import { getEnvironmentDiagnostics, hasValidFirebaseConfig } from './environment';
+import { getEnvironmentDiagnostics, hasValidFirebaseConfig, isProduction } from './environment';
 
 // Self-executing function that runs immediately when imported
 (function checkDeployment() {

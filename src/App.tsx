@@ -8,7 +8,7 @@ import './App.css';
 import { AuthProvider } from "@/context/AuthContext";
 import AuthGuard from "@/components/auth/AuthGuard";
 import ErrorBoundary from "@/components/layout/ErrorBoundary";
-import { isDevelopment, isDebugBuild, hasValidFirebaseConfig } from "./utils/environment";
+import { isDevelopment, isDebugBuild, hasValidFirebaseConfig, isProduction } from "./utils/environment";
 import LoadingSpinner from "@/components/ui/loading-spinner";
 
 // Standalone error component for Firebase configuration issues
@@ -99,13 +99,15 @@ function App() {
   console.log("Firebase config valid:", validFirebaseConfig);
   console.log("API_KEY defined:", !!import.meta.env.VITE_FIREBASE_API_KEY);
   console.log("PROJECT_ID defined:", !!import.meta.env.VITE_FIREBASE_PROJECT_ID);
+  console.log("Environment:", import.meta.env.MODE);
+  console.log("Is Production:", isProduction());
   
   // Use different approaches based on environment and config
   if (!validFirebaseConfig) {
     console.warn("Missing Firebase configuration");
     
     // In production, show the config error
-    if (!isDevelopment()) {
+    if (isProduction()) {
       return <ConfigErrorDisplay />;
     }
     

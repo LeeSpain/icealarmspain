@@ -56,6 +56,14 @@ export const hasValidFirebaseConfig = (): boolean => {
     const apiKey = getEnvVar('VITE_FIREBASE_API_KEY', '');
     const projectId = getEnvVar('VITE_FIREBASE_PROJECT_ID', '');
     
+    // For production, both values must be present and not placeholder values
+    if (isProduction()) {
+      return !!apiKey && !!projectId && 
+             !apiKey.includes('your_') && !apiKey.includes('${') &&
+             !projectId.includes('your_') && !projectId.includes('${');
+    }
+    
+    // For development, just check if they exist
     return !!apiKey && !!projectId;
   } catch (error) {
     console.error('Error checking Firebase config:', error);
@@ -76,6 +84,11 @@ export const isMockAuthEnabled = (): boolean => {
     if (forceDevMode === 'true') {
       return true;
     }
+  }
+  
+  // If explicitly enabled by environment variable
+  if (import.meta.env.VITE_ENABLE_MOCK_AUTH === 'true') {
+    return true;
   }
   
   return false;

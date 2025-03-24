@@ -1,3 +1,4 @@
+
 // Firebase authentication service
 import { mockAuth } from './mockFirebase';
 import { hasValidFirebaseConfig } from '@/utils/environment';
@@ -21,6 +22,7 @@ let analytics: Analytics | null = null;
 
 try {
   if (hasValidFirebaseConfig()) {
+    console.log('Initializing Firebase with valid config');
     const firebaseConfig = getFirebaseConfig();
     const app = initializeApp(firebaseConfig);
     auth = getAuth(app);
@@ -31,8 +33,9 @@ try {
       console.warn('Firebase analytics initialization failed:', error);
       analytics = null;
     }
+    console.log('Firebase initialized successfully');
   } else {
-    console.warn('Using mock Firebase implementation');
+    console.warn('Using mock Firebase implementation - missing or invalid configuration');
     auth = mockAuth as unknown as Auth;
     analytics = null;
   }
