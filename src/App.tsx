@@ -11,8 +11,8 @@ import AuthGuard from "@/components/auth/AuthGuard";
 function App() {
   return (
     <HelmetProvider>
-      <LanguageProvider>
-        <AuthProvider>
+      <AuthProvider>
+        <LanguageProvider>
           <Router>
             <Routes>
               {routes.map((route) => {
@@ -42,8 +42,8 @@ function App() {
             </Routes>
           </Router>
           <Toaster />
-        </AuthProvider>
-      </LanguageProvider>
+        </LanguageProvider>
+      </AuthProvider>
     </HelmetProvider>
   );
 }

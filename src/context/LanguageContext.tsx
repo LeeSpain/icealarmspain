@@ -26,7 +26,11 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     // Initialize from localStorage
     return (localStorage.getItem('language') as Language) || 'en';
   });
-  const { profile, isLoading } = useAuth();
+  
+  // Get auth context, use optional chaining to handle case when auth context isn't ready
+  const auth = useAuth();
+  const profile = auth?.profile;
+  const isLoading = auth?.isLoading || false;
 
   // When auth loads and profile is available, use profile language if set
   useEffect(() => {
