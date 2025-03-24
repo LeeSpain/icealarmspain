@@ -28,9 +28,10 @@ export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey);
 
 // Add a custom method to handle contact submissions since it's not in the generated types
 export const createContactSubmission = async (submission: ContactSubmission) => {
-  const { data, error } = await supabase
+  // Use the generic version of the API without type checking for the contact_submissions table
+  const { data, error } = await (supabase as any)
     .from('contact_submissions')
-    .insert(submission as any);
+    .insert(submission);
   
   return { data, error };
 };
