@@ -3,7 +3,6 @@ import React from 'react';
 import { useLanguage } from '@/context/LanguageContext';
 import { Globe } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { useAuth } from '@/context/AuthContext';
 
 interface LanguageSwitcherProps {
   className?: string;
@@ -11,14 +10,31 @@ interface LanguageSwitcherProps {
 
 const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({ className }) => {
   const { language, setLanguage } = useLanguage();
-  const { user, updateProfile } = useAuth();
+  
+  // Try to get auth context, but handle the case when it's not available
+  let updateProfile = null;
+  let user = null;
+  
+  try {
+    // Dynamically import and use auth only if the component is mounted within AuthProvider
+    const { useAuth } = require('@/context/AuthContext');
+    try {
+      const auth = useAuth();
+      user = auth?.user;
+      updateProfile = auth?.updateProfile;
+    } catch (error) {
+      console.log("Auth context not available in LanguageSwitcher, using local storage only");
+    }
+  } catch (error) {
+    console.log("Auth module could not be imported in LanguageSwitcher");
+  }
   
   const handleLanguageChange = async (newLanguage: 'en' | 'es') => {
     // Update the language context
     setLanguage(newLanguage);
     
-    // If user is authenticated, store language preference in their profile
-    if (user) {
+    // If user is authenticated and updateProfile is available, store language preference in their profile
+    if (user && updateProfile) {
       try {
         await updateProfile({ language: newLanguage });
       } catch (error) {
