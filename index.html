@@ -65,6 +65,15 @@
         border-radius: 4px;
         display: none;
       }
+      .troubleshooting-guide {
+        margin-top: 20px;
+        background-color: #e3f2fd;
+        border: 1px solid #bbdefb;
+        padding: 15px;
+        border-radius: 4px;
+        text-align: left;
+        display: none;
+      }
     </style>
   </head>
 
@@ -101,6 +110,16 @@
                   <li>VITE_FIREBASE_PROJECT_ID</li>
                 </ul>
               </div>
+              <div id="troubleshooting-guide" class="troubleshooting-guide">
+                <h3>Troubleshooting Steps:</h3>
+                <ol>
+                  <li>Check if your Vercel environment variables are set correctly</li>
+                  <li>Clear your browser cache and refresh</li>
+                  <li>Try using an incognito/private browser window</li>
+                  <li>Check browser console for specific errors (F12 or right-click → Inspect → Console)</li>
+                </ol>
+                <p>If you are the administrator, <a href="https://vercel.com/docs/concepts/projects/environment-variables" target="_blank">visit Vercel docs</a> for help with environment variables.</p>
+              </div>
               <p id="debug-info" style="font-size: 12px; margin-top: 20px; color: #666;"></p>
             `;
             
@@ -108,6 +127,12 @@
             const debugInfo = fallback.querySelector('#debug-info');
             if (debugInfo) {
               debugInfo.textContent = `Browser: ${navigator.userAgent}, Time: ${new Date().toISOString()}`;
+              
+              // Show troubleshooting guide
+              const troubleshootingGuide = fallback.querySelector('#troubleshooting-guide');
+              if (troubleshootingGuide) {
+                troubleshootingGuide.style.display = 'block';
+              }
               
               // Try to detect if Firebase config is missing
               if (window.missingFirebaseConfig) {
@@ -127,7 +152,7 @@
               root.appendChild(fallback);
             }
           }
-        }, 2000); // 2 seconds
+        }, 3000); // 3 seconds
       });
       
       // Add a global variable that our app can set if Firebase config is missing
@@ -154,6 +179,12 @@
           const firebaseError = document.getElementById('firebase-config-missing');
           if (firebaseError) {
             firebaseError.style.display = 'block';
+          }
+          
+          // Show troubleshooting guide
+          const troubleshootingGuide = document.getElementById('troubleshooting-guide');
+          if (troubleshootingGuide) {
+            troubleshootingGuide.style.display = 'block';
           }
         }
       });

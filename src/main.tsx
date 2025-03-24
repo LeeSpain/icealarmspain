@@ -5,6 +5,7 @@ import App from './App'
 import './styles/index.css'
 import { getEnvironment, isDevelopment, hasValidFirebaseConfig } from './utils/environment'
 import './utils/build-verification';
+import './utils/deployment-verification'; // Add our new verification utility
 import './utils/deployment-helper';
 
 // Display environment info in console
