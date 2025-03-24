@@ -6,7 +6,6 @@ import Pricing from "@/components/Pricing";
 import ExpatInfo from "@/components/ExpatInfo";
 import { useLanguage } from "@/context/LanguageContext";
 import DashboardPreview from "@/components/dashboard/DashboardPreview";
-import DecorativeElements from "@/components/layout/DecorativeElements";
 import SectionDivider from "@/components/layout/SectionDivider";
 import SectionWrapper from "@/components/layout/SectionWrapper";
 import { Helmet } from "react-helmet-async";
@@ -69,44 +68,37 @@ const Index: React.FC = () => {
   
   return (
     <Layout>
-      <div className="flex flex-col min-h-screen bg-white">
-        <Helmet>
-          <meta name="description" content={seoDescription} />
-          <meta property="og:type" content="website" />
-        </Helmet>
+      <Helmet>
+        <meta name="description" content={seoDescription} />
+        <meta property="og:type" content="website" />
+      </Helmet>
+      
+      <main className="flex-grow relative bg-white">
+        {/* Hero section with no extra padding to match other pages */}
+        <Hero />
         
-        {/* Simplified Decorative Elements - Remove if still causing shadowing */}
-        {/* <DecorativeElements /> */}
+        {/* Section Divider with enhanced styling */}
+        <SectionDivider />
         
-        <main className="flex-grow relative bg-white">
-          {/* Wrapping Hero in error boundary */}
-          <div className="relative bg-white">
-            <Hero />
-          </div>
-          
-          {/* Section Divider with enhanced styling */}
-          <SectionDivider />
-          
-          {/* Dashboard Example Section with consistent spacing */}
-          <SectionWrapper>
-            <DashboardPreview />
-          </SectionWrapper>
-          
-          {/* Device Showcase with consistent spacing */}
-          <SectionWrapper>
-            <DeviceShowcase />
-          </SectionWrapper>
-          
-          {/* Pricing section is already handled in the Pricing component */}
-          <Pricing />
-          
-          {/* Section Divider with enhanced styling */}
-          <SectionDivider variant="white-to-ice" />
-          
-          {/* ExpatInfo has its own spacing adjustments now */}
-          <ExpatInfo />
-        </main>
-      </div>
+        {/* Dashboard Example Section with consistent spacing */}
+        <SectionWrapper>
+          <DashboardPreview />
+        </SectionWrapper>
+        
+        {/* Device Showcase with consistent spacing */}
+        <SectionWrapper>
+          <DeviceShowcase />
+        </SectionWrapper>
+        
+        {/* Pricing section is already handled in the Pricing component */}
+        <Pricing />
+        
+        {/* Section Divider with enhanced styling */}
+        <SectionDivider variant="white-to-ice" />
+        
+        {/* ExpatInfo has its own spacing adjustments now */}
+        <ExpatInfo />
+      </main>
     </Layout>
   );
 };

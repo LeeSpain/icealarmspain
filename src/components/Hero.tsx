@@ -25,7 +25,7 @@ const Hero: React.FC = () => {
   return (
     <section 
       id="home" 
-      className={`relative ${isHomepage ? 'pt-24' : 'pt-20'} overflow-hidden bg-white`}
+      className="relative pt-24 pb-12 overflow-hidden bg-white"
     >
       <HeroBackground />
       
@@ -34,12 +34,12 @@ const Hero: React.FC = () => {
           <HeroHeader language={language} handleClick={handleClick} />
           
           {/* Feature Cards Section - reduced spacing */}
-          <div className="py-10">
+          <div className="py-8">
             <FeatureCards language={language} />
           </div>
           
           {/* Dashboard Preview Section - reduced spacing */}
-          <div className="py-10">
+          <div className="py-8">
             <DashboardPreview language={language} />
           </div>
         </div>
