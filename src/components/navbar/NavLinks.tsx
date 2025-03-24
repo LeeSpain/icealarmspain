@@ -40,8 +40,12 @@ const NavLinks: React.FC<NavLinksProps> = ({ onClick }) => {
     });
   }
 
-  // Determine if a link is active - simplified logic
+  // Determine if a link is active - enhancing logic for /products and /devices paths
   const isActive = (path: string) => {
+    // Consider both /products and /devices as the same for highlighting purposes
+    if (path === '/products' && (location.pathname === '/products' || location.pathname === '/devices')) {
+      return true;
+    }
     return location.pathname === path;
   };
 

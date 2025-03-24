@@ -6,6 +6,7 @@ import SectionWrapper from "@/components/layout/SectionWrapper";
 import ProductsHero from "@/components/products/ProductsHero";
 import FeaturesSection from "@/components/products/FeaturesSection";
 import ProductsCTA from "@/components/products/ProductsCTA";
+import Layout from "@/components/layout/Layout";
 
 const Products: React.FC = () => {
   const { language } = useLanguage();
@@ -16,7 +17,7 @@ const Products: React.FC = () => {
   }, []);
   
   return (
-    <>
+    <Layout>
       {/* Hero section */}
       <ProductsHero />
       
@@ -32,7 +33,7 @@ const Products: React.FC = () => {
       
       {/* CTA section */}
       <ProductsCTA />
-    </>
+    </Layout>
   );
 };
 

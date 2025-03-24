@@ -4,7 +4,7 @@ import AboutUs from "../pages/AboutUs";
 import Contact from "../pages/Contact";
 import Login from "../pages/login";
 import Join from "../pages/Join";
-import DevicesPage from "../pages/DevicesPage";
+import Products from "../pages/Products";
 import ProductDetail from "../pages/ProductDetail";
 import Checkout from "../pages/Checkout";
 import NotFound from "../pages/NotFound";
@@ -58,11 +58,11 @@ export const mainRoutes: RouteConfig[] = [
   },
   {
     path: "/products",
-    element: <Layout><DevicesPage /></Layout>
+    element: <Products />
   },
   {
     path: "/devices",
-    element: <Layout><DevicesPage /></Layout>
+    element: <Products />
   },
   {
     path: "/products/:id",
