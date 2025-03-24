@@ -4,6 +4,14 @@ import ReactDOM from 'react-dom/client'
 import App from './App'
 import './styles/index.css'
 import BasicDebug from './components/debug/BasicDebug'
+import { getEnvironment, isDevelopment } from './utils/environment'
+
+// Display environment info in console
+console.log('Application starting...');
+console.log('Environment:', getEnvironment());
+console.log('Mode:', import.meta.env.MODE);
+console.log('Dev:', import.meta.env.DEV);
+console.log('Prod:', import.meta.env.PROD);
 
 // Simple function to render the app
 function renderApp() {
@@ -37,7 +45,7 @@ function renderApp() {
     const root = ReactDOM.createRoot(rootElement);
     root.render(
       <React.StrictMode>
-        {import.meta.env.DEV && <BasicDebug />}
+        {isDevelopment() && <BasicDebug />}
         <App />
       </React.StrictMode>
     );

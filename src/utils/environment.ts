@@ -11,10 +11,19 @@ export type Environment = 'development' | 'staging' | 'production';
  * Get the current environment
  */
 export const getEnvironment = (): Environment => {
-  const env = import.meta.env.VITE_ENVIRONMENT;
-  if (env === 'production' || env === 'staging') {
-    return env;
+  // First check VITE_ENVIRONMENT
+  const envVar = import.meta.env.VITE_ENVIRONMENT;
+  if (envVar === 'production' || envVar === 'staging') {
+    return envVar;
   }
+  
+  // Fallback to NODE_ENV if VITE_ENVIRONMENT isn't set
+  if (import.meta.env.MODE === 'production') {
+    console.warn('Using MODE=production as fallback for missing VITE_ENVIRONMENT');
+    return 'production';
+  }
+  
+  // Default to development
   return 'development';
 };
 
@@ -22,7 +31,7 @@ export const getEnvironment = (): Environment => {
  * Check if we're in production
  */
 export const isProduction = (): boolean => {
-  return getEnvironment() === 'production';
+  return getEnvironment() === 'production' || import.meta.env.PROD === true;
 };
 
 /**
@@ -36,17 +45,26 @@ export const isStaging = (): boolean => {
  * Check if we're in development
  */
 export const isDevelopment = (): boolean => {
-  return getEnvironment() === 'development';
+  return getEnvironment() === 'development' || import.meta.env.DEV === true;
 };
 
 /**
- * Get required environment variable
- * @throws Error if the environment variable is not defined
+ * Get required environment variable with fallback for safety
+ * In production, this will warn but not crash if the var is missing
  */
 export const getRequiredEnvVar = (key: string): string => {
   const value = import.meta.env[key];
   if (!value) {
-    throw new Error(`Environment variable ${key} is required but not defined`);
+    const errorMsg = `Environment variable ${key} is required but not defined`;
+    console.error(errorMsg);
+    
+    // In development, we throw to make the error more visible
+    if (isDevelopment()) {
+      throw new Error(errorMsg);
+    }
+    
+    // In production, return a placeholder to prevent crashes
+    return '[MISSING-ENV-VAR]';
   }
   return value;
 };
@@ -57,6 +75,25 @@ export const getRequiredEnvVar = (key: string): string => {
 export const getEnvVar = (key: string, fallback: string = ''): string => {
   const value = import.meta.env[key];
   return value || fallback;
+};
+
+/**
+ * Check if all required environment variables are present
+ * Useful for validation during app initialization
+ */
+export const validateRequiredEnvVars = (keys: string[]): {valid: boolean, missing: string[]} => {
+  const missing: string[] = [];
+  
+  keys.forEach(key => {
+    if (!import.meta.env[key]) {
+      missing.push(key);
+    }
+  });
+  
+  return {
+    valid: missing.length === 0,
+    missing
+  };
 };
 
 /**
@@ -88,4 +125,31 @@ export const isMockAuthEnabled = (): boolean => {
 export const isAnalyticsEnabled = (): boolean => {
   const enableAnalytics = getEnvVar('VITE_ENABLE_ANALYTICS', 'false');
   return enableAnalytics === 'true' || isProduction();
+};
+
+/**
+ * Check if debug build is enabled
+ */
+export const isDebugBuild = (): boolean => {
+  const debugBuild = getEnvVar('VITE_DEBUG_BUILD', 'false');
+  return debugBuild === 'true';
+};
+
+/**
+ * Get a diagnostic report of the current environment
+ * Useful for troubleshooting
+ */
+export const getEnvironmentDiagnostics = (): Record<string, unknown> => {
+  return {
+    environment: getEnvironment(),
+    isProduction: isProduction(),
+    isStaging: isStaging(), 
+    isDevelopment: isDevelopment(),
+    mode: import.meta.env.MODE,
+    base: import.meta.env.BASE_URL,
+    userAgent: navigator.userAgent,
+    timestamp: new Date().toISOString(),
+    availableEnvVars: Object.keys(import.meta.env)
+      .filter(key => !key.includes('KEY') && !key.includes('SECRET'))
+  };
 };

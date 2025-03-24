@@ -50,9 +50,11 @@
       // Global error handler
       window.addEventListener('error', function(e) {
         console.error('Global error caught:', e.error || e.message);
+        const errorMsg = e.error ? e.error.toString() : e.message;
+        
         // Check if the page is completely blank and show a fallback message
         if (document.body.children.length <= 2) {
-          document.body.innerHTML += '<div style="padding: 20px; font-family: sans-serif;"><h1>Something went wrong</h1><p>Please try refreshing the page. If the problem persists, contact support.</p></div>';
+          document.body.innerHTML += '<div style="padding: 20px; font-family: sans-serif;"><h1>Something went wrong</h1><p>Error: ' + errorMsg + '</p><p>Please try refreshing the page. If the problem persists, contact support.</p></div>';
         }
       });
       
@@ -64,6 +66,14 @@
           const root = document.getElementById('root');
           if (root && root.innerHTML.includes('Loading Ice Guardian Alert')) {
             console.warn('React did not initialize within expected timeframe');
+            // Display more detailed troubleshooting info
+            const troubleshootDiv = document.createElement('div');
+            troubleshootDiv.className = 'fallback-content';
+            troubleshootDiv.innerHTML = '<h2>Troubleshooting Information</h2><p>The application is taking longer than expected to load. This might be due to:</p><ul><li>Network connectivity issues</li><li>JavaScript errors during initialization</li><li>Missing environment variables</li></ul><p>Check your browser console for errors.</p>';
+            
+            if (root.children.length === 1) {
+              root.appendChild(troubleshootDiv);
+            }
           }
         }, 5000);
       });

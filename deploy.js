@@ -42,36 +42,60 @@ if (!fs.existsSync(envFile)) {
 console.log(`Using environment configuration from ${envFile}`);
 fs.copyFileSync(envFile, '.env');
 
+// Read the environment variables
+const envVars = {};
+const envContent = fs.readFileSync(envFile, 'utf-8');
+envContent.split('\n').forEach(line => {
+  line = line.trim();
+  if (line && !line.startsWith('#')) {
+    const [key, ...valueParts] = line.split('=');
+    const value = valueParts.join('=').trim();
+    envVars[key.trim()] = value;
+    
+    // Set in process.env for child processes
+    process.env[key.trim()] = value;
+  }
+});
+
+// Create a verbose environment file for debugging
+if (targetEnv === 'production') {
+  const debugEnvContent = Object.entries(envVars)
+    .map(([key, value]) => {
+      // Mask sensitive values in logs
+      if (key.includes('KEY') || key.includes('SECRET') || key.includes('PASSWORD')) {
+        return `${key}=***MASKED***`;
+      }
+      return `${key}=${value}`;
+    })
+    .join('\n');
+  
+  fs.writeFileSync('build-env-debug.log', `Building with environment:\n${debugEnvContent}`);
+  console.log('Created build environment debug log');
+}
+
 // Build the application with explicit environment variables
 console.log('Building application...');
 try {
-  // Set NODE_ENV explicitly to ensure proper build optimization
-  const envVars = Object.fromEntries(
-    fs.readFileSync(envFile, 'utf-8')
-      .split('\n')
-      .filter(line => line.trim() && !line.startsWith('#'))
-      .map(line => {
-        const [key, ...valueParts] = line.split('=');
-        return [key.trim(), valueParts.join('=').trim()];
-      })
-  );
-  
   // Prepare environment variables for the build
   const envString = Object.entries(envVars)
     .map(([key, value]) => `${key}=${value}`)
     .join(' ');
   
-  // Create a temporary script to run with environment variables
-  fs.writeFileSync('temp-build.js', `
-    process.env.NODE_ENV = '${targetEnv}';
-    require('child_process').execSync('vite build', { stdio: 'inherit' });
-  `);
-  
-  // Execute the build with environment variables
-  execSync(`node temp-build.js`, { stdio: 'inherit', env: { ...process.env, ...envVars } });
-  
-  // Clean up
-  fs.unlinkSync('temp-build.js');
+  // Run the build with environment variables
+  if (targetEnv === 'production') {
+    // For production, use a more verbose build process
+    console.log('Running production build with debugging enabled...');
+    execSync(`${envString} NODE_ENV=production vite build --mode production`, { 
+      stdio: 'inherit',
+      env: { ...process.env, ...envVars, NODE_ENV: 'production' }
+    });
+  } else {
+    // Standard build for other environments
+    execSync(`${envString} vite build --mode ${targetEnv}`, { 
+      stdio: 'inherit',
+      env: { ...process.env, ...envVars }
+    });
+  }
 } catch (error) {
   console.error('Build failed', error);
   process.exit(1);
@@ -79,15 +103,23 @@ try {
 
 console.log('Build completed successfully');
 
-// If you're using a specific deployment command for different environments,
-// you can run it here.
-// For example:
-// if (targetEnv === 'production') {
-//   console.log('Deploying to production...');
-//   execSync('firebase deploy --only hosting:production', { stdio: 'inherit' });
-// } else if (targetEnv === 'staging') {
-//   console.log('Deploying to staging...');
-//   execSync('firebase deploy --only hosting:staging', { stdio: 'inherit' });
-// }
+// Add build info file in dist
+try {
+  const buildInfo = {
+    timestamp: new Date().toISOString(),
+    environment: targetEnv,
+    nodeEnv: process.env.NODE_ENV || 'unknown'
+  };
+  
+  if (!fs.existsSync('dist')) {
+    fs.mkdirSync('dist');
+  }
+  
+  fs.writeFileSync('dist/build-info.json', JSON.stringify(buildInfo, null, 2));
+  console.log('Added build info to output directory');
+} catch (error) {
+  console.error('Warning: Could not write build info', error);
+  // Non-fatal error, continue
+}
 
 console.log(`Deployment to ${targetEnv} completed!`);
