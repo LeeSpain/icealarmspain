@@ -3,6 +3,8 @@ import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWith
 import { app } from './config';
 import { isDevelopment } from '@/utils/environment';
 
+console.log("Initializing Firebase Auth");
+
 // Simple initialization without complex fallbacks
 const auth = getAuth(app);
 

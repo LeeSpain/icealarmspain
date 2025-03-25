@@ -65,6 +65,24 @@
         margin-top: 16px;
       }
     </style>
+    <!-- Add manual timeout to hide loader if app doesn't load -->
+    <script>
+      window.addEventListener('load', function() {
+        // Set a timeout to force-remove the loading screen after 10 seconds
+        setTimeout(function() {
+          const loader = document.getElementById('initial-loading');
+          if (loader && loader.style.opacity !== '0') {
+            console.log('Forcing loader removal after timeout');
+            loader.style.opacity = '0';
+            setTimeout(() => {
+              if (loader && loader.parentNode) {
+                loader.parentNode.removeChild(loader);
+              }
+            }, 300);
+          }
+        }, 10000); // 10 second timeout
+      });
+    </script>
   </head>
 
   <body>
@@ -76,6 +94,8 @@
     
     <div id="root"></div>
     
+    <!-- Add the GPT Engineer script tag back -->
+    <script src="https://cdn.gpteng.co/gptengineer.js" type="module"></script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { User } from './types';
 import { useAuthEffects } from './useAuthEffects';
@@ -15,6 +16,21 @@ interface AuthStateManagerProps {
 export const AuthStateManager: React.FC<AuthStateManagerProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  
+  // Force loading to false after a timeout to prevent getting stuck
+  useEffect(() => {
+    console.log("AuthStateManager mounting, setting loading timeout");
+    
+    // Force loading to false after 5 seconds no matter what
+    const loadingTimeout = setTimeout(() => {
+      if (isLoading) {
+        console.log("AuthStateManager: Loading timeout reached, forcing loading to false");
+        setIsLoading(false);
+      }
+    }, 5000);
+    
+    return () => clearTimeout(loadingTimeout);
+  }, [isLoading]);
   
   // Initialize from localStorage immediately in dev mode only
   useEffect(() => {

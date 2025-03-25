@@ -4,7 +4,9 @@ import ReactDOM from 'react-dom/client'
 import App from './App'
 import './styles/index.css'
 
-// Create a simple function to render the app
+console.log("Starting application initialization");
+
+// Create a simple function to render the app and remove the loading screen
 function renderApp() {
   const rootElement = document.getElementById('root');
   
@@ -14,18 +16,19 @@ function renderApp() {
   }
   
   try {
-    // Render the app without complex conditions
+    // Render the app immediately without waiting for anything
+    console.log("Creating React root and rendering app");
     const root = ReactDOM.createRoot(rootElement);
     root.render(
       <React.StrictMode>
         <App />
       </React.StrictMode>
     );
-    console.log("React app rendered successfully");
     
-    // Remove the initial loading state
+    // Remove the loading screen
     const loader = document.getElementById('initial-loading');
     if (loader && loader.parentNode) {
+      console.log("Removing initial loading screen");
       loader.style.opacity = '0';
       setTimeout(() => {
         if (loader && loader.parentNode) {
@@ -35,13 +38,14 @@ function renderApp() {
     }
   } catch (error) {
     console.error("Error rendering React app:", error);
-    // If there's an error, show it on the loading screen
+    
+    // Show error on the loading screen
     const loader = document.getElementById('initial-loading');
     if (loader) {
       loader.innerHTML = `
         <div class="error-container">
           <h3>Failed to load application</h3>
-          <p>Error: ${error.message}</p>
+          <p>Error: ${error instanceof Error ? error.message : String(error)}</p>
           <button onclick="window.location.reload()">Refresh Page</button>
         </div>
       `;
@@ -49,5 +53,6 @@ function renderApp() {
   }
 }
 
-// Render immediately
+// Render immediately without waiting for anything
+console.log("Calling renderApp immediately");
 renderApp();
