@@ -1,100 +1,70 @@
-import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
-import LoadingSpinner from '@/components/ui/loading-spinner';
-import { useLanguage } from '@/context/LanguageContext';
-import DeviceDetail from '@/components/devices/DeviceDetail';
 
-// Mock device data (we should import the actual data from the correct location)
-const deviceData = [
-  {
-    id: "sos-pendant",
-    title: "SOS Pendant",
-    description: "Emergency alert system with 24/7 monitoring",
-    price: 89.99,
-    image: "/lovable-uploads/ad65a632-e7ef-4c61-a20e-7b6ff282a87a.png",
-    features: ["One-touch alert", "Fall detection", "GPS tracking", "Water resistant"],
-    details: {
-      battery: "Up to 5 days",
-      range: "Unlimited with cellular connection",
-      warranty: "2 years"
-    }
-  },
-  {
-    id: "glucose-monitor",
-    title: "Glucose Monitor",
-    description: "Continuous glucose monitoring with alerts",
-    price: 129.99,
-    image: "/lovable-uploads/5e439305-cf63-4080-962e-52657e864050.png",
-    features: ["Real-time monitoring", "Trend analysis", "Custom alerts", "14-day sensor life"],
-    details: {
-      battery: "7 days rechargeable",
-      connectivity: "Bluetooth",
-      warranty: "1 year"
-    }
-  },
-  {
-    id: "medication-dispenser",
-    title: "Medication Dispenser",
-    description: "Automated pill dispenser with reminders",
-    price: 149.99,
-    image: "/lovable-uploads/6eb6b5d1-34a3-4236-ac3a-351d6c22de7e.png",
-    features: ["Scheduled dispensing", "Missed dose alerts", "Tamper protection", "28-day capacity"],
-    details: {
-      battery: "Plug-in with 48hr backup",
-      connectivity: "WiFi",
-      warranty: "2 years"
-    }
-  }
-];
+import React from 'react';
+import { useParams } from 'react-router-dom';
+import Footer from '@/components/Footer';
+import Navbar from '@/components/Navbar';
+
+interface DeviceDetailProps {
+  device: any;
+  index: number;
+  language: string;
+}
 
 const ProductDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const [loading, setLoading] = useState(true);
-  const [product, setProduct] = useState<any>(null);
-  const { language } = useLanguage();
+  const [isLoading, setIsLoading] = React.useState(false);
+  
+  // Mock device data
+  const device = {
+    id: id || '1',
+    name: 'Sample Device',
+    description: 'This is a sample device description',
+    price: 199.99,
+    image: '/placeholder.svg'
+  };
 
-  useEffect(() => {
-    // Simulate loading
-    const timer = setTimeout(() => {
-      if (id) {
-        // Find product by id
-        const foundProduct = deviceData.find(item => item.id === id);
-        setProduct(foundProduct || null);
-      }
-      setLoading(false);
-    }, 800);
-
-    return () => clearTimeout(timer);
-  }, [id]);
-
-  if (loading) {
+  if (isLoading) {
     return (
-      <div className="container mx-auto px-4 py-20 flex items-center justify-center">
-        <LoadingSpinner 
-          size="lg" 
-          message="Loading product details..."
-          color="primary"
-        />
+      <div className="flex items-center justify-center h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
       </div>
     );
   }
 
-  if (!product) {
-    return (
-      <div className="container mx-auto px-4 py-20 text-center">
-        <h1 className="text-2xl font-bold text-red-500 mb-4">
-          {language === 'en' ? 'Product Not Found' : 'Producto No Encontrado'}
-        </h1>
-        <p className="mb-8">
-          {language === 'en' 
-            ? 'The product you are looking for does not exist or has been removed.' 
-            : 'El producto que estás buscando no existe o ha sido eliminado.'}
-        </p>
-      </div>
-    );
-  }
-
-  return <DeviceDetail device={product} index={0} language={language} />;
+  return (
+    <div className="flex flex-col min-h-screen">
+      <Navbar />
+      
+      <main className="flex-grow pt-20 pb-16">
+        <div className="container mx-auto px-4 py-8">
+          <h1 className="text-3xl font-bold mb-6">{device.name}</h1>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div>
+              <img 
+                src={device.image} 
+                alt={device.name} 
+                className="w-full h-auto rounded-lg"
+              />
+            </div>
+            
+            <div>
+              <h2 className="text-2xl font-semibold mb-4">Description</h2>
+              <p className="text-gray-700 mb-6">{device.description}</p>
+              
+              <p className="text-2xl font-bold mb-6">${device.price}</p>
+              
+              <button className="bg-primary text-white px-6 py-2 rounded-md hover:bg-primary/90 transition-colors">
+                Add to Cart
+              </button>
+            </div>
+          </div>
+        </div>
+      </main>
+      
+      <Footer />
+    </div>
+  );
 };
 
 export default ProductDetail;

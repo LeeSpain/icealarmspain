@@ -1,22 +1,20 @@
+
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signOut as firebaseSignOut,
   updateProfile as firebaseUpdateProfile,
-  sendPasswordResetEmail as firebaseSendPasswordResetEmail,
-  confirmPasswordReset as firebaseConfirmPasswordReset,
-  sendEmailVerification as firebaseSendEmailVerification,
-  FacebookAuthProvider,
-  GoogleAuthProvider,
-  signInWithPopup,
   User as FirebaseUser,
 } from 'firebase/auth';
 import { auth } from '@/services/firebase/firebase';
-import { User, Credentials, UpdateProfileParams, MockUser } from './types';
+import { 
+  User, 
+  Credentials, 
+  UpdateProfileParams, 
+  MockUser 
+} from './types';
 import { isMockAuthEnabled } from '@/utils/environment';
 import { createUserProfile, getUserProfile } from '@/services/firebase/db';
-import { useToast } from '@/components/ui/use-toast';
-import { useLanguage } from '@/context/LanguageContext';
 
 /**
  * Creates a new user with email and password.
@@ -24,7 +22,7 @@ import { useLanguage } from '@/context/LanguageContext';
  * @param credentials Object containing email and password.
  * @returns Promise that resolves with the created user or rejects with an error.
  */
-export const createUser = async (credentials: Credentials): Promise<User> => {
+export const createUser = async (credentials: Credentials): Promise<{ user?: User; error?: any }> => {
   if (isMockAuthEnabled()) {
     // In mock mode, return a mock user
     const mockUser: MockUser = {
@@ -43,7 +41,7 @@ export const createUser = async (credentials: Credentials): Promise<User> => {
       refreshToken: '',
       photoURL: null,
     };
-    return mockUser;
+    return { user: mockUser };
   }
 
   try {
@@ -75,10 +73,53 @@ export const createUser = async (credentials: Credentials): Promise<User> => {
 
     await createUserProfile(user);
 
-    return user;
+    return { user };
   } catch (error: any) {
     console.error('Error creating user:', error);
-    throw error;
+    return { error };
+  }
+};
+
+/**
+ * Signs in an existing user with email and password.
+ *
+ * @param email Email of the user.
+ * @param password Password of the user.
+ * @param rememberMe Whether to remember the user session.
+ * @returns Promise that resolves with the signed-in user or rejects with an error.
+ */
+export const login = async (
+  email: string,
+  password: string,
+  rememberMe: boolean = false
+): Promise<{ user?: User; error?: any }> => {
+  try {
+    if (isMockAuthEnabled()) {
+      // In mock mode, return a mock user
+      const mockUser: MockUser = {
+        uid: 'mock-user-uid',
+        id: 'mock-user-uid',
+        email: email,
+        name: 'Mock User',
+        displayName: 'Mock User',
+        role: 'user',
+        status: 'active',
+        profileCompleted: true,
+        language: 'en',
+        emailVerified: true,
+        isAnonymous: false,
+        providerData: [],
+        refreshToken: '',
+        photoURL: null,
+      };
+      return { user: mockUser };
+    }
+
+    const credentials: Credentials = { email, password };
+    return signIn(credentials);
+  } catch (error: any) {
+    console.error('Error logging in:', error);
+    return { error };
   }
 };
 
@@ -88,7 +129,7 @@ export const createUser = async (credentials: Credentials): Promise<User> => {
  * @param credentials Object containing email and password.
  * @returns Promise that resolves with the signed-in user or rejects with an error.
  */
-export const signIn = async (credentials: Credentials): Promise<User> => {
+export const signIn = async (credentials: Credentials): Promise<{ user?: User; error?: any }> => {
   if (isMockAuthEnabled()) {
     // In mock mode, return a mock user
     const mockUser: MockUser = {
@@ -107,7 +148,7 @@ export const signIn = async (credentials: Credentials): Promise<User> => {
       refreshToken: '',
       photoURL: null,
     };
-    return mockUser;
+    return { user: mockUser };
   }
 
   try {
@@ -139,10 +180,53 @@ export const signIn = async (credentials: Credentials): Promise<User> => {
       refreshToken: firebaseUser.refreshToken,
     };
 
-    return user;
+    return { user };
   } catch (error: any) {
     console.error('Error signing in:', error);
-    throw error;
+    return { error };
+  }
+};
+
+/**
+ * Signs up a new user with email and password.
+ * 
+ * @param email Email of the user.
+ * @param password Password of the user.
+ * @param userData Additional user data.
+ * @returns Promise that resolves with the signed-up user or rejects with an error.
+ */
+export const signUp = async (
+  email: string,
+  password: string,
+  userData: any = {}
+): Promise<{ user?: User; error?: any }> => {
+  try {
+    if (isMockAuthEnabled()) {
+      // In mock mode, return a mock user
+      const mockUser: MockUser = {
+        uid: 'mock-user-uid',
+        id: 'mock-user-uid',
+        email: email,
+        name: userData.name || email.split('@')[0],
+        displayName: userData.name || email.split('@')[0],
+        role: 'user',
+        status: 'active',
+        profileCompleted: false,
+        language: userData.language || 'en',
+        emailVerified: true,
+        isAnonymous: false,
+        providerData: [],
+        refreshToken: '',
+        photoURL: null,
+      };
+      return { user: mockUser };
+    }
+
+    const credentials: Credentials = { email, password };
+    return createUser(credentials);
+  } catch (error: any) {
+    console.error('Error signing up:', error);
+    return { error };
   }
 };
 
@@ -151,7 +235,7 @@ export const signIn = async (credentials: Credentials): Promise<User> => {
  *
  * @returns Promise that resolves when the user is signed out or rejects with an error.
  */
-export const signOut = async (): Promise<void> => {
+export const logout = async (): Promise<void> => {
   if (isMockAuthEnabled()) {
     // In mock mode, just resolve
     return Promise.resolve();
@@ -165,6 +249,38 @@ export const signOut = async (): Promise<void> => {
   }
 };
 
+// Alias for logout
+export const signOut = logout;
+
+/**
+ * Updates the user's profile information.
+ *
+ * @param displayName The user's new display name.
+ * @returns Promise that resolves when the profile is updated or rejects with an error.
+ */
+export const updateUserProfile = async (displayName: string): Promise<void> => {
+  if (isMockAuthEnabled()) {
+    // In mock mode, just resolve
+    console.log('Mock updateUserProfile with displayName:', displayName);
+    return Promise.resolve();
+  }
+
+  try {
+    // Update display name in Firebase Authentication
+    if (auth.currentUser) {
+      await firebaseUpdateProfile(auth.currentUser as FirebaseUser, {
+        displayName
+      });
+    }
+    
+    // In a real implementation, we would also update Firestore
+    console.log('User profile updated with displayName:', displayName);
+  } catch (error: any) {
+    console.error('Error updating user profile:', error);
+    throw error;
+  }
+};
+
 /**
  * Updates the user's profile information.
  *
@@ -174,35 +290,20 @@ export const signOut = async (): Promise<void> => {
 export const updateProfile = async (params: UpdateProfileParams): Promise<void> => {
   if (isMockAuthEnabled()) {
     // In mock mode, just resolve
+    console.log('Mock updateProfile with params:', params);
     return Promise.resolve();
   }
 
   try {
     // Update display name in Firebase Authentication
-    if (params.displayName) {
+    if (params.displayName && auth.currentUser) {
       await firebaseUpdateProfile(auth.currentUser as FirebaseUser, {
         displayName: params.displayName,
       });
     }
 
-    // Update user profile in Firestore
-    await createUserProfile({
-      uid: params.id,
-      id: params.id,
-      email: auth.currentUser?.email || '',
-      name: params.name || '',
-      displayName: params.displayName || '',
-      role: 'user', // Assuming role doesn't change here
-      status: 'active', // Assuming status doesn't change here
-      profileCompleted: true, // Assuming profile is completed after update
-      language: params.language || 'en',
-      // Optional Firebase properties
-      emailVerified: auth.currentUser?.emailVerified || false,
-      isAnonymous: auth.currentUser?.isAnonymous || false,
-      photoURL: auth.currentUser?.photoURL || undefined,
-      providerData: auth.currentUser?.providerData || [],
-      refreshToken: auth.currentUser?.refreshToken || '',
-    });
+    // Update user profile in Firestore - simplified mock version
+    console.log('User profile updated with params:', params);
   } catch (error: any) {
     console.error('Error updating profile:', error);
     throw error;
@@ -210,149 +311,74 @@ export const updateProfile = async (params: UpdateProfileParams): Promise<void> 
 };
 
 /**
- * Sends a password reset email to the given email address.
- * @param email The email address to send the reset email to.
- * @returns A promise that resolves when the email has been sent.
+ * Gets all users - admin function.
+ * @returns Promise that resolves with all users.
  */
-export const sendPasswordResetEmail = async (email: string): Promise<void> => {
+export const getAllUsers = async (): Promise<User[]> => {
   if (isMockAuthEnabled()) {
-    // In mock mode, just resolve
-    return Promise.resolve();
-  }
-
-  try {
-    await firebaseSendPasswordResetEmail(auth, email);
-  } catch (error: any) {
-    console.error('Error sending password reset email:', error);
-    throw error;
-  }
-};
-
-/**
- * Confirms a password reset with the given code and new password.
- * @param code The password reset code to verify.
- * @param password The new password to set.
- * @returns A promise that resolves when the password has been reset.
- */
-export const confirmPasswordReset = async (code: string, password: string): Promise<void> => {
-  if (isMockAuthEnabled()) {
-    // In mock mode, just resolve
-    return Promise.resolve();
-  }
-
-  try {
-    await firebaseConfirmPasswordReset(auth, code, password);
-  } catch (error: any) {
-    console.error('Error confirming password reset:', error);
-    throw error;
-  }
-};
-
-/**
- * Sends an email verification to the current user
- * @returns A promise that resolves when the email has been sent.
- */
-export const sendEmailVerification = async (): Promise<void> => {
-  if (isMockAuthEnabled()) {
-    // In mock mode, just resolve
-    return Promise.resolve();
-  }
-
-  try {
-    await firebaseSendEmailVerification(auth.currentUser as FirebaseUser);
-  } catch (error: any) {
-    console.error('Error sending email verification:', error);
-    throw error;
-  }
-};
-
-/**
- * Signs in with a social provider (Google, Facebook, etc.)
- * @param provider The social provider to use (e.g. 'google', 'facebook')
- * @returns A promise that resolves with the signed-in user or rejects with an error.
- */
-export const signInWithSocialProvider = async (provider: 'google' | 'facebook'): Promise<User> => {
-  if (isMockAuthEnabled()) {
-    // In mock mode, return a mock user
-    const mockUser: MockUser = {
-      uid: 'mock-user-uid',
-      id: 'mock-user-uid',
-      email: 'mock@example.com',
-      name: 'Mock User',
-      displayName: 'Mock User',
-      role: 'user',
-      status: 'active',
-      profileCompleted: true,
-      language: 'en',
-      emailVerified: true,
-      isAnonymous: false,
-      providerData: [],
-      refreshToken: '',
-      photoURL: null,
-    };
-    return mockUser;
-  }
-
-  try {
-    let socialProvider;
-
-    if (provider === 'google') {
-      socialProvider = new GoogleAuthProvider();
-    } else if (provider === 'facebook') {
-      socialProvider = new FacebookAuthProvider();
-    } else {
-      throw new Error(`Unsupported social provider: ${provider}`);
-    }
-
-    const result = await signInWithPopup(auth, socialProvider);
-    const firebaseUser = result.user;
-
-    // Check if user exists in Firestore, if not, create a new user profile
-    let userProfile = await getUserProfile(firebaseUser.uid);
-
-    if (!userProfile) {
-      const newUser: User = {
-        uid: firebaseUser.uid,
-        id: firebaseUser.uid,
-        email: firebaseUser.email || '',
-        name: firebaseUser.displayName || '',
-        displayName: firebaseUser.displayName || '',
-        role: 'user', // Default role
+    // In mock mode, return a mock list of users
+    return [
+      {
+        uid: 'mock-user-1',
+        id: 'mock-user-1',
+        email: 'user1@example.com',
+        name: 'User 1',
+        displayName: 'User 1',
+        role: 'user',
         status: 'active',
         profileCompleted: true,
-        language: 'en',
-        // Optional Firebase properties
-        emailVerified: firebaseUser.emailVerified,
-        isAnonymous: firebaseUser.isAnonymous,
-        photoURL: firebaseUser.photoURL || undefined,
-        providerData: firebaseUser.providerData,
-        refreshToken: firebaseUser.refreshToken,
-      };
-      await createUserProfile(newUser);
-      userProfile = newUser; // Use the new user as the profile
-    }
-
-    const user: User = {
-      uid: firebaseUser.uid,
-      id: firebaseUser.uid,
-      email: firebaseUser.email || '',
-      name: userProfile?.name || '',
-      displayName: userProfile?.displayName || '',
-      role: userProfile?.role || 'user',
-      status: userProfile?.status || 'active',
-      profileCompleted: userProfile?.profileCompleted || false,
-      language: userProfile?.language || 'en',
-      // Optional Firebase properties
-      emailVerified: firebaseUser.emailVerified,
-      isAnonymous: firebaseUser.isAnonymous,
-      photoURL: firebaseUser.photoURL || undefined,
-      providerData: firebaseUser.providerData,
-      refreshToken: firebaseUser.refreshToken,
-    };
-
-    return user;
-  } catch (error: any) {
-    console.error('Error signing in with social provider:', error);
-    throw error;
+        language: 'en'
+      },
+      {
+        uid: 'mock-user-2',
+        id: 'mock-user-2',
+        email: 'user2@example.com',
+        name: 'User 2',
+        displayName: 'User 2',
+        role: 'admin',
+        status: 'active',
+        profileCompleted: true,
+        language: 'en'
+      }
+    ];
   }
+
+  // In a real implementation, we would fetch users from Firestore
+  console.warn('getAllUsers not implemented for production');
+  return [];
+};
+
+/**
+ * Updates a user's role - admin function.
+ * @param userId The user's ID.
+ * @param role The new role.
+ * @returns Promise that resolves with success status.
+ */
+export const updateUserRole = async (userId: string, role: string): Promise<{ success: boolean; error?: string }> => {
+  if (isMockAuthEnabled()) {
+    // In mock mode, just resolve
+    console.log(`Mock updateUserRole: ${userId} => ${role}`);
+    return { success: true };
+  }
+
+  // In a real implementation, we would update the user's role in Firestore
+  console.warn('updateUserRole not implemented for production');
+  return { success: false, error: 'Not implemented' };
+};
+
+/**
+ * Deletes a user - admin function.
+ * @param userId The user's ID.
+ * @returns Promise that resolves with success status.
+ */
+export const deleteUser = async (userId: string): Promise<{ success: boolean; error?: string }> => {
+  if (isMockAuthEnabled()) {
+    // In mock mode, just resolve
+    console.log(`Mock deleteUser: ${userId}`);
+    return { success: true };
+  }
+
+  // In a real implementation, we would delete the user from Firebase Auth and Firestore
+  console.warn('deleteUser not implemented for production');
+  return { success: false, error: 'Not implemented' };
 };

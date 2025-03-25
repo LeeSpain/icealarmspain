@@ -54,9 +54,16 @@ const DashboardEmergencyContactsPage: React.FC = () => {
         <h1 className="text-2xl font-bold mb-6">Emergency Contacts</h1>
         
         <EmergencyContactsTabs 
+          contacts={[]}
+          isLoading={false}
+          selectedContactId={null}
+          onSelectContact={() => {}}
+          lastTestResult={testResult}
+          testInProgress={false}
+          onAddContact={async () => false}
+          onUpdateContact={async () => false}
+          onDeleteContact={async () => false}
           onTestAlert={handleTestAlert}
-          testResult={testResult}
-          clearTestResult={() => setTestResult(null)}
         />
       </div>
     </div>

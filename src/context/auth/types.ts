@@ -24,6 +24,39 @@ export interface UserProfile {
   role: string | null;
 }
 
+// Mock User type for development
+export interface MockUser {
+  uid: string;
+  id: string;
+  email: string;
+  name: string;
+  displayName: string;
+  role: string;
+  status: 'active' | 'pending' | 'suspended';
+  profileCompleted: boolean;
+  language: string;
+  photoURL: string | null;
+  emailVerified: boolean;
+  isAnonymous: boolean;
+  providerData: any[];
+  refreshToken: string;
+}
+
+// Credentials for login/signup
+export interface Credentials {
+  email: string;
+  password: string;
+}
+
+// Parameters for updating user profile
+export interface UpdateProfileParams {
+  id: string;
+  name?: string;
+  displayName?: string;
+  language?: string;
+  [key: string]: any;
+}
+
 // Auth context type definition
 export interface AuthContextType {
   user: User | null;
