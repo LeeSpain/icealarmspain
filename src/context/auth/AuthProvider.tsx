@@ -10,30 +10,38 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  const signIn = async (email: string, password: string) => {
+  const signIn = async (email: string, password: string, rememberMe?: boolean) => {
     try {
-      return await authFunctions.signIn(email, password);
+      // Call the login function (aliased as signIn in authFunctions)
+      const user = await authFunctions.login(email, password, rememberMe || false);
+      return user;
     } catch (error) {
       console.error('Error signing in:', error);
-      return { user: null, error };
+      throw error;
     }
   };
 
-  const signUp = async (email: string, password: string) => {
+  const signUp = async (email: string, password: string, userData?: any) => {
     try {
-      return await authFunctions.signUp(email, password);
+      const result = await authFunctions.signUp(email, password, userData);
+      if (result.error) {
+        throw result.error;
+      }
+      // Return just the user object, not the {user, error} structure
+      return result.user as User;
     } catch (error) {
       console.error('Error signing up:', error);
-      return { user: null, error };
+      throw error;
     }
   };
 
   const signOut = async () => {
     try {
-      return await authFunctions.signOut();
+      // Use logout function instead of signOut
+      return await authFunctions.logout();
     } catch (error) {
       console.error('Error signing out:', error);
-      return { error };
+      throw error;
     }
   };
 
@@ -46,10 +54,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             isAuthenticated: !!user,
             isLoading,
             profile: user,
+            login: signIn,
             signIn,
             signUp,
-            signOut,
+            logout: signOut,
             updateUserProfile: wrappedUpdateUserProfile,
+            // Add required admin functions with stub implementations
+            createUser: signUp,
+            getAllUsers: async () => [],
+            updateUserRole: async () => {},
+            deleteUser: async () => {},
           }}
         >
           {children}
