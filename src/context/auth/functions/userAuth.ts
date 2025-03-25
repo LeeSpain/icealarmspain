@@ -1,5 +1,5 @@
 
-import { auth, signInWithEmailAndPassword, signOut as firebaseSignOut } from '@/services/firebase/auth';
+import { signIn, signOut } from '@/services/auth';
 import { User } from '../types';
 
 // Login with email and password
@@ -9,22 +9,7 @@ export const login = async (
   rememberMe: boolean = false
 ): Promise<User> => {
   try {
-    const userCredential = await signInWithEmailAndPassword(auth, email, password);
-    const firebaseUser = userCredential.user;
-    
-    // Convert Firebase user to our User type
-    const user: User = {
-      uid: firebaseUser.uid,
-      id: firebaseUser.uid,
-      email: firebaseUser.email || '',
-      name: firebaseUser.displayName || '',
-      displayName: firebaseUser.displayName || '',
-      role: 'member', // Default role, can be updated from profile
-      profileCompleted: !!firebaseUser.displayName,
-      photoURL: firebaseUser.photoURL || undefined,
-      lastLogin: new Date().toISOString(),
-    };
-    
+    const user = await signIn(email, password, rememberMe);
     return user;
   } catch (error) {
     console.error('Login error:', error);
@@ -35,8 +20,7 @@ export const login = async (
 // Sign out the current user
 export const logout = async (): Promise<void> => {
   try {
-    // Fix: Call firebaseSignOut without passing auth as an argument
-    await firebaseSignOut();
+    await signOut();
   } catch (error) {
     console.error('Logout error:', error);
     throw error;

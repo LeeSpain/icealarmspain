@@ -61,28 +61,6 @@ export const getRequiredEnvVar = (name: string, fallback: string = ''): string =
   }
 };
 
-// Check if all required Firebase environment variables are set
-export const hasRequiredFirebaseConfig = (): boolean => {
-  try {
-    // Check each Firebase config variable individually 
-    const requiredVars = {
-      apiKey: !!getEnvVar('VITE_FIREBASE_API_KEY'),
-      projectId: !!getEnvVar('VITE_FIREBASE_PROJECT_ID'),
-      authDomain: !!getEnvVar('VITE_FIREBASE_AUTH_DOMAIN'),
-      appId: !!getEnvVar('VITE_FIREBASE_APP_ID')
-    };
-    
-    // Return true only if all required variables are present
-    return requiredVars.apiKey && 
-           requiredVars.projectId && 
-           requiredVars.authDomain && 
-           requiredVars.appId;
-  } catch (e) {
-    console.error('Error checking Firebase configuration:', e);
-    return false;
-  }
-};
-
 // Get detailed environment diagnostics for debugging
 export const getEnvironmentDiagnostics = (): Record<string, any> => {
   return {
@@ -92,11 +70,6 @@ export const getEnvironmentDiagnostics = (): Record<string, any> => {
     base: import.meta.env.BASE_URL,
     mockAuth: isMockAuthEnabled(),
     debugBuild: isDebugBuild(),
-    firebaseApiKey: getEnvVar('VITE_FIREBASE_API_KEY') ? 'set' : 'missing',
-    firebaseProjectId: getEnvVar('VITE_FIREBASE_PROJECT_ID') ? 'set' : 'missing',
-    firebaseAuthDomain: getEnvVar('VITE_FIREBASE_AUTH_DOMAIN') ? 'set' : 'missing',
-    firebaseAppId: getEnvVar('VITE_FIREBASE_APP_ID') ? 'set' : 'missing',
-    hasAllRequiredVars: hasRequiredFirebaseConfig() ? 'yes' : 'no',
     timestamp: new Date().toISOString(),
   };
 };
@@ -104,10 +77,6 @@ export const getEnvironmentDiagnostics = (): Record<string, any> => {
 // Return an easy-to-read summary of environment issues for debugging
 export const getEnvironmentSummary = (): string => {
   const issues: string[] = [];
-  
-  if (!hasRequiredFirebaseConfig()) {
-    issues.push("Missing Firebase configuration (will use fallback values)");
-  }
   
   if (issues.length === 0) {
     return "Environment looks good! No issues detected.";

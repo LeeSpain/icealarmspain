@@ -1,8 +1,7 @@
+
 import { useEffect, useRef } from 'react';
 import { User } from './types';
-import { determineUserRole } from './utils';
-import { auth, onAuthStateChanged } from '../../services/firebase/auth';
-import { isMockAuthEnabled, isDevelopment } from '@/utils/environment';
+import { getCurrentUser } from '@/services/auth';
 
 interface UseAuthEffectsProps {
   setUser: React.Dispatch<React.SetStateAction<User | null>>;
@@ -19,9 +18,9 @@ export const useAuthEffects = ({ setUser, setIsLoading }: UseAuthEffectsProps) =
     };
   }, []);
 
-  // Listen for auth state changes
+  // Initialize auth state
   useEffect(() => {
-    console.log('Setting up Firebase auth state listener');
+    console.log('Initializing auth state');
     
     // Set loading to true initially
     setIsLoading(true);
@@ -36,127 +35,62 @@ export const useAuthEffects = ({ setUser, setIsLoading }: UseAuthEffectsProps) =
       return;
     }
     
-    // In development mode with mock auth enabled, try to load user from localStorage
-    if (isMockAuthEnabled()) {
-      try {
-        const storedUser = localStorage.getItem('currentUser');
-        if (storedUser && isMounted.current) {
-          try {
-            const parsedUser = JSON.parse(storedUser);
-            if (parsedUser && parsedUser.uid) {
-              // Check if it's a development user
-              if (typeof parsedUser.uid === 'string' && parsedUser.uid.startsWith('dev-')) {
-                console.log('Found stored development user:', parsedUser.email);
-                setUser(parsedUser);
-                
-                // For development users, set loading to false immediately
-                setIsLoading(false);
-                return; // Skip Firebase auth check for dev users
-              } else {
-                console.log('Found stored user data:', parsedUser.email);
-                setUser(parsedUser);
-                // Keep loading true for regular users until Firebase auth check completes
-              }
-            }
-          } catch (e) {
-            console.error('Error parsing stored user JSON:', e);
-            localStorage.removeItem('currentUser');
-          }
-        }
-      } catch (error) {
-        console.error('Error accessing localStorage:', error);
-        localStorage.removeItem('currentUser');
-      }
-    }
-    
-    // If we're in development mode with mock auth enabled and no stored user, skip Firebase
-    if (isMockAuthEnabled() && !localStorage.getItem('currentUser')) {
-      console.log('Development mode with no stored user, skipping Firebase auth check');
-      setIsLoading(false);
-      return;
-    }
-    
-    // Listen for Firebase auth state changes - this is the real authentication we always use
-    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
-      if (isDevelopment()) {
-        console.log('Firebase auth state changed:', firebaseUser?.email || 'No user');
-      }
+    // Get the current user from localStorage
+    try {
+      const currentUser = getCurrentUser();
       
-      if (!isMounted.current) return;
-      
-      if (!firebaseUser) {
-        if (isDevelopment()) {
-          console.log('No Firebase user, clearing user state');
-        }
-        
-        // Check if we have a development user in mock mode
-        if (isMockAuthEnabled()) {
-          const storedUser = localStorage.getItem('currentUser');
-          if (storedUser) {
-            try {
-              const parsedUser = JSON.parse(storedUser);
-              if (parsedUser && parsedUser.uid && typeof parsedUser.uid === 'string' && parsedUser.uid.startsWith('dev-')) {
-                if (isDevelopment()) {
-                  console.log('Keeping development user session active:', parsedUser.email);
-                }
-                // Don't clear development users on Firebase auth state change
-                setIsLoading(false);
-                return;
-              }
-            } catch (e) {
-              // Ignore parse errors
-            }
-          }
-        }
-        
-        // If we're here, we don't have a valid development user
+      if (currentUser && isMounted.current) {
+        console.log('Found stored user:', currentUser.email);
+        setUser(currentUser);
+      } else {
         setUser(null);
+      }
+    } catch (error) {
+      console.error('Error getting current user:', error);
+      setUser(null);
+    }
+    
+    // Set loading to false
+    setTimeout(() => {
+      if (isMounted.current) {
         setIsLoading(false);
-        return;
       }
-      
-      if (isDevelopment()) {
-        console.log('Firebase user authenticated:', firebaseUser.email);
-      }
-      
-      // Determine role from email
-      const role = determineUserRole(firebaseUser.email || '');
-      
-      const userData: User = {
-        uid: firebaseUser.uid,
-        id: firebaseUser.uid,
-        email: firebaseUser.email || '',
-        name: firebaseUser.displayName || firebaseUser.email?.split('@')[0] || '',
-        displayName: firebaseUser.displayName || firebaseUser.email?.split('@')[0] || '',
-        role,
-        profileCompleted: !!firebaseUser.displayName,
-        language: localStorage.getItem('language') || 'en',
-        lastLogin: new Date().toISOString(),
-        createdAt: firebaseUser.metadata.creationTime || '',
-      };
-      
-      setUser(userData);
-      
-      // Only store user in localStorage in development mode with mock auth
-      if (isMockAuthEnabled()) {
-        localStorage.setItem('currentUser', JSON.stringify(userData));
-      }
-      
-      setIsLoading(false);
-    });
-
+    }, 100);
+    
     // Set a timeout to ensure loading state is not stuck forever
     const loadingTimeout = setTimeout(() => {
       if (isMounted.current) {
         console.log('Authentication loading timeout reached - forcing loading to false');
         setIsLoading(false);
       }
-    }, 1500); // 1.5 second timeout as a fallback (reduced from 2 seconds)
+    }, 1000);
 
-    // Cleanup subscription and timeout
+    // Cleanup timeout
     return () => {
       clearTimeout(loadingTimeout);
-      unsubscribe();
     };
   }, [setUser, setIsLoading]);
+
+  // Listen for storage changes
+  useEffect(() => {
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'currentUser') {
+        try {
+          if (e.newValue) {
+            const parsedUser = JSON.parse(e.newValue);
+            console.log("Storage event - user updated:", parsedUser.email);
+            setUser(parsedUser);
+          } else {
+            console.log("Storage event - user removed");
+            setUser(null);
+          }
+        } catch (error) {
+          console.error("Error parsing user from storage event:", error);
+        }
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, [setUser]);
 };

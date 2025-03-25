@@ -53,7 +53,7 @@ function renderApp() {
         if (loader && loader.parentNode) {
           loader.parentNode.removeChild(loader);
         }
-      }, 5000);
+      }, 3000);
     }
   }
 }

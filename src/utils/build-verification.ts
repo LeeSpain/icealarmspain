@@ -6,7 +6,7 @@
 
 // Import React properly so we can check for its existence
 import * as React from 'react';
-import { hasRequiredFirebaseConfig, getEnvironmentDiagnostics, getEnvironment } from './environment';
+import { getEnvironmentDiagnostics, getEnvironment } from './environment';
 
 // Self-executing function for immediate checking
 (function verifyBuild() {
@@ -17,20 +17,6 @@ import { hasRequiredFirebaseConfig, getEnvironmentDiagnostics, getEnvironment } 
     // Log environment variables (non-sensitive only)
     const envDiagnostics = getEnvironmentDiagnostics();
     console.log('🌍 Environment diagnostics:', envDiagnostics);
-    
-    // Check Firebase configuration
-    const firebaseConfigResult = hasRequiredFirebaseConfig();
-    console.log('🔥 Firebase configuration check:', firebaseConfigResult ? 'PASSED' : 'USING FALLBACKS');
-    
-    if (!firebaseConfigResult) {
-      console.log('⚠️ Using Firebase fallback configuration');
-      console.log('   The application will continue to function with limited features.');
-      
-      // Only in development, log more details
-      if (envDiagnostics.isDev) {
-        console.log('   In development mode, mock authentication will be used when appropriate.');
-      }
-    }
     
     // Check for common issues
     const checks = {
@@ -78,12 +64,10 @@ export const printConfigInfoToElement = (elementId: string): void => {
     if (!element) return;
     
     const envInfo = getEnvironmentDiagnostics();
-    const firebaseConfig = hasRequiredFirebaseConfig();
     
     element.innerHTML = `
       <div style="text-align: left; font-size: 12px; color: #666; padding: 10px; background: #f5f5f5; border-radius: 4px; margin-top: 20px;">
         <p><strong>Environment:</strong> ${getEnvironment()}</p>
-        <p><strong>Firebase Config:</strong> ${firebaseConfig ? 'Available' : 'Using Fallbacks'}</p>
         <p><strong>Mode:</strong> ${envInfo.mode}</p>
         <p><strong>Time:</strong> ${new Date().toISOString()}</p>
       </div>
