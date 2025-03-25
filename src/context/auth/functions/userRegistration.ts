@@ -6,7 +6,7 @@ import { User } from '../types';
 export const signUp = async (
   email: string, 
   password: string, 
-  userData?: any
+  userData?: Partial<User>
 ): Promise<{ user: User | null; error: any | null }> => {
   console.log('Signup attempt:', { email });
   
@@ -19,8 +19,8 @@ export const signUp = async (
   
   try {
     const result = await authSignUp(email, password, {
-      display_name: userData?.display_name,
-      displayName: userData?.display_name,
+      displayName: userData?.displayName || userData?.display_name, // Use displayName, fallback to display_name if provided
+      name: userData?.name || userData?.displayName || email.split('@')[0]
     });
     
     return result;
