@@ -8,8 +8,13 @@
     <meta name="description" content="Medical alert and health monitoring system for seniors and expatriates" />
     <meta name="author" content="Ice Guardian" />
     <meta property="og:image" content="/og-image.png" />
+    
+    <!-- Preconnect to critical domains -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&display=swap">
-    <link rel="preload" href="/src/styles/index.css" as="style">
+    
+    <!-- Critical CSS inlined to prevent FOUC -->
     <style>
       /* Critical rendering styles */
       html, body {
@@ -23,21 +28,50 @@
         min-height: 100vh;
         width: 100%;
       }
-      /* Removed the initial-content styles and animation */
+      /* Basic fallback if JS fails to load */
+      .js-error-fallback {
+        display: none; /* Hidden by default, shown if JS errors after 5s */
+        max-width: 500px;
+        margin: 50px auto;
+        text-align: center;
+        padding: 20px;
+        font-family: system-ui, sans-serif;
+      }
     </style>
-    <!-- Preconnect to critical domains -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
+    <!-- Preload important resources -->
+    <link rel="preload" href="/src/styles/index.css" as="style">
   </head>
 
   <body>
     <!-- Root element where React will mount -->
-    <div id="root">
-      <!-- Removed the loading message -->
+    <div id="root"></div>
+    
+    <!-- Fallback content if JS fails -->
+    <div id="js-error-fallback" class="js-error-fallback">
+      <h2>Ice Guardian Alert</h2>
+      <p>We're having trouble loading the application. Please try refreshing the page.</p>
+      <p>If this problem persists, please contact support.</p>
     </div>
     
-    <!-- Add the GPT Engineer script tag back -->
+    <!-- Show fallback after 5 seconds if app hasn't loaded -->
+    <script>
+      setTimeout(function() {
+        if (!window.appLoaded) {
+          document.getElementById('js-error-fallback').style.display = 'block';
+        }
+      }, 5000);
+    </script>
+    
+    <!-- GPT Engineer script for the "Select" feature -->
     <script src="https://cdn.gpteng.co/gptengineer.js" type="module"></script>
+    
+    <!-- Main application script -->
     <script type="module" src="/src/main.tsx"></script>
+    
+    <!-- Mark app as loaded when this script runs -->
+    <script>
+      window.appLoaded = true;
+    </script>
   </body>
 </html>

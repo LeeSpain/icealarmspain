@@ -3,14 +3,47 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
 import './styles/index.css';
-import './utils/diagnostic-helper'; // Import diagnostics for better debugging
+import './utils/diagnostic-helper';
+import { getEnvironment, isProduction } from './utils/environment';
 
-// Console message to confirm script execution
-console.log("Main script executing...");
+// Immediately log initialization to help with debugging
+console.log(`Application initializing - Environment: ${getEnvironment()}`);
+
+// Check for critical environment variables
+function checkEnvironment() {
+  // For production, log a clear message about environment variables
+  if (isProduction()) {
+    console.log("Production environment detected");
+    
+    // Check for Firebase config which is critical
+    const hasFirebaseConfig = !!import.meta.env.VITE_FIREBASE_API_KEY && 
+                             !!import.meta.env.VITE_FIREBASE_PROJECT_ID;
+    
+    if (!hasFirebaseConfig) {
+      console.error("CRITICAL: Missing Firebase configuration. This will prevent the app from working correctly.");
+      return false;
+    }
+  }
+  return true;
+}
 
 // Function to initialize the app with error handling
 function initializeApp() {
   try {
+    // Verify environment configuration
+    const envCheck = checkEnvironment();
+    if (!envCheck && isProduction()) {
+      // In production, display an informative message rather than a blank screen
+      document.body.innerHTML = `
+        <div style="font-family: sans-serif; max-width: 500px; margin: 50px auto; text-align: center; padding: 20px;">
+          <h2>Configuration Error</h2>
+          <p>The application could not start because it's missing required configuration.</p>
+          <p>Please check the application logs for more details.</p>
+        </div>
+      `;
+      return;
+    }
+
     // Get the root element
     const rootElement = document.getElementById('root');
 
@@ -24,7 +57,7 @@ function initializeApp() {
       return initializeApp(); // Try again with the new element
     }
 
-    // Create the React root and render directly - no error boundaries that might block rendering
+    // Create the React root and render
     const root = ReactDOM.createRoot(rootElement);
     
     root.render(
@@ -48,7 +81,7 @@ function initializeApp() {
   } catch (error) {
     console.error("Fatal error during app initialization:", error);
     
-    // Emergency rendering - display something rather than a blank page
+    // Emergency rendering - display something rather than a blank screen
     const rootElement = document.getElementById('root') || document.body;
     rootElement.innerHTML = `
       <div style="font-family: sans-serif; padding: 20px; text-align: center;">

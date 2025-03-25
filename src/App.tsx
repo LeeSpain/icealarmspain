@@ -8,6 +8,12 @@ import { HelmetProvider } from "react-helmet-async";
 import './App.css';
 import ScrollToTop from "@/components/layout/ScrollToTop";
 import { AuthProvider } from "./context/auth";
+import ErrorBoundaryRoot from "@/components/layout/ErrorBoundaryRoot";
+import { getEnvironment } from "@/utils/environment";
+
+// Initialize diagnostic information
+const appStartTime = Date.now();
+console.log(`App.tsx loading - Environment: ${getEnvironment()}`);
 
 // Simple fallback component when routes are loading
 const LoadingFallback = () => (
@@ -16,7 +22,7 @@ const LoadingFallback = () => (
   </div>
 );
 
-// Error boundary for the entire app
+// Standard error boundary for route-level errors
 class ErrorBoundary extends React.Component<{children: React.ReactNode}, {hasError: boolean, error: Error | null}> {
   constructor(props: {children: React.ReactNode}) {
     super(props);
@@ -55,7 +61,10 @@ class ErrorBoundary extends React.Component<{children: React.ReactNode}, {hasErr
 
 function App() {
   useEffect(() => {
-    console.log("App component rendering");
+    // Performance tracking for app initialization
+    const mountTime = Date.now() - appStartTime;
+    console.log(`App component mounted in ${mountTime}ms`);
+    
     // Check if the app is mounted successfully
     const timeoutId = setTimeout(() => {
       console.log("App mounted for 1 second - rendering appears successful");
@@ -65,7 +74,7 @@ function App() {
   }, []);
   
   return (
-    <ErrorBoundary>
+    <ErrorBoundaryRoot>
       <HelmetProvider>
         <AuthProvider>
           <LanguageProvider>
@@ -79,7 +88,11 @@ function App() {
                       <Route
                         key={route.path}
                         path={route.path}
-                        element={route.element}
+                        element={
+                          <ErrorBoundary>
+                            {route.element}
+                          </ErrorBoundary>
+                        }
                       />
                     );
                   })}
@@ -90,7 +103,7 @@ function App() {
           </LanguageProvider>
         </AuthProvider>
       </HelmetProvider>
-    </ErrorBoundary>
+    </ErrorBoundaryRoot>
   );
 }
 

@@ -1,6 +1,7 @@
 
 import React, { Component, ErrorInfo, ReactNode } from 'react';
 import { Shield } from 'lucide-react';
+import { isProduction } from '@/utils/environment';
 
 interface Props {
   children: ReactNode;
@@ -30,6 +31,28 @@ class ErrorBoundaryRoot extends Component<Props, State> {
   public componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
     this.setState({ errorInfo });
     console.error("Root level error caught:", error, errorInfo);
+    
+    // Log to console in a way that's very visible
+    console.group('🔴 CRITICAL APPLICATION ERROR');
+    console.error('Error:', error.message);
+    console.error('Component Stack:', errorInfo.componentStack);
+    console.groupEnd();
+
+    // In production, we might want to log this to an error tracking service
+    if (isProduction()) {
+      // Log to window.appErrors for diagnostic purposes
+      if (window && !window.appErrors) {
+        window.appErrors = [];
+      }
+      if (window.appErrors) {
+        window.appErrors.push({
+          timestamp: new Date().toISOString(),
+          message: error.message,
+          stack: error.stack,
+          componentStack: errorInfo.componentStack
+        });
+      }
+    }
   }
 
   private retry = (): void => {
@@ -58,17 +81,19 @@ class ErrorBoundaryRoot extends Component<Props, State> {
             
             <button
               onClick={this.retry}
-              className="px-4 py-2 bg-ice-600 text-white rounded-md hover:bg-ice-700 transition-colors focus:outline-none focus:ring-2 focus:ring-ice-500 focus:ring-opacity-50"
+              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
             >
               Reload Application
             </button>
             
-            <div className="mt-6 text-sm text-gray-500">
-              <p className="font-medium">Error details:</p>
-              <div className="mt-2 text-left bg-gray-50 p-3 rounded-md overflow-auto max-h-32">
-                <p>{this.state.error?.toString()}</p>
+            {this.state.error && !isProduction() && (
+              <div className="mt-6 text-sm text-gray-500">
+                <p className="font-medium">Error details:</p>
+                <div className="mt-2 text-left bg-gray-50 p-3 rounded-md overflow-auto max-h-32">
+                  <p>{this.state.error?.toString()}</p>
+                </div>
               </div>
-            </div>
+            )}
           </div>
         </div>
       );
