@@ -43,6 +43,32 @@ export function areAllEnvVarsSet(): boolean {
   return requiredVars.every(varName => !!import.meta.env[varName]);
 }
 
+// Get an environment variable with fallback
+export function getEnvVar(name: string, fallback: string = ''): string {
+  return import.meta.env[name] || fallback;
+}
+
+// Get a required environment variable (throws if not found in production)
+export function getRequiredEnvVar(name: string): string {
+  const value = import.meta.env[name];
+  if (!value && isProduction()) {
+    throw new Error(`Required environment variable ${name} is not set`);
+  }
+  return value || '';
+}
+
+// Check if mock authentication is enabled (for development only)
+export function isMockAuthEnabled(): boolean {
+  // Only enable mock auth in development mode
+  if (!isDevelopment()) return false;
+  
+  // Allow explicit opt-in via environment variable
+  if (import.meta.env.VITE_ENABLE_MOCK_AUTH === 'true') return true;
+  
+  // Default behavior: enable mock auth in dev mode when Firebase config is missing
+  return !hasValidFirebaseConfig();
+}
+
 // Generate a configuration report for debugging
 export function generateConfigReport(): string {
   const env = getEnvironment();
@@ -68,6 +94,7 @@ export function getEnvironmentDiagnostics() {
     isProduction: isProduction(),
     isDebugBuild: isDebugBuild(),
     hasValidFirebaseConfig: hasValidFirebaseConfig(),
+    mockAuthEnabled: isMockAuthEnabled(),
     mode: import.meta.env.MODE,
     dev: import.meta.env.DEV,
     prod: import.meta.env.PROD,

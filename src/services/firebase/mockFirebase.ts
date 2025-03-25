@@ -1,181 +1,103 @@
 
-/**
- * Mock Firebase implementation for when Firebase config is missing
- * This allows the application to load and render with basic functionality
- * even when Firebase is not properly configured
- */
+import { isDevelopment } from '@/utils/environment';
 
-import { getEnvironment, isDevelopment } from '@/utils/environment';
-import { User } from 'firebase/auth';
-
-// Log that we're using mock Firebase
-console.warn('Using mock Firebase implementation due to missing configuration');
-if (isDevelopment()) {
-  console.info('This is normal in development if you haven\'t set up Firebase credentials');
-  console.info('Add VITE_FIREBASE_API_KEY and VITE_FIREBASE_PROJECT_ID to your .env file for full functionality');
-} else {
-  console.error('CRITICAL: Mock Firebase is being used in a non-development environment');
-  console.error('Please configure proper Firebase credentials in your hosting environment');
-}
-
-// Define a mock user class that matches Firebase's User interface
-class MockUser implements Partial<User> {
+// Define simple mock types to match Firebase interfaces
+export type MockUser = {
   uid: string;
   email: string | null;
   displayName: string | null;
-  photoURL: string | null;
-  emailVerified: boolean;
-  isAnonymous: boolean = false;
-  providerData: any[] = [];
-  refreshToken: string = '';
-  tenantId: string | null = null;
-  phoneNumber: string | null = null;
-  
-  constructor(email: string, displayName?: string) {
-    this.uid = `mock-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
-    this.email = email;
-    this.displayName = displayName || email.split('@')[0];
-    this.photoURL = null;
-    this.emailVerified = true;
-  }
-  
-  // Add any other User properties needed
-  metadata = {
-    creationTime: new Date().toISOString(),
-    lastSignInTime: new Date().toISOString()
+  metadata: {
+    creationTime: string;
+    lastSignInTime: string;
   };
-  
-  // Add stub methods required by the User interface
-  getIdToken(): Promise<string> {
-    return Promise.resolve('mock-id-token');
-  }
-  
-  delete(): Promise<void> {
-    return Promise.resolve();
-  }
-  
-  reload(): Promise<void> {
-    return Promise.resolve();
-  }
-}
+};
 
-// Mock Auth
+export type MockUserCredential = {
+  user: MockUser;
+};
+
+// Create a mock Firebase auth service for development
 export const mockAuth = {
-  currentUser: null as (MockUser | null),
+  currentUser: null as MockUser | null,
   
-  onAuthStateChanged: (callback: (user: MockUser | null) => void) => {
-    // Always return null user
-    setTimeout(() => callback(null), 100);
+  // Mock sign in implementation
+  signInWithEmailAndPassword: (email: string, password: string): Promise<MockUserCredential> => {
+    console.log('MOCK: Sign in with', { email, password });
     
-    // Return mock unsubscribe function
-    return () => {};
-  },
-  
-  signInWithEmailAndPassword: async (email: string, password: string) => {
-    console.log(`Mock signIn called with: ${email}`);
-    
-    // Create a mock user that matches Firebase's UserCredential interface
-    const mockUser = new MockUser(email);
-    
-    // Return a mock UserCredential
-    return {
-      user: mockUser,
-      providerId: null,
-      operationType: 'signIn'
-    };
-  },
-  
-  createUserWithEmailAndPassword: async (email: string, password: string) => {
-    console.log(`Mock createUser called with: ${email}`);
-    
-    // Create a mock user that matches Firebase's UserCredential interface
-    const mockUser = new MockUser(email);
-    
-    // Return a mock UserCredential
-    return {
-      user: mockUser,
-      providerId: null,
-      operationType: 'signUp'
-    };
-  },
-  
-  signOut: async () => {
-    console.log('Mock sign out called');
-    return Promise.resolve();
-  },
-  
-  updateProfile: async (user: any, profile: {displayName?: string; photoURL?: string}) => {
-    console.log('Mock updateProfile called with:', profile);
-    return Promise.resolve();
-  }
-};
-
-// Mock Firestore
-export const mockFirestore = {
-  collection: (name: string) => ({
-    doc: (id: string) => ({
-      get: async () => ({
-        exists: false,
-        data: () => null,
-        id
-      }),
-      set: async () => Promise.resolve(),
-      update: async () => Promise.resolve(),
-      delete: async () => Promise.resolve()
-    }),
-    add: async () => ({ id: 'mock-id' }),
-    where: () => ({
-      get: async () => ({
-        empty: true,
-        docs: [],
-        forEach: () => {}
-      })
-    })
-  })
-};
-
-// Mock Analytics
-export const mockAnalytics = {
-  logEvent: (name: string, params: any) => {
-    console.log(`Mock analytics event: ${name}`, params);
-  }
-};
-
-// Mock Storage
-export const mockStorage = {
-  ref: (path: string) => ({
-    put: async () => ({
-      ref: {
-        getDownloadURL: async () => 'https://example.com/mock-download-url'
+    const user: MockUser = {
+      uid: `mock-${Date.now()}`,
+      email,
+      displayName: email.split('@')[0],
+      metadata: {
+        creationTime: new Date().toISOString(),
+        lastSignInTime: new Date().toISOString()
       }
-    }),
-    delete: async () => Promise.resolve()
-  })
-};
-
-// Mock Functions
-export const mockFunctions = {
-  httpsCallable: (name: string) => async (data: any) => {
-    console.log(`Mock cloud function called: ${name}`, data);
-    return { data: null };
-  }
-};
-
-// Export a mock Firebase instance
-export const mockFirebase = {
-  auth: mockAuth,
-  firestore: mockFirestore,
-  analytics: mockAnalytics,
-  storage: mockStorage,
-  functions: mockFunctions,
-  app: {
-    name: '[DEFAULT]',
-    options: {
-      apiKey: 'mock-api-key',
-      projectId: 'mock-project-id',
-      appId: 'mock-app-id'
+    };
+    
+    mockAuth.currentUser = user;
+    
+    // Persist to local storage for session maintenance
+    localStorage.setItem('mockFirebaseUser', JSON.stringify(user));
+    
+    return Promise.resolve({ user });
+  },
+  
+  // Mock create user implementation
+  createUserWithEmailAndPassword: (email: string, password: string): Promise<MockUserCredential> => {
+    console.log('MOCK: Create user with', { email, password });
+    
+    const user: MockUser = {
+      uid: `mock-${Date.now()}`,
+      email,
+      displayName: null,
+      metadata: {
+        creationTime: new Date().toISOString(),
+        lastSignInTime: new Date().toISOString()
+      }
+    };
+    
+    mockAuth.currentUser = user;
+    
+    // Persist to local storage
+    localStorage.setItem('mockFirebaseUser', JSON.stringify(user));
+    
+    return Promise.resolve({ user });
+  },
+  
+  // Mock sign out implementation
+  signOut: (): Promise<void> => {
+    console.log('MOCK: Sign out');
+    mockAuth.currentUser = null;
+    localStorage.removeItem('mockFirebaseUser');
+    return Promise.resolve();
+  },
+  
+  // Mock auth state changed callback
+  onAuthStateChanged: (callback: (user: MockUser | null) => void) => {
+    console.log('MOCK: Setting up auth state changed listener');
+    
+    // Try to restore user from localStorage
+    try {
+      const storedUser = localStorage.getItem('mockFirebaseUser');
+      if (storedUser) {
+        mockAuth.currentUser = JSON.parse(storedUser);
+      }
+    } catch (e) {
+      console.error('Error restoring mock user from localStorage', e);
     }
+    
+    // Call the callback with the current user state
+    setTimeout(() => {
+      callback(mockAuth.currentUser);
+    }, 100);
+    
+    // Return a mock subscription
+    return {
+      unsubscribe: () => {
+        console.log('MOCK: Unsubscribed from auth state changes');
+      }
+    };
   }
 };
 
-export default mockFirebase;
+// More mock Firebase services can be added here as needed

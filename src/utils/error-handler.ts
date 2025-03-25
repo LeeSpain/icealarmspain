@@ -1,122 +1,65 @@
 
-import { toast } from "@/hooks/use-toast";
-
-type ErrorWithMessage = {
-  message: string;
-};
-
-type ErrorWithCode = {
-  code: string;
-  message?: string;
-};
+import { toast } from '@/components/ui/use-toast';
 
 /**
- * Type guard to check if an error has a message property
+ * Shows an error toast with a formatted error message
  */
-function isErrorWithMessage(error: unknown): error is ErrorWithMessage {
-  return (
-    typeof error === 'object' &&
-    error !== null &&
-    'message' in error &&
-    typeof (error as ErrorWithMessage).message === 'string'
-  );
-}
-
-/**
- * Type guard to check if an error has a code property
- */
-function isErrorWithCode(error: unknown): error is ErrorWithCode {
-  return (
-    typeof error === 'object' &&
-    error !== null &&
-    'code' in error &&
-    typeof (error as ErrorWithCode).code === 'string'
-  );
-}
-
-/**
- * Extracts a human-readable message from any error type
- */
-export function getErrorMessage(error: unknown): string {
-  // Default error message
-  let message = 'An unknown error occurred';
+export function showErrorToast(error: any, context: string = 'Operation') {
+  console.error(`${context} error:`, error);
   
-  if (isErrorWithMessage(error)) {
-    message = error.message;
-  } else if (isErrorWithCode(error)) {
-    if (error.message) {
-      message = error.message;
-    } else {
-      // Map common error codes to messages
-      switch (error.code) {
-        case 'auth/user-not-found':
-          message = 'User not found. Please check your credentials.';
-          break;
-        case 'auth/wrong-password':
-          message = 'Invalid password. Please try again.';
-          break;
-        case 'auth/email-already-in-use':
-          message = 'This email is already registered.';
-          break;
-        default:
-          message = `Error code: ${error.code}`;
-      }
-    }
-  } else if (typeof error === 'string') {
-    message = error;
+  let errorMessage = 'An unexpected error occurred';
+  
+  if (typeof error === 'string') {
+    errorMessage = error;
+  } else if (error instanceof Error) {
+    errorMessage = error.message;
+  } else if (error && typeof error === 'object') {
+    errorMessage = error.message || error.error || JSON.stringify(error);
   }
   
-  return message;
-}
-
-/**
- * Global error handler
- */
-export function handleError(error: unknown, context?: string): string {
-  const errorMessage = getErrorMessage(error);
-  const contextPrefix = context ? `${context}: ` : '';
-  const fullMessage = `${contextPrefix}${errorMessage}`;
-  
-  // Log to console
-  console.error(fullMessage, error);
-  
-  return fullMessage;
-}
-
-/**
- * Shows an error toast
- */
-export function showErrorToast(error: unknown, context?: string): void {
-  const message = handleError(error, context);
-  
   toast({
-    title: context || "Error",
-    description: message,
+    title: `${context} Failed`,
+    description: errorMessage,
     variant: "destructive",
   });
 }
 
 /**
- * Async error handler - can be used with try/catch
+ * Formats an error message for display
  */
-export async function tryAsync<T>(
-  asyncFn: () => Promise<T>,
-  options: {
-    context?: string;
-    showToast?: boolean;
-    fallbackValue?: T;
-  } = {}
-): Promise<T | undefined> {
-  const { context, showToast = true, fallbackValue } = options;
+export function formatErrorMessage(error: any): string {
+  if (typeof error === 'string') {
+    return error;
+  } else if (error instanceof Error) {
+    return error.message;
+  } else if (error && typeof error === 'object') {
+    return error.message || error.error || JSON.stringify(error);
+  }
+  return 'An unexpected error occurred';
+}
+
+/**
+ * Handles API errors and returns a formatted response
+ */
+export function handleApiError<T>(error: any, defaultValue: T): { data: T; error: string } {
+  console.error('API Error:', error);
+  return {
+    data: defaultValue,
+    error: formatErrorMessage(error)
+  };
+}
+
+/**
+ * Custom error class for application-specific errors
+ */
+export class AppError extends Error {
+  code?: string;
+  details?: any;
   
-  try {
-    return await asyncFn();
-  } catch (error) {
-    if (showToast) {
-      showErrorToast(error, context);
-    } else {
-      handleError(error, context);
-    }
-    return fallbackValue;
+  constructor(message: string, code?: string, details?: any) {
+    super(message);
+    this.name = 'AppError';
+    this.code = code;
+    this.details = details;
   }
 }
