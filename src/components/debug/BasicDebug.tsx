@@ -17,41 +17,19 @@ const BasicDebug = () => {
       console.log("Debug element NOT found in DOM");
     }
     
-    // Check for Tailwind CSS loading
-    console.log("Checking Tailwind CSS loading status...");
-    const stylesheets = Array.from(document.styleSheets);
-    const hasTailwind = stylesheets.some(sheet => {
-      try {
-        return Array.from(sheet.cssRules).some(rule => 
-          rule.cssText.includes('@tailwind') || 
-          rule.cssText.includes('--tw-') ||
-          rule.cssText.includes('bg-red-500')
-        );
-      } catch (e) {
-        // CORS error for external stylesheets
-        return false;
-      }
-    });
-    console.log("Tailwind CSS detected:", hasTailwind);
+    // Log environment variables (safe ones only)
+    console.log("Environment:", import.meta.env.MODE);
+    console.log("Is Production:", import.meta.env.PROD);
+    console.log("Is Development:", import.meta.env.DEV);
     
-    // Check CSS variables
-    const rootElement = document.documentElement;
-    const computedStyle = window.getComputedStyle(rootElement);
-    console.log("Root CSS variables:", {
-      "--background": computedStyle.getPropertyValue('--background'),
-      "--foreground": computedStyle.getPropertyValue('--foreground'),
-      "--border": computedStyle.getPropertyValue('--border'),
+    // Check document structure
+    console.log("Document structure:", {
+      doctype: document.doctype ? true : false,
+      html: document.documentElement ? true : false,
+      head: document.head ? true : false,
+      body: document.body ? true : false,
+      rootElement: document.getElementById('root') ? true : false
     });
-
-    // Log all CSS Custom Properties
-    const cssVars = {};
-    for (let i = 0; i < computedStyle.length; i++) {
-      const prop = computedStyle[i];
-      if (prop.startsWith('--')) {
-        cssVars[prop] = computedStyle.getPropertyValue(prop);
-      }
-    }
-    console.log("All CSS custom properties:", cssVars);
   }, []);
 
   return (

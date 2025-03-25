@@ -4,7 +4,6 @@ import { useLanguage } from "@/context/LanguageContext";
 import ContactForm from "./ContactForm";
 import ContactCards from "./ContactCards";
 import AIGuardianSection from "./AIGuardianSection";
-import VisitUsSection from "./VisitUsSection";
 
 const ContactContent: React.FC = () => {
   const { language } = useLanguage();
@@ -22,9 +21,6 @@ const ContactContent: React.FC = () => {
           
           {/* AI Guardian section */}
           <AIGuardianSection />
-
-          {/* Visit Us section */}
-          <VisitUsSection />
           
           {/* Form section with enhanced styling */}
           <div className="bg-gradient-to-br from-white to-ice-50/50 rounded-2xl shadow-lg p-8 mb-16 relative overflow-hidden">

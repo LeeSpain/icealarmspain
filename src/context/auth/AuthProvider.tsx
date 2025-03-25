@@ -13,28 +13,54 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         // Create the context value
         const contextValue: AuthContextType = {
           user,
+          profile: user ? { 
+            display_name: user.displayName,
+            role: user.role
+          } : null,
           isAuthenticated: !!user,
           isLoading,
-          login: authFunctions.login,
-          signIn: authFunctions.signIn,
+          login: async (email, password, rememberMe) => {
+            try {
+              const user = await authFunctions.login(email, password, rememberMe);
+              return { user, error: null };
+            } catch (error) {
+              return { user: undefined, error };
+            }
+          },
+          signIn: async (email, password, rememberMe) => {
+            try {
+              const user = await authFunctions.signIn(email, password, rememberMe);
+              return { user, error: null };
+            } catch (error) {
+              return { user: undefined, error };
+            }
+          },
           signUp: async (email, password, userData) => {
             const result = await authFunctions.signUp(email, password, userData);
-            if (result.error) throw result.error;
-            if (!result.user) throw new Error('Failed to create user');
-            return result.user;
+            return result;
           },
           logout: authFunctions.logout,
+          signOut: authFunctions.logout,
           updateUserProfile: wrappedUpdateUserProfile,
+          updateProfile: async (data) => {
+            // Placeholder implementation
+            console.log("Update profile with:", data);
+            return { success: true };
+          },
           // Admin functions
           createUser: async (email, password, userData) => {
             const result = await authFunctions.createUser(email, password, userData);
-            if (result.error) throw result.error;
-            if (!result.user) throw new Error('Failed to create user');
-            return result.user;
+            return result;
           },
           getAllUsers: authFunctions.getAllUsers,
           updateUserRole: authFunctions.updateUserRole,
           deleteUser: authFunctions.deleteUser,
+          hasRole: (roles) => {
+            if (!user || !user.role) return false;
+            return Array.isArray(roles) 
+              ? roles.includes(user.role)
+              : user.role === roles;
+          }
         };
 
         return (

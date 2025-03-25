@@ -1,44 +1,119 @@
 
+// Firebase authentication service
+import { mockAuth } from './mockFirebase';
+import { hasValidFirebaseConfig } from '@/utils/environment';
 import { initializeApp } from 'firebase/app';
-import {
-  getAuth,
+import { 
+  getAuth, 
   signInWithEmailAndPassword as firebaseSignIn,
-  createUserWithEmailAndPassword as firebaseSignUp,
+  createUserWithEmailAndPassword as firebaseCreateUser,
+  onAuthStateChanged as firebaseOnAuthStateChanged,
   signOut as firebaseSignOut,
-  onAuthStateChanged as firebaseAuthStateChanged,
   updateProfile as firebaseUpdateProfile,
-  Auth,
-  User,
-  setPersistence as firebaseSetPersistence,
-  browserLocalPersistence,
-  browserSessionPersistence,
-  UserCredential
+  User as FirebaseUser,
+  Auth
 } from 'firebase/auth';
-import { getAnalytics } from 'firebase/analytics';
+import { getAnalytics, Analytics } from 'firebase/analytics';
 import { getFirebaseConfig } from './config';
 
-// Initialize Firebase with the config
-const app = initializeApp(getFirebaseConfig());
+// Initialize Firebase if config is valid
+let auth: Auth = mockAuth as unknown as Auth;
+let analytics: Analytics | null = null;
 
-// Export the auth instance
-export const auth: Auth = getAuth(app);
+try {
+  if (hasValidFirebaseConfig()) {
+    console.log('Initializing Firebase with valid config');
+    const firebaseConfig = getFirebaseConfig();
+    const app = initializeApp(firebaseConfig);
+    auth = getAuth(app);
+    try {
+      // Analytics might fail in some environments
+      analytics = getAnalytics(app);
+    } catch (error) {
+      console.warn('Firebase analytics initialization failed:', error);
+      analytics = null;
+    }
+    console.log('Firebase initialized successfully');
+  } else {
+    console.warn('Using mock Firebase implementation - missing or invalid configuration');
+    auth = mockAuth as unknown as Auth;
+    analytics = null;
+  }
+} catch (error) {
+  console.error('Error initializing Firebase:', error);
+  auth = mockAuth as unknown as Auth;
+  analytics = null;
+}
 
-// Export analytics 
-export const analytics = getAnalytics(app);
+// Re-export Firebase auth functions with safe fallbacks
+export { auth, analytics };
 
-// Export Firebase auth methods with better naming
-export const signInWithEmailAndPassword = firebaseSignIn;
-export const createUserWithEmailAndPassword = firebaseSignUp;
-export const signOut = firebaseSignOut;
-export const onAuthStateChanged = firebaseAuthStateChanged;
-export const updateProfile = firebaseUpdateProfile;
-export const setPersistence = firebaseSetPersistence;
+// Re-export types
+export type { FirebaseUser };
 
-// Re-export constants
-export { 
-  browserLocalPersistence, 
-  browserSessionPersistence 
+// Export wrapped versions of Firebase functions
+export const signInWithEmailAndPassword = async (email: string, password: string) => {
+  if (!hasValidFirebaseConfig()) {
+    return mockAuth.signInWithEmailAndPassword(email, password);
+  }
+  return firebaseSignIn(auth, email, password);
 };
 
-// Re-export types for easier access
-export type { User, UserCredential };
+export const createUserWithEmailAndPassword = async (email: string, password: string) => {
+  if (!hasValidFirebaseConfig()) {
+    return mockAuth.createUserWithEmailAndPassword(email, password);
+  }
+  return firebaseCreateUser(auth, email, password);
+};
+
+export const onAuthStateChanged = (callback: (user: FirebaseUser | null) => void) => {
+  if (!hasValidFirebaseConfig()) {
+    return mockAuth.onAuthStateChanged(callback as (user: any) => void);
+  }
+  return firebaseOnAuthStateChanged(auth, callback);
+};
+
+export const signOut = async () => {
+  if (!hasValidFirebaseConfig()) {
+    return mockAuth.signOut();
+  }
+  return firebaseSignOut(auth);
+};
+
+export const updateProfile = async (user: FirebaseUser, profile: { displayName?: string; photoURL?: string }) => {
+  if (!hasValidFirebaseConfig()) {
+    console.log('Mock update profile:', profile);
+    return Promise.resolve();
+  }
+  return firebaseUpdateProfile(user, profile);
+};
+
+// This file should export auth-related functions that work regardless of Firebase config
+
+// Export functions that work even without Firebase config
+export const isAuthenticated = async (): Promise<boolean> => {
+  try {
+    // Always return false if using mock auth
+    if (!hasValidFirebaseConfig()) {
+      console.log('Using mock auth: user is never authenticated');
+      return false;
+    }
+    
+    // Actual implementation would check Firebase auth here
+    return !!auth.currentUser;
+  } catch (error) {
+    console.error('Error checking authentication status:', error);
+    return false;
+  }
+};
+
+// Export a safe version of auth that never crashes the app
+export const getSafeAuth = () => {
+  if (!hasValidFirebaseConfig()) {
+    return mockAuth;
+  }
+  
+  return auth;
+};
+
+// Other auth functions would go here, all with fallbacks to mock implementations

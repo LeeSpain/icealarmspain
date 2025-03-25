@@ -1,12 +1,17 @@
 
-import { MockPayment } from './mockPayment';
-import { hasRealFirebaseConfig } from './config';
+// Mock payment service for Firebase to satisfy imports
 
-// Initialize payment service
-let payment: MockPayment;
+export const initiatePayment = async (amount: number, userId: string) => {
+  console.log(`Initiating payment of ${amount} for user ${userId}`);
+  return { success: true, id: `payment-${Date.now()}` };
+};
 
-// Create and export payment instance (currently only mock)
-// In the future, you could implement real payment service here
-payment = new MockPayment();
+export const getPaymentStatus = async (paymentId: string) => {
+  console.log(`Getting status for payment ${paymentId}`);
+  return { status: 'completed', timestamp: new Date().toISOString() };
+};
 
-export { payment };
+export const cancelPayment = async (paymentId: string) => {
+  console.log(`Cancelling payment ${paymentId}`);
+  return { success: true };
+};

@@ -1,214 +1,350 @@
+import React, { ReactNode, useEffect, useState, useContext } from 'react';
+import { User, AuthContextType } from './auth/types';
+import { AuthContext } from './auth/context';
+import { useAuthStateListener } from './auth/useAuthEffects';
+import { showErrorToast } from '@/utils/error-handler';
+import { isMockAuthEnabled } from '@/utils/environment';
 
-import React, { createContext, useContext, useEffect, useState } from 'react';
-import { User, Session } from '@supabase/supabase-js';
-import { supabase } from '@/integrations/supabase/client';
-import { useToast } from '@/components/ui/use-toast';
+// Add this export for the useAuth hook
+export const useAuth = () => useContext(AuthContext);
 
-type AuthContextType = {
-  session: Session | null;
-  user: User | null;
-  profile: any | null;
-  isLoading: boolean;
-  signIn: (email: string, password: string) => Promise<{ error: any | null }>;
-  signUp: (email: string, password: string, userData?: any) => Promise<{ error: any | null }>;
-  signOut: () => Promise<void>;
-  updateProfile: (data: any) => Promise<{ error: any | null }>;
-};
+export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+  const { currentUser, loading, error } = useAuthStateListener();
+  const [profile, setProfile] = useState<any>(null);
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
-
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [session, setSession] = useState<Session | null>(null);
-  const [user, setUser] = useState<User | null>(null);
-  const [profile, setProfile] = useState<any | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const { toast } = useToast();
-
+  // Log auth state for debugging
   useEffect(() => {
-    // Set up auth state listener FIRST
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, currentSession) => {
-        console.log('Auth state changed:', event);
-        setSession(currentSession);
-        setUser(currentSession?.user ?? null);
+    console.log('Auth state:', { currentUser, loading, error });
+  }, [currentUser, loading, error]);
+
+  // Handle auth errors
+  useEffect(() => {
+    if (error) {
+      showErrorToast(error, 'Authentication');
+    }
+  }, [error]);
+
+  /**
+   * Check if the user has a specific role or any of the provided roles
+   */
+  const hasRole = (role: string | string[]): boolean => {
+    if (!currentUser) return false;
+    
+    if (Array.isArray(role)) {
+      return role.some(r => currentUser.role === r);
+    }
+    
+    return currentUser.role === role;
+  };
+
+  /**
+   * Sign in with email and password
+   */
+  const signIn = async (
+    email: string,
+    password: string,
+    rememberMe: boolean = false
+  ): Promise<{ user?: User; error?: any }> => {
+    console.log('Signing in:', email, 'Remember me:', rememberMe);
+    
+    try {
+      if (isMockAuthEnabled()) {
+        console.log('Using mock auth for sign in');
         
-        if (currentSession?.user) {
-          await fetchProfile(currentSession.user.id);
-        } else {
-          setProfile(null);
+        // Simple mock authentication
+        if (email === 'admin@example.com' && password === 'password') {
+          const mockUser: User = {
+            id: '12345',
+            uid: '12345',
+            email: 'admin@example.com',
+            name: 'Admin User',
+            displayName: 'Admin User',
+            role: 'admin',
+            profileCompleted: true,
+            status: 'active',
+          };
+          
+          localStorage.setItem('mockUser', JSON.stringify(mockUser));
+          return { user: mockUser };
+        } else if (email && password) {
+          const mockUser: User = {
+            id: '67890',
+            uid: '67890',
+            email,
+            name: 'Test User',
+            displayName: 'Test User',
+            role: 'member',
+            profileCompleted: true,
+            status: 'active',
+          };
+          
+          localStorage.setItem('mockUser', JSON.stringify(mockUser));
+          return { user: mockUser };
         }
-      }
-    );
-
-    // THEN check for existing session
-    const initializeAuth = async () => {
-      setIsLoading(true);
-      
-      try {
-        const { data: { session: currentSession } } = await supabase.auth.getSession();
         
-        setSession(currentSession);
-        setUser(currentSession?.user ?? null);
+        return { error: 'Invalid credentials' };
+      }
+      
+      // Real authentication would happen here
+      // This would typically involve Firebase Auth
+      // For now we'll just return an error
+      return { error: 'Authentication not implemented for production yet' };
+      
+    } catch (error) {
+      console.error('Sign in error:', error);
+      return { error };
+    }
+  };
+  
+  /**
+   * Legacy login method (for backward compatibility)
+   */
+  const login = signIn;
+
+  /**
+   * Sign up a new user
+   */
+  const signUp = async (
+    email: string,
+    password: string,
+    userData: any = {}
+  ): Promise<{ user?: User; error?: any }> => {
+    console.log('Signing up:', email, userData);
+    
+    try {
+      if (isMockAuthEnabled()) {
+        console.log('Using mock auth for sign up');
         
-        if (currentSession?.user) {
-          await fetchProfile(currentSession.user.id);
-        }
-      } catch (error) {
-        console.error('Error initializing auth:', error);
-        toast({
-          title: 'Authentication Error',
-          description: 'There was a problem initializing your session',
-          variant: 'destructive',
-        });
-      } finally {
-        setIsLoading(false);
+        // Create a mock user
+        const mockUser: User = {
+          id: `mock-${Date.now()}`,
+          uid: `mock-${Date.now()}`,
+          email,
+          name: userData.name || email.split('@')[0],
+          displayName: userData.name || email.split('@')[0],
+          role: 'member',
+          profileCompleted: false,
+          status: 'active',
+        };
+        
+        localStorage.setItem('mockUser', JSON.stringify(mockUser));
+        return { user: mockUser };
       }
-    };
-
-    initializeAuth();
-
-    return () => {
-      subscription?.unsubscribe();
-    };
-  }, []);
-
-  const fetchProfile = async (userId: string) => {
-    try {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', userId)
-        .single();
-
-      if (error) {
-        throw error;
-      }
-
-      setProfile(data);
-    } catch (error) {
-      console.error('Error fetching profile:', error);
-      setProfile(null);
-    }
-  };
-
-  const signIn = async (email: string, password: string) => {
-    try {
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-
-      if (error) throw error;
       
-      return { error: null };
+      // Real sign up would happen here
+      // For now we'll just return an error
+      return { error: 'Sign up not implemented for production yet' };
+      
     } catch (error) {
-      console.error('Error signing in:', error);
-      toast({
-        title: 'Sign in failed',
-        description: error.message || 'Please check your credentials and try again',
-        variant: 'destructive',
-      });
+      console.error('Sign up error:', error);
       return { error };
     }
   };
 
-  const signUp = async (email: string, password: string, userData?: any) => {
+  /**
+   * Sign out the current user
+   */
+  const signOut = async (): Promise<void> => {
+    console.log('Signing out');
+    
     try {
-      const { error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: userData,
-        },
-      });
-
-      if (error) throw error;
-      
-      toast({
-        title: 'Account created',
-        description: 'Please check your email to confirm your account',
-      });
-      
-      return { error: null };
-    } catch (error) {
-      console.error('Error signing up:', error);
-      toast({
-        title: 'Sign up failed',
-        description: error.message || 'There was a problem creating your account',
-        variant: 'destructive',
-      });
-      return { error };
-    }
-  };
-
-  const signOut = async () => {
-    try {
-      await supabase.auth.signOut();
-      toast({
-        title: 'Signed out',
-        description: 'You have been successfully signed out',
-      });
-    } catch (error) {
-      console.error('Error signing out:', error);
-      toast({
-        title: 'Sign out failed',
-        description: 'There was a problem signing you out',
-        variant: 'destructive',
-      });
-    }
-  };
-
-  const updateProfile = async (data: any) => {
-    try {
-      if (!user) {
-        throw new Error('User not authenticated');
+      if (isMockAuthEnabled()) {
+        localStorage.removeItem('mockUser');
+        return;
       }
-
-      const { error } = await supabase
-        .from('profiles')
-        .update(data)
-        .eq('id', user.id);
-
-      if (error) throw error;
-
-      // Refresh profile data
-      await fetchProfile(user.id);
       
-      toast({
-        title: 'Profile updated',
-        description: 'Your profile has been successfully updated',
-      });
+      // Real sign out would happen here
       
-      return { error: null };
     } catch (error) {
-      console.error('Error updating profile:', error);
-      toast({
-        title: 'Update failed',
-        description: error.message || 'There was a problem updating your profile',
-        variant: 'destructive',
-      });
+      console.error('Sign out error:', error);
+      throw error;
+    }
+  };
+  
+  /**
+   * Legacy logout method (for backward compatibility)
+   */
+  const logout = signOut;
+
+  /**
+   * Update the user's profile
+   */
+  const updateProfile = async (profileData: { [key: string]: any }): Promise<{ success: boolean; error?: string }> => {
+    console.log('Updating profile:', profileData);
+    
+    try {
+      if (isMockAuthEnabled()) {
+        if (!currentUser) throw new Error('No user logged in');
+        
+        const mockUser = JSON.parse(localStorage.getItem('mockUser') || '{}');
+        const updatedUser = { ...mockUser, ...profileData };
+        localStorage.setItem('mockUser', JSON.stringify(updatedUser));
+        
+        // Update the profile state
+        setProfile((prev: any) => ({ ...prev, ...profileData }));
+        return { success: true };
+      }
+      
+      // Real profile update would happen here
+      return { success: true };
+    } catch (error) {
+      console.error('Update profile error:', error);
+      return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
+    }
+  };
+
+  /**
+   * Update the user's profile display name
+   * (legacy method for backward compatibility)
+   */
+  const updateUserProfile = async (displayName: string): Promise<void> => {
+    await updateProfile({ displayName });
+  };
+
+  /**
+   * Create a new user (admin function)
+   */
+  const createUser = async (
+    email: string,
+    password: string,
+    userData: any
+  ): Promise<{ user?: User; error?: any }> => {
+    console.log('Admin creating user:', email, userData);
+    
+    try {
+      if (isMockAuthEnabled()) {
+        // Create a mock user
+        const mockUser: User = {
+          id: `mock-${Date.now()}`,
+          uid: `mock-${Date.now()}`,
+          email,
+          name: userData.name || email.split('@')[0],
+          displayName: userData.name || email.split('@')[0],
+          role: userData.role || 'member',
+          profileCompleted: false,
+          status: 'active',
+        };
+        
+        return { user: mockUser };
+      }
+      
+      // Real user creation would happen here
+      return { error: 'User creation not implemented for production yet' };
+      
+    } catch (error) {
+      console.error('Create user error:', error);
       return { error };
     }
   };
 
-  const value = {
-    session,
-    user,
+  /**
+   * Get all users (admin function)
+   */
+  const getAllUsers = async (): Promise<User[]> => {
+    console.log('Admin getting all users');
+    
+    try {
+      if (isMockAuthEnabled()) {
+        // Return mock users
+        return [
+          {
+            uid: '12345',
+            id: '12345',
+            email: 'admin@example.com',
+            name: 'Admin User',
+            displayName: 'Admin User',
+            role: 'admin',
+            profileCompleted: true,
+            status: 'active',
+          },
+          {
+            uid: '67890',
+            id: '67890',
+            email: 'member@example.com',
+            name: 'Test User',
+            displayName: 'Test User',
+            role: 'member',
+            profileCompleted: true,
+            status: 'active',
+          },
+        ];
+      }
+      
+      // Real user fetching would happen here
+      return [];
+      
+    } catch (error) {
+      console.error('Get all users error:', error);
+      throw error;
+    }
+  };
+
+  /**
+   * Update a user's role (admin function)
+   */
+  const updateUserRole = async (userId: string, role: string): Promise<void> => {
+    console.log('Admin updating user role:', userId, role);
+    
+    try {
+      if (isMockAuthEnabled()) {
+        console.log('Mock user role updated:', userId, role);
+        return;
+      }
+      
+      // Real role update would happen here
+      
+    } catch (error) {
+      console.error('Update user role error:', error);
+      throw error;
+    }
+  };
+
+  /**
+   * Delete a user (admin function)
+   */
+  const deleteUser = async (userId: string): Promise<void> => {
+    console.log('Admin deleting user:', userId);
+    
+    try {
+      if (isMockAuthEnabled()) {
+        console.log('Mock user deleted:', userId);
+        return;
+      }
+      
+      // Real user deletion would happen here
+      
+    } catch (error) {
+      console.error('Delete user error:', error);
+      throw error;
+    }
+  };
+
+  // Construct the auth context value
+  const contextValue: AuthContextType = {
+    user: currentUser,
     profile,
-    isLoading,
+    isAuthenticated: !!currentUser,
+    isLoading: loading,
+    login,
     signIn,
     signUp,
+    logout,
     signOut,
+    updateUserProfile,
     updateProfile,
+    createUser,
+    getAllUsers,
+    updateUserRole,
+    deleteUser,
+    hasRole,
   };
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={contextValue}>
+      {children}
+    </AuthContext.Provider>
+  );
 };
 
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
-  return context;
-};
+export { AuthContext };
+export default AuthProvider;

@@ -9,6 +9,7 @@ import SectionDivider from "@/components/layout/SectionDivider";
 import SectionWrapper from "@/components/layout/SectionWrapper";
 import { Helmet } from "react-helmet-async";
 import Layout from "@/components/layout/Layout";
+import { getEnvironment } from "@/utils/environment";
 
 const Index: React.FC = () => {
   console.log("Index component rendering - SHOULD BE VISIBLE");
@@ -16,6 +17,18 @@ const Index: React.FC = () => {
   
   // Reference to track if component is mounted
   const isMounted = useRef(true);
+  
+  // Log environment information for debugging
+  useEffect(() => {
+    console.log("Index component mounted");
+    console.log("Current environment:", getEnvironment());
+    console.log("Language:", language);
+    
+    // Cleanup function
+    return () => {
+      isMounted.current = false;
+    };
+  }, [language]);
   
   // Define the scroll handler function using useCallback to avoid recreating it on each render
   const handleAnchorClick = useCallback((e: Event) => {
@@ -68,6 +81,7 @@ const Index: React.FC = () => {
   return (
     <Layout>
       <Helmet>
+        <title>Ice Guardian Alert - Home</title>
         <meta name="description" content={seoDescription} />
         <meta property="og:type" content="website" />
       </Helmet>

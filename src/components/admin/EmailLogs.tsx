@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState } from "react";
-import { getUserEmailLogs } from "@/services/emailService";
+import { getUserEmailLogs, EmailLog } from "@/services/emailService";
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { format } from "date-fns";
 import { Loader2 } from "lucide-react";
@@ -9,7 +9,7 @@ import { useLanguage } from "@/context/LanguageContext";
 
 const EmailLogs: React.FC = () => {
   const { language } = useLanguage();
-  const [logs, setLogs] = useState<any[]>([]);
+  const [logs, setLogs] = useState<EmailLog[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -17,8 +17,8 @@ const EmailLogs: React.FC = () => {
     setIsLoading(true);
     setError(null);
     try {
-      const { data, error } = await getUserEmailLogs();
-      if (error) throw error;
+      const { data, error } = await getUserEmailLogs('current-user');
+      if (error) throw new Error(error);
       setLogs(data || []);
     } catch (error) {
       console.error("Error fetching email logs:", error);
@@ -97,16 +97,12 @@ const EmailLogs: React.FC = () => {
           <TableBody>
             {logs.map((log) => (
               <TableRow key={log.id}>
-                <TableCell>{format(new Date(log.created_at), 'PPp')}</TableCell>
-                <TableCell>{log.recipient}</TableCell>
+                <TableCell>{format(new Date(log.sentAt), 'PPp')}</TableCell>
+                <TableCell>{log.to}</TableCell>
                 <TableCell>{log.subject}</TableCell>
                 <TableCell>
-                  <Badge variant={log.email_type === 'welcome' ? "secondary" : "default"}>
-                    {log.email_type === 'welcome' 
-                      ? (language === 'en' ? "Welcome" : "Bienvenida") 
-                      : log.email_type === 'notification' 
-                        ? (language === 'en' ? "Notification" : "Notificación")
-                        : (language === 'en' ? "General" : "General")}
+                  <Badge variant="secondary">
+                    {language === 'en' ? "Notification" : "Notificación"}
                   </Badge>
                 </TableCell>
                 <TableCell>
