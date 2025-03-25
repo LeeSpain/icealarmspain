@@ -1,10 +1,11 @@
+
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { LogOut, User } from "lucide-react";
 import { ButtonCustom } from "@/components/ui/button-custom";
 import { useLanguage } from "@/context/LanguageContext";
 import { useToast } from "@/components/ui/use-toast";
-import { useAuth } from "../../context/auth"; // Use relative path instead of alias
+import { useAuth } from "../../context/auth"; // Use relative path for consistency
 import {
   DropdownMenu,
   DropdownMenuContent,

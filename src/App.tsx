@@ -5,8 +5,8 @@ import { Toaster } from "@/components/ui/toaster";
 import { LanguageProvider } from "@/context/LanguageContext";
 import { HelmetProvider } from "react-helmet-async";
 import './App.css';
-import { AuthProvider } from "./context/auth"; // Fix import path - remove @ alias
-import AuthGuard from "@/components/auth/AuthGuard";
+import { AuthProvider } from "./context/auth"; // Import from correct path
+import AuthGuard from "./components/auth/AuthGuard"; // Use relative path to avoid import issues
 import ErrorBoundary from "@/components/layout/ErrorBoundary";
 import { isDevelopment, isDebugBuild } from "./utils/environment";
 

@@ -1,7 +1,7 @@
 
 import React, { useEffect } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
-import { useAuth } from '../../context/auth'; // Use relative path instead of alias
+import { useAuth } from '../../context/auth'; // Use relative path for consistency
 
 interface AuthGuardProps {
   children: React.ReactNode;

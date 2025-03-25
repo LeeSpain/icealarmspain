@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
 import { useLanguage } from "@/context/LanguageContext";
-import { useAuth } from "../../context/auth"; // Use relative path instead of alias
+import { useAuth } from "../../context/auth"; // Use relative path for consistency
 
 export const useLoginPage = () => {
   const { language } = useLanguage();

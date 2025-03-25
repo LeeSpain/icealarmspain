@@ -6,7 +6,7 @@ import Layout from "@/components/layout/Layout";
 import SignupForm from "@/components/auth/SignupForm";
 import { Card, CardContent } from "@/components/ui/card";
 import { Link } from "react-router-dom";
-import { useAuth } from "../../context/auth"; // Use relative path instead of alias
+import { useAuth } from "../../context/auth"; // Use relative path for consistency
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
