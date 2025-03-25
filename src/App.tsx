@@ -1,5 +1,5 @@
 
-import React, { Suspense, useEffect } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { routes } from "./routes";
 import { Toaster } from "@/components/ui/toaster";
@@ -12,6 +12,7 @@ import ErrorBoundaryRoot from "@/components/layout/ErrorBoundaryRoot";
 import { getEnvironment } from "@/utils/environment";
 import BasicDebug from "@/components/debug/BasicDebug";
 import EnhancedDebug from "@/components/debug/EnhancedDebug";
+import LoadingSpinner from "@/components/ui/loading-spinner";
 
 // Import the Index page explicitly to ensure it's available
 import Index from "./pages/Index";
@@ -31,6 +32,8 @@ const LoadingFallback = () => (
 );
 
 function App() {
+  const [appReady, setAppReady] = useState(false);
+
   useEffect(() => {
     // Performance tracking for app initialization
     const mountTime = Date.now() - appStartTime;
@@ -39,6 +42,25 @@ function App() {
     // Check if the app is mounted successfully
     const timeoutId = setTimeout(() => {
       console.log("App mounted for 1 second - rendering appears successful");
+      
+      // After a short delay, mark app as ready
+      setTimeout(() => {
+        setAppReady(true);
+        console.log("App marked as ready, should be fully visible now");
+        
+        // Remove the loading indicator if it still exists
+        const loadingIndicator = document.querySelector('.loading-indicator');
+        if (loadingIndicator) {
+          loadingIndicator.remove();
+          console.log("Loading indicator removed by App component");
+        }
+        
+        const loadingText = document.querySelector('.loading-text');
+        if (loadingText) {
+          loadingText.remove();
+          console.log("Loading text removed by App component");
+        }
+      }, 500);
     }, 1000);
     
     return () => clearTimeout(timeoutId);
@@ -80,6 +102,13 @@ function App() {
           </AuthProvider>
         </HelmetProvider>
       </ErrorBoundaryRoot>
+      
+      {/* Extra loading indicator that disappears when app is ready */}
+      {!appReady && (
+        <div className="fixed inset-0 bg-white bg-opacity-70 flex items-center justify-center z-50">
+          <LoadingSpinner size="lg" message="Loading Ice Guardian..." />
+        </div>
+      )}
     </>
   );
 }

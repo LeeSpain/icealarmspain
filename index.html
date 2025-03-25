@@ -37,11 +37,12 @@
         height: 4px;
         background-color: #38bdf8;
         animation: loading 2s infinite;
+        z-index: 9999;
       }
       @keyframes loading {
-        0% { width: 0%; }
-        50% { width: 50%; }
-        100% { width: 100%; }
+        0% { width: 0%; left: 0; }
+        50% { width: 70%; left: 15%; }
+        100% { width: 100%; left: 100%; }
       }
       
       /* Fallback content that will show if JS fails completely */
@@ -55,6 +56,17 @@
         border-radius: 8px;
         box-shadow: 0 4px 12px rgba(0,0,0,0.1);
       }
+      
+      /* Add text below loading indicator for better user feedback */
+      .loading-text {
+        position: fixed;
+        top: 20px;
+        left: 0;
+        width: 100%;
+        text-align: center;
+        font-size: 14px;
+        color: #666;
+      }
     </style>
     
     <!-- Preload key resources -->
@@ -64,6 +76,7 @@
   <body>
     <!-- Loading indicator that will be removed by JS -->
     <div class="loading-indicator"></div>
+    <div class="loading-text">Loading Ice Guardian Alert...</div>
     
     <!-- Root element where React will mount -->
     <div id="root"></div>
@@ -75,16 +88,29 @@
       <button onclick="window.location.reload()" style="margin-top: 20px; padding: 8px 16px; background: #3b82f6; color: white; border: none; border-radius: 4px; cursor: pointer;">
         Refresh Page
       </button>
+      <a href="/diagnostics.html" style="display: block; margin-top: 10px; color: #3b82f6;">
+        Run Diagnostics
+      </a>
     </div>
     
     <script>
-      // Show fallback after 8 seconds if app hasn't loaded
+      // Create a visible loading message in case the app takes time to load
+      document.querySelector('.loading-text').style.display = 'block';
+      
+      // Show fallback after 6 seconds if app hasn't loaded
       setTimeout(function() {
-        if (!window.appLoaded) {
-          console.error("Application failed to load in 8 seconds");
+        if (!window.appStarted) {
+          console.error("Application failed to start in 6 seconds");
           document.getElementById('js-error-fallback').style.display = 'block';
+          
+          // Hide loading indicator to avoid confusion
+          var loadingIndicator = document.querySelector('.loading-indicator');
+          if (loadingIndicator) loadingIndicator.style.display = 'none';
+          
+          var loadingText = document.querySelector('.loading-text');
+          if (loadingText) loadingText.style.display = 'none';
         }
-      }, 8000);
+      }, 6000);
     </script>
     
     <!-- GPT Engineer script for the "Select" feature -->
