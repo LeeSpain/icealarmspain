@@ -11,6 +11,8 @@ import ErrorBoundary from "@/components/layout/ErrorBoundary";
 import { isDevelopment, isDebugBuild, hasValidFirebaseConfig, isProduction } from "./utils/environment";
 import LoadingSpinner from "@/components/ui/loading-spinner";
 import DeploymentDebugger from "@/components/debug/DeploymentDebugger";
+import EmergencyLoadingBanner from "@/components/debug/EmergencyLoadingBanner";
+import EmergencyInitializer from "@/components/debug/EmergencyInitializer";
 
 // Standalone error component for Firebase configuration issues
 function ConfigErrorDisplay() {
@@ -96,6 +98,10 @@ function App() {
   // Log that App component is rendering (helps with debugging)
   console.log("App component rendering");
   
+  // Add emergency initializer and loading banner
+  const emergencyInitializer = <EmergencyInitializer />;
+  const emergencyBanner = <EmergencyLoadingBanner />;
+  
   // Check Firebase configuration before rendering
   const validFirebaseConfig = hasValidFirebaseConfig();
   
@@ -119,11 +125,23 @@ function App() {
     
     // In production, show the config error
     if (isProduction()) {
-      return <ConfigErrorDisplay />;
+      return (
+        <>
+          {emergencyInitializer}
+          {emergencyBanner}
+          <ConfigErrorDisplay />
+        </>
+      );
     }
     
     // In development, show a minimal app
-    return <MinimalApp />;
+    return (
+      <>
+        {emergencyInitializer}
+        {emergencyBanner}
+        <MinimalApp />
+      </>
+    );
   }
   
   // Normal app with valid config
@@ -132,10 +150,17 @@ function App() {
       <HelmetProvider>
         <AuthProvider>
           <LanguageProvider>
+            {emergencyInitializer}
+            {emergencyBanner}
             <Router>
               <Routes>
                 {routes.map((route) => {
                   console.log(`Registering route: ${route.path}`);
+                  
+                  // Create element based on whether route.element is a React component or JSX element
+                  const RouteElement = typeof route.element === 'function' 
+                    ? React.createElement(route.element)
+                    : route.element;
                   
                   // Protected routes with optional role restrictions
                   if (route.protected) {
@@ -145,7 +170,7 @@ function App() {
                         path={route.path}
                         element={
                           <AuthGuard allowedRoles={route.allowedRoles}>
-                            {route.element}
+                            {RouteElement}
                           </AuthGuard>
                         }
                       />
@@ -156,7 +181,7 @@ function App() {
                     <Route
                       key={route.path}
                       path={route.path}
-                      element={route.element}
+                      element={RouteElement}
                     />
                   );
                 })}
