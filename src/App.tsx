@@ -7,6 +7,7 @@ import { HelmetProvider } from "react-helmet-async";
 import './App.css';
 import ScrollToTop from "@/components/layout/ScrollToTop";
 import ErrorBoundary from "@/components/layout/ErrorBoundary";
+import { AuthProvider } from "./context/auth";
 import { isDevelopment } from "./utils/environment";
 
 // Add a global error handler to catch initialization errors
@@ -23,26 +24,26 @@ function App() {
   return (
     <ErrorBoundary>
       <HelmetProvider>
-        <LanguageProvider>
-          <Router>
-            <ScrollToTop />
-            <Routes>
-              {routes.map((route) => {
-                console.log(`Registering route: ${route.path}`);
-                
-                // All routes render without authentication checks
-                return (
-                  <Route
-                    key={route.path}
-                    path={route.path}
-                    element={route.element}
-                  />
-                );
-              })}
-            </Routes>
-          </Router>
-          <Toaster />
-        </LanguageProvider>
+        <AuthProvider>
+          <LanguageProvider>
+            <Router>
+              <ScrollToTop />
+              <Routes>
+                {routes.map((route) => {
+                  console.log(`Registering route: ${route.path}`);
+                  return (
+                    <Route
+                      key={route.path}
+                      path={route.path}
+                      element={route.element}
+                    />
+                  );
+                })}
+              </Routes>
+            </Router>
+            <Toaster />
+          </LanguageProvider>
+        </AuthProvider>
       </HelmetProvider>
     </ErrorBoundary>
   );

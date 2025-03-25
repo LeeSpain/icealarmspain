@@ -9,5 +9,4 @@ export * from './authFunctions';
 export { AuthProvider } from './AuthProvider';
 
 // Export the context itself, but avoid duplicate exports
-// by importing it directly from the source
 export { AuthContext } from './context';

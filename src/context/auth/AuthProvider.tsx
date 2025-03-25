@@ -1,14 +1,14 @@
 
-import React, { createContext, useState, useEffect } from 'react';
+import React, { createContext } from 'react';
 import { AuthContextType, User } from './types';
 
 // Create the context with a default value
 export const AuthContext = createContext<AuthContextType | null>(null);
 
-// Mock user for development
-const mockUser: User = {
-  uid: 'mock-user',
-  id: 'mock-user',
+// Create a dummy user that's always "logged in"
+const dummyUser: User = {
+  uid: 'dummy-user',
+  id: 'dummy-user',
   email: 'user@example.com',
   name: 'Demo User',
   displayName: 'Demo User',
@@ -24,35 +24,22 @@ interface Props {
 }
 
 export const AuthProvider: React.FC<Props> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-  
-  // Simplified auth provider - no actual authentication
-  useEffect(() => {
-    console.log('Auth provider initialized - authentication disabled');
-    // Just use the mock user for all interactions to prevent blank screens
-    setUser(mockUser);
-    setIsLoading(false);
-  }, []);
-
-  // Mock authentication functions that don't do anything
+  // Create a dummy auth context that always provides a user
   const authContextValue: AuthContextType = {
-    user,
-    profile: user,
-    isAuthenticated: !!user,
-    isLoading,
-    login: async () => mockUser,
-    signIn: async () => mockUser,
-    signUp: async () => mockUser,
+    user: dummyUser,
+    profile: dummyUser,
+    isAuthenticated: true, // Always authenticated
+    isLoading: false,
+    login: async () => dummyUser,
+    signIn: async () => dummyUser,
+    signUp: async () => dummyUser,
     logout: async () => {},
     updateUserProfile: async () => {},
-    createUser: async () => mockUser,
-    getAllUsers: async () => [mockUser],
+    createUser: async () => dummyUser,
+    getAllUsers: async () => [dummyUser],
     updateUserRole: async () => {},
     deleteUser: async () => {}
   };
-
-  console.log('AuthProvider rendering');
   
   return (
     <AuthContext.Provider value={authContextValue}>
