@@ -2,20 +2,26 @@
 import { toast } from '@/components/ui/use-toast';
 
 /**
+ * Get a formatted error message from any error type
+ */
+export function getErrorMessage(error: any): string {
+  if (typeof error === 'string') {
+    return error;
+  } else if (error instanceof Error) {
+    return error.message;
+  } else if (error && typeof error === 'object') {
+    return error.message || error.error || JSON.stringify(error);
+  }
+  return 'An unexpected error occurred';
+}
+
+/**
  * Shows an error toast with a formatted error message
  */
 export function showErrorToast(error: any, context: string = 'Operation') {
   console.error(`${context} error:`, error);
   
-  let errorMessage = 'An unexpected error occurred';
-  
-  if (typeof error === 'string') {
-    errorMessage = error;
-  } else if (error instanceof Error) {
-    errorMessage = error.message;
-  } else if (error && typeof error === 'object') {
-    errorMessage = error.message || error.error || JSON.stringify(error);
-  }
+  let errorMessage = getErrorMessage(error);
   
   toast({
     title: `${context} Failed`,
@@ -28,14 +34,7 @@ export function showErrorToast(error: any, context: string = 'Operation') {
  * Formats an error message for display
  */
 export function formatErrorMessage(error: any): string {
-  if (typeof error === 'string') {
-    return error;
-  } else if (error instanceof Error) {
-    return error.message;
-  } else if (error && typeof error === 'object') {
-    return error.message || error.error || JSON.stringify(error);
-  }
-  return 'An unexpected error occurred';
+  return getErrorMessage(error);
 }
 
 /**
