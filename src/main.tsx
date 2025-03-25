@@ -8,6 +8,8 @@ import './utils/build-verification';
 import './utils/deployment-verification';
 import './utils/deployment-helper';
 import CriticalDebug from './components/debug/CriticalDebug';
+import EmergencyLoadingBanner from './components/debug/EmergencyLoadingBanner';
+import EmergencyInitializer from './components/debug/EmergencyInitializer';
 
 // Initialize the diagnostic object as early as possible
 if (typeof window !== 'undefined') {
@@ -60,6 +62,32 @@ if (typeof window !== 'undefined') {
   window.addEventListener('DOMContentLoaded', () => {
     console.log('DOMContentLoaded event fired');
     document.dispatchEvent(new CustomEvent('app-init-started'));
+    
+    // Immediately render the emergency banner if needed
+    try {
+      const bannerRoot = document.createElement('div');
+      bannerRoot.id = 'emergency-banner-root';
+      document.body.appendChild(bannerRoot);
+      
+      const bannerRoot2 = ReactDOM.createRoot(bannerRoot);
+      bannerRoot2.render(<EmergencyLoadingBanner />);
+      console.log('Emergency banner rendered');
+    } catch (e) {
+      console.error('Failed to render emergency banner:', e);
+    }
+    
+    // Immediately render the emergency initializer if needed
+    try {
+      const initializerRoot = document.createElement('div');
+      initializerRoot.id = 'emergency-initializer-root';
+      document.body.appendChild(initializerRoot);
+      
+      const initializerRoot2 = ReactDOM.createRoot(initializerRoot);
+      initializerRoot2.render(<EmergencyInitializer />);
+      console.log('Emergency initializer rendered');
+    } catch (e) {
+      console.error('Failed to render emergency initializer:', e);
+    }
   });
 }
 
@@ -209,6 +237,9 @@ function renderApp() {
               <h3>Diagnostic Information</h3>
               ${generateConfigReport()}
             </div>
+            <div style="margin-top: 20px;">
+              <a href="/testing" style="display: inline-block; padding: 10px 20px; background-color: #1976d2; color: white; text-decoration: none; border-radius: 4px;">Go to Testing Page</a>
+            </div>
           </div>
         `;
         logAppEvent('displayed error fallback in root element');
@@ -265,7 +296,7 @@ function ErrorBoundaryWrapper({ children }: { children: React.ReactNode }) {
 console.log("Calling renderApp()");
 renderApp();
 
-// Fallback mechanism - if for some reason nothing renders after 7 seconds,
+// Fallback mechanism - if for some reason nothing renders after 5 seconds,
 // let's try once more. This helps with potential race conditions.
 setTimeout(() => {
   if (typeof window !== 'undefined' && !window.appRendered) {
@@ -279,7 +310,7 @@ setTimeout(() => {
     
     renderApp();
   }
-}, 7000); 
+}, 5000); 
 
 // Add a third attempt with a longer timeout for very slow connections
 setTimeout(() => {
@@ -295,7 +326,7 @@ setTimeout(() => {
       // Add extra information to the fallback
       const debugInfo = document.getElementById('debug-info');
       if (debugInfo) {
-        debugInfo.innerHTML += '<br><strong>Multiple render attempts failed.</strong> Please check console for errors.';
+        debugInfo.innerHTML += '<br><strong>Multiple render attempts failed.</strong> Try visiting the <a href="/testing" style="color: blue; text-decoration: underline;">testing page</a>.';
       }
     }
     
@@ -305,12 +336,29 @@ setTimeout(() => {
       if (rootElement) {
         // First try to render just the critical debug component
         const criticalRoot = ReactDOM.createRoot(rootElement);
-        criticalRoot.render(<CriticalDebug />);
+        criticalRoot.render(<>
+          <CriticalDebug />
+          <div style="margin-top: 20px; text-align: center;">
+            <a href="/testing" style="display: inline-block; padding: 10px 20px; background-color: #1976d2; color: white; text-decoration: none; border-radius: 4px;">Go to Testing Page</a>
+          </div>
+        </>);
         logAppEvent('last-resort render of CriticalDebug component');
       }
     } catch (error) {
       console.error("Final render attempt failed:", error);
       logAppEvent('final render attempt failed');
+      
+      // Last resort - try just some plain HTML
+      const rootElement = document.getElementById('root');
+      if (rootElement) {
+        rootElement.innerHTML = `
+          <div style="padding: 20px; max-width: 600px; margin: 0 auto; text-align: center;">
+            <h2>Emergency Recovery Mode</h2>
+            <p>We're having trouble initializing the application.</p>
+            <a href="/testing" style="display: inline-block; padding: 10px 20px; background-color: #1976d2; color: white; text-decoration: none; border-radius: 4px; margin-top: 20px;">Go to Testing Page</a>
+          </div>
+        `;
+      }
     }
   }
 }, 15000);

@@ -108,6 +108,36 @@
         max-height: 100px;
         overflow: auto;
       }
+      .recovery-actions {
+        margin-top: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+      }
+      .recovery-button {
+        display: inline-block;
+        padding: 10px 20px;
+        background-color: #1976d2;
+        color: white;
+        text-decoration: none;
+        border-radius: 4px;
+        font-weight: 500;
+        cursor: pointer;
+        border: none;
+        transition: background-color 0.2s;
+      }
+      .recovery-button:hover {
+        background-color: #1565c0;
+      }
+      .recovery-button.secondary {
+        background-color: #f5f5f5;
+        color: #333;
+        border: 1px solid #ddd;
+      }
+      .recovery-button.secondary:hover {
+        background-color: #e0e0e0;
+      }
     </style>
   </head>
 
@@ -119,6 +149,12 @@
       <div class="loading-spinner"></div>
       <h1>Loading Ice Guardian Alert...</h1>
       <p>If this message persists, please ensure JavaScript is enabled and refresh the page.</p>
+      
+      <div class="recovery-actions">
+        <a href="/testing" class="recovery-button">Go to Testing Page</a>
+        <button onclick="attemptRecovery()" class="recovery-button secondary">Try to Recover</button>
+      </div>
+      
       <div id="env-error" class="env-error">
         <strong>Missing environment variables detected.</strong><br>
         Make sure VITE_FIREBASE_API_KEY and VITE_FIREBASE_PROJECT_ID are set in your hosting environment.
@@ -207,6 +243,34 @@
         renderTime: null,
         secondAttempt: false
       };
+      
+      // Function to attempt recovery
+      function attemptRecovery() {
+        console.log('Attempting recovery...');
+        document.getElementById('debug-info').textContent = 'Attempting recovery... ' + new Date().toISOString();
+        
+        try {
+          // Try to directly render the app
+          if (typeof window.renderApp === 'function') {
+            window.renderApp();
+            console.log('Manual renderApp called from recovery button');
+          } else {
+            console.warn('window.renderApp function not available');
+            document.getElementById('debug-info').textContent += ' - renderApp function not available';
+          }
+          
+          // Force a navigation to the test page after a short delay if nothing happens
+          setTimeout(function() {
+            if (!window.appRendered) {
+              console.log('App still not rendered after recovery attempt, redirecting to test page');
+              window.location.href = '/testing';
+            }
+          }, 3000);
+        } catch (e) {
+          console.error('Error in recovery attempt:', e);
+          document.getElementById('debug-info').textContent += ' - Error: ' + (e.message || String(e));
+        }
+      }
       
       // Track important events with error handling
       function logAppEvent(event) {
@@ -468,6 +532,14 @@
                 console.error('Last resort render failed:', e);
               }
             }
+            
+            // If still nothing after a brief wait, redirect to testing page
+            setTimeout(function() {
+              if (!window.appRendered) {
+                console.log('App still not rendered, redirecting to testing page');
+                window.location.href = '/testing';
+              }
+            }, 5000);
           }
         }, 30000); // 30 seconds - truly last resort
       } catch (e) {
