@@ -34,7 +34,7 @@ export function useAuthStateListener(): AuthStateHook {
               uid: user.id || '12345',
               id: user.id || '12345',
               email: user.email || 'mock@example.com',
-              name: user.name || 'Mock User',
+              name: user.displayName || 'Mock User',
               displayName: user.displayName || 'Mock User',
               role: user.role || 'member',
               profileCompleted: true,
@@ -97,13 +97,7 @@ export function useAuthStateListener(): AuthStateHook {
       );
 
       // Return unsubscribe function to clean up on unmount
-      return () => {
-        if (typeof unsubscribe === 'function') {
-          unsubscribe();
-        } else if (unsubscribe && typeof unsubscribe.unsubscribe === 'function') {
-          unsubscribe.unsubscribe();
-        }
-      };
+      return () => unsubscribe();
     } catch (err) {
       console.error('Error setting up auth listener:', err);
       setError(err instanceof Error ? err.message : 'Authentication setup failed');
@@ -113,4 +107,39 @@ export function useAuthStateListener(): AuthStateHook {
   }, []);
 
   return { currentUser, loading, error };
+}
+
+// Hook for authStateManager
+export function useAuthEffects({ setUser, setIsLoading }: { 
+  setUser: React.Dispatch<React.SetStateAction<User | null>>, 
+  setIsLoading: React.Dispatch<React.SetStateAction<boolean>> 
+}): void {
+  useEffect(() => {
+    if (!isMockAuthEnabled()) {
+      const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+        if (firebaseUser) {
+          // Process the Firebase user into our app's user
+          const user: User = {
+            uid: firebaseUser.uid,
+            id: firebaseUser.uid,
+            email: firebaseUser.email || '',
+            name: firebaseUser.displayName || '',
+            displayName: firebaseUser.displayName || '',
+            role: 'member', // Default role
+            status: 'active',
+            profileCompleted: !!firebaseUser.displayName,
+            photoURL: firebaseUser.photoURL || undefined,
+            lastLogin: new Date().toISOString(),
+          };
+          setUser(user);
+        } else {
+          setUser(null);
+        }
+        setIsLoading(false);
+      });
+      
+      // Return cleanup function
+      return () => unsubscribe();
+    }
+  }, [setUser, setIsLoading]);
 }

@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { useToast } from "@/components/ui/use-toast";
 import { useLanguage } from "@/context/LanguageContext";
-import { useAuth } from "@/context/auth";
+import { useAuth } from "@/context/auth/hooks";
 import { Contact, TestResult } from "@/components/emergency-contacts/types";
 import { getContacts, addContact, updateContact, deleteContact, testAlert } from '@/services/contactsService';
 

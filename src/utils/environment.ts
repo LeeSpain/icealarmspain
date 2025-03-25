@@ -59,3 +59,34 @@ export function getRequiredEnvVar(name: string): string {
 export function isMockAuthEnabled(): boolean {
   return getEnvVar('VITE_MOCK_AUTH', 'false') === 'true' || isDevelopment();
 }
+
+/**
+ * Get the current environment name
+ */
+export function getEnvironment(): string {
+  return import.meta.env.MODE || 'development';
+}
+
+/**
+ * Get diagnostic information about the environment
+ */
+export function getEnvironmentDiagnostics(): Record<string, any> {
+  return {
+    environment: getEnvironment(),
+    isDevelopment: isDevelopment(),
+    isProduction: isProduction(),
+    isDebugBuild: isDebugBuild(),
+    hasValidFirebaseConfig: hasValidFirebaseConfig(),
+    firebaseConfigured: {
+      apiKey: !!import.meta.env.VITE_FIREBASE_API_KEY,
+      projectId: !!import.meta.env.VITE_FIREBASE_PROJECT_ID
+    },
+    mockAuthEnabled: isMockAuthEnabled(),
+    environmentVars: {
+      MODE: import.meta.env.MODE,
+      BASE_URL: import.meta.env.BASE_URL,
+      PROD: import.meta.env.PROD,
+      DEV: import.meta.env.DEV
+    }
+  };
+}

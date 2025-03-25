@@ -61,30 +61,51 @@ export const sendTestEmail = async (to: string): Promise<{success: boolean, erro
   });
 };
 
+// Send welcome email to new users
+export const sendWelcomeEmail = async (to: string, name: string): Promise<{success: boolean, error?: string}> => {
+  return sendEmail({
+    to,
+    subject: 'Welcome to ICE Guardian',
+    body: `Hello ${name},\n\nWelcome to ICE Guardian! We're excited to have you join our community.\n\nThe ICE Guardian Team`
+  });
+};
+
+// Send notification email for custom messages
+export const sendNotificationEmail = async (to: string, subject: string, message: string): Promise<{success: boolean, error?: string}> => {
+  return sendEmail({
+    to,
+    subject,
+    body: message
+  });
+};
+
 // Get email logs for a user
-export const getUserEmailLogs = async (userId: string): Promise<EmailLog[]> => {
+export const getUserEmailLogs = async (userId: string): Promise<{data: EmailLog[], error?: string}> => {
   console.log('Getting email logs for user:', userId);
   
   // In development, return mock data
   if (process.env.NODE_ENV === 'development') {
-    return [
-      {
-        id: '1',
-        userId,
-        to: 'user@example.com',
-        subject: 'Welcome to ICE Guardian',
-        sentAt: new Date(Date.now() - 86400000), // 1 day ago
-        status: 'delivered'
-      },
-      {
-        id: '2',
-        userId,
-        to: 'user@example.com',
-        subject: 'Your monthly report',
-        sentAt: new Date(Date.now() - 172800000), // 2 days ago
-        status: 'opened'
-      }
-    ];
+    return {
+      data: [
+        {
+          id: '1',
+          userId,
+          to: 'user@example.com',
+          subject: 'Welcome to ICE Guardian',
+          sentAt: new Date(Date.now() - 86400000), // 1 day ago
+          status: 'delivered'
+        },
+        {
+          id: '2',
+          userId,
+          to: 'user@example.com',
+          subject: 'Your monthly report',
+          sentAt: new Date(Date.now() - 172800000), // 2 days ago
+          status: 'opened'
+        }
+      ],
+      error: undefined
+    };
   }
   
   try {
@@ -93,9 +114,13 @@ export const getUserEmailLogs = async (userId: string): Promise<EmailLog[]> => {
       throw new Error('Failed to fetch email logs');
     }
     
-    return await response.json();
+    const data = await response.json();
+    return { data };
   } catch (error) {
     console.error('Error fetching email logs:', error);
-    return [];
+    return { 
+      data: [],
+      error: error instanceof Error ? error.message : 'Failed to fetch email logs'
+    };
   }
 };

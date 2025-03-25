@@ -1,236 +1,167 @@
 
+import { Contact } from '@/components/emergency-contacts/types';
 import { getEnvVar } from '@/utils/environment';
 
-// Define the contact submission interface
-export interface ContactSubmission {
-  name: string;
-  email: string;
-  subject: string;
-  message: string;
-  userId?: string;
-}
-
-// Define the emergency contact interface
-export interface EmergencyContact {
-  id: string;
-  userId: string;
-  name: string;
-  relationship: string;
-  phone: string;
-  email?: string;
-  priority: 'primary' | 'secondary' | 'tertiary';
-  notificationPreferences: {
-    sms: boolean;
-    email: boolean;
-    call: boolean;
-  };
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-// Submit a contact form
-export async function submitContactForm(data: ContactSubmission): Promise<{ success: boolean; error?: string }> {
-  console.log('Submitting contact form:', data);
-
-  // In development, just log the submission
-  if (getEnvVar('NODE_ENV') === 'development') {
-    console.log('Contact form submitted:', data);
-    return { success: true };
+// Mock data for development
+const mockContacts: Contact[] = [
+  {
+    id: '1',
+    name: 'John Doe',
+    relationship: 'Family',
+    phone: '555-123-4567',
+    email: 'john.doe@example.com',
+    priority: 1,
+    receivesAlerts: true,
+    receivesUpdates: true
+  },
+  {
+    id: '2',
+    name: 'Jane Smith',
+    relationship: 'Friend',
+    phone: '555-987-6543',
+    email: 'jane.smith@example.com',
+    priority: 2,
+    receivesAlerts: true,
+    receivesUpdates: false
   }
+];
 
-  try {
-    // In production, this would send the data to an API endpoint
-    const response = await fetch('/api/contact', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data),
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      return { 
-        success: false, 
-        error: errorData.message || 'Failed to submit contact form' 
-      };
-    }
-
-    return { success: true };
-  } catch (error) {
-    console.error('Error submitting contact form:', error);
-    return { 
-      success: false, 
-      error: error instanceof Error ? error.message : 'Failed to submit contact form' 
-    };
-  }
-}
-
-// Get contacts for a user
-export async function getContacts(userId: string): Promise<EmergencyContact[]> {
-  console.log('Getting contacts for user:', userId);
-  
-  // In development, return mock data
-  if (getEnvVar('NODE_ENV') === 'development') {
-    return [
-      {
-        id: '1',
-        userId,
-        name: 'John Doe',
-        relationship: 'Family',
-        phone: '555-123-4567',
-        email: 'john@example.com',
-        priority: 'primary',
-        notificationPreferences: {
-          sms: true,
-          email: true,
-          call: true,
-        },
-        createdAt: new Date(),
-        updatedAt: new Date()
-      },
-      {
-        id: '2',
-        userId,
-        name: 'Jane Smith',
-        relationship: 'Friend',
-        phone: '555-765-4321',
-        priority: 'secondary',
-        notificationPreferences: {
-          sms: true,
-          email: false,
-          call: true,
-        },
-        createdAt: new Date(),
-        updatedAt: new Date()
-      }
-    ];
+// Get all contacts for the current user
+export const getContacts = async (): Promise<Contact[]> => {
+  // For development, return mock data
+  if (process.env.NODE_ENV === 'development') {
+    return [...mockContacts];
   }
   
   try {
-    const response = await fetch(`/api/contacts?userId=${userId}`);
+    const response = await fetch('/api/contacts');
     if (!response.ok) {
       throw new Error('Failed to fetch contacts');
     }
-    
     return await response.json();
   } catch (error) {
     console.error('Error fetching contacts:', error);
     return [];
   }
-}
+};
 
 // Add a new contact
-export async function addContact(contact: Omit<EmergencyContact, 'id' | 'createdAt' | 'updatedAt'>): Promise<{ success: boolean; id?: string; error?: string }> {
-  console.log('Adding contact:', contact);
-  
-  // In development, just log and return success
-  if (getEnvVar('NODE_ENV') === 'development') {
-    console.log('Contact added (mock):', contact);
-    return { success: true, id: `mock-${Date.now()}` };
+export const addContact = async (contact: Omit<Contact, 'id'>): Promise<Contact> => {
+  // For development, return mock data with a generated ID
+  if (process.env.NODE_ENV === 'development') {
+    const newContact = {
+      ...contact,
+      id: `mock-${Date.now()}`
+    };
+    mockContacts.push(newContact);
+    return newContact;
   }
   
-  try {
-    const response = await fetch('/api/contacts', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(contact),
-    });
-    
-    if (!response.ok) {
-      const errorData = await response.json();
-      return { success: false, error: errorData.message || 'Failed to add contact' };
-    }
-    
-    const data = await response.json();
-    return { success: true, id: data.id };
-  } catch (error) {
-    console.error('Error adding contact:', error);
-    return { success: false, error: error instanceof Error ? error.message : 'Failed to add contact' };
+  const response = await fetch('/api/contacts', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(contact)
+  });
+  
+  if (!response.ok) {
+    throw new Error('Failed to add contact');
   }
-}
+  
+  return await response.json();
+};
 
-// Update a contact
-export async function updateContact(id: string, contact: Partial<EmergencyContact>): Promise<{ success: boolean; error?: string }> {
-  console.log('Updating contact:', id, contact);
-  
-  // In development, just log and return success
-  if (getEnvVar('NODE_ENV') === 'development') {
-    console.log('Contact updated (mock):', id, contact);
-    return { success: true };
-  }
-  
-  try {
-    const response = await fetch(`/api/contacts/${id}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(contact),
-    });
-    
-    if (!response.ok) {
-      const errorData = await response.json();
-      return { success: false, error: errorData.message || 'Failed to update contact' };
+// Update an existing contact
+export const updateContact = async (id: string, updatedData: Partial<Contact>): Promise<Contact> => {
+  // For development, update mock data
+  if (process.env.NODE_ENV === 'development') {
+    const index = mockContacts.findIndex(c => c.id === id);
+    if (index === -1) {
+      throw new Error('Contact not found');
     }
     
-    return { success: true };
-  } catch (error) {
-    console.error('Error updating contact:', error);
-    return { success: false, error: error instanceof Error ? error.message : 'Failed to update contact' };
+    const updatedContact = {
+      ...mockContacts[index],
+      ...updatedData
+    };
+    
+    mockContacts[index] = updatedContact;
+    return updatedContact;
   }
-}
+  
+  const response = await fetch(`/api/contacts/${id}`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(updatedData)
+  });
+  
+  if (!response.ok) {
+    throw new Error('Failed to update contact');
+  }
+  
+  return await response.json();
+};
 
 // Delete a contact
-export async function deleteContact(id: string): Promise<{ success: boolean; error?: string }> {
-  console.log('Deleting contact:', id);
-  
-  // In development, just log and return success
-  if (getEnvVar('NODE_ENV') === 'development') {
-    console.log('Contact deleted (mock):', id);
-    return { success: true };
-  }
-  
-  try {
-    const response = await fetch(`/api/contacts/${id}`, {
-      method: 'DELETE',
-    });
-    
-    if (!response.ok) {
-      const errorData = await response.json();
-      return { success: false, error: errorData.message || 'Failed to delete contact' };
+export const deleteContact = async (id: string): Promise<void> => {
+  // For development, remove from mock data
+  if (process.env.NODE_ENV === 'development') {
+    const index = mockContacts.findIndex(c => c.id === id);
+    if (index !== -1) {
+      mockContacts.splice(index, 1);
     }
-    
-    return { success: true };
-  } catch (error) {
-    console.error('Error deleting contact:', error);
-    return { success: false, error: error instanceof Error ? error.message : 'Failed to delete contact' };
+    return;
   }
-}
+  
+  const response = await fetch(`/api/contacts/${id}`, {
+    method: 'DELETE'
+  });
+  
+  if (!response.ok) {
+    throw new Error('Failed to delete contact');
+  }
+};
 
-// Test an alert to a contact
-export async function testAlert(contactId: string, alertType: string): Promise<{ success: boolean; error?: string }> {
-  console.log('Testing alert:', contactId, alertType);
-  
-  // In development, just log and return success
-  if (getEnvVar('NODE_ENV') === 'development') {
-    console.log('Alert tested (mock):', contactId, alertType);
-    return { success: true };
+// Test alert functionality
+export const testAlert = async (alertType: 'emergency' | 'medical' | 'activity' | 'all', contactIds: string[]): Promise<{
+  id: string;
+  success: boolean;
+  timestamp: string;
+  type: 'emergency' | 'medical' | 'activity' | 'all';
+  recipients: string[];
+  errorMessage?: string;
+}> => {
+  // For development, return mock success
+  if (process.env.NODE_ENV === 'development') {
+    const recipients = mockContacts
+      .filter(c => contactIds.includes(c.id))
+      .map(c => c.email);
+    
+    return {
+      id: `test-${Date.now()}`,
+      success: true,
+      timestamp: new Date().toISOString(),
+      type: alertType,
+      recipients
+    };
   }
   
-  try {
-    const response = await fetch('/api/test-alert', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ contactId, alertType }),
-    });
-    
-    if (!response.ok) {
-      const errorData = await response.json();
-      return { success: false, error: errorData.message || 'Failed to test alert' };
-    }
-    
-    return { success: true };
-  } catch (error) {
-    console.error('Error testing alert:', error);
-    return { success: false, error: error instanceof Error ? error.message : 'Failed to test alert' };
+  const response = await fetch('/api/test-alert', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ type: alertType, contactIds })
+  });
+  
+  if (!response.ok) {
+    const error = await response.json();
+    return {
+      id: `error-${Date.now()}`,
+      success: false,
+      timestamp: new Date().toISOString(),
+      type: alertType,
+      recipients: [],
+      errorMessage: error.message || 'Failed to send test alert'
+    };
   }
-}
+  
+  return await response.json();
+};
