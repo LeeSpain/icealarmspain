@@ -10,6 +10,7 @@
     <meta property="og:image" content="/og-image.png" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&display=swap">
     <link rel="preload" href="/src/styles/index.css" as="style">
+    <!-- Force visibility with critical inline styles -->
     <style>
       /* Critical rendering styles - Force visibility */
       html, body {
@@ -20,10 +21,17 @@
         color: black !important;
         visibility: visible !important;
         opacity: 1 !important;
+        display: block !important;
       }
       #root {
         min-height: 100vh;
         width: 100%;
+        visibility: visible !important;
+        opacity: 1 !important;
+        display: block !important;
+      }
+      /* Make sure all core elements are visible */
+      .App, main, header, footer, div {
         visibility: visible !important;
         opacity: 1 !important;
         display: block !important;
@@ -33,6 +41,9 @@
         margin: 2rem auto;
         text-align: center;
         padding: 20px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        background: white;
       }
       .error-container button {
         background: #0070f3;
@@ -43,7 +54,82 @@
         cursor: pointer;
         margin-top: 16px;
       }
+      /* Force debugging info to show */
+      #debug-info {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        background: rgba(0,0,0,0.8);
+        color: white;
+        padding: 10px;
+        font-size: 12px;
+        z-index: 9999;
+        max-width: 100%;
+        max-height: 200px;
+        overflow: auto;
+      }
     </style>
+    <!-- Debugging script to run before anything else -->
+    <script>
+      // Run immediately to detect any early issues
+      console.log('Page initialization started');
+      
+      // Track rendering stages
+      window.renderingStages = {
+        htmlLoaded: true,
+        domContentLoaded: false,
+        windowLoaded: false,
+        reactStarted: false,
+        reactRendered: false
+      };
+      
+      // Add debug element as soon as possible
+      document.addEventListener('DOMContentLoaded', function() {
+        window.renderingStages.domContentLoaded = true;
+        console.log('DOM content loaded');
+        
+        // Create debug info element
+        var debugEl = document.createElement('div');
+        debugEl.id = 'debug-info';
+        debugEl.innerHTML = 'Initializing...';
+        document.body.appendChild(debugEl);
+        
+        // Update debug info
+        function updateDebugInfo() {
+          var debugEl = document.getElementById('debug-info');
+          if (debugEl) {
+            debugEl.innerHTML = 'Rendering stages: ' + 
+              JSON.stringify(window.renderingStages, null, 2) +
+              '<br>Root children: ' + (document.getElementById('root')?.children.length || 0);
+          }
+        }
+        
+        // Update debug info regularly
+        updateDebugInfo();
+        setInterval(updateDebugInfo, 1000);
+        
+        // Add fallback content
+        setTimeout(function() {
+          var root = document.getElementById('root');
+          if (root && (!root.children.length || !root.innerHTML.trim())) {
+            console.log('No content in root after 3 seconds, adding fallback');
+            root.innerHTML = `
+              <div class="error-container">
+                <h1>Ice Guardian Alert</h1>
+                <p>We're experiencing technical difficulties with rendering. Please try refreshing the page.</p>
+                <button onclick="window.location.reload()">Refresh Page</button>
+                <p>Debug info: React rendering failed. Check console for errors.</p>
+              </div>
+            `;
+          }
+        }, 3000);
+      });
+      
+      window.addEventListener('load', function() {
+        window.renderingStages.windowLoaded = true;
+        console.log('Window loaded');
+      });
+    </script>
     <!-- Preconnect to critical domains -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
   </head>

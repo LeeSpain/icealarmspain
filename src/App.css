@@ -13,8 +13,8 @@ html, body {
 }
 
 body {
-  display: flex;
-  flex-direction: column;
+  display: flex !important;
+  flex-direction: column !important;
 }
 
 /* App container */
@@ -30,13 +30,28 @@ body {
 
 /* Main content area */
 main {
-  flex: 1;
-  background-color: white;
-  color: black;
-  padding-top: 4rem;
+  flex: 1 !important;
+  background-color: white !important;
+  color: black !important;
+  padding-top: 4rem !important;
+  display: block !important;
+}
+
+/* Force all React components to be visible */
+#root > * {
+  visibility: visible !important;
+  opacity: 1 !important;
+  display: block !important;
 }
 
 /* Prevent loading flashes */
 body.loading {
   overflow: hidden;
+}
+
+/* Force critical UI components to display */
+header, nav, footer, .navbar, .hero, .container, section {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
 }
