@@ -10,6 +10,13 @@ import AuthGuard from "./components/auth/AuthGuard"; // Use relative path to avo
 import ErrorBoundary from "@/components/layout/ErrorBoundary";
 import { isDevelopment, isDebugBuild } from "./utils/environment";
 
+// Add a global error handler to catch initialization errors
+if (typeof window !== 'undefined') {
+  window.addEventListener('error', (event) => {
+    console.error('Global error caught:', event.error);
+  });
+}
+
 function App() {
   // Log that App component is rendering (helps with debugging)
   console.log("App component rendering");
