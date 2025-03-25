@@ -1,15 +1,19 @@
+
 import React from "react";
 import { Bell } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useAuth } from "@/context/auth";
+import { User } from "@/context/auth/types";
 
-interface HeaderProps {
-  activeSection: string;
+export interface HeaderProps {
+  activeSection?: string;
+  user?: User;
 }
 
-const Header: React.FC<HeaderProps> = ({ activeSection }) => {
-  const { user } = useAuth();
+const Header: React.FC<HeaderProps> = ({ activeSection = "dashboard", user }) => {
+  const { user: authUser } = useAuth();
+  const displayUser = user || authUser;
   
   const getPageTitle = () => {
     switch (activeSection) {
@@ -39,7 +43,7 @@ const Header: React.FC<HeaderProps> = ({ activeSection }) => {
         
         <Avatar className="h-8 w-8">
           <AvatarFallback className="bg-primary/10 text-primary">
-            {user?.name?.charAt(0) || 'A'}
+            {displayUser?.name?.charAt(0) || 'A'}
           </AvatarFallback>
         </Avatar>
       </div>

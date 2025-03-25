@@ -9,28 +9,38 @@ import {
 import { auth } from '@/services/firebase/firebase';
 import { 
   User, 
-  Credentials, 
-  UpdateProfileParams, 
-  MockUser 
+  UpdateProfileParams
 } from './types';
 import { isMockAuthEnabled } from '@/utils/environment';
 import { createUserProfile, getUserProfile } from '@/services/firebase/db';
 
+// Define Credentials interface locally since it's missing
+export interface Credentials {
+  email: string;
+  password: string;
+}
+
+// Define MockUser interface locally since it's missing
+export interface MockUser extends User {
+  // Any additional properties can be added here
+}
+
 /**
  * Creates a new user with email and password.
- *
- * @param credentials Object containing email and password.
- * @returns Promise that resolves with the created user or rejects with an error.
  */
-export const createUser = async (credentials: Credentials): Promise<{ user?: User; error?: any }> => {
+export const createUser = async (
+  email: string,
+  password: string,
+  userData: any = {}
+): Promise<{ user?: User; error?: any }> => {
   if (isMockAuthEnabled()) {
     // In mock mode, return a mock user
-    const mockUser: MockUser = {
+    const mockUser: User = {
       uid: 'mock-user-uid',
       id: 'mock-user-uid',
-      email: credentials.email,
-      name: 'Mock User',
-      displayName: 'Mock User',
+      email: email,
+      name: userData.name || 'Mock User',
+      displayName: userData.name || 'Mock User',
       role: 'user',
       status: 'active',
       profileCompleted: false,
@@ -45,10 +55,11 @@ export const createUser = async (credentials: Credentials): Promise<{ user?: Use
   }
 
   try {
+    // We'll use any here to avoid the Auth type issue
     const userCredential = await createUserWithEmailAndPassword(
-      auth,
-      credentials.email,
-      credentials.password
+      auth as any,
+      email,
+      password
     );
     const firebaseUser = userCredential.user;
 
@@ -82,11 +93,6 @@ export const createUser = async (credentials: Credentials): Promise<{ user?: Use
 
 /**
  * Signs in an existing user with email and password.
- *
- * @param email Email of the user.
- * @param password Password of the user.
- * @param rememberMe Whether to remember the user session.
- * @returns Promise that resolves with the signed-in user or rejects with an error.
  */
 export const login = async (
   email: string,
@@ -96,7 +102,7 @@ export const login = async (
   try {
     if (isMockAuthEnabled()) {
       // In mock mode, return a mock user
-      const mockUser: MockUser = {
+      const mockUser: User = {
         uid: 'mock-user-uid',
         id: 'mock-user-uid',
         email: email,
@@ -115,8 +121,7 @@ export const login = async (
       return { user: mockUser };
     }
 
-    const credentials: Credentials = { email, password };
-    return signIn(credentials);
+    return signIn(email, password);
   } catch (error: any) {
     console.error('Error logging in:', error);
     return { error };
@@ -125,17 +130,18 @@ export const login = async (
 
 /**
  * Signs in an existing user with email and password.
- *
- * @param credentials Object containing email and password.
- * @returns Promise that resolves with the signed-in user or rejects with an error.
  */
-export const signIn = async (credentials: Credentials): Promise<{ user?: User; error?: any }> => {
+export const signIn = async (
+  email: string,
+  password: string,
+  rememberMe: boolean = false
+): Promise<{ user?: User; error?: any }> => {
   if (isMockAuthEnabled()) {
     // In mock mode, return a mock user
-    const mockUser: MockUser = {
+    const mockUser: User = {
       uid: 'mock-user-uid',
       id: 'mock-user-uid',
-      email: credentials.email,
+      email: email,
       name: 'Mock User',
       displayName: 'Mock User',
       role: 'user',
@@ -153,9 +159,9 @@ export const signIn = async (credentials: Credentials): Promise<{ user?: User; e
 
   try {
     const userCredential = await signInWithEmailAndPassword(
-      auth,
-      credentials.email,
-      credentials.password
+      auth as any,
+      email,
+      password
     );
     const firebaseUser = userCredential.user;
 
@@ -189,21 +195,16 @@ export const signIn = async (credentials: Credentials): Promise<{ user?: User; e
 
 /**
  * Signs up a new user with email and password.
- * 
- * @param email Email of the user.
- * @param password Password of the user.
- * @param userData Additional user data.
- * @returns Promise that resolves with the signed-up user or rejects with an error.
  */
 export const signUp = async (
   email: string,
-  password: string,
+  password: string, 
   userData: any = {}
 ): Promise<{ user?: User; error?: any }> => {
   try {
     if (isMockAuthEnabled()) {
-      // In mock mode, return a mock user
-      const mockUser: MockUser = {
+      // Mock authentication for development
+      const mockUser: User = {
         uid: 'mock-user-uid',
         id: 'mock-user-uid',
         email: email,
@@ -222,8 +223,7 @@ export const signUp = async (
       return { user: mockUser };
     }
 
-    const credentials: Credentials = { email, password };
-    return createUser(credentials);
+    return createUser(email, password, userData);
   } catch (error: any) {
     console.error('Error signing up:', error);
     return { error };
@@ -232,8 +232,6 @@ export const signUp = async (
 
 /**
  * Signs out the current user.
- *
- * @returns Promise that resolves when the user is signed out or rejects with an error.
  */
 export const logout = async (): Promise<void> => {
   if (isMockAuthEnabled()) {
@@ -242,7 +240,7 @@ export const logout = async (): Promise<void> => {
   }
 
   try {
-    await firebaseSignOut(auth);
+    await firebaseSignOut(auth as any);
   } catch (error: any) {
     console.error('Error signing out:', error);
     throw error;
@@ -254,9 +252,6 @@ export const signOut = logout;
 
 /**
  * Updates the user's profile information.
- *
- * @param displayName The user's new display name.
- * @returns Promise that resolves when the profile is updated or rejects with an error.
  */
 export const updateUserProfile = async (displayName: string): Promise<void> => {
   if (isMockAuthEnabled()) {
@@ -283,9 +278,6 @@ export const updateUserProfile = async (displayName: string): Promise<void> => {
 
 /**
  * Updates the user's profile information.
- *
- * @param params Object containing the user's ID and the profile information to update.
- * @returns Promise that resolves when the profile is updated or rejects with an error.
  */
 export const updateProfile = async (params: UpdateProfileParams): Promise<void> => {
   if (isMockAuthEnabled()) {
@@ -312,7 +304,6 @@ export const updateProfile = async (params: UpdateProfileParams): Promise<void> 
 
 /**
  * Gets all users - admin function.
- * @returns Promise that resolves with all users.
  */
 export const getAllUsers = async (): Promise<User[]> => {
   if (isMockAuthEnabled()) {
@@ -350,9 +341,6 @@ export const getAllUsers = async (): Promise<User[]> => {
 
 /**
  * Updates a user's role - admin function.
- * @param userId The user's ID.
- * @param role The new role.
- * @returns Promise that resolves with success status.
  */
 export const updateUserRole = async (userId: string, role: string): Promise<{ success: boolean; error?: string }> => {
   if (isMockAuthEnabled()) {
@@ -368,8 +356,6 @@ export const updateUserRole = async (userId: string, role: string): Promise<{ su
 
 /**
  * Deletes a user - admin function.
- * @param userId The user's ID.
- * @returns Promise that resolves with success status.
  */
 export const deleteUser = async (userId: string): Promise<{ success: boolean; error?: string }> => {
   if (isMockAuthEnabled()) {
