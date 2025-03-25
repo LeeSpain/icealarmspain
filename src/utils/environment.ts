@@ -1,92 +1,91 @@
 
-// Environment utility functions to safely access environment variables
+/**
+ * Environment utility functions to safely access environment variables
+ * and determine environment-specific behavior
+ */
+
+// Environment type definition
+export type Environment = 'development' | 'staging' | 'production';
 
 /**
- * Returns true if the application is running in development mode
+ * Get the current environment
  */
-export function isDevelopment(): boolean {
-  return import.meta.env.DEV || import.meta.env.MODE === 'development';
-}
+export const getEnvironment = (): Environment => {
+  const env = import.meta.env.VITE_ENVIRONMENT;
+  if (env === 'production' || env === 'staging') {
+    return env;
+  }
+  return 'development';
+};
 
 /**
- * Returns true if the application is running in production mode
+ * Check if we're in production
  */
-export function isProduction(): boolean {
-  return import.meta.env.PROD || import.meta.env.MODE === 'production';
-}
+export const isProduction = (): boolean => {
+  return getEnvironment() === 'production';
+};
 
 /**
- * Returns true if the application is running in debug build mode
+ * Check if we're in staging
  */
-export function isDebugBuild(): boolean {
-  return import.meta.env.VITE_DEBUG_BUILD === 'true';
-}
+export const isStaging = (): boolean => {
+  return getEnvironment() === 'staging';
+};
 
 /**
- * Returns true if the current environment has valid Firebase configuration
+ * Check if we're in development
  */
-export function hasValidFirebaseConfig(): boolean {
-  return (
-    !!import.meta.env.VITE_FIREBASE_API_KEY && 
-    !!import.meta.env.VITE_FIREBASE_PROJECT_ID
-  );
-}
+export const isDevelopment = (): boolean => {
+  return getEnvironment() === 'development';
+};
 
 /**
- * Get an environment variable with a fallback value
+ * Get required environment variable
+ * @throws Error if the environment variable is not defined
  */
-export function getEnvVar(name: string, fallback: string = ''): string {
-  const value = import.meta.env[name];
-  return value !== undefined ? value : fallback;
-}
-
-/**
- * Get a required environment variable
- * Throws an error if the variable is not set
- */
-export function getRequiredEnvVar(name: string): string {
-  const value = import.meta.env[name];
-  if (value === undefined) {
-    throw new Error(`Required environment variable ${name} is not defined`);
+export const getRequiredEnvVar = (key: string): string => {
+  const value = import.meta.env[key];
+  if (!value) {
+    throw new Error(`Environment variable ${key} is required but not defined`);
   }
   return value;
-}
+};
 
 /**
- * Returns true if mock authentication is enabled
- * This is useful for development and demo environments
+ * Get optional environment variable with fallback
  */
-export function isMockAuthEnabled(): boolean {
-  return getEnvVar('VITE_MOCK_AUTH', 'false') === 'true' || isDevelopment();
-}
+export const getEnvVar = (key: string, fallback: string = ''): string => {
+  const value = import.meta.env[key];
+  return value || fallback;
+};
 
 /**
- * Get the current environment name
+ * Get API URL with optional path
  */
-export function getEnvironment(): string {
-  return import.meta.env.MODE || 'development';
-}
+export const getApiUrl = (path: string = ''): string => {
+  const baseUrl = getEnvVar('VITE_API_URL', '');
+  return `${baseUrl}${path}`;
+};
 
 /**
- * Get diagnostic information about the environment
+ * Get redirect URL for authentication
  */
-export function getEnvironmentDiagnostics(): Record<string, any> {
-  return {
-    environment: getEnvironment(),
-    isDevelopment: isDevelopment(),
-    isProduction: isProduction(),
-    isDebugBuild: isDebugBuild(),
-    hasValidFirebaseConfig: hasValidFirebaseConfig(),
-    firebaseConfigured: {
-      apiKey: !!import.meta.env.VITE_FIREBASE_API_KEY,
-      projectId: !!import.meta.env.VITE_FIREBASE_PROJECT_ID
-    },
-    mockAuthEnabled: isMockAuthEnabled(),
-    environmentVars: {
-      MODE: import.meta.env.MODE,
-      BASE_URL: import.meta.env.BASE_URL,
-      PROD: import.meta.env.PROD,
-      DEV: import.meta.env.DEV
-    }
-  };
-}
+export const getAuthRedirectUrl = (): string => {
+  return getEnvVar('VITE_AUTH_REDIRECT_URL', window.location.origin);
+};
+
+/**
+ * Check if mock authentication should be enabled
+ */
+export const isMockAuthEnabled = (): boolean => {
+  const mockAuth = getEnvVar('VITE_ENABLE_MOCK_AUTH', 'false');
+  return mockAuth === 'true';
+};
+
+/**
+ * Check if analytics should be enabled
+ */
+export const isAnalyticsEnabled = (): boolean => {
+  const enableAnalytics = getEnvVar('VITE_ENABLE_ANALYTICS', 'false');
+  return enableAnalytics === 'true' || isProduction();
+};

@@ -1,9 +1,9 @@
-
 import React from "react";
 import { useLanguage } from "@/context/LanguageContext";
 import { useNavigate } from "react-router-dom";
 import PricingHero from "./pricing/PricingHero";
 import PricingPlans from "./pricing/PricingPlans";
+import { PricingActions } from "./pricing/PricingActions"; // Named import
 
 const Pricing: React.FC = () => {
   const { language } = useLanguage();
@@ -93,7 +93,7 @@ const Pricing: React.FC = () => {
       <div className="container mx-auto px-4 md:px-6 py-14">
         <div className="max-w-5xl mx-auto">
           <PricingPlans plans={plans} language={language} />
-          {/* Removed PricingActions component */}
+          <PricingActions price={19.99} planName="Basic" language={language} />
         </div>
       </div>
     </section>

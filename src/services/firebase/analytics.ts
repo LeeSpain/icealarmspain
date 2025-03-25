@@ -1,18 +1,20 @@
 
-// Analytics service mock for Firebase to satisfy imports
+import { analytics } from './auth';
+import { logEvent as firebaseLogEvent } from 'firebase/analytics';
 
+// Helper function to log events to Firebase Analytics
 export const logEvent = (eventName: string, eventParams?: Record<string, any>) => {
-  console.log(`Analytics event: ${eventName}`, eventParams);
+  try {
+    if (analytics) {
+      firebaseLogEvent(analytics, eventName, eventParams);
+      console.log(`Analytics event logged: ${eventName}`, eventParams);
+    } else {
+      console.log(`Analytics event would be logged (mock): ${eventName}`, eventParams);
+    }
+  } catch (error) {
+    console.error('Error logging analytics event:', error);
+  }
 };
 
-export const setUserProperties = (properties: Record<string, any>) => {
-  console.log('Setting user properties:', properties);
-};
-
-export const setUserId = (userId: string | null) => {
-  console.log('Setting analytics user ID:', userId);
-};
-
-export const setCurrentScreen = (screenName: string) => {
-  console.log('Setting current screen:', screenName);
-};
+// Export analytics instance
+export { analytics };

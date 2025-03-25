@@ -5,4 +5,3 @@ export * from './types';
 export * from './AuthProvider';
 export * from './hooks';
 export * from './utils';
-export { useAuth } from './hooks';

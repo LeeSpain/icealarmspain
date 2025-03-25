@@ -1,153 +1,162 @@
-
-import { useEffect, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { User } from './types';
-import { onAuthStateChanged } from 'firebase/auth';
-import { auth } from '@/firebase';
-import { isMockAuthEnabled } from '@/utils/environment';
+import { determineUserRole } from './utils';
+import { auth, onAuthStateChanged } from '../../services/firebase/auth';
+import { isMockAuthEnabled, isDevelopment } from '@/utils/environment';
 
-interface AuthStateHook {
-  currentUser: User | null;
-  loading: boolean;
-  error: string | null;
+interface UseAuthEffectsProps {
+  setUser: React.Dispatch<React.SetStateAction<User | null>>;
+  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export function useAuthStateListener(): AuthStateHook {
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+export const useAuthEffects = ({ setUser, setIsLoading }: UseAuthEffectsProps) => {
+  const isMounted = useRef(true);
 
+  // Set up cleanup function to prevent memory leaks
   useEffect(() => {
-    console.log('Setting up auth state listener');
-
-    // If mock auth is enabled, use mock data
-    if (isMockAuthEnabled()) {
-      console.log('Using mock auth data');
-      
-      // Simulate auth delay
-      const timer = setTimeout(() => {
-        const mockUser = localStorage.getItem('mockUser');
-        
-        if (mockUser) {
-          try {
-            const user = JSON.parse(mockUser);
-            setCurrentUser({
-              uid: user.id || '12345',
-              id: user.id || '12345',
-              email: user.email || 'mock@example.com',
-              name: user.displayName || 'Mock User',
-              displayName: user.displayName || 'Mock User',
-              role: user.role || 'member',
-              profileCompleted: true,
-              status: 'active',
-            });
-          } catch (err) {
-            console.error('Error parsing mock user:', err);
-            setCurrentUser(null);
-          }
-        } else {
-          setCurrentUser(null);
-        }
-        
-        setLoading(false);
-      }, 1000);
-      
-      return () => clearTimeout(timer);
-    }
-
-    // Real Firebase auth listener
-    try {
-      // We need to fix this part to properly handle unsubscribe
-      const unsubscribe = onAuthStateChanged(
-        auth,
-        async (firebaseUser) => {
-          console.log('Auth state changed:', firebaseUser);
-          
-          if (firebaseUser) {
-            try {
-              // Here you would typically fetch additional user data from your database
-              // This is simplified for now
-              const user: User = {
-                uid: firebaseUser.uid,
-                id: firebaseUser.uid,
-                email: firebaseUser.email || '',
-                name: firebaseUser.displayName || '',
-                displayName: firebaseUser.displayName || '',
-                role: 'member', // Default role, should be fetched from your database
-                profileCompleted: true, // Should be determined by your app logic
-                photoURL: firebaseUser.photoURL || undefined,
-                lastLogin: new Date().toISOString(),
-                status: 'active',
-              };
-              
-              setCurrentUser(user);
-            } catch (err) {
-              console.error('Error processing authenticated user:', err);
-              setError('Failed to process user data');
-              setCurrentUser(null);
-            }
-          } else {
-            setCurrentUser(null);
-          }
-          
-          setLoading(false);
-        },
-        (err) => {
-          console.error('Auth state error:', err);
-          setError(err.message);
-          setLoading(false);
-        }
-      );
-
-      // Return unsubscribe function to clean up on unmount
-      return () => unsubscribe();
-    } catch (err) {
-      console.error('Error setting up auth listener:', err);
-      setError(err instanceof Error ? err.message : 'Authentication setup failed');
-      setLoading(false);
-      return () => {}; // Empty cleanup function
-    }
+    return () => {
+      isMounted.current = false;
+    };
   }, []);
 
-  return { currentUser, loading, error };
-}
-
-// Hook for authStateManager
-export function useAuthEffects({ setUser, setIsLoading }: { 
-  setUser: React.Dispatch<React.SetStateAction<User | null>>, 
-  setIsLoading: React.Dispatch<React.SetStateAction<boolean>> 
-}): void {
+  // Listen for auth state changes
   useEffect(() => {
-    if (!isMockAuthEnabled()) {
+    console.log('Setting up Firebase auth state listener');
+    
+    // Set loading to true initially
+    setIsLoading(true);
+    
+    // Check for recently logged out flag to prevent auto-login after logout
+    const recentlyLoggedOut = sessionStorage.getItem('recentlyLoggedOut');
+    if (recentlyLoggedOut) {
+      console.log('Recently logged out, not restoring from localStorage');
+      sessionStorage.removeItem('recentlyLoggedOut');
+      setUser(null);
+      setIsLoading(false);
+      return;
+    }
+    
+    // In development mode with mock auth enabled, try to load user from localStorage
+    if (isMockAuthEnabled()) {
       try {
-        const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
-          if (firebaseUser) {
-            // Process the Firebase user into our app's user
-            const user: User = {
-              uid: firebaseUser.uid,
-              id: firebaseUser.uid,
-              email: firebaseUser.email || '',
-              name: firebaseUser.displayName || '',
-              displayName: firebaseUser.displayName || '',
-              role: 'member', // Default role
-              status: 'active',
-              profileCompleted: !!firebaseUser.displayName,
-              photoURL: firebaseUser.photoURL || undefined,
-              lastLogin: new Date().toISOString(),
-            };
-            setUser(user);
-          } else {
-            setUser(null);
+        const storedUser = localStorage.getItem('currentUser');
+        if (storedUser && isMounted.current) {
+          try {
+            const parsedUser = JSON.parse(storedUser);
+            if (parsedUser && parsedUser.uid) {
+              // Check if it's a development user
+              if (typeof parsedUser.uid === 'string' && parsedUser.uid.startsWith('dev-')) {
+                console.log('Found stored development user:', parsedUser.email);
+                setUser(parsedUser);
+                
+                // For development users, set loading to false immediately
+                setIsLoading(false);
+                return; // Skip Firebase auth check for dev users
+              } else {
+                console.log('Found stored user data:', parsedUser.email);
+                setUser(parsedUser);
+                // Keep loading true for regular users until Firebase auth check completes
+              }
+            }
+          } catch (e) {
+            console.error('Error parsing stored user JSON:', e);
+            localStorage.removeItem('currentUser');
           }
-          setIsLoading(false);
-        });
-        
-        // Return cleanup function
-        return () => unsubscribe();
+        }
       } catch (error) {
-        console.error('Error in auth effects hook:', error);
-        setIsLoading(false);
-        return () => {}; // Empty cleanup
+        console.error('Error accessing localStorage:', error);
+        localStorage.removeItem('currentUser');
       }
     }
+    
+    // If we're in development mode with mock auth enabled and no stored user, skip Firebase
+    if (isMockAuthEnabled() && !localStorage.getItem('currentUser')) {
+      console.log('Development mode with no stored user, skipping Firebase auth check');
+      setIsLoading(false);
+      return;
+    }
+    
+    // Listen for Firebase auth state changes - this is the real authentication we always use
+    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+      if (isDevelopment()) {
+        console.log('Firebase auth state changed:', firebaseUser?.email || 'No user');
+      }
+      
+      if (!isMounted.current) return;
+      
+      if (!firebaseUser) {
+        if (isDevelopment()) {
+          console.log('No Firebase user, clearing user state');
+        }
+        
+        // Check if we have a development user in mock mode
+        if (isMockAuthEnabled()) {
+          const storedUser = localStorage.getItem('currentUser');
+          if (storedUser) {
+            try {
+              const parsedUser = JSON.parse(storedUser);
+              if (parsedUser && parsedUser.uid && typeof parsedUser.uid === 'string' && parsedUser.uid.startsWith('dev-')) {
+                if (isDevelopment()) {
+                  console.log('Keeping development user session active:', parsedUser.email);
+                }
+                // Don't clear development users on Firebase auth state change
+                setIsLoading(false);
+                return;
+              }
+            } catch (e) {
+              // Ignore parse errors
+            }
+          }
+        }
+        
+        // If we're here, we don't have a valid development user
+        setUser(null);
+        setIsLoading(false);
+        return;
+      }
+      
+      if (isDevelopment()) {
+        console.log('Firebase user authenticated:', firebaseUser.email);
+      }
+      
+      // Determine role from email
+      const role = determineUserRole(firebaseUser.email || '');
+      
+      const userData: User = {
+        uid: firebaseUser.uid,
+        id: firebaseUser.uid,
+        email: firebaseUser.email || '',
+        name: firebaseUser.displayName || firebaseUser.email?.split('@')[0] || '',
+        displayName: firebaseUser.displayName || firebaseUser.email?.split('@')[0] || '',
+        role,
+        profileCompleted: !!firebaseUser.displayName,
+        language: localStorage.getItem('language') || 'en',
+        lastLogin: new Date().toISOString(),
+        createdAt: firebaseUser.metadata.creationTime || '',
+      };
+      
+      setUser(userData);
+      
+      // Only store user in localStorage in development mode with mock auth
+      if (isMockAuthEnabled()) {
+        localStorage.setItem('currentUser', JSON.stringify(userData));
+      }
+      
+      setIsLoading(false);
+    });
+
+    // Set a timeout to ensure loading state is not stuck forever
+    const loadingTimeout = setTimeout(() => {
+      if (isMounted.current) {
+        console.log('Authentication loading timeout reached - forcing loading to false');
+        setIsLoading(false);
+      }
+    }, 1500); // 1.5 second timeout as a fallback (reduced from 2 seconds)
+
+    // Cleanup subscription and timeout
+    return () => {
+      clearTimeout(loadingTimeout);
+      unsubscribe();
+    };
   }, [setUser, setIsLoading]);
-}
+};

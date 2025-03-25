@@ -1,56 +1,29 @@
 
-import { isMockAuthEnabled } from '@/utils/environment';
+// User profile functions
 
 // Update user profile
 export const updateUserProfile = async (displayName: string): Promise<void> => {
-  console.log('Updating user profile:', displayName);
-  
   try {
-    if (isMockAuthEnabled()) {
-      // In development, just update localStorage
-      const storedUser = localStorage.getItem('mockUser');
-      if (storedUser) {
-        const user = JSON.parse(storedUser);
-        user.displayName = displayName;
-        user.name = displayName;
-        user.profileCompleted = true;
-        localStorage.setItem('mockUser', JSON.stringify(user));
-      }
-      return;
+    // Get the current user from localStorage
+    const storedUser = localStorage.getItem('currentUser');
+    if (storedUser) {
+      // Parse the user data
+      const user = JSON.parse(storedUser);
+      
+      // Update the display name
+      user.displayName = displayName;
+      user.name = displayName;
+      user.profileCompleted = true;
+      
+      // Save the updated user data back to localStorage
+      localStorage.setItem('currentUser', JSON.stringify(user));
+      
+      console.log('User profile updated successfully');
     } else {
-      // In production, this would update Firebase Auth user profile
-      console.log('Update user profile not implemented in production mode');
+      throw new Error('No user found in localStorage');
     }
   } catch (error) {
-    console.error('Update user profile error:', error);
+    console.error('Error updating user profile:', error);
     throw error;
-  }
-};
-
-// Update profile with arbitrary data
-export const updateProfile = async (profileData: { [key: string]: any }): Promise<{ success: boolean; error?: string }> => {
-  console.log('Updating profile with:', profileData);
-  
-  try {
-    if (isMockAuthEnabled()) {
-      // In development, just update localStorage
-      const storedUser = localStorage.getItem('mockUser');
-      if (storedUser) {
-        const user = JSON.parse(storedUser);
-        const updatedUser = { ...user, ...profileData };
-        localStorage.setItem('mockUser', JSON.stringify(updatedUser));
-      }
-      return { success: true };
-    } else {
-      // In production, this would update the user's profile in Firestore
-      console.log('Update profile not implemented in production mode');
-      return { success: false, error: 'Update profile not implemented for production yet' };
-    }
-  } catch (error) {
-    console.error('Update profile error:', error);
-    return { 
-      success: false, 
-      error: error instanceof Error ? error.message : 'Unknown error updating profile'
-    };
   }
 };

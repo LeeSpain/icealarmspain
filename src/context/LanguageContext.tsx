@@ -1,55 +1,62 @@
 
-import React, { createContext, useState, useContext, ReactNode } from 'react';
+import React, { createContext, useState, useContext, useEffect } from 'react';
+import { useAuth } from '@/context/AuthContext';
 
-type Language = 'en' | 'es' | 'fr' | 'de';
+export type Language = 'en' | 'es';
 
-interface LanguageContextType {
+export interface LanguageContextType {
   language: Language;
   setLanguage: (language: Language) => void;
   t: (key: string) => string;
 }
 
-const defaultContext: LanguageContextType = {
+const defaultTranslations: Record<string, Record<string, string>> = {
+  en: {},
+  es: {}
+};
+
+const LanguageContext = createContext<LanguageContextType>({
   language: 'en',
   setLanguage: () => {},
   t: (key: string) => key
-};
+});
 
-const LanguageContext = createContext<LanguageContextType>(defaultContext);
+export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [language, setLanguage] = useState<Language>(() => {
+    // Initialize from localStorage
+    return (localStorage.getItem('language') as Language) || 'en';
+  });
+  
+  // Get auth context, use optional chaining to handle case when auth context isn't ready
+  const auth = useAuth();
+  const profile = auth?.profile;
+  const isLoading = auth?.isLoading || false;
 
-// Simple translations just for core functionality
-const translations: Record<Language, Record<string, string>> = {
-  en: {
-    'app.name': 'Ice Guardian',
-    'app.loading': 'Loading...',
-    'error.general': 'Something went wrong',
-    'error.firebase': 'Firebase configuration error'
-  },
-  es: {
-    'app.name': 'Guardián de Hielo',
-    'app.loading': 'Cargando...',
-    'error.general': 'Algo salió mal',
-    'error.firebase': 'Error de configuración de Firebase'
-  },
-  fr: {
-    'app.name': 'Gardien de Glace',
-    'app.loading': 'Chargement...',
-    'error.general': 'Quelque chose s\'est mal passé',
-    'error.firebase': 'Erreur de configuration Firebase'
-  },
-  de: {
-    'app.name': 'Eis Wächter',
-    'app.loading': 'Wird geladen...',
-    'error.general': 'Etwas ist schief gelaufen',
-    'error.firebase': 'Firebase-Konfigurationsfehler'
-  }
-};
+  // When auth loads and profile is available, use profile language if set
+  useEffect(() => {
+    if (!isLoading && profile && profile.language) {
+      setLanguage(profile.language as Language);
+    }
+  }, [isLoading, profile]);
 
-export const LanguageProvider: React.FC<{children: ReactNode}> = ({ children }) => {
-  const [language, setLanguage] = useState<Language>('en');
+  // Save to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem('language', language);
+  }, [language]);
 
+  // Simple translation function
   const t = (key: string): string => {
-    return translations[language][key] || key;
+    // Simplified translation function - can be expanded later
+    const translations = defaultTranslations;
+    
+    if (language && 
+        translations[language] && 
+        translations[language][key]) {
+      return translations[language][key];
+    }
+    
+    // Return key as fallback
+    return key;
   };
 
   return (

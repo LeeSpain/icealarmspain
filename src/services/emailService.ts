@@ -1,126 +1,120 @@
 
-// Email service for sending and tracking emails
+import { supabase } from "@/integrations/supabase/client";
 
-interface EmailOptions {
+interface SendEmailProps {
   to: string;
   subject: string;
-  body: string;
-  template?: string;
-  attachments?: Array<{name: string, content: string}>;
+  html: string;
+  text?: string;
+  from?: string;
+  emailType?: string;
 }
 
-export interface EmailLog {
-  id: string;
-  userId: string;
-  to: string;
-  subject: string;
-  sentAt: Date;
-  status: 'sent' | 'failed' | 'delivered' | 'opened';
-  templateId?: string;
-}
-
-// Send email function
-export const sendEmail = async (options: EmailOptions): Promise<{success: boolean, error?: string}> => {
-  console.log('Sending email:', options);
-  
-  // In development, just log the email
-  if (process.env.NODE_ENV === 'development') {
-    console.log('Email sent (mock):', options);
-    return { success: true };
-  }
-  
+/**
+ * Send an email using the Supabase edge function
+ */
+export const sendEmail = async ({
+  to,
+  subject,
+  html,
+  text,
+  from,
+  emailType = "general"
+}: SendEmailProps) => {
   try {
-    // In production, this would send via an API
-    const response = await fetch('/api/send-email', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(options),
+    // Get the current user if available
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    const { data, error } = await supabase.functions.invoke("send-email", {
+      body: {
+        to,
+        subject,
+        html,
+        text,
+        from,
+        emailType,
+        userId: user?.id
+      },
     });
-    
-    if (!response.ok) {
-      const errorData = await response.json();
-      return { success: false, error: errorData.message || 'Failed to send email' };
+
+    if (error) {
+      console.error("Error sending email:", error);
+      throw error;
     }
-    
-    return { success: true };
+
+    return { data, error: null };
   } catch (error) {
-    console.error('Error sending email:', error);
-    return { 
-      success: false, 
-      error: error instanceof Error ? error.message : 'Failed to send email' 
-    };
+    console.error("Exception sending email:", error);
+    return { data: null, error };
   }
 };
 
-// Send test email
-export const sendTestEmail = async (to: string): Promise<{success: boolean, error?: string}> => {
-  return sendEmail({
-    to,
-    subject: 'Test Email from ICE Guardian',
-    body: `This is a test email sent from ICE Guardian at ${new Date().toLocaleString()}`
-  });
-};
+/**
+ * Send a welcome email to a new user
+ */
+export const sendWelcomeEmail = async (email: string, name: string) => {
+  const subject = "Welcome to ICE Alarm España";
+  const html = `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+      <h1 style="color: #0066cc;">Welcome to ICE Alarm España!</h1>
+      <p>Hello ${name || "there"},</p>
+      <p>Thank you for joining ICE Alarm España. We're excited to have you on board!</p>
+      <p>With our health monitoring services, you'll enjoy:</p>
+      <ul>
+        <li>24/7 emergency assistance</li>
+        <li>AI-powered health monitoring</li>
+        <li>Support in multiple languages</li>
+      </ul>
+      <p>If you have any questions, please don't hesitate to contact our support team.</p>
+      <p>Best regards,<br>The ICE Alarm España Team</p>
+    </div>
+  `;
 
-// Send welcome email to new users
-export const sendWelcomeEmail = async (to: string, name: string): Promise<{success: boolean, error?: string}> => {
   return sendEmail({
-    to,
-    subject: 'Welcome to ICE Guardian',
-    body: `Hello ${name},\n\nWelcome to ICE Guardian! We're excited to have you join our community.\n\nThe ICE Guardian Team`
-  });
-};
-
-// Send notification email for custom messages
-export const sendNotificationEmail = async (to: string, subject: string, message: string): Promise<{success: boolean, error?: string}> => {
-  return sendEmail({
-    to,
+    to: email,
     subject,
-    body: message
+    html,
+    emailType: "welcome"
   });
 };
 
-// Get email logs for a user
-export const getUserEmailLogs = async (userId: string): Promise<{data: EmailLog[], error?: string}> => {
-  console.log('Getting email logs for user:', userId);
-  
-  // In development, return mock data
-  if (process.env.NODE_ENV === 'development') {
-    return {
-      data: [
-        {
-          id: '1',
-          userId,
-          to: 'user@example.com',
-          subject: 'Welcome to ICE Guardian',
-          sentAt: new Date(Date.now() - 86400000), // 1 day ago
-          status: 'delivered'
-        },
-        {
-          id: '2',
-          userId,
-          to: 'user@example.com',
-          subject: 'Your monthly report',
-          sentAt: new Date(Date.now() - 172800000), // 2 days ago
-          status: 'opened'
-        }
-      ],
-      error: undefined
-    };
-  }
-  
+/**
+ * Send a notification email for important events
+ */
+export const sendNotificationEmail = async (email: string, title: string, message: string) => {
+  const subject = `ICE Alarm Notification: ${title}`;
+  const html = `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+      <h1 style="color: #0066cc;">ICE Alarm Notification</h1>
+      <h2>${title}</h2>
+      <p>${message}</p>
+      <p>For more details, please log in to your ICE Alarm dashboard.</p>
+      <p>Best regards,<br>The ICE Alarm España Team</p>
+    </div>
+  `;
+
+  return sendEmail({
+    to: email,
+    subject,
+    html,
+    emailType: "notification"
+  });
+};
+
+/**
+ * Retrieve email logs for the current user
+ */
+export const getUserEmailLogs = async () => {
   try {
-    const response = await fetch(`/api/email-logs?userId=${userId}`);
-    if (!response.ok) {
-      throw new Error('Failed to fetch email logs');
-    }
-    
-    const data = await response.json();
-    return { data };
+    const { data, error } = await supabase
+      .from("email_logs")
+      .select("*")
+      .order("created_at", { ascending: false });
+
+    if (error) throw error;
+    return { data, error: null };
   } catch (error) {
-    console.error('Error fetching email logs:', error);
-    return { 
-      data: [],
-      error: error instanceof Error ? error.message : 'Failed to fetch email logs'
-    };
+    console.error("Error retrieving email logs:", error);
+    return { data: null, error };
   }
 };

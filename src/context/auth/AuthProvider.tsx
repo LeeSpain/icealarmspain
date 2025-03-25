@@ -13,54 +13,28 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         // Create the context value
         const contextValue: AuthContextType = {
           user,
-          profile: user ? { 
-            display_name: user.displayName,
-            role: user.role
-          } : null,
           isAuthenticated: !!user,
           isLoading,
-          login: async (email, password, rememberMe) => {
-            try {
-              const user = await authFunctions.login(email, password, rememberMe);
-              return { user, error: null };
-            } catch (error) {
-              return { user: undefined, error };
-            }
-          },
-          signIn: async (email, password, rememberMe) => {
-            try {
-              const user = await authFunctions.signIn(email, password, rememberMe);
-              return { user, error: null };
-            } catch (error) {
-              return { user: undefined, error };
-            }
-          },
+          login: authFunctions.login,
+          signIn: authFunctions.signIn,
           signUp: async (email, password, userData) => {
             const result = await authFunctions.signUp(email, password, userData);
-            return result;
+            if (result.error) throw result.error;
+            if (!result.user) throw new Error('Failed to create user');
+            return result.user;
           },
           logout: authFunctions.logout,
-          signOut: authFunctions.logout,
           updateUserProfile: wrappedUpdateUserProfile,
-          updateProfile: async (data) => {
-            // Placeholder implementation
-            console.log("Update profile with:", data);
-            return { success: true };
-          },
           // Admin functions
           createUser: async (email, password, userData) => {
             const result = await authFunctions.createUser(email, password, userData);
-            return result;
+            if (result.error) throw result.error;
+            if (!result.user) throw new Error('Failed to create user');
+            return result.user;
           },
           getAllUsers: authFunctions.getAllUsers,
           updateUserRole: authFunctions.updateUserRole,
           deleteUser: authFunctions.deleteUser,
-          hasRole: (roles) => {
-            if (!user || !user.role) return false;
-            return Array.isArray(roles) 
-              ? roles.includes(user.role)
-              : user.role === roles;
-          }
         };
 
         return (
