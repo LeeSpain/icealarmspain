@@ -5,38 +5,40 @@ export interface Contact {
   relationship: string;
   phone: string;
   email: string;
-  address?: string;
-  priority: number; // Changed from enum to number
-  notificationPreferences: {
-    sms: boolean;
-    email: boolean;
-    call: boolean;
-  };
-  // Add missing properties
+  priority: number;
   receivesAlerts: boolean;
   receivesUpdates: boolean;
 }
 
-export interface TestResult {
-  success: boolean;
-  type: string;
-  recipients: string[];
-  error?: string;
-  timestamp: string;
-  id?: string; // Added optional id property
-  errorMessage?: string; // Added errorMessage property
-}
+export type AlertType = 'emergency' | 'medical' | 'activity' | 'all';
 
 export type TestStatus = 'idle' | 'sending' | 'success' | 'error';
 
-export interface TestLog {
+export interface TestResult {
   id: string;
-  timestamp: string;
-  type: string;
-  recipients: string[];
+  timestamp: Date;
+  type: AlertType;
   success: boolean;
-  error?: string;
+  recipients: string[];
+  errorMessage?: string;
 }
 
-// Add missing AlertType type
-export type AlertType = 'emergency' | 'medical' | 'activity' | 'all';
+export interface TestLog {
+  contactId: string;
+  timestamp: Date;
+  alertType: AlertType;
+  delivered: boolean;
+  deliveryMethod: 'sms' | 'email' | 'call';
+  message: string;
+}
+
+// Make all properties required to match the Zod schema
+export type ContactFormValues = {
+  name: string;
+  relationship: string;
+  phone: string;
+  email: string;
+  priority: number;
+  receivesAlerts: boolean;
+  receivesUpdates: boolean;
+};

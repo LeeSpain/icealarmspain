@@ -1,3 +1,4 @@
+
 /**
  * Deployment helper script
  * 
@@ -87,130 +88,92 @@ if (missingVars.length > 0) {
   process.exit(1);
 }
 
-// Check for placeholder values in production
-if (targetEnv === 'production') {
-  const placeholderVars = Object.entries(envVars)
-    .filter(([key, value]) => 
-      requiredVars.includes(key) && 
-      (value.includes('your_') || value.includes('placeholder'))
-    )
-    .map(([key]) => key);
-  
-  if (placeholderVars.length > 0) {
-    console.warn(`WARNING: The following variables in ${envFile} appear to have placeholder values:`);
-    console.warn(placeholderVars.join(', '));
-    console.warn(`Make sure to replace them with actual values before deploying to production.`);
+// Create a verbose environment file for debugging
+const debugEnvContent = Object.entries(envVars)
+  .map(([key, value]) => {
+    // Mask sensitive values in logs
+    if (key.includes('KEY') || key.includes('SECRET') || key.includes('PASSWORD')) {
+      return `${key}=***MASKED***`;
+    }
+    return `${key}=${value}`;
+  })
+  .join('\n');
+
+fs.writeFileSync('build-env-debug.log', `Building with environment:\n${debugEnvContent}`);
+console.log('Created build environment debug log');
+
+// Add build verification to the start of the main file
+try {
+  console.log('Adding build verification to enhance debugging...');
+  const mainFilePath = 'src/main.tsx';
+  if (fs.existsSync(mainFilePath)) {
+    const mainContent = fs.readFileSync(mainFilePath, 'utf-8');
+    const importLine = "import './utils/build-verification';";
     
-    // Ask for confirmation before continuing
-    const readline = require('readline').createInterface({
-      input: process.stdin,
-      output: process.stdout
-    });
-    
-    readline.question('Continue with build anyway? (y/N): ', (answer) => {
-      readline.close();
-      if (answer.toLowerCase() !== 'y') {
-        console.log('Build cancelled.');
-        process.exit(1);
-      }
-      // Otherwise continue with the build
-      continueBuild();
-    });
-  } else {
-    continueBuild();
+    if (!mainContent.includes(importLine)) {
+      const updatedContent = `${importLine}\n${mainContent}`;
+      fs.writeFileSync(mainFilePath, updatedContent);
+      console.log('Added build verification to main.tsx');
+    }
   }
-} else {
-  continueBuild();
+} catch (error) {
+  console.error('Warning: Could not add build verification:', error);
+  // Non-fatal error, continue
 }
 
-function continueBuild() {
-  // Create a verbose environment file for debugging
-  const debugEnvContent = Object.entries(envVars)
-    .map(([key, value]) => {
-      // Mask sensitive values in logs
-      if (key.includes('KEY') || key.includes('SECRET') || key.includes('PASSWORD')) {
-        return `${key}=***MASKED***`;
-      }
-      return `${key}=${value}`;
-    })
-    .join('\n');
-
-  fs.writeFileSync('build-env-debug.log', `Building with environment:\n${debugEnvContent}`);
-  console.log('Created build environment debug log');
-
-  // Add build verification to the start of the main file
-  try {
-    console.log('Adding build verification to enhance debugging...');
-    const mainFilePath = 'src/main.tsx';
-    if (fs.existsSync(mainFilePath)) {
-      const mainContent = fs.readFileSync(mainFilePath, 'utf-8');
-      const importLine = "import './utils/build-verification';";
-      
-      if (!mainContent.includes(importLine)) {
-        const updatedContent = `${importLine}\n${mainContent}`;
-        fs.writeFileSync(mainFilePath, updatedContent);
-        console.log('Added build verification to main.tsx');
-      }
-    }
-  } catch (error) {
-    console.error('Warning: Could not add build verification:', error);
-    // Non-fatal error, continue
+// Build the application with explicit environment variables
+console.log('Building application...');
+try {
+  // Prepare environment variables for the build
+  const envString = Object.entries(envVars)
+    .map(([key, value]) => `${key}=${value}`)
+    .join(' ');
+  
+  // Run the build with environment variables
+  if (targetEnv === 'production') {
+    // For production, use a more verbose build process
+    console.log('Running production build with debugging enabled...');
+    
+    // Set NODE_ENV explicitly in case it's not being picked up
+    process.env.NODE_ENV = 'production';
+    
+    execSync(`${envString} NODE_ENV=production VITE_DEBUG_BUILD=true vite build --mode production`, { 
+      stdio: 'inherit',
+      env: { ...process.env, ...envVars, NODE_ENV: 'production', VITE_DEBUG_BUILD: 'true' }
+    });
+  } else {
+    // Standard build for other environments
+    execSync(`${envString} vite build --mode ${targetEnv}`, { 
+      stdio: 'inherit',
+      env: { ...process.env, ...envVars }
+    });
   }
+} catch (error) {
+  console.error('Build failed', error);
+  process.exit(1);
+}
 
-  // Build the application with explicit environment variables
-  console.log('Building application...');
-  try {
-    // Prepare environment variables for the build
-    const envString = Object.entries(envVars)
-      .map(([key, value]) => `${key}=${value}`)
-      .join(' ');
-    
-    // Run the build with environment variables
-    if (targetEnv === 'production') {
-      // For production, use a more verbose build process
-      console.log('Running production build with debugging enabled...');
-      
-      // Set NODE_ENV explicitly in case it's not being picked up
-      process.env.NODE_ENV = 'production';
-      
-      execSync(`${envString} NODE_ENV=production vite build --mode production`, { 
-        stdio: 'inherit',
-        env: { ...process.env, ...envVars, NODE_ENV: 'production' }
-      });
-    } else {
-      // Standard build for other environments
-      execSync(`${envString} vite build --mode ${targetEnv}`, { 
-        stdio: 'inherit',
-        env: { ...process.env, ...envVars }
-      });
-    }
-  } catch (error) {
-    console.error('Build failed', error);
-    process.exit(1);
+console.log('Build completed successfully');
+
+// Add build info file in dist
+try {
+  const buildInfo = {
+    timestamp: new Date().toISOString(),
+    environment: targetEnv,
+    nodeEnv: process.env.NODE_ENV || 'unknown',
+    viteMode: targetEnv,
+    builtWith: 'deploy.js script'
+  };
+  
+  if (!fs.existsSync('dist')) {
+    fs.mkdirSync('dist');
   }
-
-  console.log('Build completed successfully');
-
-  // Add build info file in dist
-  try {
-    const buildInfo = {
-      timestamp: new Date().toISOString(),
-      environment: targetEnv,
-      nodeEnv: process.env.NODE_ENV || 'unknown',
-      viteMode: targetEnv,
-      builtWith: 'deploy.js script',
-      firebaseConfigPresent: !!envVars.VITE_FIREBASE_API_KEY && !!envVars.VITE_FIREBASE_PROJECT_ID
-    };
-    
-    if (!fs.existsSync('dist')) {
-      fs.mkdirSync('dist');
-    }
-    
-    fs.writeFileSync('dist/build-info.json', JSON.stringify(buildInfo, null, 2));
-    console.log('Added build info to output directory');
-    
-    // Create a test HTML file that can be used to verify the build
-    const testHtml = `
+  
+  fs.writeFileSync('dist/build-info.json', JSON.stringify(buildInfo, null, 2));
+  console.log('Added build info to output directory');
+  
+  // Create a test HTML file that can be used to verify the build
+  const testHtml = `
 <!DOCTYPE html>
 <html>
 <head>
@@ -222,7 +185,6 @@ function continueBuild() {
   <p>If you can see this page, the build was generated correctly.</p>
   <p>Environment: ${targetEnv}</p>
   <p>Build Time: ${new Date().toISOString()}</p>
-  <p>Firebase Config Present: ${!!envVars.VITE_FIREBASE_API_KEY && !!envVars.VITE_FIREBASE_PROJECT_ID}</p>
   <script>
     document.write('<p>JavaScript is working in this build.</p>');
     console.log('Build verification page loaded');
@@ -230,18 +192,17 @@ function continueBuild() {
 </body>
 </html>
 `;
-    fs.writeFileSync('dist/verify.html', testHtml);
-    console.log('Added verification page to dist/ folder');
-    
-  } catch (error) {
-    console.error('Warning: Could not write build info', error);
-    // Non-fatal error, continue
-  }
-
-  console.log(`Deployment to ${targetEnv} completed!`);
-  console.log(`Next steps:
-  1. Verify that .env.${targetEnv} contains all required environment variables
-  2. Test the build locally with: npx serve dist
-  3. If issues persist, check build-env-debug.log and browser console logs
-  `);
+  fs.writeFileSync('dist/verify.html', testHtml);
+  console.log('Added verification page to dist/ folder');
+  
+} catch (error) {
+  console.error('Warning: Could not write build info', error);
+  // Non-fatal error, continue
 }
+
+console.log(`Deployment to ${targetEnv} completed!`);
+console.log(`Next steps:
+1. Verify that .env.${targetEnv} contains all required environment variables
+2. Test the build locally with: npx serve dist
+3. If issues persist, check build-env-debug.log and browser console logs
+`);

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { User } from './types';
 import { useAuthEffects } from './useAuthEffects';
@@ -25,11 +24,6 @@ export const AuthStateManager: React.FC<AuthStateManagerProps> = ({ children }) 
         if (storedUser) {
           console.log("AuthStateManager: Found user in localStorage");
           const parsedUser = JSON.parse(storedUser);
-          
-          // Ensure we have the required status field with valid value
-          if (parsedUser && (!parsedUser.status || !['active', 'pending', 'suspended'].includes(parsedUser.status))) {
-            parsedUser.status = 'active';
-          }
           
           // Ensure role is properly set
           const storedRole = localStorage.getItem('userRole');

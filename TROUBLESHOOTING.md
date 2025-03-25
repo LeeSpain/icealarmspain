@@ -1,3 +1,4 @@
+
 # Troubleshooting Guide for Ice Guardian Alert
 
 This document provides solutions for common issues encountered when building, deploying, or running the Ice Guardian Alert application.
@@ -6,103 +7,128 @@ This document provides solutions for common issues encountered when building, de
 
 If you encounter a blank screen or the loading message doesn't disappear:
 
-### 1. Check Environment Variables in Vercel
+### 1. Check Environment Variables
 
 Missing environment variables are the most common cause of blank screens in production:
 
-1. Go to your [Vercel Dashboard](https://vercel.com/dashboard)
-2. Select your Ice Guardian Alert project
-3. Click on "Settings" in the top navigation
-4. Click on "Environment Variables" in the left sidebar
-5. Verify these required variables are set:
-   - `VITE_FIREBASE_API_KEY` - Your Firebase API key
-   - `VITE_FIREBASE_PROJECT_ID` - Your Firebase project ID
-6. If any are missing, add them with the values from your Firebase project
-7. Click "Save" and redeploy your application
+```bash
+# Verify that all required variables are set in your environment file
+cat .env.production
 
-### 2. How to Get Your Firebase Configuration Values
+# Required variables:
+# - VITE_FIREBASE_API_KEY
+# - VITE_FIREBASE_AUTH_DOMAIN
+# - VITE_FIREBASE_PROJECT_ID
+# - VITE_FIREBASE_STORAGE_BUCKET
+# - VITE_FIREBASE_MESSAGING_SENDER_ID
+# - VITE_FIREBASE_APP_ID
+```
 
-If you need to find your Firebase configuration values:
+### 2. Try the Debug Build
 
-1. Go to the [Firebase Console](https://console.firebase.google.com/)
-2. Select your project
-3. Click on the web app icon (</>) in the Project Overview 
-4. Select your app from the list
-5. Click on "Config" in the SDK setup options
-6. Copy the values from the displayed configuration object:
-   ```javascript
-   const firebaseConfig = {
-     apiKey: "YOUR_API_KEY", // Use this for VITE_FIREBASE_API_KEY
-     projectId: "YOUR_PROJECT_ID", // Use this for VITE_FIREBASE_PROJECT_ID
-     // other values...
-   };
-   ```
+Use the debug build option to get more verbose logging:
 
-### 3. Clear Browser Cache and Try Again
+```bash
+npm run build:debug
+```
 
-Sometimes browser caching can cause issues with new deploys:
+This adds additional console logging and enables the `VITE_DEBUG_BUILD` flag.
 
-1. Clear your browser cache (Ctrl+Shift+Delete or ⌘+Shift+Delete on Mac)
-2. Try loading the site in an incognito/private browsing window
-3. Try a different browser entirely
+### 3. Check Console Logs
 
-### 4. Check Browser Console for Specific Errors
+Open your browser's developer tools (F12) and check the console tab for errors.
 
-1. Open your browser's developer tools (F12 or right-click → Inspect)
-2. Go to the Console tab
-3. Look for error messages:
-   - "Firebase not initialized" - Environment variables issue
-   - "ChunkLoadError" - Build configuration issue
-   - "TypeError: Cannot read property of undefined" - Initialization sequence issue
+Common error patterns:
+- "Firebase not initialized" - Environment variables issue
+- "ChunkLoadError" - Build configuration issue
+- "TypeError: Cannot read property of undefined" - Initialization sequence issue
 
-### 5. Verify Firebase Project Settings
+### 4. Verify the Build Output
 
-If you're still having issues:
+Inspect the generated build files:
 
-1. Confirm your Firebase project is active
-2. Verify that the web app is registered and enabled in the Firebase console
-3. Make sure your API key hasn't been rotated or changed
+```bash
+# Check the main JavaScript bundle
+ls -la dist/assets/*.js
 
-## Common Errors and Solutions
+# Ensure index.html was generated properly
+cat dist/index.html
+```
 
-### "Firebase app already exists" Error
+Look for any missing scripts or malformed HTML.
 
-This can happen if Firebase is initialized multiple times:
+### 5. Test with a Local Server
 
-1. Check that you're only importing and initializing Firebase once
-2. Look for duplicate imports of the Firebase configuration
+Test the build locally before deploying:
 
-### "Missing or insufficient permissions" Error
+```bash
+npx serve dist
+```
 
-This indicates a Firebase Authentication or Database permission issue:
+Visit http://localhost:3000 and check if the application works correctly.
 
-1. Check Firebase Console → Authentication → Sign-in methods
-2. Ensure all required sign-in methods are enabled
-3. Verify Security Rules in Firebase Console if using Firestore or Realtime Database
+## Environment Variable Issues
 
-## Vercel-Specific Deployment Issues
+If your environment variables aren't being injected correctly:
 
-### Environment Variables Not Loading
+1. Make sure all variables in `.env.production` start with `VITE_` for client-side use
+2. Verify that the deploy script is correctly copying the environment file
+3. Check for any syntax errors in your environment files (no spaces around = signs)
 
-If your environment variables appear to be set but aren't working:
+## Firebase Configuration Issues
 
-1. Check for typos in the variable names
-2. Make sure you've selected the right environment (Production, Preview, Development)
-3. Try redeploying with "Clear cache and redeploy" option
+If Firebase isn't initializing:
 
-### Cold Start Issues
+1. Verify your Firebase project is properly set up in the Firebase console
+2. Check that the web app is registered and the configuration matches your environment variables
+3. Test authentication with a minimal Firebase example to confirm your credentials work
 
-If the app works after a few refreshes but initially shows a blank screen:
+## Build Process Issues
 
-1. Check if there's a long initialization process in your code
-2. Consider adding a pre-rendering step to your build process
-3. Implement a better loading state that appears immediately
+If the build process fails:
+
+1. Clear the cache and node modules:
+```bash
+rm -rf node_modules/.vite
+npm cache clean --force
+rm -rf node_modules
+npm install
+```
+
+2. Try with the --force flag:
+```bash
+vite build --force
+```
+
+3. Check for TypeScript errors:
+```bash
+npx tsc --noEmit
+```
+
+## React Rendering Issues
+
+If React isn't rendering properly:
+
+1. Check that the root element exists in the DOM
+2. Verify that ReactDOM.createRoot is being called correctly
+3. Look for errors during React initialization in the console
+
+## Deployment Checklist
+
+Before deploying, always:
+
+1. Run `npm run build` locally and test with `npx serve dist`
+2. Verify all required environment variables are set
+3. Check for any TypeScript or ESLint errors
+4. Review the console for warnings or errors
+5. Test critical paths in the application
 
 ## Getting Help
 
 If you're still experiencing issues:
 
 1. Capture the full console output with errors
-2. Take a screenshot of your Vercel environment variables (with sensitive data redacted)
+2. Note which environment you're deploying to
 3. Document the steps to reproduce the issue
-4. Contact support at support@iceguardian.com
+4. Share the build logs if available
+

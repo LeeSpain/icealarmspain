@@ -1,8 +1,7 @@
 
-import React from 'react';
-import { Navigate } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
-import LoadingSpinner from '@/components/ui/loading-spinner';
 
 interface AuthGuardProps {
   children: React.ReactNode;
@@ -10,33 +9,29 @@ interface AuthGuardProps {
 }
 
 const AuthGuard: React.FC<AuthGuardProps> = ({ children, allowedRoles }) => {
-  const { isAuthenticated, isLoading, hasRole } = useAuth();
+  const { user, profile, isLoading } = useAuth();
+  const location = useLocation();
 
-  // Show loading state while checking authentication
+  const checkRoleAccess = () => {
+    if (!allowedRoles || !profile) return true;
+    return allowedRoles.includes(profile.role);
+  };
+
   if (isLoading) {
-    return (
-      <div className="flex h-screen items-center justify-center">
-        <LoadingSpinner size="lg" />
-      </div>
-    );
+    // You could return a loading spinner here
+    return <div className="flex items-center justify-center h-screen">Loading...</div>;
   }
 
-  // Redirect to login if not authenticated
-  if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
+  if (!user) {
+    // Redirect to login page if not authenticated
+    return <Navigate to={`/login?redirect=${encodeURIComponent(location.pathname)}`} replace />;
   }
 
-  // Check role-based access if roles are specified
-  if (allowedRoles && allowedRoles.length > 0) {
-    const hasAccess = hasRole(allowedRoles);
-    
-    if (!hasAccess) {
-      // Redirect to dashboard if authenticated but doesn't have required role
-      return <Navigate to="/dashboard" replace />;
-    }
+  if (allowedRoles && !checkRoleAccess()) {
+    // Redirect to dashboard if user doesn't have required role
+    return <Navigate to="/dashboard" replace />;
   }
 
-  // User is authenticated and has required roles (if any)
   return <>{children}</>;
 };
 

@@ -1,79 +1,109 @@
 
+import { auth, createUserWithEmailAndPassword, updateProfile } from '@/services/firebase/auth';
 import { User } from '../types';
-import { isMockAuthEnabled } from '@/utils/environment';
+import { determineUserRole } from '../utils';
+import { isMockAuthEnabled, isDevelopment } from '@/utils/environment';
+import { sendWelcomeEmail } from '@/services/emailService';
 
-// Example function to create a new user
+// Sign up function (create a new user)
 export const signUp = async (
-  email: string,
-  password: string,
-  userData: any = {}
-): Promise<{ user?: User; error?: any }> => {
-  console.log('Signing up:', email, userData);
-
-  try {
-    if (isMockAuthEnabled()) {
-      const mockUser: User = {
-        id: `mock-${Date.now()}`,
-        uid: `mock-${Date.now()}`,
-        email: email,
-        name: userData.name || email.split('@')[0],
-        displayName: userData.name || email.split('@')[0],
-        role: 'member',
-        profileCompleted: false,
-        status: 'active',
-        language: userData.language || 'en'
-      };
-
-      localStorage.setItem('mockUser', JSON.stringify(mockUser));
-      
-      // Simulate sending welcome email
-      console.log(`Mock: Sending welcome email to ${email}`);
-      
-      return { user: mockUser };
-    } else {
-      // In a real app, this would be implemented with Firebase Auth
-      console.log('Signup not implemented in production mode');
-      return { error: 'Sign up not implemented for production yet' };
+  email: string, 
+  password: string, 
+  userData?: any
+): Promise<{ user: User | null; error: any | null }> => {
+  console.log('Signup attempt:', { email });
+  
+  if (!email || !password) {
+    return { 
+      user: null, 
+      error: new Error('Email and password are required') 
+    };
+  }
+  
+  // In mock auth mode for development, use the mock implementation
+  if (isMockAuthEnabled()) {
+    console.log('Using mock auth implementation for signup');
+    
+    // Determine role using exact email matching
+    const role = determineUserRole(email);
+    console.log('Determined role:', role);
+    
+    const devUserId = `dev-${email.replace(/[^a-z0-9]/gi, '-')}`;
+    
+    // Create a user object
+    const user: User = {
+      uid: devUserId,
+      id: devUserId,
+      email: email,
+      name: userData?.display_name || email.split('@')[0],
+      displayName: userData?.display_name || email.split('@')[0],
+      role,
+      status: 'active',
+      profileCompleted: !!userData?.display_name,
+      language: localStorage.getItem('language') || 'en',
+      lastLogin: new Date().toISOString(),
+      createdAt: new Date().toISOString()
+    };
+    
+    // Store the user in localStorage
+    localStorage.setItem('currentUser', JSON.stringify(user));
+    localStorage.setItem('userRole', role);
+    
+    // Send welcome email
+    try {
+      await sendWelcomeEmail(email, user.displayName);
+    } catch (error) {
+      console.error('Error sending welcome email:', error);
+      // Continue even if email fails
     }
-  } catch (error) {
-    console.error('Sign up error:', error);
-    return { error };
+    
+    return { user, error: null };
+  } 
+  // In production, use the real Firebase auth
+  else {
+    try {
+      // Create user with Firebase
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const firebaseUser = userCredential.user;
+      
+      // Update display name if provided
+      if (userData?.display_name) {
+        await updateProfile(firebaseUser, { displayName: userData.display_name });
+      }
+      
+      // Determine role from email
+      const role = determineUserRole(firebaseUser.email || '');
+      
+      // Create user object
+      const user: User = {
+        uid: firebaseUser.uid,
+        id: firebaseUser.uid,
+        email: firebaseUser.email || '',
+        name: userData?.display_name || firebaseUser.displayName || email.split('@')[0],
+        displayName: userData?.display_name || firebaseUser.displayName || email.split('@')[0],
+        role,
+        status: 'active',
+        profileCompleted: !!userData?.display_name,
+        language: localStorage.getItem('language') || 'en',
+        lastLogin: new Date().toISOString(),
+        createdAt: firebaseUser.metadata.creationTime || '',
+      };
+      
+      // Send welcome email
+      try {
+        await sendWelcomeEmail(email, user.displayName);
+      } catch (error) {
+        console.error('Error sending welcome email:', error);
+        // Continue even if email fails
+      }
+      
+      return { user, error: null };
+    } catch (error) {
+      console.error('Firebase authentication error during signup:', error);
+      return { user: null, error };
+    }
   }
 };
 
-// Function to create a user (admin function)
-export const createUser = async (
-  email: string,
-  password: string,
-  userData: any = {}
-): Promise<{ user?: User; error?: any }> => {
-  console.log('Admin creating user:', email, userData);
-
-  try {
-    if (isMockAuthEnabled()) {
-      const mockUser: User = {
-        id: `mock-${Date.now()}`,
-        uid: `mock-${Date.now()}`,
-        email: email,
-        name: userData.name || email.split('@')[0],
-        displayName: userData.name || email.split('@')[0],
-        role: userData.role || 'member',
-        profileCompleted: false,
-        status: 'active',
-        language: userData.language || 'en'
-      };
-      
-      // Simulate notification
-      console.log(`Mock: Admin created user ${email} with role ${mockUser.role}`);
-      
-      return { user: mockUser };
-    } else {
-      // In a real app, this would be implemented with Firebase Admin SDK
-      console.log('User creation not implemented in production mode');
-      return { error: 'User creation not implemented for production yet' };
-    }
-  } catch (error) {
-    console.error('Create user error:', error);
-    return { error };
-  }
-};
+// Export this function for backward compatibility
+export const createUser = signUp;

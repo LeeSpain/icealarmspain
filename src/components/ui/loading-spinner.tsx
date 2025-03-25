@@ -1,55 +1,57 @@
 
-import React from 'react';
-import { cn } from '@/lib/utils';
+import React from "react";
+import { cn } from "@/lib/utils";
+import { Loader2 } from "lucide-react";
+import { useLanguage } from "@/context/LanguageContext";
 
-export interface LoadingSpinnerProps {
-  size?: 'sm' | 'md' | 'lg';
-  className?: string;
-  color?: 'primary' | 'white' | 'gray';
-  fullPage?: boolean;
+interface LoadingSpinnerProps {
+  size?: "sm" | "md" | "lg";
   message?: string;
+  className?: string;
+  fullPage?: boolean;
 }
 
-const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
-  size = 'md',
+export const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({ 
+  size = "md", 
+  message, 
   className,
-  color = 'primary',
-  fullPage = false,
-  message
+  fullPage = false
 }) => {
+  const { language } = useLanguage();
+  const defaultMessage = language === 'en' ? 'Loading...' : 'Cargando...';
+  
   const sizeClasses = {
-    sm: 'w-4 h-4 border-2',
-    md: 'w-8 h-8 border-3',
-    lg: 'w-12 h-12 border-4'
+    sm: "h-4 w-4",
+    md: "h-8 w-8",
+    lg: "h-12 w-12"
   };
-
-  const colorClasses = {
-    primary: 'border-t-blue-500',
-    white: 'border-t-white',
-    gray: 'border-t-gray-400'
-  };
-
-  const spinner = (
-    <div
-      className={cn(
-        'animate-spin rounded-full border-solid border-gray-200',
-        sizeClasses[size],
-        colorClasses[color],
-        className
+  
+  const content = (
+    <div className={cn(
+      "flex flex-col items-center justify-center", 
+      fullPage ? "min-h-screen" : "",
+      className
+    )}>
+      <Loader2 className={cn("animate-spin text-primary mb-2", sizeClasses[size])} aria-hidden="true" />
+      {(message || fullPage) && (
+        <p className="text-muted-foreground">
+          {message || defaultMessage}
+        </p>
       )}
-    />
+    </div>
   );
-
-  if (fullPage) {
-    return (
-      <div className="fixed inset-0 flex flex-col items-center justify-center bg-white bg-opacity-80 z-50">
-        {spinner}
-        {message && <p className="mt-4 text-gray-600">{message}</p>}
-      </div>
-    );
-  }
-
-  return spinner;
+  
+  // For accessibility, announce loading state to screen readers
+  return (
+    <>
+      {content}
+      {fullPage && (
+        <div className="sr-only" role="status" aria-live="polite">
+          {message || defaultMessage}
+        </div>
+      )}
+    </>
+  );
 };
 
 export default LoadingSpinner;

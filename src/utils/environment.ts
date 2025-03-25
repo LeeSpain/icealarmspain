@@ -1,85 +1,155 @@
 
-// Environment utility functions
+/**
+ * Environment utility functions to safely access environment variables
+ * and determine environment-specific behavior
+ */
+
+// Environment type definition
+export type Environment = 'development' | 'staging' | 'production';
 
 /**
- * Check if we're running in development mode
+ * Get the current environment
  */
-export const isDevelopment = (): boolean => {
-  return process.env.NODE_ENV === 'development';
+export const getEnvironment = (): Environment => {
+  // First check VITE_ENVIRONMENT
+  const envVar = import.meta.env.VITE_ENVIRONMENT;
+  if (envVar === 'production' || envVar === 'staging') {
+    return envVar;
+  }
+  
+  // Fallback to NODE_ENV if VITE_ENVIRONMENT isn't set
+  if (import.meta.env.MODE === 'production') {
+    console.warn('Using MODE=production as fallback for missing VITE_ENVIRONMENT');
+    return 'production';
+  }
+  
+  // Default to development
+  return 'development';
 };
 
 /**
- * Check if we're running in production mode
+ * Check if we're in production
  */
 export const isProduction = (): boolean => {
-  return process.env.NODE_ENV === 'production';
+  return getEnvironment() === 'production' || import.meta.env.PROD === true;
 };
 
 /**
- * Check if we're running in a debug build
+ * Check if we're in staging
  */
-export const isDebugBuild = (): boolean => {
-  return isDevelopment() || !!import.meta.env.VITE_DEBUG_MODE;
+export const isStaging = (): boolean => {
+  return getEnvironment() === 'staging';
 };
 
 /**
- * Check if we should use mock authentication for development
+ * Check if we're in development
+ */
+export const isDevelopment = (): boolean => {
+  return getEnvironment() === 'development' || import.meta.env.DEV === true;
+};
+
+/**
+ * Get required environment variable with fallback for safety
+ * In production, this will warn but not crash if the var is missing
+ */
+export const getRequiredEnvVar = (key: string): string => {
+  const value = import.meta.env[key];
+  if (!value) {
+    const errorMsg = `Environment variable ${key} is required but not defined`;
+    console.error(errorMsg);
+    
+    // In development, we throw to make the error more visible
+    if (isDevelopment()) {
+      throw new Error(errorMsg);
+    }
+    
+    // In production, return a placeholder to prevent crashes
+    return '[MISSING-ENV-VAR]';
+  }
+  return value;
+};
+
+/**
+ * Get optional environment variable with fallback
+ */
+export const getEnvVar = (key: string, fallback: string = ''): string => {
+  const value = import.meta.env[key];
+  return value || fallback;
+};
+
+/**
+ * Check if all required environment variables are present
+ * Useful for validation during app initialization
+ */
+export const validateRequiredEnvVars = (keys: string[]): {valid: boolean, missing: string[]} => {
+  const missing: string[] = [];
+  
+  keys.forEach(key => {
+    if (!import.meta.env[key]) {
+      missing.push(key);
+    }
+  });
+  
+  return {
+    valid: missing.length === 0,
+    missing
+  };
+};
+
+/**
+ * Get API URL with optional path
+ */
+export const getApiUrl = (path: string = ''): string => {
+  const baseUrl = getEnvVar('VITE_API_URL', '');
+  return `${baseUrl}${path}`;
+};
+
+/**
+ * Get redirect URL for authentication
+ */
+export const getAuthRedirectUrl = (): string => {
+  return getEnvVar('VITE_AUTH_REDIRECT_URL', window.location.origin);
+};
+
+/**
+ * Check if mock authentication should be enabled
  */
 export const isMockAuthEnabled = (): boolean => {
-  return isDevelopment() || !hasValidFirebaseConfig();
+  const mockAuth = getEnvVar('VITE_ENABLE_MOCK_AUTH', 'false');
+  return mockAuth === 'true';
 };
 
 /**
- * Check if we have a valid Firebase configuration
+ * Check if analytics should be enabled
  */
-export const hasValidFirebaseConfig = (): boolean => {
-  // This would check for Firebase config in a real app
-  // For now, we're returning false to force mock auth
-  return false;
+export const isAnalyticsEnabled = (): boolean => {
+  const enableAnalytics = getEnvVar('VITE_ENABLE_ANALYTICS', 'false');
+  return enableAnalytics === 'true' || isProduction();
 };
 
 /**
- * Get an environment variable with a fallback value if it's not defined
+ * Check if debug build is enabled
  */
-export const getEnvVar = (name: string, fallback: string = ''): string => {
-  return import.meta.env[name] || fallback;
+export const isDebugBuild = (): boolean => {
+  const debugBuild = getEnvVar('VITE_DEBUG_BUILD', 'false');
+  return debugBuild === 'true';
 };
 
 /**
- * Get a required environment variable, throws an error if it's not defined in production
+ * Get a diagnostic report of the current environment
+ * Useful for troubleshooting
  */
-export const getRequiredEnvVar = (name: string): string => {
-  const value = import.meta.env[name];
-  if (!value && isProduction()) {
-    throw new Error(`Required environment variable ${name} is not defined`);
-  }
-  return value || '';
-};
-
-/**
- * Get the current environment (development, production, etc.)
- */
-export const getEnvironment = (): string => {
-  return process.env.NODE_ENV || 'development';
-};
-
-/**
- * Get diagnostics information about the current environment
- */
-export const getEnvironmentDiagnostics = (): Record<string, any> => {
+export const getEnvironmentDiagnostics = (): Record<string, unknown> => {
   return {
     environment: getEnvironment(),
-    isDevelopment: isDevelopment(),
     isProduction: isProduction(),
-    isDebugBuild: isDebugBuild(),
-    nodeEnv: process.env.NODE_ENV,
-    hasValidFirebaseConfig: hasValidFirebaseConfig(),
-    firebaseApiKeyDefined: !!import.meta.env.VITE_FIREBASE_API_KEY,
-    firebaseProjectIdDefined: !!import.meta.env.VITE_FIREBASE_PROJECT_ID,
-    viteMode: import.meta.env.MODE,
-    viteDev: import.meta.env.DEV,
-    viteProd: import.meta.env.PROD,
-    buildTime: import.meta.env.VITE_BUILD_TIME || 'unknown',
-    mockAuthEnabled: isMockAuthEnabled()
+    isStaging: isStaging(), 
+    isDevelopment: isDevelopment(),
+    mode: import.meta.env.MODE,
+    base: import.meta.env.BASE_URL,
+    userAgent: navigator.userAgent,
+    timestamp: new Date().toISOString(),
+    availableEnvVars: Object.keys(import.meta.env)
+      .filter(key => !key.includes('KEY') && !key.includes('SECRET'))
   };
 };

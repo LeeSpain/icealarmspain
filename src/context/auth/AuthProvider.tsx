@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { AuthContextType } from './types';
 import { AuthContext } from './context';
@@ -12,34 +13,28 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         // Create the context value
         const contextValue: AuthContextType = {
           user,
-          profile: user ? { 
-            display_name: user.displayName,
-            role: user.role
-          } : null,
           isAuthenticated: !!user,
           isLoading,
           login: authFunctions.login,
           signIn: authFunctions.signIn,
-          signUp: authFunctions.signUp,
-          logout: authFunctions.logout,
-          signOut: authFunctions.logout,
-          updateUserProfile: wrappedUpdateUserProfile,
-          updateProfile: async (data) => {
-            // Placeholder implementation
-            console.log("Update profile with:", data);
-            return { success: true };
+          signUp: async (email, password, userData) => {
+            const result = await authFunctions.signUp(email, password, userData);
+            if (result.error) throw result.error;
+            if (!result.user) throw new Error('Failed to create user');
+            return result.user;
           },
+          logout: authFunctions.logout,
+          updateUserProfile: wrappedUpdateUserProfile,
           // Admin functions
-          createUser: authFunctions.createUser,
+          createUser: async (email, password, userData) => {
+            const result = await authFunctions.createUser(email, password, userData);
+            if (result.error) throw result.error;
+            if (!result.user) throw new Error('Failed to create user');
+            return result.user;
+          },
           getAllUsers: authFunctions.getAllUsers,
           updateUserRole: authFunctions.updateUserRole,
           deleteUser: authFunctions.deleteUser,
-          hasRole: (roles) => {
-            if (!user || !user.role) return false;
-            return Array.isArray(roles) 
-              ? roles.includes(user.role)
-              : user.role === roles;
-          }
         };
 
         return (

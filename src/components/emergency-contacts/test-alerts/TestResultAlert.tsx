@@ -2,7 +2,7 @@
 import React from 'react';
 import { useLanguage } from '@/context/LanguageContext';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
-import { CheckCircle, AlertTriangle, XCircle, Clock } from 'lucide-react';
+import { CheckCircle2, XCircle } from 'lucide-react';
 import { TestResult } from '../types';
 
 interface TestResultAlertProps {
@@ -11,38 +11,29 @@ interface TestResultAlertProps {
 
 const TestResultAlert: React.FC<TestResultAlertProps> = ({ testResult }) => {
   const { language } = useLanguage();
-
+  
   if (!testResult) return null;
-
-  const { success, type, recipients, timestamp } = testResult;
-
-  const formattedTime = new Date(timestamp).toLocaleTimeString();
-  const formattedDate = new Date(timestamp).toLocaleDateString();
-
-  const iconMap = {
-    success: <CheckCircle className="h-5 w-5 text-green-500" />,
-    error: <XCircle className="h-5 w-5 text-red-500" />,
-    pending: <Clock className="h-5 w-5 text-amber-500" />
-  };
-
+  
   return (
-    <Alert variant={success ? "default" : "destructive"} className="mb-6">
+    <Alert variant={testResult.success ? "default" : "destructive"} className="mb-6">
       <div className="flex items-start">
-        {success ? iconMap.success : iconMap.error}
-        <div className="ml-3">
-          <AlertTitle className="mb-1 text-base">
-            {success 
+        {testResult.success ? (
+          <CheckCircle2 className="h-5 w-5 mr-2 text-green-500" />
+        ) : (
+          <XCircle className="h-5 w-5 mr-2 text-destructive" />
+        )}
+        <div>
+          <AlertTitle>
+            {testResult.success 
               ? (language === 'en' ? 'Test Successful' : 'Prueba Exitosa')
               : (language === 'en' ? 'Test Failed' : 'Prueba Fallida')}
           </AlertTitle>
-          <AlertDescription className="text-sm">
-            {success 
+          <AlertDescription>
+            {testResult.success
               ? (language === 'en' 
-                  ? `Test ${type} alert sent to ${recipients.length} contact(s) at ${formattedTime} on ${formattedDate}.`
-                  : `Alerta de prueba ${type} enviada a ${recipients.length} contacto(s) a las ${formattedTime} el ${formattedDate}.`)
-              : (language === 'en'
-                  ? testResult.error || testResult.errorMessage || "Failed to send test alerts."
-                  : testResult.error || testResult.errorMessage || "Error al enviar alertas de prueba.")}
+                  ? `Test ${testResult.type} alerts were sent to ${testResult.recipients.join(', ')}.`
+                  : `Alertas de prueba de tipo ${testResult.type} fueron enviadas a ${testResult.recipients.join(', ')}.`)
+              : (testResult.errorMessage || (language === 'en' ? 'An error occurred' : 'Ocurrió un error'))}
           </AlertDescription>
         </div>
       </div>

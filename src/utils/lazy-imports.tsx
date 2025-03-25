@@ -1,63 +1,50 @@
 
-import React, { Suspense, LazyExoticComponent, ComponentType } from 'react';
-import { Route, RouteProps } from 'react-router-dom';
+import React, { Suspense } from 'react';
 import LoadingSpinner from '@/components/ui/loading-spinner';
 
-/**
- * Wrapper component for lazily loaded components with a loading fallback
- */
-export const AsyncComponent = ({
+interface LazyComponentProps {
+  component: React.LazyExoticComponent<React.ComponentType<any>>;
+  loading?: React.ReactNode;
+  props?: Record<string, any>;
+}
+
+export function lazyImport<T extends React.ComponentType<any>>(
+  importFunc: () => Promise<{ default: T }>
+) {
+  return React.lazy(importFunc);
+}
+
+export const LazyComponent: React.FC<LazyComponentProps> = ({
   component: Component,
-  ...props
-}: {
-  component: LazyExoticComponent<ComponentType<any>>;
-  [key: string]: any;
+  loading,
+  props = {},
 }) => {
   return (
-    <Suspense
-      fallback={
-        <div className="flex items-center justify-center h-full w-full">
-          <LoadingSpinner 
-            size="lg" 
-            color="primary"
-          />
-        </div>
-      }
-    >
+    <Suspense fallback={loading || <LoadingSpinner fullPage />}>
       <Component {...props} />
     </Suspense>
   );
 };
 
-/**
- * Creates a route with a lazy-loaded component
- */
-export function AsyncPageRoute({
-  component: Component,
-  fallbackMessage = "Loading page...",
-  ...rest
-}: RouteProps & {
-  component: LazyExoticComponent<ComponentType<any>>;
-  fallbackMessage?: string;
-}) {
-  return (
-    <Route
-      {...rest}
-      element={
-        <Suspense
-          fallback={
-            <div className="flex items-center justify-center h-screen">
-              <LoadingSpinner 
-                size="lg" 
-                message={fallbackMessage}
-                color="primary"
-              />
-            </div>
-          }
-        >
-          <Component />
-        </Suspense>
-      }
-    />
-  );
-}
+// Create a higher-order component for lazy loading page components
+export const withLazyLoading = <P extends object>(
+  importFunc: () => Promise<{ default: React.ComponentType<P> }>,
+  loadingMessage?: string
+) => {
+  const LazyComponent = React.lazy(importFunc);
+  
+  // Create a proper React function component that will properly handle the props
+  const WithLazyLoading = (props: P) => {
+    return (
+      <Suspense fallback={<LoadingSpinner fullPage message={loadingMessage} />}>
+        {/* Use createElement with properly typed props to avoid TypeScript issues */}
+        <LazyComponent {...(props as any)} />
+      </Suspense>
+    );
+  };
+  
+  // Set display name for better debugging
+  WithLazyLoading.displayName = `withLazyLoading(${importFunc.toString().split('(')[0]})`;
+  
+  return WithLazyLoading;
+};

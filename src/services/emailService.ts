@@ -1,131 +1,120 @@
 
-/**
- * Email service functions
- */
+import { supabase } from "@/integrations/supabase/client";
 
-// Email log type
-export interface EmailLog {
-  id: string;
+interface SendEmailProps {
   to: string;
   subject: string;
-  body: string;
-  sentAt: string;
-  status: 'sent' | 'failed';
-  userId: string;
+  html: string;
+  text?: string;
+  from?: string;
+  emailType?: string;
 }
 
-// Placeholder implementation for email sending
-export const sendEmail = async (
-  to: string, 
-  subject: string, 
-  body: string
-): Promise<{ success: boolean; error?: string }> => {
-  console.log(`Sending email to ${to} with subject: ${subject}`);
-  
-  // Mock implementation always succeeds
-  return { success: true };
-};
+/**
+ * Send an email using the Supabase edge function
+ */
+export const sendEmail = async ({
+  to,
+  subject,
+  html,
+  text,
+  from,
+  emailType = "general"
+}: SendEmailProps) => {
+  try {
+    // Get the current user if available
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    const { data, error } = await supabase.functions.invoke("send-email", {
+      body: {
+        to,
+        subject,
+        html,
+        text,
+        from,
+        emailType,
+        userId: user?.id
+      },
+    });
 
-// Welcome email
-export const sendWelcomeEmail = async (
-  to: string, 
-  userName: string
-): Promise<{ success: boolean; error?: string }> => {
-  console.log(`Sending welcome email to ${to} for user ${userName}`);
-  
-  return sendEmail(
-    to,
-    'Welcome to Ice Guardian!',
-    `Hello ${userName},\n\nWelcome to Ice Guardian! We're excited to have you on board.`
-  );
-};
-
-// Password reset email
-export const sendPasswordResetEmail = async (
-  to: string
-): Promise<{ success: boolean; error?: string }> => {
-  console.log(`Sending password reset email to ${to}`);
-  
-  return sendEmail(
-    to,
-    'Password Reset Request',
-    'You requested a password reset. Click the link below to reset your password.'
-  );
-};
-
-// Notification email
-export const sendNotificationEmail = async (
-  to: string | string[],
-  subject: string,
-  message: string
-): Promise<{ success: boolean; error?: string }> => {
-  const recipients = Array.isArray(to) ? to : [to];
-  console.log(`Sending notification email to ${recipients.join(', ')}`);
-  
-  // In a real implementation, we would handle multiple recipients
-  // Here we're just sending to each recipient individually
-  const results = await Promise.all(
-    recipients.map(recipient => 
-      sendEmail(recipient, subject, message)
-    )
-  );
-  
-  // Check if any failed
-  const anyFailed = results.some(result => !result.success);
-  if (anyFailed) {
-    return { 
-      success: false, 
-      error: 'Failed to send to some recipients' 
-    };
-  }
-  
-  return { success: true };
-};
-
-// Emergency alert email
-export const sendEmergencyAlertEmail = async (
-  to: string | string[],
-  userName: string,
-  message: string
-): Promise<{ success: boolean; error?: string, recipients: string[] }> => {
-  const recipients = Array.isArray(to) ? to : [to];
-  console.log(`Sending emergency alert email for ${userName} to ${recipients.join(', ')}`);
-  
-  const result = await sendNotificationEmail(
-    recipients,
-    `EMERGENCY ALERT: ${userName} needs assistance`,
-    message
-  );
-  
-  return { 
-    ...result, 
-    recipients
-  };
-};
-
-// Get user email logs
-export const getUserEmailLogs = async (userId: string): Promise<{ data: EmailLog[], error: string | null }> => {
-  // Mock implementation
-  const mockLogs: EmailLog[] = [
-    {
-      id: '1',
-      to: 'contact@example.com',
-      subject: 'Test Notification',
-      body: 'This is a test notification.',
-      sentAt: new Date().toISOString(),
-      status: 'sent',
-      userId
-    },
-    {
-      id: '2',
-      to: 'emergency@example.com',
-      subject: 'Emergency Alert',
-      body: 'Emergency alert test.',
-      sentAt: new Date(Date.now() - 86400000).toISOString(), // 1 day ago
-      status: 'sent',
-      userId
+    if (error) {
+      console.error("Error sending email:", error);
+      throw error;
     }
-  ];
-  
-  return { data: mockLogs, error: null };
+
+    return { data, error: null };
+  } catch (error) {
+    console.error("Exception sending email:", error);
+    return { data: null, error };
+  }
+};
+
+/**
+ * Send a welcome email to a new user
+ */
+export const sendWelcomeEmail = async (email: string, name: string) => {
+  const subject = "Welcome to ICE Alarm España";
+  const html = `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+      <h1 style="color: #0066cc;">Welcome to ICE Alarm España!</h1>
+      <p>Hello ${name || "there"},</p>
+      <p>Thank you for joining ICE Alarm España. We're excited to have you on board!</p>
+      <p>With our health monitoring services, you'll enjoy:</p>
+      <ul>
+        <li>24/7 emergency assistance</li>
+        <li>AI-powered health monitoring</li>
+        <li>Support in multiple languages</li>
+      </ul>
+      <p>If you have any questions, please don't hesitate to contact our support team.</p>
+      <p>Best regards,<br>The ICE Alarm España Team</p>
+    </div>
+  `;
+
+  return sendEmail({
+    to: email,
+    subject,
+    html,
+    emailType: "welcome"
+  });
+};
+
+/**
+ * Send a notification email for important events
+ */
+export const sendNotificationEmail = async (email: string, title: string, message: string) => {
+  const subject = `ICE Alarm Notification: ${title}`;
+  const html = `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+      <h1 style="color: #0066cc;">ICE Alarm Notification</h1>
+      <h2>${title}</h2>
+      <p>${message}</p>
+      <p>For more details, please log in to your ICE Alarm dashboard.</p>
+      <p>Best regards,<br>The ICE Alarm España Team</p>
+    </div>
+  `;
+
+  return sendEmail({
+    to: email,
+    subject,
+    html,
+    emailType: "notification"
+  });
+};
+
+/**
+ * Retrieve email logs for the current user
+ */
+export const getUserEmailLogs = async () => {
+  try {
+    const { data, error } = await supabase
+      .from("email_logs")
+      .select("*")
+      .order("created_at", { ascending: false });
+
+    if (error) throw error;
+    return { data, error: null };
+  } catch (error) {
+    console.error("Error retrieving email logs:", error);
+    return { data: null, error };
+  }
 };

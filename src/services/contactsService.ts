@@ -1,177 +1,144 @@
 
-import { Contact } from '@/components/emergency-contacts/types';
-import { getEnvVar } from '@/utils/environment';
+import { supabase, supabaseOperation } from '@/integrations/supabase/client';
+import { Contact, TestResult, AlertType } from "@/components/emergency-contacts/types";
+import { getEnvVar, isProduction } from '@/utils/environment';
 
-// Mock data for development
-const mockContacts: Contact[] = [
-  {
-    id: '1',
-    name: 'John Doe',
-    relationship: 'Family',
-    phone: '555-123-4567',
-    email: 'john.doe@example.com',
-    priority: 1, // Changed to number
-    receivesAlerts: true,
-    receivesUpdates: true,
-    notificationPreferences: {
-      sms: true,
-      email: true,
-      call: true
-    }
-  },
-  {
-    id: '2',
-    name: 'Jane Smith',
-    relationship: 'Friend',
-    phone: '555-987-6543',
-    email: 'jane.smith@example.com',
-    priority: 2, // Changed to number
-    receivesAlerts: true,
-    receivesUpdates: false,
-    notificationPreferences: {
-      sms: true,
-      email: true,
-      call: false
-    }
-  }
-];
-
-// Get all contacts for the current user
-export const getContacts = async (): Promise<Contact[]> => {
-  // For development, return mock data
-  if (process.env.NODE_ENV === 'development') {
-    return [...mockContacts];
-  }
-  
-  try {
-    const response = await fetch('/api/contacts');
-    if (!response.ok) {
-      throw new Error('Failed to fetch contacts');
-    }
-    return await response.json();
-  } catch (error) {
+/**
+ * Fetches emergency contacts for the current user
+ */
+export async function getContacts(): Promise<Contact[]> {
+  const { data, error } = await supabase
+    .from('emergency_contacts')
+    .select('*')
+    .order('is_primary', { ascending: false })
+    .order('created_at', { ascending: true });
+    
+  if (error) {
     console.error('Error fetching contacts:', error);
-    return [];
+    throw error;
   }
-};
+  
+  return data || [];
+}
 
-// Add a new contact
-export const addContact = async (contact: Omit<Contact, 'id'>): Promise<Contact> => {
-  // For development, return mock data with a generated ID
-  if (process.env.NODE_ENV === 'development') {
-    const newContact = {
-      ...contact,
-      id: `mock-${Date.now()}`
-    };
-    mockContacts.push(newContact);
-    return newContact;
+/**
+ * Adds a new emergency contact
+ */
+export async function addContact(contact: Omit<Contact, 'id'>): Promise<Contact> {
+  const { data, error, success } = await supabaseOperation(
+    () => supabase.from('emergency_contacts').insert(contact).select('*').single(),
+    { context: 'Emergency Contacts' }
+  );
+  
+  if (!success || error || !data) {
+    throw error || new Error('Failed to add contact');
   }
   
-  const response = await fetch('/api/contacts', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(contact)
-  });
-  
-  if (!response.ok) {
-    throw new Error('Failed to add contact');
-  }
-  
-  return await response.json();
-};
+  return data as Contact;
+}
 
-// Update an existing contact
-export const updateContact = async (id: string, updatedData: Partial<Contact>): Promise<Contact> => {
-  // For development, update mock data
-  if (process.env.NODE_ENV === 'development') {
-    const index = mockContacts.findIndex(c => c.id === id);
-    if (index === -1) {
-      throw new Error('Contact not found');
+/**
+ * Updates an existing emergency contact
+ */
+export async function updateContact(id: string, updatedContact: Partial<Contact>): Promise<Contact> {
+  const { data, error, success } = await supabaseOperation(
+    () => supabase
+      .from('emergency_contacts')
+      .update({ ...updatedContact, updated_at: new Date().toISOString() })
+      .eq('id', id)
+      .select('*')
+      .single(),
+    { context: 'Emergency Contacts' }
+  );
+  
+  if (!success || error || !data) {
+    throw error || new Error('Failed to update contact');
+  }
+  
+  return data as Contact;
+}
+
+/**
+ * Deletes an emergency contact
+ */
+export async function deleteContact(id: string): Promise<void> {
+  const { error, success } = await supabaseOperation(
+    () => supabase.from('emergency_contacts').delete().eq('id', id),
+    { context: 'Emergency Contacts' }
+  );
+  
+  if (!success || error) {
+    throw error || new Error('Failed to delete contact');
+  }
+}
+
+/**
+ * Sends a test alert to specified emergency contacts
+ */
+export async function testAlert(
+  alertType: AlertType, 
+  contactIds: string[]
+): Promise<TestResult> {
+  try {
+    // In development, mock the alert test
+    if (!isProduction()) {
+      // Simulate API delay
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // Get contact details to return recipient information
+      const { data: contacts } = await supabase
+        .from('emergency_contacts')
+        .select('name')
+        .in('id', contactIds);
+      
+      const recipients = contacts?.map(c => c.name) || [];
+      
+      // Create a proper TestResult matching the type definition
+      return {
+        id: Math.random().toString(36).substring(2, 9),
+        success: true,
+        timestamp: new Date(),
+        type: alertType,
+        recipients,
+        errorMessage: undefined
+      };
     }
     
-    const updatedContact = {
-      ...mockContacts[index],
-      ...updatedData
-    };
+    // In production, use the real API
+    const apiUrl = getEnvVar('VITE_API_URL', '') + '/api/alert/test';
     
-    mockContacts[index] = updatedContact;
-    return updatedContact;
-  }
-  
-  const response = await fetch(`/api/contacts/${id}`, {
-    method: 'PATCH',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(updatedData)
-  });
-  
-  if (!response.ok) {
-    throw new Error('Failed to update contact');
-  }
-  
-  return await response.json();
-};
-
-// Delete a contact
-export const deleteContact = async (id: string): Promise<void> => {
-  // For development, remove from mock data
-  if (process.env.NODE_ENV === 'development') {
-    const index = mockContacts.findIndex(c => c.id === id);
-    if (index !== -1) {
-      mockContacts.splice(index, 1);
+    const response = await fetch(apiUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        alertType,
+        contactIds,
+      }),
+    });
+    
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Failed to send test alert');
     }
-    return;
-  }
-  
-  const response = await fetch(`/api/contacts/${id}`, {
-    method: 'DELETE'
-  });
-  
-  if (!response.ok) {
-    throw new Error('Failed to delete contact');
-  }
-};
-
-// Test alert functionality
-export const testAlert = async (alertType: 'emergency' | 'medical' | 'activity' | 'all', contactIds: string[]): Promise<{
-  id: string;
-  success: boolean;
-  timestamp: string;
-  type: 'emergency' | 'medical' | 'activity' | 'all';
-  recipients: string[];
-  errorMessage?: string;
-}> => {
-  // For development, return mock success
-  if (process.env.NODE_ENV === 'development') {
-    const recipients = mockContacts
-      .filter(c => contactIds.includes(c.id))
-      .map(c => c.email);
     
+    const result = await response.json();
+    // Ensure timestamp is a Date object and properly convert the response
     return {
-      id: `test-${Date.now()}`,
-      success: true,
-      timestamp: new Date().toISOString(),
-      type: alertType,
-      recipients
+      ...result,
+      timestamp: new Date(result.timestamp),
+      type: result.type || alertType, // Ensure type is set
     };
-  }
-  
-  const response = await fetch('/api/test-alert', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ type: alertType, contactIds })
-  });
-  
-  if (!response.ok) {
-    const error = await response.json();
+  } catch (error) {
+    console.error('Error testing alert:', error);
     return {
-      id: `error-${Date.now()}`,
+      id: Math.random().toString(36).substring(2, 9),
       success: false,
-      timestamp: new Date().toISOString(),
+      timestamp: new Date(),
       type: alertType,
       recipients: [],
       errorMessage: error.message || 'Failed to send test alert'
     };
   }
-  
-  return await response.json();
-};
+}

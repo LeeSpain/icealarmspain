@@ -1,5 +1,6 @@
 
-// User type definition
+// Authentication types
+
 export interface User {
   uid: string;
   id: string;
@@ -7,73 +8,32 @@ export interface User {
   name: string;
   displayName: string;
   role: string;
-  status: 'active' | 'pending' | 'suspended';
   profileCompleted: boolean;
-  language: string;
+  status?: string;
   photoURL?: string;
-  lastLogin?: string;
-  emailVerified?: boolean;
-  isAnonymous?: boolean;
-  providerData?: any[];
-  refreshToken?: string;
-}
-
-// User profile type
-export interface UserProfile {
-  display_name: string | null;
-  role: string | null;
-}
-
-// Mock User type for development
-export interface MockUser {
-  uid: string;
-  id: string;
-  email: string;
-  name: string;
-  displayName: string;
-  role: string;
-  status: 'active' | 'pending' | 'suspended';
-  profileCompleted: boolean;
-  language: string;
-  photoURL: string | null;
-  emailVerified: boolean;
-  isAnonymous: boolean;
-  providerData: any[];
-  refreshToken: string;
-}
-
-// Credentials for login/signup
-export interface Credentials {
-  email: string;
-  password: string;
-}
-
-// Parameters for updating user profile
-export interface UpdateProfileParams {
-  id: string;
-  name?: string;
-  displayName?: string;
   language?: string;
-  [key: string]: any;
+  lastLogin?: string;
+  createdAt?: string;
 }
 
-// Auth context type definition
 export interface AuthContextType {
   user: User | null;
-  profile: UserProfile | null;
   isAuthenticated: boolean;
   isLoading: boolean;
-  login: (email: string, password: string, rememberMe?: boolean) => Promise<{ user?: User; error?: any }>;
-  signIn: (email: string, password: string, rememberMe?: boolean) => Promise<{ user?: User; error?: any }>;
-  signUp: (email: string, password: string, userData?: any) => Promise<{ user?: User; error?: any }>;
+  login: (email: string, password: string, rememberMe?: boolean) => Promise<User>;
+  signIn: (email: string, password: string, rememberMe?: boolean) => Promise<User>;
+  signUp: (email: string, password: string, userData?: any) => Promise<User>;
   logout: () => Promise<void>;
-  signOut: () => Promise<void>;
   updateUserProfile: (displayName: string) => Promise<void>;
-  updateProfile: (data: any) => Promise<{ success: boolean }>;
   // Admin functions
-  createUser: (email: string, password: string, userData?: any) => Promise<{ user?: User; error?: any }>;
+  createUser: (email: string, password: string, userData: any) => Promise<User>;
   getAllUsers: () => Promise<User[]>;
-  updateUserRole: (userId: string, role: string) => Promise<{ success: boolean; error?: string }>;
-  deleteUser: (userId: string) => Promise<{ success: boolean; error?: string }>;
-  hasRole: (roles: string | string[]) => boolean;
+  updateUserRole: (userId: string, role: string) => Promise<void>;
+  deleteUser: (userId: string) => Promise<void>;
+}
+
+// Props for the useLoadingState hook
+export interface UseLoadingStateProps {
+  externalLoading?: boolean;
+  externalError?: string | null;
 }

@@ -68,11 +68,6 @@ const AddContactTab: React.FC<AddContactTabProps> = ({ onAddContact }) => {
         priority: data.priority,
         receivesAlerts: data.receivesAlerts,
         receivesUpdates: data.receivesUpdates,
-        notificationPreferences: {
-          sms: true,
-          email: true,
-          call: false
-        }
       });
       
       if (success) {
