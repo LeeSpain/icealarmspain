@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Helmet } from "react-helmet-async";
 import { useLanguage } from "@/context/LanguageContext";
@@ -6,7 +5,7 @@ import Layout from "@/components/layout/Layout";
 import SignupForm from "@/components/auth/SignupForm";
 import { Card, CardContent } from "@/components/ui/card";
 import { Link } from "react-router-dom";
-import { useAuth } from "@/context/AuthContext";
+import { useAuth } from "@/context/auth"; // Fixed import path
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
@@ -24,14 +23,9 @@ const Signup: React.FC = () => {
     setError(null);
     
     try {
-      const { error } = await signUp(email, password, {
+      await signUp(email, password, {
         display_name: displayName
       });
-      
-      if (error) {
-        setError(error.message);
-        return;
-      }
       
       toast({
         title: language === 'en' ? "Account Created" : "Cuenta Creada",

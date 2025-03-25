@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { LogOut, User } from "lucide-react";
@@ -24,7 +23,7 @@ const AuthButtons: React.FC<AuthButtonsProps> = ({ isMobile = false, onClose }) 
   const { language } = useLanguage();
   const { toast } = useToast();
   const navigate = useNavigate();
-  const { user, profile, signOut } = useAuth();
+  const { user, profile, logout } = useAuth();
   
   const loginText = language === 'en' ? "Login" : "Iniciar Sesión";
   const signupText = language === 'en' ? "Sign Up" : "Registrarse";
@@ -34,7 +33,7 @@ const AuthButtons: React.FC<AuthButtonsProps> = ({ isMobile = false, onClose }) 
   const handleLogout = async (e: React.MouseEvent) => {
     e.preventDefault();
     
-    await signOut();
+    await logout();
     
     // Close mobile menu if open
     if (onClose) onClose();

@@ -53,7 +53,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             user,
             isAuthenticated: !!user,
             isLoading,
-            profile: user,
+            profile: user, // Use user as profile since they have the same structure
             login: signIn,
             signIn,
             signUp,

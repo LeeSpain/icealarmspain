@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
 import { useLanguage } from "@/context/LanguageContext";
-import { useAuth } from "@/context/AuthContext";
+import { useAuth } from "@/context/auth"; // Fixed import path
 
 export const useLoginPage = () => {
   const { language } = useLanguage();
@@ -39,10 +39,10 @@ export const useLoginPage = () => {
     setLoginError(null);
     
     try {
-      const { error } = await signIn(email, password);
+      const user = await signIn(email, password, rememberMe);
       
-      if (error) {
-        setLoginError(error.message);
+      if (!user) {
+        setLoginError("Authentication failed");
         return;
       }
       
