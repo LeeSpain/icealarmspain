@@ -11,17 +11,22 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&display=swap">
     <link rel="preload" href="/src/styles/index.css" as="style">
     <style>
-      /* Critical rendering styles */
+      /* Critical rendering styles - Force visibility */
       html, body {
         margin: 0;
         padding: 0;
         font-family: 'Inter', sans-serif;
-        background-color: white;
-        color: black;
+        background-color: white !important;
+        color: black !important;
+        visibility: visible !important;
+        opacity: 1 !important;
       }
       #root {
         min-height: 100vh;
         width: 100%;
+        visibility: visible !important;
+        opacity: 1 !important;
+        display: block !important;
       }
       .error-container {
         max-width: 500px;
@@ -41,7 +46,6 @@
     </style>
     <!-- Preconnect to critical domains -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://firebase-project-id.firebaseapp.com" crossorigin>
   </head>
 
   <body>

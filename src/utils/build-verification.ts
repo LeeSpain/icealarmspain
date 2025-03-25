@@ -29,6 +29,13 @@ import { getEnvironmentDiagnostics, getEnvironment } from './environment';
       console.error('❌ Root element not found! This will prevent the app from rendering.');
     }
     
+    // Check DOM structure
+    if (document && document.body) {
+      console.log('📃 Document structure check - Body children count:', document.body.children.length);
+      console.log('📃 Document structure check - Root element visible:', 
+        document.getElementById('root')?.style.display !== 'none');
+    }
+    
     console.log('✅ Build verification completed');
   } catch (error) {
     console.error('❌ Build verification failed:', error);

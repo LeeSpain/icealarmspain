@@ -3,6 +3,7 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App'
 import './styles/index.css'
+import './utils/check-render'
 
 // Add type declarations for window properties
 declare global {
@@ -36,6 +37,7 @@ if (!rootElement) {
     
     // Set a flag to indicate the app has fully loaded
     window.appLoaded = true;
+    console.log("App rendered successfully");
   } catch (error) {
     console.error("Error rendering React app:", error);
     
