@@ -16,11 +16,12 @@ export const AsyncComponent = ({
   return (
     <Suspense
       fallback={
-        <LoadingSpinner 
-          size="lg" 
-          fullPage={true} 
-          color="primary"
-        />
+        <div className="flex items-center justify-center h-full w-full">
+          <LoadingSpinner 
+            size="lg" 
+            color="primary"
+          />
+        </div>
       }
     >
       <Component {...props} />
@@ -45,12 +46,13 @@ export function AsyncPageRoute({
       element={
         <Suspense
           fallback={
-            <LoadingSpinner 
-              size="lg" 
-              fullPage={true} 
-              message={fallbackMessage}
-              color="primary"
-            />
+            <div className="flex items-center justify-center h-screen">
+              <LoadingSpinner 
+                size="lg" 
+                message={fallbackMessage}
+                color="primary"
+              />
+            </div>
           }
         >
           <Component />

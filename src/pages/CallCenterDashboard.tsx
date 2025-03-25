@@ -7,6 +7,20 @@ import SectionRenderer from '@/components/callcenter/dashboard/SectionRenderer';
 import Header from '@/components/callcenter/dashboard/Header';
 import LoadingState from '@/components/callcenter/dashboard/LoadingState';
 
+interface SidebarProps {
+  activeSection: string;
+  setActiveSection: (section: string) => void;
+  collapsed: boolean;
+  setCollapsed: (collapsed: boolean) => void;
+  user: User;
+}
+
+interface HeaderProps {
+  collapsed: boolean;
+  setCollapsed: (collapsed: boolean) => void;
+  user: User;
+}
+
 // Create a default export for this component
 const CallCenterDashboard: React.FC = () => {
   const {
@@ -36,15 +50,15 @@ const CallCenterDashboard: React.FC = () => {
       <Sidebar
         activeSection={activeSection}
         setActiveSection={setActiveSection}
-        isCollapsed={sidebarCollapsed}
-        setIsCollapsed={setSidebarCollapsed}
+        collapsed={sidebarCollapsed}
+        setCollapsed={setSidebarCollapsed}
         user={mockUser}
       />
 
       <div className="flex-1 flex flex-col overflow-hidden">
         <Header
-          sidebarCollapsed={sidebarCollapsed}
-          setSidebarCollapsed={setSidebarCollapsed}
+          collapsed={sidebarCollapsed}
+          setCollapsed={setSidebarCollapsed}
           user={mockUser}
         />
 

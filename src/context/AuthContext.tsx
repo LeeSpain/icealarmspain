@@ -1,4 +1,3 @@
-
 import React, { ReactNode, useEffect, useState, useContext } from 'react';
 import { User, AuthContextType } from './auth/types';
 import { AuthContext } from './auth/context';
@@ -22,7 +21,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Set up auth state listener
+  // Set up auth state listener with proper hook usage
   useEffect(() => {
     if (isMockAuthEnabled()) {
       // Mock auth for development
@@ -51,8 +50,15 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       
       return () => clearTimeout(timer);
     } else {
-      // Real Firebase auth state change listener
-      useAuthEffects({ setUser, setIsLoading });
+      // Real Firebase auth state change listener using the useAuthEffects hook
+      const cleanupFn = useAuthEffects({ setUser, setIsLoading });
+      return () => {
+        if (typeof cleanupFn === 'function') {
+          cleanupFn();
+        } else if (cleanupFn && typeof cleanupFn.unsubscribe === 'function') {
+          cleanupFn.unsubscribe();
+        }
+      };
     }
   }, []);
 

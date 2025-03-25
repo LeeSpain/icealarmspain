@@ -116,10 +116,26 @@ export const signUp = async (
     const firebaseUser = userCredential.user;
     
     // Update profile if name provided
-    if (userData?.displayName) {
+    if (userData?.displayName && firebaseUser) {
+      // Type checking to ensure firebaseUser is compatible with our User type
+      const compatibleUser: User = {
+        uid: firebaseUser.uid,
+        id: firebaseUser.uid,
+        email: firebaseUser.email || '',
+        name: userData?.displayName || '',
+        displayName: userData?.displayName || '',
+        role: 'user',
+        status: 'active',
+        profileCompleted: !!userData?.displayName,
+        language: 'en'
+      };
+      
+      // Only call firebaseUpdateProfile if we have a valid user
       await firebaseUpdateProfile(firebaseUser, {
         displayName: userData.displayName
       });
+      
+      return { user: compatibleUser };
     }
     
     // Map to our User type

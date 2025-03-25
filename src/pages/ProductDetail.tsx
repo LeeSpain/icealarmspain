@@ -4,7 +4,54 @@ import { useParams } from 'react-router-dom';
 import LoadingSpinner from '@/components/ui/loading-spinner';
 import { useLanguage } from '@/context/LanguageContext';
 import DeviceDetail from '@/components/devices/DeviceDetail';
-import { deviceData } from '@/components/devices/deviceData';
+
+// Mock device data (we should import the actual data from the correct location)
+const deviceData = [
+  {
+    id: "sos-pendant",
+    title: "SOS Pendant",
+    description: "Emergency alert system with 24/7 monitoring",
+    price: 89.99,
+    image: "/lovable-uploads/ad65a632-e7ef-4c61-a20e-7b6ff282a87a.png",
+    features: ["One-touch alert", "Fall detection", "GPS tracking", "Water resistant"],
+    details: {
+      battery: "Up to 5 days",
+      range: "Unlimited with cellular connection",
+      warranty: "2 years"
+    }
+  },
+  {
+    id: "glucose-monitor",
+    title: "Glucose Monitor",
+    description: "Continuous glucose monitoring with alerts",
+    price: 129.99,
+    image: "/lovable-uploads/5e439305-cf63-4080-962e-52657e864050.png",
+    features: ["Real-time monitoring", "Trend analysis", "Custom alerts", "14-day sensor life"],
+    details: {
+      battery: "7 days rechargeable",
+      connectivity: "Bluetooth",
+      warranty: "1 year"
+    }
+  },
+  {
+    id: "medication-dispenser",
+    title: "Medication Dispenser",
+    description: "Automated pill dispenser with reminders",
+    price: 149.99,
+    image: "/lovable-uploads/6eb6b5d1-34a3-4236-ac3a-351d6c22de7e.png",
+    features: ["Scheduled dispensing", "Missed dose alerts", "Tamper protection", "28-day capacity"],
+    details: {
+      battery: "Plug-in with 48hr backup",
+      connectivity: "WiFi",
+      warranty: "2 years"
+    }
+  }
+];
+
+// Define the props interface for DeviceDetail
+interface DeviceDetailProps {
+  device: any;
+}
 
 const ProductDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -28,12 +75,13 @@ const ProductDetail: React.FC = () => {
 
   if (loading) {
     return (
-      <LoadingSpinner 
-        size="lg" 
-        fullPage={true} 
-        message="Loading product details..."
-        color="primary"
-      />
+      <div className="container mx-auto px-4 py-20 flex items-center justify-center">
+        <LoadingSpinner 
+          size="lg" 
+          message="Loading product details..."
+          color="primary"
+        />
+      </div>
     );
   }
 
@@ -52,7 +100,7 @@ const ProductDetail: React.FC = () => {
     );
   }
 
-  return <DeviceDetail product={product} />;
+  return <DeviceDetail device={product} />;
 };
 
 export default ProductDetail;

@@ -5,37 +5,30 @@ export interface Contact {
   relationship: string;
   phone: string;
   email: string;
-  priority: number;
-  receivesAlerts: boolean;
-  receivesUpdates: boolean;
+  address?: string;
+  priority: 'primary' | 'secondary' | 'tertiary';
+  notificationPreferences: {
+    sms: boolean;
+    email: boolean;
+    call: boolean;
+  };
 }
-
-export type AlertType = 'emergency' | 'medical' | 'activity' | 'all';
 
 export interface TestResult {
-  id: string;
-  timestamp: string;
   success: boolean;
-  type: AlertType;
+  type: string;
   recipients: string[];
   error?: string;
+  timestamp: string;
 }
 
-export interface TestStatus {
-  id: string;
-  contactId: string;
-  type: 'sms' | 'email' | 'call' | 'all';
-  status: 'success' | 'failed' | 'pending';
-  timestamp: string;
-  message?: string;
-}
+export type TestStatus = 'idle' | 'sending' | 'success' | 'error';
 
 export interface TestLog {
   id: string;
-  userId: string;
-  type: 'sms' | 'email' | 'call' | 'all';
-  recipients: string[];
-  status: 'success' | 'failed' | 'pending';
   timestamp: string;
-  message?: string;
+  type: string;
+  recipients: string[];
+  success: boolean;
+  error?: string;
 }
