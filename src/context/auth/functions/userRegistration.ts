@@ -1,5 +1,5 @@
 
-import { signUp } from '@/services/auth';
+import { signUp as authSignUp } from '@/services/auth';
 import { User } from '../types';
 
 // Sign up function (create a new user)
@@ -18,7 +18,7 @@ export const signUp = async (
   }
   
   try {
-    const result = await signUp(email, password, {
+    const result = await authSignUp(email, password, {
       display_name: userData?.display_name,
       displayName: userData?.display_name,
     });

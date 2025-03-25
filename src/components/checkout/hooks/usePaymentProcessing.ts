@@ -1,7 +1,7 @@
 
 import { useState } from "react";
 import { BillingInfo, CardDetails } from "../types/checkout.types";
-import { logEvent } from "@/services/firebase/analytics";
+import { logEvent } from "@/services/analytics";
 
 interface UsePaymentProcessingProps {
   language: string;
