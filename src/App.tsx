@@ -23,47 +23,35 @@ console.log(`App.tsx loading - Environment: ${getEnvironment()}`);
 
 // Simple fallback component when routes are loading
 const LoadingFallback = () => (
-  <div className="flex items-center justify-center min-h-screen">
-    <div className="text-center">
-      <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-      <p className="text-lg">Loading application...</p>
-    </div>
+  <div className="flex items-center justify-center min-h-[200px]">
+    <LoadingSpinner size="sm" />
   </div>
 );
 
 function App() {
-  const [appReady, setAppReady] = useState(false);
+  const [initialLoading, setInitialLoading] = useState(true);
 
   useEffect(() => {
     // Performance tracking for app initialization
     const mountTime = Date.now() - appStartTime;
     console.log(`App component mounted in ${mountTime}ms`);
     
-    // Check if the app is mounted successfully
-    const timeoutId = setTimeout(() => {
-      console.log("App mounted for 1 second - rendering appears successful");
-      
-      // After a short delay, mark app as ready
-      setTimeout(() => {
-        setAppReady(true);
-        console.log("App marked as ready, should be fully visible now");
-        
-        // Remove the loading indicator if it still exists
-        const loadingIndicator = document.querySelector('.loading-indicator');
-        if (loadingIndicator) {
-          loadingIndicator.remove();
-          console.log("Loading indicator removed by App component");
-        }
-        
-        const loadingText = document.querySelector('.loading-text');
-        if (loadingText) {
-          loadingText.remove();
-          console.log("Loading text removed by App component");
-        }
-      }, 500);
-    }, 1000);
+    // Remove initial loading indicator immediately
+    const loadingIndicator = document.querySelector('.loading-indicator');
+    if (loadingIndicator) {
+      loadingIndicator.remove();
+      console.log("Loading indicator removed by App component");
+    }
     
-    return () => clearTimeout(timeoutId);
+    const loadingText = document.querySelector('.loading-text');
+    if (loadingText) {
+      loadingText.remove();
+      console.log("Loading text removed by App component");
+    }
+    
+    // Mark app as loaded - this happens only on the initial load
+    setInitialLoading(false);
+    window.appLoaded = true;
   }, []);
   
   return (
@@ -103,8 +91,8 @@ function App() {
         </HelmetProvider>
       </ErrorBoundaryRoot>
       
-      {/* Extra loading indicator that disappears when app is ready */}
-      {!appReady && (
+      {/* Only show on initial app load, not on page navigations */}
+      {initialLoading && (
         <div className="fixed inset-0 bg-white bg-opacity-70 flex items-center justify-center z-50">
           <LoadingSpinner size="lg" message="Loading Ice Guardian..." />
         </div>

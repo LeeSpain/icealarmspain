@@ -28,7 +28,7 @@
         width: 100%;
       }
       
-      /* Loading indicator that will always show until JS removes it */
+      /* Loading indicator that will show only on initial page load */
       .loading-indicator {
         position: fixed;
         top: 0; 
@@ -74,7 +74,7 @@
   </head>
 
   <body>
-    <!-- Loading indicator that will be removed by JS -->
+    <!-- Loading indicator for initial page load only, removed by App.tsx -->
     <div class="loading-indicator"></div>
     <div class="loading-text">Loading Ice Guardian Alert...</div>
     
@@ -88,19 +88,16 @@
       <button onclick="window.location.reload()" style="margin-top: 20px; padding: 8px 16px; background: #3b82f6; color: white; border: none; border-radius: 4px; cursor: pointer;">
         Refresh Page
       </button>
-      <a href="/diagnostics.html" style="display: block; margin-top: 10px; color: #3b82f6;">
+      <a href="/verify.html" style="display: block; margin-top: 10px; color: #3b82f6;">
         Run Diagnostics
       </a>
     </div>
     
     <script>
-      // Create a visible loading message in case the app takes time to load
-      document.querySelector('.loading-text').style.display = 'block';
-      
-      // Show fallback after 6 seconds if app hasn't loaded
+      // Show fallback after 5 seconds if app hasn't loaded
       setTimeout(function() {
         if (!window.appStarted) {
-          console.error("Application failed to start in 6 seconds");
+          console.error("Application failed to start in 5 seconds");
           document.getElementById('js-error-fallback').style.display = 'block';
           
           // Hide loading indicator to avoid confusion
@@ -110,7 +107,7 @@
           var loadingText = document.querySelector('.loading-text');
           if (loadingText) loadingText.style.display = 'none';
         }
-      }, 6000);
+      }, 5000);
     </script>
     
     <!-- GPT Engineer script for the "Select" feature -->
@@ -118,11 +115,5 @@
     
     <!-- Main application script -->
     <script type="module" src="/src/main.tsx"></script>
-    
-    <!-- Mark app as loaded when this script runs -->
-    <script>
-      window.appLoaded = true;
-      console.log('Scripts loaded successfully');
-    </script>
   </body>
 </html>

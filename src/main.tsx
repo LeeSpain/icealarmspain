@@ -41,7 +41,7 @@ function showEmergencyUI(message) {
       <button onclick="window.location.reload()" style="margin-top: 20px; padding: 8px 16px; background: #3b82f6; color: white; border: none; border-radius: 4px; cursor: pointer;">
         Refresh Page
       </button>
-      <a href="/diagnostics.html" style="display: block; margin-top: 10px; color: #3b82f6; text-decoration: underline;">
+      <a href="/verify.html" style="display: block; margin-top: 10px; color: #3b82f6; text-decoration: underline;">
         Run Diagnostics
       </a>
     </div>
@@ -68,23 +68,9 @@ function createRoot() {
   return ReactDOM.createRoot(rootElement);
 }
 
-// Initialize the application with timeout protection
+// Initialize the application without timeouts that delay rendering
 function initApp() {
   try {
-    // Update loading status
-    if (document.getElementById('page-load-status')) {
-      document.getElementById('page-load-status').textContent = 'Status: React initializing';
-    }
-    
-    // Set a timeout to catch stuck loading states
-    const renderTimeout = setTimeout(() => {
-      const loadingIndicator = document.querySelector('.loading-indicator');
-      if (loadingIndicator && document.body.contains(loadingIndicator)) {
-        console.error("Application render timed out after 8 seconds");
-        showEmergencyUI("Application is taking too long to load. This might be due to network issues or missing resources.");
-      }
-    }, 8000);
-    
     // Create the React root
     const root = createRoot();
     
@@ -101,30 +87,8 @@ function initApp() {
     
     console.log("React app rendered successfully");
     
-    // Update loading status
-    if (document.getElementById('page-load-status')) {
-      document.getElementById('page-load-status').textContent = 'Status: React rendered';
-    }
-    
-    // Make the loading indicator disappear 
-    setTimeout(() => {
-      const loadingIndicator = document.querySelector('.loading-indicator');
-      if (loadingIndicator && document.body.contains(loadingIndicator)) {
-        loadingIndicator.remove();
-        console.log("Loading indicator removed");
-      }
-      
-      const debugStatus = document.querySelector('[style*="position: fixed; bottom: 0; right: 0; background: red;"]');
-      if (debugStatus && isProduction()) {
-        debugStatus.remove();
-      }
-      
-      // Clear the render timeout since we've successfully removed the loader
-      clearTimeout(renderTimeout);
-      
-      // Set a flag to indicate app loaded successfully
-      window.appLoaded = true;
-    }, 1000);
+    // Flag to indicate app started loading
+    window.appStarted = true;
     
   } catch (error) {
     console.error("Fatal error during app initialization:", error);
@@ -133,9 +97,6 @@ function initApp() {
     showEmergencyUI(`The application encountered an error while loading: ${String(error).substring(0, 200)}`);
   }
 }
-
-// Flag to track if app has started loading
-window.appStarted = true;
 
 // Start the app immediately
 initApp();
