@@ -3,8 +3,6 @@
  * Simple authentication service that uses localStorage for demo purposes
  */
 
-import { getEnvVar } from '@/utils/environment';
-
 export type User = {
   uid: string;
   id: string;

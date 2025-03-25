@@ -20,19 +20,13 @@ import { getEnvironmentDiagnostics, getEnvironment } from './environment';
     const checks = {
       documentExists: typeof document !== 'undefined',
       windowExists: typeof window !== 'undefined',
-      rootElementExists: document && document.getElementById('root') !== null,
-      firebaseApiKey: !!import.meta.env.VITE_FIREBASE_API_KEY,
-      firebaseProjectId: !!import.meta.env.VITE_FIREBASE_PROJECT_ID
+      rootElementExists: document && document.getElementById('root') !== null
     };
     
     console.log('🧪 Environment checks:', checks);
     
     if (!checks.rootElementExists) {
       console.error('❌ Root element not found! This will prevent the app from rendering.');
-    }
-    
-    if (!checks.firebaseApiKey || !checks.firebaseProjectId) {
-      console.error('❌ Critical Firebase configuration missing! Authentication will not work.');
     }
     
     console.log('✅ Build verification completed');
