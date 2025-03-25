@@ -8,6 +8,37 @@ import './utils/build-verification';
 import './utils/deployment-verification';
 import './utils/deployment-helper';
 
+// Initialize the diagnostic object as early as possible
+if (typeof window !== 'undefined') {
+  if (!window.appDiagnostics) {
+    window.appDiagnostics = {
+      startTime: new Date().toISOString(),
+      environment: getEnvironment(),
+      firebaseConfigValid: hasValidFirebaseConfig(),
+      renderAttempted: false,
+      errors: [],
+      events: [],
+      renderCompleted: false,
+      renderTime: null,
+      secondAttempt: false
+    };
+  } else {
+    // Update existing appDiagnostics
+    window.appDiagnostics.environment = getEnvironment();
+    window.appDiagnostics.firebaseConfigValid = hasValidFirebaseConfig();
+    
+    // Ensure events array exists
+    if (!window.appDiagnostics.events) {
+      window.appDiagnostics.events = [];
+    }
+    
+    // Ensure errors array exists
+    if (!window.appDiagnostics.errors) {
+      window.appDiagnostics.errors = [];
+    }
+  }
+}
+
 // Display environment info in console
 console.log('Application starting...');
 console.log('Environment:', getEnvironment());
@@ -29,46 +60,10 @@ if (typeof window !== 'undefined') {
     console.log('DOMContentLoaded event fired');
     document.dispatchEvent(new CustomEvent('app-init-started'));
   });
-  
-  // Add detailed diagnostics for troubleshooting
-  if (!window.appDiagnostics) {
-    console.log('Initializing window.appDiagnostics');
-    window.appDiagnostics = {
-      startTime: new Date().toISOString(),
-      environment: getEnvironment(),
-      firebaseConfigValid: hasValidFirebaseConfig(),
-      renderAttempted: false,
-      errors: [],
-      events: [],
-      renderCompleted: false,
-      renderTime: null,
-      secondAttempt: false
-    };
-  } else {
-    // Update existing diagnostics
-    console.log('Updating existing window.appDiagnostics');
-    window.appDiagnostics.environment = getEnvironment();
-    window.appDiagnostics.firebaseConfigValid = hasValidFirebaseConfig();
-    
-    // Ensure events array exists
-    if (!window.appDiagnostics.events) {
-      console.log('Creating missing events array in window.appDiagnostics');
-      window.appDiagnostics.events = [];
-    }
-    
-    // Ensure errors array exists
-    if (!window.appDiagnostics.errors) {
-      console.log('Creating missing errors array in window.appDiagnostics');
-      window.appDiagnostics.errors = [];
-    }
-  }
-
-  // Log that window.appDiagnostics has been initialized
-  console.log('window.appDiagnostics initialized:', window.appDiagnostics);
 }
 
 // Helper function to safely log app events
-function logAppEvent(event) {
+function logAppEvent(event: string) {
   try {
     console.log('Main.tsx logging app event:', event);
     
@@ -223,7 +218,7 @@ function renderApp() {
 console.log("Calling renderApp()");
 renderApp();
 
-// Fallback mechanism - if for some reason nothing renders after 5 seconds,
+// Fallback mechanism - if for some reason nothing renders after 7 seconds,
 // let's try once more. This helps with potential race conditions.
 setTimeout(() => {
   if (typeof window !== 'undefined' && !window.appRendered) {
@@ -237,7 +232,7 @@ setTimeout(() => {
     
     renderApp();
   }
-}, 5000);
+}, 7000); // Increased from 5000 to 7000
 
 // Export the renderApp function so it can be called from outside if needed
 if (typeof window !== 'undefined') {

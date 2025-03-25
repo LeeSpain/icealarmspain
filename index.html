@@ -199,10 +199,16 @@
             // Show debug info
             const debugInfo = document.getElementById('debug-info');
             if (debugInfo) {
-              debugInfo.textContent = `Browser: ${navigator.userAgent}, Time: ${new Date().toISOString()}`;
+              let debugText = `Browser: ${navigator.userAgent}, Time: ${new Date().toISOString()}`;
               if (error) {
-                debugInfo.textContent += `\nError: ${error.message || 'Unknown error'}`;
+                debugText += `\nError: ${error.message || error.toString() || 'Unknown error'}`;
               }
+              
+              if (window.appDiagnostics && window.appDiagnostics.events && window.appDiagnostics.events.length > 0) {
+                debugText += `\nLast Event: ${window.appDiagnostics.events[window.appDiagnostics.events.length - 1].event}`;
+              }
+              
+              debugInfo.textContent = debugText;
             }
             
             // Show troubleshooting guide
@@ -245,15 +251,15 @@
             logAppEvent('initializationTimeout');
             showFallbackContent({ message: 'App initialization timed out' });
           }
-        }, 8000); // Increased timeout for slower networks
+        }, 12000); // Increased timeout for slower networks (from 8s to 12s)
         
-        // Add a shorter timeout to show the loading spinner quickly
+        // Show loading spinner quicker on slow loads
         setTimeout(function() {
           if (!window.appRendered && !window.appRenderFailed) {
             document.getElementById('fallback-content').style.display = 'block';
             logAppEvent('showingLoadingSpinner');
           }
-        }, 1000);
+        }, 800);  // Reduced from 1000ms to 800ms
         
         // Clear the timeout if app renders successfully
         document.addEventListener('react-rendered', function() {
@@ -280,7 +286,7 @@
               window.missingFirebaseConfig = true;
               console.warn('Previous Firebase config error detected');
               logAppEvent('previousErrorDetected');
-              showFallbackContent();
+              showFallbackContent({ message: 'Previous Firebase configuration error detected' });
             }
           } catch (e) {
             // Ignore localStorage errors
