@@ -9,18 +9,14 @@ import { AuthProvider } from "./context/auth";
 import AuthGuard from "./components/auth/AuthGuard"; 
 import ErrorBoundary from "@/components/layout/ErrorBoundary";
 import ScrollToTop from "@/components/layout/ScrollToTop";
-import FallbackRendering from "@/components/debug/FallbackRendering";
-import BasicDebug from "@/components/debug/BasicDebug";
 import { isDevelopment, isDebugBuild } from "./utils/environment";
+import "./utils/build-verification";
 
 // Add a global error handler to catch initialization errors
 if (typeof window !== 'undefined') {
   window.addEventListener('error', (event) => {
     console.error('Global error caught:', event.error);
   });
-  
-  // Log app rendering start
-  console.log("App.tsx is being processed");
 }
 
 function App() {
@@ -32,12 +28,6 @@ function App() {
       <HelmetProvider>
         <AuthProvider>
           <LanguageProvider>
-            {/* Add fallback rendering component */}
-            <FallbackRendering />
-            
-            {/* Include basic debug component in production to help troubleshoot */}
-            <BasicDebug />
-            
             <Router>
               <ScrollToTop />
               <Routes>
