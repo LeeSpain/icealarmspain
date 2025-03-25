@@ -1,68 +1,84 @@
 
 import React from "react";
-import { RouteConfig } from "./routes/types";
-import { withLazyLoading } from "./utils/lazy-imports";
-import TestingPanel from "./components/test/TestingPanel";
+import { lazy } from "react";
+import PlaceholderPage from "./components/placeholder/PlaceholderPage";
+import TestingPage from "./pages/TestingPage";
+import HomePage from "./pages/HomePage";
 
-// Use lazy loading for better performance
-const SOSPendantPage = withLazyLoading(() => import("./pages/SOSPendantPage"), "Loading SOS Pendant page...");
-const MedicalDispenserPage = withLazyLoading(() => import("./pages/MedicalDispenserPage"), "Loading Medical Dispenser page...");
-const GlucoseMonitorPage = withLazyLoading(() => import("./pages/GlucoseMonitorPage"), "Loading Glucose Monitor page...");
-const Signup = withLazyLoading(() => import("./pages/signup"), "Loading Signup page...");
-const Checkout = withLazyLoading(() => import("./pages/Checkout"), "Loading Checkout page...");
+// Define route configuration type
+export interface RouteConfig {
+  path: string;
+  element: any;
+  protected?: boolean;
+  allowedRoles?: string[];
+}
 
-// Import routes from the routes directory
-import { routes as allRoutes } from "./routes/index";
+// Use placeholder components for most routes
+const createPlaceholder = (name: string) => () => React.createElement(PlaceholderPage, { name });
 
-// Define the routes that we've already implemented and need to keep
-const customRoutes: RouteConfig[] = [
+// Route definitions with placeholders
+export const routes: RouteConfig[] = [
   {
-    path: "/sos-pendant",
-    element: <SOSPendantPage />,
+    path: "/",
+    element: HomePage,
+    protected: false,
   },
   {
-    path: "/medical-dispenser",
-    element: <MedicalDispenserPage />,
+    path: "/about",
+    element: createPlaceholder("About Page"),
+    protected: false,
   },
   {
-    path: "/glucose-monitor",
-    element: <GlucoseMonitorPage />,
+    path: "/contact",
+    element: createPlaceholder("Contact Page"),
+    protected: false,
+  },
+  {
+    path: "/login",
+    element: createPlaceholder("Login Page"),
+    protected: false,
   },
   {
     path: "/signup",
-    element: <Signup />,
+    element: createPlaceholder("Signup Page"),
+    protected: false,
   },
   {
-    path: "/checkout",
-    element: <Checkout />,
+    path: "/products",
+    element: createPlaceholder("Products Page"),
+    protected: false,
   },
   {
-    path: "/testing", // Testing route
-    element: <TestingPanel />,
+    path: "/testing",
+    element: TestingPage,
+    protected: false,
+  },
+  {
+    path: "/dashboard",
+    element: createPlaceholder("Dashboard Page"),
+    protected: true,
+  },
+  {
+    path: "/member-dashboard",
+    element: createPlaceholder("Member Dashboard"),
+    protected: true,
+    allowedRoles: ["member"],
+  },
+  {
+    path: "/admin-dashboard",
+    element: createPlaceholder("Admin Dashboard"),
+    protected: true,
+    allowedRoles: ["admin"],
+  },
+  {
+    path: "/ai-guardian",
+    element: createPlaceholder("AI Guardian Dashboard"),
+    protected: true,
+    allowedRoles: ["member", "admin"],
+  },
+  {
+    path: "*",
+    element: createPlaceholder("Not Found Page"),
+    protected: false,
   }
-];
-
-// Mark protected routes
-const protectedRoutes = allRoutes.map(route => {
-  // Mark dashboard and admin routes as protected
-  if (route.path.startsWith('/dashboard') || 
-      route.path.startsWith('/admin') || 
-      route.path.startsWith('/call-center')) {
-    return {
-      ...route,
-      protected: true,
-      allowedRoles: route.path.startsWith('/admin') 
-        ? ['admin'] 
-        : route.path.startsWith('/call-center')
-          ? ['callcenter', 'admin']
-          : undefined
-    };
-  }
-  return route;
-});
-
-// Combine the imported routes with our custom routes
-export const routes = [
-  ...protectedRoutes,
-  ...customRoutes
 ];
