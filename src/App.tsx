@@ -30,9 +30,10 @@ function App() {
               })}
             </Routes>
             <Toaster />
-          </LanguageProvider>
-        </AuthProvider>
-      </HelmetProvider>
+          </Router>
+        </LanguageProvider>
+      </AuthProvider>
+    </HelmetProvider>
   );
 }
 
