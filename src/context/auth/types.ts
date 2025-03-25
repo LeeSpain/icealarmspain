@@ -25,6 +25,7 @@ export interface AuthContextType {
   signUp: (email: string, password: string, userData?: any) => Promise<User>;
   logout: () => Promise<void>;
   updateUserProfile: (displayName: string) => Promise<void>;
+  profile: User | null; // Added this line to include profile in the interface
   // Admin functions
   createUser: (email: string, password: string, userData: any) => Promise<User>;
   getAllUsers: () => Promise<User[]>;

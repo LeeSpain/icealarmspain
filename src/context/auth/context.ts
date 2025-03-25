@@ -7,6 +7,7 @@ export const AuthContext = createContext<AuthContextType>({
   user: null,
   isAuthenticated: false,
   isLoading: true,
+  profile: null, // Add the profile field with a default value
   login: async () => {
     throw new Error('login not implemented');
     return {} as any;
