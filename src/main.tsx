@@ -30,6 +30,11 @@ function checkEnvironment() {
 // Function to initialize the app with error handling
 function initializeApp() {
   try {
+    // Update the debug status
+    if (document.getElementById('page-load-status')) {
+      document.getElementById('page-load-status').textContent = 'Status: React initializing';
+    }
+
     // Verify environment configuration
     const envCheck = checkEnvironment();
     if (!envCheck && isProduction()) {
@@ -68,6 +73,11 @@ function initializeApp() {
 
     console.log("React app rendered successfully");
     
+    // Update the debug status
+    if (document.getElementById('page-load-status')) {
+      document.getElementById('page-load-status').textContent = 'Status: React rendered';
+    }
+    
     // Check if app is visible
     setTimeout(() => {
       const appContent = rootElement.innerHTML;
@@ -80,6 +90,11 @@ function initializeApp() {
 
   } catch (error) {
     console.error("Fatal error during app initialization:", error);
+    
+    // Update the debug status
+    if (document.getElementById('page-load-status')) {
+      document.getElementById('page-load-status').textContent = 'Status: Fatal error';
+    }
     
     // Emergency rendering - display something rather than a blank screen
     const rootElement = document.getElementById('root') || document.body;

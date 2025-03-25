@@ -37,6 +37,21 @@
         padding: 20px;
         font-family: system-ui, sans-serif;
       }
+      /* Visual indicator to show the page is loading */
+      .loading-indicator {
+        position: fixed;
+        top: 0; 
+        left: 0;
+        width: 100%;
+        height: 4px;
+        background-color: #38bdf8;
+        animation: loading 2s infinite;
+      }
+      @keyframes loading {
+        0% { width: 0%; }
+        50% { width: 50%; }
+        100% { width: 100%; }
+      }
     </style>
     
     <!-- Preload important resources -->
@@ -44,8 +59,39 @@
   </head>
 
   <body>
+    <!-- Loading indicator visible immediately -->
+    <div class="loading-indicator"></div>
+    
     <!-- Root element where React will mount -->
     <div id="root"></div>
+    
+    <!-- Direct DOM fallback - visible immediately for debugging -->
+    <div style="position: fixed; bottom: 0; right: 0; background: red; color: white; padding: 10px; z-index: 9999; font-family: sans-serif; display: block;">
+      Page loading... If you see this message for more than a few seconds, there may be a rendering issue.
+      <div id="page-load-status">Status: Initializing</div>
+    </div>
+    
+    <script>
+      // Update status
+      document.getElementById('page-load-status').textContent = 'Status: DOM Loaded';
+      
+      // Check if root element exists
+      if (!document.getElementById('root')) {
+        console.error('Root element not found in DOM!');
+        document.body.innerHTML += '<div style="color: red; padding: 20px;">Error: Root element not found</div>';
+      }
+
+      // After 5 seconds, check if the app has loaded
+      setTimeout(function() {
+        document.getElementById('page-load-status').textContent = 'Status: 5s timeout reached';
+        
+        const rootContent = document.getElementById('root').innerHTML;
+        if (!rootContent || rootContent.length < 10) {
+          document.getElementById('js-error-fallback').style.display = 'block';
+          console.error('App failed to render in 5 seconds');
+        }
+      }, 5000);
+    </script>
     
     <!-- Fallback content if JS fails -->
     <div id="js-error-fallback" class="js-error-fallback">
@@ -53,15 +99,6 @@
       <p>We're having trouble loading the application. Please try refreshing the page.</p>
       <p>If this problem persists, please contact support.</p>
     </div>
-    
-    <!-- Show fallback after 5 seconds if app hasn't loaded -->
-    <script>
-      setTimeout(function() {
-        if (!window.appLoaded) {
-          document.getElementById('js-error-fallback').style.display = 'block';
-        }
-      }, 5000);
-    </script>
     
     <!-- GPT Engineer script for the "Select" feature -->
     <script src="https://cdn.gpteng.co/gptengineer.js" type="module"></script>
@@ -72,6 +109,8 @@
     <!-- Mark app as loaded when this script runs -->
     <script>
       window.appLoaded = true;
+      console.log('Main script loaded - window.appLoaded set to true');
+      document.getElementById('page-load-status').textContent = 'Status: Scripts loaded';
     </script>
   </body>
 </html>

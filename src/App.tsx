@@ -10,6 +10,7 @@ import ScrollToTop from "@/components/layout/ScrollToTop";
 import { AuthProvider } from "./context/auth";
 import ErrorBoundaryRoot from "@/components/layout/ErrorBoundaryRoot";
 import { getEnvironment } from "@/utils/environment";
+import BasicDebug from "@/components/debug/BasicDebug";
 
 // Initialize diagnostic information
 const appStartTime = Date.now();
@@ -74,36 +75,41 @@ function App() {
   }, []);
   
   return (
-    <ErrorBoundaryRoot>
-      <HelmetProvider>
-        <AuthProvider>
-          <LanguageProvider>
-            <Router>
-              <ScrollToTop />
-              <Suspense fallback={<LoadingFallback />}>
-                <Routes>
-                  {routes.map((route) => {
-                    console.log(`Registering route: ${route.path}`);
-                    return (
-                      <Route
-                        key={route.path}
-                        path={route.path}
-                        element={
-                          <ErrorBoundary>
-                            {route.element}
-                          </ErrorBoundary>
-                        }
-                      />
-                    );
-                  })}
-                </Routes>
-              </Suspense>
-              <Toaster />
-            </Router>
-          </LanguageProvider>
-        </AuthProvider>
-      </HelmetProvider>
-    </ErrorBoundaryRoot>
+    <>
+      {/* Always render the debug component outside of any providers */}
+      <BasicDebug />
+      
+      <ErrorBoundaryRoot>
+        <HelmetProvider>
+          <AuthProvider>
+            <LanguageProvider>
+              <Router>
+                <ScrollToTop />
+                <Suspense fallback={<LoadingFallback />}>
+                  <Routes>
+                    {routes.map((route) => {
+                      console.log(`Registering route: ${route.path}`);
+                      return (
+                        <Route
+                          key={route.path}
+                          path={route.path}
+                          element={
+                            <ErrorBoundary>
+                              {route.element}
+                            </ErrorBoundary>
+                          }
+                        />
+                      );
+                    })}
+                  </Routes>
+                </Suspense>
+                <Toaster />
+              </Router>
+            </LanguageProvider>
+          </AuthProvider>
+        </HelmetProvider>
+      </ErrorBoundaryRoot>
+    </>
   );
 }
 
