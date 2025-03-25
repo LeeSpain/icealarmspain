@@ -5,7 +5,7 @@ import App from './App'
 import './styles/index.css'
 // Import verification module first to catch early issues
 import './utils/build-verification'
-import { getEnvironment, isDevelopment } from './utils/environment'
+import { getEnvironment, isDevelopment, isProduction } from './utils/environment'
 
 // Display environment info in console
 console.log('Application starting...');
@@ -19,6 +19,10 @@ const firebaseConfigAvailable = import.meta.env.VITE_FIREBASE_API_KEY &&
                                import.meta.env.VITE_FIREBASE_PROJECT_ID;
 
 console.log('Firebase config available:', firebaseConfigAvailable ? 'Yes' : 'No');
+if (!firebaseConfigAvailable) {
+  console.error('CRITICAL: Missing Firebase configuration - Application may not work correctly!');
+  console.error('Required env vars: VITE_FIREBASE_API_KEY, VITE_FIREBASE_PROJECT_ID');
+}
 
 // Add a global error handler to provide better error messages for context errors
 window.addEventListener('error', (event) => {
@@ -52,6 +56,13 @@ function renderApp() {
       rootElement.removeChild(rootElement.firstChild);
     }
     
+    // Check if Firebase config is present before attempting to render
+    if (!firebaseConfigAvailable && isProduction()) {
+      console.error('Missing Firebase configuration in production environment');
+      showMissingConfigPage(rootElement);
+      return;
+    }
+    
     const root = ReactDOM.createRoot(rootElement);
     root.render(
       <React.StrictMode>
@@ -76,6 +87,33 @@ function showErrorPage(element, error) {
       ${isDevelopment() ? `<p>Error: ${errorMessage}</p>` : '<p>Please try refreshing the page.</p>'}
       ${!firebaseConfigAvailable ? '<p><strong>Missing Firebase configuration.</strong> Please check environment variables.</p>' : ''}
       <p>If the problem persists, please contact support.</p>
+    </div>
+  `;
+}
+
+// Function to show a clear message about missing Firebase configuration
+function showMissingConfigPage(element) {
+  element.innerHTML = `
+    <div style="padding: 20px; font-family: sans-serif; max-width: 600px; margin: 0 auto; text-align: center;">
+      <h1>Configuration Missing</h1>
+      <p>The application cannot start because Firebase configuration is missing.</p>
+      <p>If you're the site administrator:</p>
+      <ol style="text-align: left; display: inline-block;">
+        <li>Go to your Lovable project settings</li>
+        <li>Navigate to the Environment Variables section</li>
+        <li>Add the required Firebase configuration variables:
+          <ul>
+            <li>VITE_FIREBASE_API_KEY</li>
+            <li>VITE_FIREBASE_PROJECT_ID</li>
+            <li>VITE_FIREBASE_AUTH_DOMAIN</li>
+            <li>VITE_FIREBASE_STORAGE_BUCKET</li>
+            <li>VITE_FIREBASE_MESSAGING_SENDER_ID</li>
+            <li>VITE_FIREBASE_APP_ID</li>
+          </ul>
+        </li>
+        <li>Republish your application</li>
+      </ol>
+      <p>For detailed instructions, see the <a href="https://docs.lovable.dev/user-guides/environment-variables" style="color: #0070f3;">Lovable documentation</a>.</p>
     </div>
   `;
 }

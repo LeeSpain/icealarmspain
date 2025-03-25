@@ -32,17 +32,53 @@ export const getEnvironment = (): string => {
 
 // Get an environment variable with a fallback
 export const getEnvVar = (name: string, fallback: string = ''): string => {
-  return import.meta.env[name] || fallback;
+  try {
+    const value = import.meta.env[name];
+    return value !== undefined ? value : fallback;
+  } catch (e) {
+    console.warn(`Failed to access env var ${name}, using fallback`, e);
+    return fallback;
+  }
 };
 
-// Get a required environment variable (throws if not found)
-export const getRequiredEnvVar = (name: string): string => {
-  const value = import.meta.env[name];
-  if (!value) {
-    console.error(`Required environment variable ${name} is missing`);
-    throw new Error(`Required environment variable ${name} is missing`);
+// Get a required environment variable (throws if not found in production, returns fallback in development)
+export const getRequiredEnvVar = (name: string, fallback: string = ''): string => {
+  try {
+    const value = import.meta.env[name];
+    if (value === undefined || value === '') {
+      const errorMsg = `Required environment variable ${name} is missing`;
+      console.error(errorMsg);
+      
+      // In production, this is a critical error
+      if (isProduction()) {
+        throw new Error(errorMsg);
+      }
+      
+      // In development, we can use a fallback
+      return fallback;
+    }
+    return value;
+  } catch (e) {
+    if (isProduction()) {
+      throw e;
+    }
+    console.warn(`Failed to access required env var ${name}, using fallback in development`, e);
+    return fallback;
   }
-  return value;
+};
+
+// Check if all required Firebase environment variables are set
+export const hasRequiredFirebaseConfig = (): boolean => {
+  try {
+    return (
+      !!getEnvVar('VITE_FIREBASE_API_KEY') &&
+      !!getEnvVar('VITE_FIREBASE_PROJECT_ID') &&
+      !!getEnvVar('VITE_FIREBASE_AUTH_DOMAIN') &&
+      !!getEnvVar('VITE_FIREBASE_APP_ID')
+    );
+  } catch (e) {
+    return false;
+  }
 };
 
 // Get detailed environment diagnostics for debugging
@@ -56,6 +92,9 @@ export const getEnvironmentDiagnostics = (): Record<string, any> => {
     debugBuild: isDebugBuild(),
     firebaseApiKey: import.meta.env.VITE_FIREBASE_API_KEY ? 'set' : 'missing',
     firebaseProjectId: import.meta.env.VITE_FIREBASE_PROJECT_ID ? 'set' : 'missing',
+    firebaseAuthDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN ? 'set' : 'missing',
+    firebaseAppId: import.meta.env.VITE_FIREBASE_APP_ID ? 'set' : 'missing',
+    hasAllRequiredVars: hasRequiredFirebaseConfig() ? 'yes' : 'no',
     timestamp: new Date().toISOString(),
   };
 };

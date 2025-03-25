@@ -6,21 +6,26 @@
 
 // Import React properly so we can check for its existence
 import * as React from 'react';
+import { hasRequiredFirebaseConfig, getEnvironmentDiagnostics } from './environment';
 
 // Self-executing function for immediate checking
 (function verifyBuild() {
   try {
-    console.log('Build verification running...');
+    console.log('🔍 Build verification running...');
     
     // Log environment variables (non-sensitive only)
-    const envVars = Object.keys(import.meta.env)
-      .filter(key => !key.includes('KEY') && !key.includes('SECRET'))
-      .reduce((acc, key) => {
-        acc[key] = import.meta.env[key];
-        return acc;
-      }, {} as Record<string, unknown>);
+    const envDiagnostics = getEnvironmentDiagnostics();
+    console.log('🌍 Environment diagnostics:', envDiagnostics);
     
-    console.log('Environment variables available:', envVars);
+    // Check Firebase configuration
+    const firebaseConfigResult = hasRequiredFirebaseConfig();
+    console.log('🔥 Firebase configuration check:', firebaseConfigResult ? 'PASSED' : 'FAILED');
+    
+    if (!firebaseConfigResult) {
+      console.error('❌ CRITICAL: Missing required Firebase configuration!');
+      console.error('   The application may not function correctly.');
+      console.error('   Please check your environment variables in Project Settings.');
+    }
     
     // Check for common issues
     const checks = {
@@ -30,15 +35,33 @@ import * as React from 'react';
       reactExists: typeof React !== 'undefined'
     };
     
-    console.log('Environment checks:', checks);
+    console.log('🧪 Environment checks:', checks);
     
     if (!checks.rootElementExists) {
-      console.error('Root element not found! This will prevent the app from rendering.');
+      console.error('❌ Root element not found! This will prevent the app from rendering.');
     }
     
-    console.log('Build verification completed');
+    console.log('✅ Build verification completed');
+    
+    // Add a visible indicator for debug builds
+    if (envDiagnostics.debugBuild === 'true' && typeof document !== 'undefined') {
+      const debugIndicator = document.createElement('div');
+      debugIndicator.style.position = 'fixed';
+      debugIndicator.style.bottom = '0';
+      debugIndicator.style.right = '0';
+      debugIndicator.style.backgroundColor = 'rgba(255, 0, 0, 0.2)';
+      debugIndicator.style.color = 'white';
+      debugIndicator.style.padding = '2px 5px';
+      debugIndicator.style.fontSize = '10px';
+      debugIndicator.style.zIndex = '9999';
+      debugIndicator.textContent = `DEBUG BUILD - ${envDiagnostics.mode}`;
+      
+      setTimeout(() => {
+        document.body.appendChild(debugIndicator);
+      }, 1000);
+    }
   } catch (error) {
-    console.error('Build verification failed:', error);
+    console.error('❌ Build verification failed:', error);
   }
 })();
 
