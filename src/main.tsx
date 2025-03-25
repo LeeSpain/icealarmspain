@@ -27,10 +27,25 @@ function renderApp() {
     const loader = document.getElementById('initial-loading');
     if (loader && loader.parentNode) {
       loader.style.opacity = '0';
-      setTimeout(() => loader.parentNode.removeChild(loader), 300);
+      setTimeout(() => {
+        if (loader && loader.parentNode) {
+          loader.parentNode.removeChild(loader);
+        }
+      }, 300);
     }
   } catch (error) {
     console.error("Error rendering React app:", error);
+    // If there's an error, show it on the loading screen
+    const loader = document.getElementById('initial-loading');
+    if (loader) {
+      loader.innerHTML = `
+        <div class="error-container">
+          <h3>Failed to load application</h3>
+          <p>Error: ${error.message}</p>
+          <button onclick="window.location.reload()">Refresh Page</button>
+        </div>
+      `;
+    }
   }
 }
 
