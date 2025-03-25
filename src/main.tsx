@@ -121,7 +121,7 @@ function showErrorPage(element: HTMLElement, error: unknown) {
   }
 }
 
-// Initial render
+// Initial render - try immediately
 renderApp();
 
 // Fallback timeout render attempt (last resort)
@@ -131,4 +131,4 @@ setTimeout(() => {
     console.log("Root element is empty after timeout, attempting re-render");
     renderApp();
   }
-}, 1000);
+}, 500); // Reduced from 1000ms to 500ms for faster loading

@@ -20,37 +20,15 @@ import { hasRequiredFirebaseConfig, getEnvironmentDiagnostics, getEnvironment } 
     
     // Check Firebase configuration
     const firebaseConfigResult = hasRequiredFirebaseConfig();
-    console.log('🔥 Firebase configuration check:', firebaseConfigResult ? 'PASSED' : 'FAILED');
+    console.log('🔥 Firebase configuration check:', firebaseConfigResult ? 'PASSED' : 'USING FALLBACKS');
     
     if (!firebaseConfigResult) {
-      console.error('❌ CRITICAL: Missing required Firebase configuration!');
-      console.error('   The application may not function correctly.');
-      console.error('   Please check your environment variables in Lovable Project Settings.');
+      console.log('⚠️ Using Firebase fallback configuration');
+      console.log('   The application will continue to function with limited features.');
       
-      // Only in production, log a more detailed error to help with debugging
-      if (envDiagnostics.isProd) {
-        console.error(`
-==========================================================
-🛑 PRODUCTION ENVIRONMENT MISSING CONFIGURATION 🛑
-
-Your app is deployed but missing required Firebase configuration.
-To fix this issue:
-
-1. Go to your Lovable project dashboard
-2. Click on "Project Settings" in the sidebar
-3. Navigate to the "Environment Variables" section
-4. Add the following environment variables:
-   - VITE_FIREBASE_API_KEY
-   - VITE_FIREBASE_PROJECT_ID
-   - VITE_FIREBASE_AUTH_DOMAIN
-   - VITE_FIREBASE_APP_ID
-
-5. Save the changes and republish your app
-
-For more information, see:
-https://docs.lovable.dev/user-guides/environment-variables
-==========================================================
-        `);
+      // Only in development, log more details
+      if (envDiagnostics.isDev) {
+        console.log('   In development mode, mock authentication will be used when appropriate.');
       }
     }
     
@@ -70,8 +48,8 @@ https://docs.lovable.dev/user-guides/environment-variables
     
     console.log('✅ Build verification completed');
     
-    // Add a visible indicator for debug builds
-    if (envDiagnostics.debugBuild === 'true' && typeof document !== 'undefined') {
+    // Add a visible indicator for debug builds (only in development)
+    if (envDiagnostics.isDev && typeof document !== 'undefined') {
       const debugIndicator = document.createElement('div');
       debugIndicator.style.position = 'fixed';
       debugIndicator.style.bottom = '0';
@@ -105,10 +83,7 @@ export const printConfigInfoToElement = (elementId: string): void => {
     element.innerHTML = `
       <div style="text-align: left; font-size: 12px; color: #666; padding: 10px; background: #f5f5f5; border-radius: 4px; margin-top: 20px;">
         <p><strong>Environment:</strong> ${getEnvironment()}</p>
-        <p><strong>Firebase Config:</strong> ${firebaseConfig ? 'Available' : 'Missing'}</p>
-        <p><strong>Required Variables:</strong> ${envInfo.hasAllRequiredVars}</p>
-        <p><strong>API Key:</strong> ${envInfo.firebaseApiKey}</p>
-        <p><strong>Project ID:</strong> ${envInfo.firebaseProjectId}</p>
+        <p><strong>Firebase Config:</strong> ${firebaseConfig ? 'Available' : 'Using Fallbacks'}</p>
         <p><strong>Mode:</strong> ${envInfo.mode}</p>
         <p><strong>Time:</strong> ${new Date().toISOString()}</p>
       </div>

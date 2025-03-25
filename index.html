@@ -30,7 +30,7 @@
         max-width: 600px;
         margin: 0 auto;
         text-align: center;
-        display: none; /* Hide by default */
+        display: none; /* Hide by default - will only show if app fails to load */
       }
       .loading-spinner {
         display: inline-block;
@@ -64,17 +64,6 @@
         margin-top: 20px;
         text-align: left;
         display: none;
-      }
-      .missing-config-guide h3 {
-        margin-top: 0;
-        color: #d97706;
-      }
-      .missing-config-guide ol {
-        margin-left: 20px;
-        padding-left: 0;
-      }
-      .missing-config-guide li {
-        margin-bottom: 8px;
       }
     </style>
   </head>
@@ -113,14 +102,13 @@
     <script>
       // Show fallback content only if React doesn't load after a delay
       window.addEventListener('load', function() {
-        // Set a much longer delay before showing the fallback content
-        // This gives more time for the app to load normally
+        // Wait a bit longer before assuming there's a problem
         setTimeout(function() {
           const root = document.getElementById('root');
           const fallback = document.querySelector('.fallback-content');
           
           // Check if React app has rendered content
-          if (root && root.children.length === 1 && fallback && root.contains(fallback)) {
+          if (root && root.children.length <= 1 && fallback && root.contains(fallback)) {
             // React hasn't loaded or has failed, show minimal error info
             fallback.style.display = 'block';
             
@@ -130,15 +118,9 @@
               if (errorSection) {
                 errorSection.style.display = 'block';
               }
-            }, 5000); // Show error details after 5 more seconds
+            }, 3000); // Show error details after 3 more seconds
           }
-        }, 8000); // Show initial fallback only after 8 seconds
-      });
-      
-      // More minimal error handling
-      window.addEventListener('error', function(e) {
-        console.error('Error caught:', e.error || e.message);
-        // Don't automatically show error UI on JavaScript errors
+        }, 5000); // Increase to 5 seconds before showing initial fallback
       });
     </script>
   </body>

@@ -6,9 +6,9 @@ import { isDevelopment } from '@/utils/environment';
 
 // Initialize Firebase Authentication with graceful fallbacks
 const createAuthFallback = () => {
-  console.warn('Creating Firebase Auth fallback due to missing configuration');
+  console.warn('Creating Firebase Auth fallback - using mock auth mode');
   
-  // Create a minimal mock implementation
+  // Create a minimal mock implementation that won't break the app
   return {
     currentUser: null,
     onAuthStateChanged: (callback) => {
@@ -16,9 +16,26 @@ const createAuthFallback = () => {
       callback(null);
       return () => {}; // Return unsubscribe function
     },
-    signInWithEmailAndPassword: () => Promise.reject(new Error('Firebase auth not available')),
-    createUserWithEmailAndPassword: () => Promise.reject(new Error('Firebase auth not available')),
-    signOut: () => Promise.resolve()
+    signInWithEmailAndPassword: async (email, password) => {
+      console.log('Sign in requested in fallback mode for:', email);
+      if (isDevelopment()) {
+        // In development, create a mock user for testing
+        const mockUser = {
+          uid: `dev-${Date.now()}`,
+          email,
+          displayName: email.split('@')[0],
+          emailVerified: true
+        };
+        localStorage.setItem('currentUser', JSON.stringify(mockUser));
+        return { user: mockUser };
+      }
+      return Promise.reject(new Error('Firebase auth not fully configured'));
+    },
+    createUserWithEmailAndPassword: () => Promise.reject(new Error('Firebase auth not fully configured')),
+    signOut: async () => {
+      localStorage.removeItem('currentUser');
+      return Promise.resolve();
+    }
   };
 };
 
@@ -35,7 +52,7 @@ try {
     try {
       analytics = getAnalytics(app);
     } catch (e) {
-      console.warn('Analytics initialization failed:', e);
+      console.warn('Analytics initialization failed - continuing without analytics');
       analytics = null;
     }
   } else {
