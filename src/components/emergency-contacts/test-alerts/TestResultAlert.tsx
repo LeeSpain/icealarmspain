@@ -33,7 +33,7 @@ const TestResultAlert: React.FC<TestResultAlertProps> = ({ testResult }) => {
               ? (language === 'en' 
                   ? `Test ${testResult.type} alerts were sent to ${testResult.recipients.join(', ')}.`
                   : `Alertas de prueba de tipo ${testResult.type} fueron enviadas a ${testResult.recipients.join(', ')}.`)
-              : (testResult.errorMessage || (language === 'en' ? 'An error occurred' : 'Ocurrió un error'))}
+              : (testResult.error || (language === 'en' ? 'An error occurred' : 'Ocurrió un error'))}
           </AlertDescription>
         </div>
       </div>

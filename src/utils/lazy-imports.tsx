@@ -1,14 +1,20 @@
 
-// Update the LoadingSpinner usage to match the component props
+import React, { Suspense, LazyExoticComponent, ComponentType } from 'react';
+import { Route, RouteProps } from 'react-router-dom';
+import LoadingSpinner from '@/components/ui/loading-spinner';
+
+/**
+ * Wrapper component for lazily loaded components with a loading fallback
+ */
 export const AsyncComponent = ({
   component: Component,
   ...props
 }: {
-  component: React.LazyExoticComponent<React.ComponentType<any>>;
+  component: LazyExoticComponent<ComponentType<any>>;
   [key: string]: any;
 }) => {
   return (
-    <React.Suspense
+    <Suspense
       fallback={
         <LoadingSpinner 
           size="lg" 
@@ -18,24 +24,26 @@ export const AsyncComponent = ({
       }
     >
       <Component {...props} />
-    </React.Suspense>
+    </Suspense>
   );
 };
 
-// And later in the file:
+/**
+ * Creates a route with a lazy-loaded component
+ */
 export function AsyncPageRoute({
   component: Component,
   fallbackMessage = "Loading page...",
   ...rest
 }: RouteProps & {
-  component: React.LazyExoticComponent<React.ComponentType<any>>;
+  component: LazyExoticComponent<ComponentType<any>>;
   fallbackMessage?: string;
 }) {
   return (
     <Route
       {...rest}
       element={
-        <React.Suspense
+        <Suspense
           fallback={
             <LoadingSpinner 
               size="lg" 
@@ -46,7 +54,7 @@ export function AsyncPageRoute({
           }
         >
           <Component />
-        </React.Suspense>
+        </Suspense>
       }
     />
   );

@@ -1,4 +1,3 @@
-
 import { User } from './types';
 import { 
   signInWithEmailAndPassword, 
@@ -7,6 +6,17 @@ import {
   updateProfile as firebaseUpdateProfile
 } from '@/services/firebase/auth';
 import { isMockAuthEnabled } from '@/utils/environment';
+
+// Add types for MockUser 
+interface MockUser {
+  uid: string;
+  email: string | null;
+  displayName: string | null;
+  metadata: {
+    creationTime: string;
+    lastSignInTime: string;
+  };
+}
 
 /**
  * Sign in with email and password

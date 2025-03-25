@@ -22,7 +22,8 @@ export const signIn = async (
           displayName: 'Admin User',
           role: 'admin',
           profileCompleted: true,
-          status: 'active'
+          status: 'active',
+          language: 'en'
         };
         
         localStorage.setItem('mockUser', JSON.stringify(mockUser));
@@ -37,7 +38,8 @@ export const signIn = async (
           displayName: 'Test User',
           role: 'member',
           profileCompleted: true,
-          status: 'active'
+          status: 'active',
+          language: 'en'
         };
         
         localStorage.setItem('mockUser', JSON.stringify(mockUser));

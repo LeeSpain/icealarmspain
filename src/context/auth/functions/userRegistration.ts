@@ -20,7 +20,8 @@ export const signUp = async (
         displayName: userData.name || email.split('@')[0],
         role: 'member',
         profileCompleted: false,
-        status: 'active'
+        status: 'active',
+        language: userData.language || 'en'
       };
 
       localStorage.setItem('mockUser', JSON.stringify(mockUser));
@@ -58,7 +59,8 @@ export const createUser = async (
         displayName: userData.name || email.split('@')[0],
         role: userData.role || 'member',
         profileCompleted: false,
-        status: 'active'
+        status: 'active',
+        language: userData.language || 'en'
       };
       
       // Simulate notification
