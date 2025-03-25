@@ -4,7 +4,7 @@ import { LogOut, User } from "lucide-react";
 import { ButtonCustom } from "@/components/ui/button-custom";
 import { useLanguage } from "@/context/LanguageContext";
 import { useToast } from "@/components/ui/use-toast";
-import { useAuth } from "@/context/auth";
+import { useAuth } from "../../context/auth"; // Use relative path instead of alias
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -24,6 +24,9 @@ const AuthButtons: React.FC<AuthButtonsProps> = ({ isMobile = false, onClose }) 
   const { toast } = useToast();
   const navigate = useNavigate();
   const { user, profile, logout } = useAuth();
+  
+  // For debugging
+  console.log("AuthButtons: user=", user, "profile=", profile);
   
   const loginText = language === 'en' ? "Login" : "Iniciar Sesión";
   const signupText = language === 'en' ? "Sign Up" : "Registrarse";

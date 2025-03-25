@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
 import { useLanguage } from "@/context/LanguageContext";
-import { useAuth } from "@/context/auth"; // Fixed import path
+import { useAuth } from "../../context/auth"; // Use relative path instead of alias
 
 export const useLoginPage = () => {
   const { language } = useLanguage();
@@ -11,6 +11,10 @@ export const useLoginPage = () => {
   const location = useLocation();
   const { toast } = useToast();
   const { signIn, user, profile } = useAuth();
+
+  // For debugging
+  console.log("useLoginPage: user=", user, "profile=", profile);
+  
   const [loginInProgress, setLoginInProgress] = useState(false);
   const [loginError, setLoginError] = useState<string | null>(null);
   

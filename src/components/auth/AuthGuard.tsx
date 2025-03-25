@@ -1,7 +1,7 @@
 
 import React, { useEffect } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
-import { useAuth } from '@/context/auth'; // Fixed import path
+import { useAuth } from '../../context/auth'; // Use relative path instead of alias
 
 interface AuthGuardProps {
   children: React.ReactNode;
@@ -11,6 +11,9 @@ interface AuthGuardProps {
 const AuthGuard: React.FC<AuthGuardProps> = ({ children, allowedRoles }) => {
   const { user, profile, isLoading } = useAuth();
   const location = useLocation();
+
+  // For debugging
+  console.log("AuthGuard: user=", user, "profile=", profile, "isLoading=", isLoading);
 
   const checkRoleAccess = () => {
     if (!allowedRoles || !profile) return true;
