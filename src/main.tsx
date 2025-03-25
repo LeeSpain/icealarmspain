@@ -14,6 +14,18 @@ console.log('Mode:', import.meta.env.MODE);
 console.log('Dev:', import.meta.env.DEV);
 console.log('Prod:', import.meta.env.PROD);
 
+// Add a global error handler to provide better error messages for context errors
+window.addEventListener('error', (event) => {
+  if (event.error && event.error.message && 
+      (event.error.message.includes('must be used within') || 
+       event.error.message.includes('Provider'))) {
+    console.error('React Context Error:', event.error.message);
+    console.error('This is likely due to a context being used outside its provider.');
+    console.error('Check the component structure and ensure providers are properly nested.');
+    console.error('Full error:', event.error);
+  }
+});
+
 // Check for required environment variables before attempting to render
 const requiredEnvVars = ['VITE_FIREBASE_API_KEY', 'VITE_FIREBASE_PROJECT_ID'];
 const missingVars = requiredEnvVars.filter(varName => !import.meta.env[varName]);

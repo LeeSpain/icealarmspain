@@ -1,6 +1,6 @@
 
 import React, { createContext, useState, useContext, useEffect } from 'react';
-import { useAuth } from '@/context/AuthContext';
+import { useAuth } from './auth'; // Updated to use the new auth implementation
 
 export type Language = 'en' | 'es';
 
