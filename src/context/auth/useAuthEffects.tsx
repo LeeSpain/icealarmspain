@@ -56,6 +56,7 @@ export function useAuthStateListener(): AuthStateHook {
 
     // Real Firebase auth listener
     try {
+      // We need to fix this part to properly handle unsubscribe
       const unsubscribe = onAuthStateChanged(
         auth,
         async (firebaseUser) => {
@@ -75,6 +76,7 @@ export function useAuthStateListener(): AuthStateHook {
                 profileCompleted: true, // Should be determined by your app logic
                 photoURL: firebaseUser.photoURL || undefined,
                 lastLogin: new Date().toISOString(),
+                status: 'active',
               };
               
               setCurrentUser(user);
@@ -116,30 +118,36 @@ export function useAuthEffects({ setUser, setIsLoading }: {
 }): void {
   useEffect(() => {
     if (!isMockAuthEnabled()) {
-      const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
-        if (firebaseUser) {
-          // Process the Firebase user into our app's user
-          const user: User = {
-            uid: firebaseUser.uid,
-            id: firebaseUser.uid,
-            email: firebaseUser.email || '',
-            name: firebaseUser.displayName || '',
-            displayName: firebaseUser.displayName || '',
-            role: 'member', // Default role
-            status: 'active',
-            profileCompleted: !!firebaseUser.displayName,
-            photoURL: firebaseUser.photoURL || undefined,
-            lastLogin: new Date().toISOString(),
-          };
-          setUser(user);
-        } else {
-          setUser(null);
-        }
+      try {
+        const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+          if (firebaseUser) {
+            // Process the Firebase user into our app's user
+            const user: User = {
+              uid: firebaseUser.uid,
+              id: firebaseUser.uid,
+              email: firebaseUser.email || '',
+              name: firebaseUser.displayName || '',
+              displayName: firebaseUser.displayName || '',
+              role: 'member', // Default role
+              status: 'active',
+              profileCompleted: !!firebaseUser.displayName,
+              photoURL: firebaseUser.photoURL || undefined,
+              lastLogin: new Date().toISOString(),
+            };
+            setUser(user);
+          } else {
+            setUser(null);
+          }
+          setIsLoading(false);
+        });
+        
+        // Return cleanup function
+        return () => unsubscribe();
+      } catch (error) {
+        console.error('Error in auth effects hook:', error);
         setIsLoading(false);
-      });
-      
-      // Return cleanup function
-      return () => unsubscribe();
+        return () => {}; // Empty cleanup
+      }
     }
   }, [setUser, setIsLoading]);
 }

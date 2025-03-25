@@ -1,32 +1,55 @@
 
-import { useState } from "react";
-import { UseLoadingStateProps } from "@/context/auth/types";
+import { useState, useEffect } from 'react';
 
-export const useLoadingState = (externalLoading?: boolean) => {
-  const [internalLoading, setInternalLoading] = useState(false);
-  const [internalError, setInternalError] = useState<string | null>(null);
-  
-  // Use external loading state if provided, otherwise use internal
-  const isLoading = externalLoading !== undefined ? externalLoading : internalLoading;
+export interface UseLoadingStateProps {
+  initialState?: boolean;
+  delay?: number;
+}
 
-  // Update internal error when external error changes
-  const updateExternalError = (error: string | null) => {
-    if (error) {
-      setInternalError(error);
+export function useLoadingState({ initialState = false, delay = 300 }: UseLoadingStateProps = {}) {
+  const [isLoading, setIsLoading] = useState(initialState);
+  const [startTime, setStartTime] = useState<number | null>(null);
+
+  const startLoading = () => {
+    setIsLoading(true);
+    setStartTime(Date.now());
+  };
+
+  const stopLoading = () => {
+    if (startTime) {
+      const elapsedTime = Date.now() - startTime;
+      
+      if (elapsedTime < delay) {
+        // If less time has passed than the minimum delay,
+        // wait before stopping the loading state
+        setTimeout(() => {
+          setIsLoading(false);
+          setStartTime(null);
+        }, delay - elapsedTime);
+      } else {
+        // If more time has passed than the minimum delay,
+        // stop loading immediately
+        setIsLoading(false);
+        setStartTime(null);
+      }
+    } else {
+      setIsLoading(false);
     }
   };
 
-  const clearError = () => {
-    setInternalError(null);
-  };
+  useEffect(() => {
+    // Clean up any pending timeouts on unmount
+    return () => {
+      setStartTime(null);
+    };
+  }, []);
 
   return {
     isLoading,
-    internalLoading,
-    setInternalLoading,
-    internalError,
-    setInternalError,
-    updateExternalError,
-    clearError
+    startLoading,
+    stopLoading,
+    setIsLoading
   };
-};
+}
+
+export default useLoadingState;

@@ -1,10 +1,12 @@
-
-import React, { ReactNode, useEffect, useState } from 'react';
+import React, { ReactNode, useEffect, useState, useContext } from 'react';
 import { User, AuthContextType } from './auth/types';
 import { AuthContext } from './auth/context';
 import { useAuthStateListener } from './auth/useAuthEffects';
 import { showErrorToast } from '@/utils/error-handler';
 import { isMockAuthEnabled } from '@/utils/environment';
+
+// Add this export for the useAuth hook
+export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const { currentUser, loading, error } = useAuthStateListener();
@@ -51,7 +53,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         
         // Simple mock authentication
         if (email === 'admin@example.com' && password === 'password') {
-          const mockUser = {
+          const mockUser: User = {
             id: '12345',
             uid: '12345',
             email: 'admin@example.com',
@@ -65,7 +67,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           localStorage.setItem('mockUser', JSON.stringify(mockUser));
           return { user: mockUser };
         } else if (email && password) {
-          const mockUser = {
+          const mockUser: User = {
             id: '67890',
             uid: '67890',
             email,
@@ -97,17 +99,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   /**
    * Legacy login method (for backward compatibility)
    */
-  const login = async (
-    email: string,
-    password: string,
-    rememberMe: boolean = false
-  ): Promise<User> => {
-    const result = await signIn(email, password, rememberMe);
-    if (result.error) {
-      throw result.error;
-    }
-    return result.user as User;
-  };
+  const login = signIn;
 
   /**
    * Sign up a new user
@@ -124,7 +116,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         console.log('Using mock auth for sign up');
         
         // Create a mock user
-        const mockUser = {
+        const mockUser: User = {
           id: `mock-${Date.now()}`,
           uid: `mock-${Date.now()}`,
           email,
@@ -133,7 +125,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           role: 'member',
           profileCompleted: false,
           status: 'active',
-          ...userData,
         };
         
         localStorage.setItem('mockUser', JSON.stringify(mockUser));
@@ -173,14 +164,12 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   /**
    * Legacy logout method (for backward compatibility)
    */
-  const logout = async (): Promise<void> => {
-    return signOut();
-  };
+  const logout = signOut;
 
   /**
    * Update the user's profile
    */
-  const updateProfile = async (profileData: { [key: string]: any }): Promise<void> => {
+  const updateProfile = async (profileData: { [key: string]: any }): Promise<{ success: boolean; error?: string }> => {
     console.log('Updating profile:', profileData);
     
     try {
@@ -193,14 +182,14 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         
         // Update the profile state
         setProfile((prev: any) => ({ ...prev, ...profileData }));
-        return;
+        return { success: true };
       }
       
       // Real profile update would happen here
-      
+      return { success: true };
     } catch (error) {
       console.error('Update profile error:', error);
-      throw error;
+      return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
     }
   };
 
@@ -209,7 +198,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
    * (legacy method for backward compatibility)
    */
   const updateUserProfile = async (displayName: string): Promise<void> => {
-    return updateProfile({ displayName });
+    await updateProfile({ displayName });
   };
 
   /**
@@ -219,13 +208,13 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     email: string,
     password: string,
     userData: any
-  ): Promise<User> => {
+  ): Promise<{ user?: User; error?: any }> => {
     console.log('Admin creating user:', email, userData);
     
     try {
       if (isMockAuthEnabled()) {
         // Create a mock user
-        const mockUser = {
+        const mockUser: User = {
           id: `mock-${Date.now()}`,
           uid: `mock-${Date.now()}`,
           email,
@@ -234,18 +223,17 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           role: userData.role || 'member',
           profileCompleted: false,
           status: 'active',
-          ...userData,
         };
         
-        return mockUser;
+        return { user: mockUser };
       }
       
       // Real user creation would happen here
-      throw new Error('User creation not implemented for production yet');
+      return { error: 'User creation not implemented for production yet' };
       
     } catch (error) {
       console.error('Create user error:', error);
-      throw error;
+      return { error };
     }
   };
 

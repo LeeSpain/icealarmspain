@@ -7,7 +7,7 @@ export interface User {
   name: string;
   displayName: string;
   role?: string;
-  status?: 'active' | 'pending' | 'suspended';
+  status: 'active' | 'pending' | 'suspended';
   profileCompleted?: boolean;
   photoURL?: string;
   lastLogin?: string;
@@ -39,4 +39,10 @@ export interface AuthContextType {
   updateUserRole: (userId: string, role: string) => Promise<void>;
   deleteUser: (userId: string) => Promise<void>;
   hasRole: (roles: string | string[]) => boolean;
+}
+
+// Add a type for loading state hooks if needed
+export interface UseLoadingStateProps {
+  initialState?: boolean;
+  delay?: number;
 }
