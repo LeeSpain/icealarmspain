@@ -5,6 +5,14 @@ import App from './App'
 import './styles/index.css'
 import { getEnvironmentDiagnostics, getRequiredEnvVar } from './utils/environment'
 
+// Add type declarations for window properties
+declare global {
+  interface Window {
+    appLoaded?: boolean;
+    appStarted?: boolean;
+  }
+}
+
 // Log startup information to help with debugging
 console.log("Starting application initialization");
 console.log("Environment:", getEnvironmentDiagnostics());
@@ -26,11 +34,18 @@ if (!rootElement) {
   try {
     console.log("Creating React root and rendering app");
     const root = ReactDOM.createRoot(rootElement);
+    
+    // Set a flag to indicate the app has started rendering
+    window.appStarted = true;
+
     root.render(
       <React.StrictMode>
         <App />
       </React.StrictMode>
     );
+    
+    // Set a flag to indicate the app has fully loaded
+    window.appLoaded = true;
   } catch (error) {
     console.error("Error rendering React app:", error);
     
