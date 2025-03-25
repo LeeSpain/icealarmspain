@@ -1,126 +1,93 @@
 
-// Email service for sending and tracking emails
+/**
+ * Email service functions
+ */
 
-interface EmailOptions {
-  to: string;
-  subject: string;
-  body: string;
-  template?: string;
-  attachments?: Array<{name: string, content: string}>;
-}
-
-export interface EmailLog {
-  id: string;
-  userId: string;
-  to: string;
-  subject: string;
-  sentAt: Date;
-  status: 'sent' | 'failed' | 'delivered' | 'opened';
-  templateId?: string;
-}
-
-// Send email function
-export const sendEmail = async (options: EmailOptions): Promise<{success: boolean, error?: string}> => {
-  console.log('Sending email:', options);
+// Placeholder implementation for email sending
+export const sendEmail = async (
+  to: string, 
+  subject: string, 
+  body: string
+): Promise<{ success: boolean; error?: string }> => {
+  console.log(`Sending email to ${to} with subject: ${subject}`);
   
-  // In development, just log the email
-  if (process.env.NODE_ENV === 'development') {
-    console.log('Email sent (mock):', options);
-    return { success: true };
-  }
+  // Mock implementation always succeeds
+  return { success: true };
+};
+
+// Welcome email
+export const sendWelcomeEmail = async (
+  to: string, 
+  userName: string
+): Promise<{ success: boolean; error?: string }> => {
+  console.log(`Sending welcome email to ${to} for user ${userName}`);
   
-  try {
-    // In production, this would send via an API
-    const response = await fetch('/api/send-email', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(options),
-    });
-    
-    if (!response.ok) {
-      const errorData = await response.json();
-      return { success: false, error: errorData.message || 'Failed to send email' };
-    }
-    
-    return { success: true };
-  } catch (error) {
-    console.error('Error sending email:', error);
+  return sendEmail(
+    to,
+    'Welcome to Ice Guardian!',
+    `Hello ${userName},\n\nWelcome to Ice Guardian! We're excited to have you on board.`
+  );
+};
+
+// Password reset email
+export const sendPasswordResetEmail = async (
+  to: string
+): Promise<{ success: boolean; error?: string }> => {
+  console.log(`Sending password reset email to ${to}`);
+  
+  return sendEmail(
+    to,
+    'Password Reset Request',
+    'You requested a password reset. Click the link below to reset your password.'
+  );
+};
+
+// Notification email
+export const sendNotificationEmail = async (
+  to: string | string[],
+  subject: string,
+  message: string
+): Promise<{ success: boolean; error?: string }> => {
+  const recipients = Array.isArray(to) ? to : [to];
+  console.log(`Sending notification email to ${recipients.join(', ')}`);
+  
+  // In a real implementation, we would handle multiple recipients
+  // Here we're just sending to each recipient individually
+  const results = await Promise.all(
+    recipients.map(recipient => 
+      sendEmail(recipient, subject, message)
+    )
+  );
+  
+  // Check if any failed
+  const anyFailed = results.some(result => !result.success);
+  if (anyFailed) {
     return { 
       success: false, 
-      error: error instanceof Error ? error.message : 'Failed to send email' 
-    };
-  }
-};
-
-// Send test email
-export const sendTestEmail = async (to: string): Promise<{success: boolean, error?: string}> => {
-  return sendEmail({
-    to,
-    subject: 'Test Email from ICE Guardian',
-    body: `This is a test email sent from ICE Guardian at ${new Date().toLocaleString()}`
-  });
-};
-
-// Send welcome email to new users
-export const sendWelcomeEmail = async (to: string, name: string): Promise<{success: boolean, error?: string}> => {
-  return sendEmail({
-    to,
-    subject: 'Welcome to ICE Guardian',
-    body: `Hello ${name},\n\nWelcome to ICE Guardian! We're excited to have you join our community.\n\nThe ICE Guardian Team`
-  });
-};
-
-// Send notification email for custom messages
-export const sendNotificationEmail = async (to: string, subject: string, message: string): Promise<{success: boolean, error?: string}> => {
-  return sendEmail({
-    to,
-    subject,
-    body: message
-  });
-};
-
-// Get email logs for a user
-export const getUserEmailLogs = async (userId: string): Promise<{data: EmailLog[], error?: string}> => {
-  console.log('Getting email logs for user:', userId);
-  
-  // In development, return mock data
-  if (process.env.NODE_ENV === 'development') {
-    return {
-      data: [
-        {
-          id: '1',
-          userId,
-          to: 'user@example.com',
-          subject: 'Welcome to ICE Guardian',
-          sentAt: new Date(Date.now() - 86400000), // 1 day ago
-          status: 'delivered'
-        },
-        {
-          id: '2',
-          userId,
-          to: 'user@example.com',
-          subject: 'Your monthly report',
-          sentAt: new Date(Date.now() - 172800000), // 2 days ago
-          status: 'opened'
-        }
-      ],
-      error: undefined
+      error: 'Failed to send to some recipients' 
     };
   }
   
-  try {
-    const response = await fetch(`/api/email-logs?userId=${userId}`);
-    if (!response.ok) {
-      throw new Error('Failed to fetch email logs');
-    }
-    
-    const data = await response.json();
-    return { data };
-  } catch (error) {
-    console.error('Error fetching email logs:', error);
-    return { 
-      data: [],
-      error: error instanceof Error ? error.message : 'Failed to fetch email logs'
-    };
-  }
+  return { success: true };
+};
+
+// Emergency alert email
+export const sendEmergencyAlertEmail = async (
+  to: string | string[],
+  userName: string,
+  message: string
+): Promise<{ success: boolean; error?: string, recipients: string[] }> => {
+  const recipients = Array.isArray(to) ? to : [to];
+  console.log(`Sending emergency alert email for ${userName} to ${recipients.join(', ')}`);
+  
+  const result = await sendNotificationEmail(
+    recipients,
+    `EMERGENCY ALERT: ${userName} needs assistance`,
+    message
+  );
+  
+  return { 
+    ...result, 
+    recipients
+  };
 };

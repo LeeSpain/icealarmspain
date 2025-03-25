@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { AuthContextType } from './types';
 import { AuthContext } from './context';
@@ -19,26 +18,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           } : null,
           isAuthenticated: !!user,
           isLoading,
-          login: async (email, password, rememberMe) => {
-            try {
-              const user = await authFunctions.login(email, password, rememberMe);
-              return { user, error: null };
-            } catch (error) {
-              return { user: undefined, error };
-            }
-          },
-          signIn: async (email, password, rememberMe) => {
-            try {
-              const user = await authFunctions.signIn(email, password, rememberMe);
-              return { user, error: null };
-            } catch (error) {
-              return { user: undefined, error };
-            }
-          },
-          signUp: async (email, password, userData) => {
-            const result = await authFunctions.signUp(email, password, userData);
-            return result;
-          },
+          login: authFunctions.login,
+          signIn: authFunctions.signIn,
+          signUp: authFunctions.signUp,
           logout: authFunctions.logout,
           signOut: authFunctions.logout,
           updateUserProfile: wrappedUpdateUserProfile,
@@ -48,10 +30,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             return { success: true };
           },
           // Admin functions
-          createUser: async (email, password, userData) => {
-            const result = await authFunctions.createUser(email, password, userData);
-            return result;
-          },
+          createUser: authFunctions.createUser,
           getAllUsers: authFunctions.getAllUsers,
           updateUserRole: authFunctions.updateUserRole,
           deleteUser: authFunctions.deleteUser,

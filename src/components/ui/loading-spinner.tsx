@@ -1,44 +1,40 @@
 
 import React from 'react';
+import { cn } from '@/lib/utils';
 
 export interface LoadingSpinnerProps {
   size?: 'sm' | 'md' | 'lg';
-  color?: string;
-  fullPage?: boolean;
-  message?: string;
   className?: string;
+  color?: 'primary' | 'white' | 'gray';
 }
 
 const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
   size = 'md',
-  color = 'currentColor',
-  fullPage = false,
-  message,
-  className = '',
+  className,
+  color = 'primary'
 }) => {
   const sizeClasses = {
-    sm: 'w-5 h-5',
-    md: 'w-8 h-8',
-    lg: 'w-12 h-12',
+    sm: 'w-4 h-4 border-2',
+    md: 'w-8 h-8 border-3',
+    lg: 'w-12 h-12 border-4'
   };
 
-  const spinner = (
-    <div className={`flex flex-col items-center justify-center ${className}`}>
-      <div className={`animate-spin rounded-full border-t-2 border-b-2 ${sizeClasses[size]}`} 
-           style={{ borderColor: color }}></div>
-      {message && <p className="mt-2 text-sm text-gray-500">{message}</p>}
-    </div>
+  const colorClasses = {
+    primary: 'border-t-blue-500',
+    white: 'border-t-white',
+    gray: 'border-t-gray-400'
+  };
+
+  return (
+    <div
+      className={cn(
+        'animate-spin rounded-full border-solid border-gray-200',
+        sizeClasses[size],
+        colorClasses[color],
+        className
+      )}
+    />
   );
-
-  if (fullPage) {
-    return (
-      <div className="fixed inset-0 flex items-center justify-center bg-white bg-opacity-80 z-50">
-        {spinner}
-      </div>
-    );
-  }
-
-  return spinner;
 };
 
 export default LoadingSpinner;

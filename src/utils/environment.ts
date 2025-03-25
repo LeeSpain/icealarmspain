@@ -1,92 +1,73 @@
 
-// Environment utility functions to safely access environment variables
+/**
+ * Environment utility functions
+ */
 
 /**
- * Returns true if the application is running in development mode
+ * Check if we're in development mode
  */
-export function isDevelopment(): boolean {
-  return import.meta.env.DEV || import.meta.env.MODE === 'development';
-}
+export const isDevelopment = (): boolean => {
+  return import.meta.env.DEV === true || import.meta.env.MODE === 'development';
+};
 
 /**
- * Returns true if the application is running in production mode
+ * Check if we're in production mode
  */
-export function isProduction(): boolean {
-  return import.meta.env.PROD || import.meta.env.MODE === 'production';
-}
+export const isProduction = (): boolean => {
+  return import.meta.env.PROD === true || import.meta.env.MODE === 'production';
+};
 
 /**
- * Returns true if the application is running in debug build mode
+ * Check if we're in test mode
  */
-export function isDebugBuild(): boolean {
+export const isTest = (): boolean => {
+  return import.meta.env.MODE === 'test';
+};
+
+/**
+ * Check if we're in a debug build
+ */
+export const isDebugBuild = (): boolean => {
   return import.meta.env.VITE_DEBUG_BUILD === 'true';
-}
+};
 
 /**
- * Returns true if the current environment has valid Firebase configuration
+ * Check if we have valid Firebase configuration
  */
-export function hasValidFirebaseConfig(): boolean {
-  return (
-    !!import.meta.env.VITE_FIREBASE_API_KEY && 
-    !!import.meta.env.VITE_FIREBASE_PROJECT_ID
-  );
-}
+export const hasValidFirebaseConfig = (): boolean => {
+  return !!import.meta.env.VITE_FIREBASE_API_KEY && 
+         !!import.meta.env.VITE_FIREBASE_PROJECT_ID;
+};
 
 /**
- * Get an environment variable with a fallback value
+ * Check if mock auth should be enabled
  */
-export function getEnvVar(name: string, fallback: string = ''): string {
-  const value = import.meta.env[name];
-  return value !== undefined ? value : fallback;
-}
+export const isMockAuthEnabled = (): boolean => {
+  // Enable mock auth in development if no Firebase config
+  return isDevelopment() && !hasValidFirebaseConfig();
+};
 
 /**
- * Get a required environment variable
- * Throws an error if the variable is not set
+ * Get the current environment
  */
-export function getRequiredEnvVar(name: string): string {
-  const value = import.meta.env[name];
-  if (value === undefined) {
-    throw new Error(`Required environment variable ${name} is not defined`);
-  }
-  return value;
-}
+export const getEnvironment = (): string => {
+  return import.meta.env.MODE || 'unknown';
+};
 
 /**
- * Returns true if mock authentication is enabled
- * This is useful for development and demo environments
+ * Get diagnostic information about the current environment
  */
-export function isMockAuthEnabled(): boolean {
-  return getEnvVar('VITE_MOCK_AUTH', 'false') === 'true' || isDevelopment();
-}
-
-/**
- * Get the current environment name
- */
-export function getEnvironment(): string {
-  return import.meta.env.MODE || 'development';
-}
-
-/**
- * Get diagnostic information about the environment
- */
-export function getEnvironmentDiagnostics(): Record<string, any> {
+export const getEnvironmentDiagnostics = () => {
   return {
     environment: getEnvironment(),
-    isDevelopment: isDevelopment(),
-    isProduction: isProduction(),
+    isDev: isDevelopment(),
+    isProd: isProduction(),
+    isTest: isTest(),
     isDebugBuild: isDebugBuild(),
-    hasValidFirebaseConfig: hasValidFirebaseConfig(),
-    firebaseConfigured: {
-      apiKey: !!import.meta.env.VITE_FIREBASE_API_KEY,
-      projectId: !!import.meta.env.VITE_FIREBASE_PROJECT_ID
-    },
+    firebaseConfigPresent: hasValidFirebaseConfig(),
     mockAuthEnabled: isMockAuthEnabled(),
-    environmentVars: {
-      MODE: import.meta.env.MODE,
-      BASE_URL: import.meta.env.BASE_URL,
-      PROD: import.meta.env.PROD,
-      DEV: import.meta.env.DEV
-    }
+    buildTime: import.meta.env.VITE_BUILD_TIME || 'unknown',
+    buildId: import.meta.env.VITE_BUILD_ID || 'unknown',
+    nodeEnv: import.meta.env.NODE_ENV || 'unknown',
   };
-}
+};

@@ -2,47 +2,23 @@
 import { createContext } from 'react';
 import { AuthContextType } from './types';
 
-// Create the initial auth context with default values
+// Create a default context with sensible defaults
 export const AuthContext = createContext<AuthContextType>({
   user: null,
   profile: null,
   isAuthenticated: false,
   isLoading: true,
-  login: async () => {
-    throw new Error('login not implemented');
-  },
-  signIn: async () => {
-    throw new Error('signIn not implemented');
-    return { error: 'Not implemented' };
-  },
-  signUp: async () => {
-    throw new Error('signUp not implemented');
-    return { error: 'Not implemented' };
-  },
-  logout: async () => {
-    throw new Error('logout not implemented');
-  },
-  signOut: async () => {
-    throw new Error('signOut not implemented');
-  },
-  updateUserProfile: async () => {
-    throw new Error('updateUserProfile not implemented');
-  },
-  updateProfile: async () => {
-    throw new Error('updateProfile not implemented');
-  },
-  createUser: async () => {
-    throw new Error('createUser not implemented');
-  },
-  getAllUsers: async () => {
-    throw new Error('getAllUsers not implemented');
-    return [];
-  },
-  updateUserRole: async () => {
-    throw new Error('updateUserRole not implemented');
-  },
-  deleteUser: async () => {
-    throw new Error('deleteUser not implemented');
-  },
-  hasRole: () => false,
+  login: async () => ({ error: new Error('Not implemented') }),
+  signIn: async () => ({ error: new Error('Not implemented') }),
+  signUp: async () => ({ error: new Error('Not implemented') }),
+  logout: async () => {},
+  signOut: async () => {},
+  updateUserProfile: async () => {},
+  updateProfile: async () => ({ success: false }),
+  // Admin functions
+  createUser: async () => ({ error: new Error('Not implemented') }),
+  getAllUsers: async () => [],
+  updateUserRole: async () => ({ success: false }),
+  deleteUser: async () => ({ success: false }),
+  hasRole: () => false
 });

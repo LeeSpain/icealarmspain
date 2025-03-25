@@ -1,27 +1,24 @@
 
-// User type
+// User type definition
 export interface User {
   uid: string;
   id: string;
   email: string;
   name: string;
   displayName: string;
-  role?: string;
+  role: string;
   status: 'active' | 'pending' | 'suspended';
-  profileCompleted?: boolean;
-  photoURL?: string;
-  lastLogin?: string;
-  createdAt?: string;
+  profileCompleted: boolean;
+  language: string;
 }
 
 // User profile type
 export interface UserProfile {
-  display_name?: string;
-  role?: string;
-  [key: string]: any;
+  display_name: string | null;
+  role: string | null;
 }
 
-// Auth context type
+// Auth context type definition
 export interface AuthContextType {
   user: User | null;
   profile: UserProfile | null;
@@ -33,16 +30,11 @@ export interface AuthContextType {
   logout: () => Promise<void>;
   signOut: () => Promise<void>;
   updateUserProfile: (displayName: string) => Promise<void>;
-  updateProfile: (data: any) => Promise<{ success: boolean; error?: string }>;
+  updateProfile: (data: any) => Promise<{ success: boolean }>;
+  // Admin functions
   createUser: (email: string, password: string, userData?: any) => Promise<{ user?: User; error?: any }>;
   getAllUsers: () => Promise<User[]>;
-  updateUserRole: (userId: string, role: string) => Promise<void>;
-  deleteUser: (userId: string) => Promise<void>;
+  updateUserRole: (userId: string, role: string) => Promise<{ success: boolean; error?: string }>;
+  deleteUser: (userId: string) => Promise<{ success: boolean; error?: string }>;
   hasRole: (roles: string | string[]) => boolean;
-}
-
-// Add a type for loading state hooks if needed
-export interface UseLoadingStateProps {
-  initialState?: boolean;
-  delay?: number;
 }
