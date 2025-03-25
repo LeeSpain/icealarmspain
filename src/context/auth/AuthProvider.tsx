@@ -1,11 +1,9 @@
 
-import React, { createContext } from 'react';
+import React from 'react';
+import { AuthContext } from './context';
 import { AuthContextType, User } from './types';
 
-// Create the context with a default value
-export const AuthContext = createContext<AuthContextType | null>(null);
-
-// Create a dummy user that's always "logged in"
+// Create a dummy user that's always available
 const dummyUser: User = {
   uid: 'dummy-user',
   id: 'dummy-user',
