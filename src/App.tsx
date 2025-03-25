@@ -1,6 +1,6 @@
 
 import React, { Suspense, useEffect } from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { routes } from "./routes";
 import { Toaster } from "@/components/ui/toaster";
 import { LanguageProvider } from "@/context/LanguageContext";
@@ -11,6 +11,10 @@ import { AuthProvider } from "./context/auth";
 import ErrorBoundaryRoot from "@/components/layout/ErrorBoundaryRoot";
 import { getEnvironment } from "@/utils/environment";
 import BasicDebug from "@/components/debug/BasicDebug";
+import EnhancedDebug from "@/components/debug/EnhancedDebug";
+
+// Import the Index page explicitly to ensure it's available
+import Index from "./pages/Index";
 
 // Initialize diagnostic information
 const appStartTime = Date.now();
@@ -19,46 +23,12 @@ console.log(`App.tsx loading - Environment: ${getEnvironment()}`);
 // Simple fallback component when routes are loading
 const LoadingFallback = () => (
   <div className="flex items-center justify-center min-h-screen">
-    <p className="text-lg">Loading...</p>
+    <div className="text-center">
+      <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+      <p className="text-lg">Loading application...</p>
+    </div>
   </div>
 );
-
-// Standard error boundary for route-level errors
-class ErrorBoundary extends React.Component<{children: React.ReactNode}, {hasError: boolean, error: Error | null}> {
-  constructor(props: {children: React.ReactNode}) {
-    super(props);
-    this.state = { hasError: false, error: null };
-  }
-
-  static getDerivedStateFromError(error: Error) {
-    return { hasError: true, error };
-  }
-
-  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    console.error("App error boundary caught error:", error, errorInfo);
-  }
-
-  render() {
-    if (this.state.hasError) {
-      return (
-        <div className="min-h-screen flex items-center justify-center p-4">
-          <div className="max-w-md p-8 bg-white rounded-lg shadow-lg">
-            <h2 className="text-2xl font-bold mb-4">Something went wrong</h2>
-            <p className="mb-4">The application encountered an error. Please try refreshing the page.</p>
-            <button 
-              onClick={() => window.location.reload()}
-              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-            >
-              Refresh Page
-            </button>
-          </div>
-        </div>
-      );
-    }
-
-    return this.props.children;
-  }
-}
 
 function App() {
   useEffect(() => {
@@ -76,8 +46,9 @@ function App() {
   
   return (
     <>
-      {/* Always render the debug component outside of any providers */}
+      {/* Debug components render outside any providers */}
       <BasicDebug />
+      <EnhancedDebug />
       
       <ErrorBoundaryRoot>
         <HelmetProvider>
@@ -87,20 +58,20 @@ function App() {
                 <ScrollToTop />
                 <Suspense fallback={<LoadingFallback />}>
                   <Routes>
-                    {routes.map((route) => {
-                      console.log(`Registering route: ${route.path}`);
-                      return (
-                        <Route
-                          key={route.path}
-                          path={route.path}
-                          element={
-                            <ErrorBoundary>
-                              {route.element}
-                            </ErrorBoundary>
-                          }
-                        />
-                      );
-                    })}
+                    {/* Explicitly add index route for extra safety */}
+                    <Route path="/" element={<Index />} />
+                    
+                    {/* Map all defined routes */}
+                    {routes.map((route) => (
+                      <Route
+                        key={route.path}
+                        path={route.path}
+                        element={route.element}
+                      />
+                    ))}
+                    
+                    {/* Fallback route */}
+                    <Route path="*" element={<Navigate to="/" />} />
                   </Routes>
                 </Suspense>
                 <Toaster />

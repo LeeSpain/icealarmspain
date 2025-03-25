@@ -1,0 +1,157 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ice Guardian - Diagnostics</title>
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      line-height: 1.5;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    h1 {
+      color: #0f172a;
+      border-bottom: 2px solid #e2e8f0;
+      padding-bottom: 10px;
+    }
+    pre {
+      background: #f1f5f9;
+      padding: 15px;
+      border-radius: 5px;
+      overflow-x: auto;
+    }
+    .card {
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 15px;
+      margin-bottom: 20px;
+    }
+    .card h2 {
+      margin-top: 0;
+    }
+    button {
+      background: #0ea5e9;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #0284c7;
+    }
+    .success {
+      color: #16a34a;
+    }
+    .error {
+      color: #dc2626;
+    }
+  </style>
+</head>
+<body>
+  <h1>Ice Guardian Diagnostics Page</h1>
+  <p>This page helps diagnose issues with the Ice Guardian website.</p>
+  
+  <div class="card">
+    <h2>Basic Connectivity</h2>
+    <p>Status: <span id="connectivity-status">Checking...</span></p>
+    <p>This diagnostic page loaded successfully, which means basic website access is working.</p>
+  </div>
+  
+  <div class="card">
+    <h2>Environment Information</h2>
+    <p>Browser: <span id="browser-info"></span></p>
+    <p>Screen Size: <span id="screen-size"></span></p>
+    <p>Window Size: <span id="window-size"></span></p>
+    <p>Device Pixel Ratio: <span id="pixel-ratio"></span></p>
+  </div>
+  
+  <div class="card">
+    <h2>Critical Resources Check</h2>
+    <ul id="resource-check">
+      <li>Checking main.js: <span id="main-js-status">Pending...</span></li>
+      <li>Checking index.css: <span id="css-status">Pending...</span></li>
+    </ul>
+  </div>
+  
+  <div class="card">
+    <h2>Root Element Test</h2>
+    <p>The following div should render if DOM manipulation is working:</p>
+    <div id="test-root" style="padding: 10px; background: #f0f9ff; border-radius: 4px;">
+      If you can see this, JavaScript DOM manipulation is working.
+    </div>
+    <button id="dom-test-btn" style="margin-top: 10px;">Test DOM Manipulation</button>
+  </div>
+  
+  <div class="card">
+    <h2>Manual Actions</h2>
+    <p>Try these steps to fix common issues:</p>
+    <ol>
+      <li>Clear your browser cache and reload</li>
+      <li>Try a different browser</li>
+      <li>Disable browser extensions</li>
+      <li>Try private/incognito mode</li>
+    </ol>
+    <button id="clear-cache-btn">Clear LocalStorage</button>
+  </div>
+  
+  <script>
+    // Set connectivity status
+    document.getElementById('connectivity-status').textContent = 'Connected ✓';
+    document.getElementById('connectivity-status').className = 'success';
+    
+    // Set environment info
+    document.getElementById('browser-info').textContent = navigator.userAgent;
+    document.getElementById('screen-size').textContent = `${window.screen.width} x ${window.screen.height}`;
+    document.getElementById('window-size').textContent = `${window.innerWidth} x ${window.innerHeight}`;
+    document.getElementById('pixel-ratio').textContent = window.devicePixelRatio;
+    
+    // Test DOM manipulation
+    document.getElementById('dom-test-btn').addEventListener('click', function() {
+      const testRoot = document.getElementById('test-root');
+      testRoot.innerHTML = 'DOM manipulation successful! ' + new Date().toLocaleTimeString();
+      testRoot.style.background = '#dcfce7';
+    });
+    
+    // Clear cache button
+    document.getElementById('clear-cache-btn').addEventListener('click', function() {
+      localStorage.clear();
+      this.textContent = 'LocalStorage Cleared ✓';
+      this.disabled = true;
+    });
+    
+    // Resource checks
+    function checkResource(url, statusElement) {
+      const element = document.getElementById(statusElement);
+      
+      fetch(url)
+        .then(response => {
+          if (response.ok) {
+            element.textContent = 'Loaded ✓';
+            element.className = 'success';
+          } else {
+            element.textContent = `Failed (${response.status})`;
+            element.className = 'error';
+          }
+        })
+        .catch(error => {
+          element.textContent = `Error: ${error.message}`;
+          element.className = 'error';
+        });
+    }
+    
+    // Check main resources
+    window.addEventListener('load', function() {
+      // Give some time for scripts to load
+      setTimeout(() => {
+        checkResource('/assets/index-*.js', 'main-js-status');
+        checkResource('/assets/index-*.css', 'css-status');
+      }, 1000);
+    });
+  </script>
+</body>
+</html>
