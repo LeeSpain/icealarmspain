@@ -7,12 +7,14 @@ import './styles/index.css'
 // Simple render tracking for debugging
 console.log("Starting application initialization");
 
-// Log when React starts rendering
+// Initialize the rendering stages object if it doesn't exist
 if (typeof window !== 'undefined') {
-  window.renderingStages = {
-    ...window.renderingStages,
-    reactStarted: true
+  window.renderingStages = window.renderingStages || {
+    htmlLoaded: true
   };
+  
+  // Log when React starts rendering
+  window.renderingStages.reactStarted = true;
 }
 
 // Create a more reliable root element check
