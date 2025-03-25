@@ -10,56 +10,6 @@
     <meta property="og:image" content="/og-image.png" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&display=swap">
     <link rel="preload" href="/src/styles/index.css" as="style">
-    <script>
-      // Global error tracking to prevent blank screens
-      window.appErrors = [];
-      window.addEventListener('error', function(event) {
-        window.appErrors.push({
-          type: 'error',
-          message: event.message,
-          source: event.filename,
-          line: event.lineno,
-          time: new Date().toISOString()
-        });
-        
-        // Check if we need to show error UI (if app doesn't load in 5 seconds)
-        if (!window.errorUITimeout) {
-          window.errorUITimeout = setTimeout(function() {
-            var root = document.getElementById('root');
-            var initialLoader = document.querySelector('.initial-loader');
-            
-            if (initialLoader && root && root.children.length <= 1) {
-              // App failed to load, show error UI
-              var errorHTML = `
-                <div class="error-container">
-                  <h2>Application Failed to Load</h2>
-                  <p>We encountered an issue loading the Ice Guardian application.</p>
-                  <button onclick="window.location.reload()">Reload Application</button>
-                  <div style="margin-top: 20px; text-align: left;">
-                    <details>
-                      <summary>Error Details</summary>
-                      <pre style="max-height: 200px; overflow: auto; background: #f5f5f5; padding: 10px; border-radius: 4px;">${JSON.stringify(window.appErrors, null, 2)}</pre>
-                    </details>
-                  </div>
-                </div>
-              `;
-              
-              // Replace loader with error UI
-              root.innerHTML = errorHTML;
-            }
-          }, 5000);
-        }
-      });
-      
-      // Configuration fallbacks for production environments
-      window.APP_CONFIG = {
-        environment: 'production',
-        features: {
-          mockAuth: true,
-          debugMode: false
-        }
-      };
-    </script>
     <style>
       /* Critical rendering styles */
       html, body {
@@ -91,27 +41,6 @@
         cursor: pointer;
         margin-top: 16px;
       }
-      .initial-loader {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        min-height: 100vh;
-        text-align: center;
-        padding: 20px;
-      }
-      .loader-spinner {
-        width: 40px;
-        height: 40px;
-        border: 3px solid rgba(0,0,0,0.1);
-        border-radius: 50%;
-        border-top-color: #0070f3;
-        animation: spin 1s linear infinite;
-        margin-bottom: 16px;
-      }
-      @keyframes spin {
-        to { transform: rotate(360deg); }
-      }
     </style>
     <!-- Preconnect to critical domains -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -120,47 +49,10 @@
 
   <body>
     <!-- Root element where React will mount -->
-    <div id="root">
-      <!-- Initial loader that will be replaced when React mounts -->
-      <div class="initial-loader">
-        <div class="loader-spinner"></div>
-        <div>Loading Ice Guardian Alert...</div>
-        <noscript>
-          <p style="color: red;">JavaScript is required to use this application.</p>
-        </noscript>
-      </div>
-    </div>
+    <div id="root"></div>
     
     <!-- Add the GPT Engineer script tag back -->
     <script src="https://cdn.gpteng.co/gptengineer.js" type="module"></script>
     <script type="module" src="/src/main.tsx"></script>
-    
-    <!-- Fallback script for production environments -->
-    <script>
-      // Safety fallback - show content after max timeout
-      setTimeout(function() {
-        var initialLoader = document.querySelector('.initial-loader');
-        if (initialLoader) {
-          var content = document.createElement('div');
-          content.innerHTML = `
-            <div class="error-container">
-              <h2>Ice Guardian Alert</h2>
-              <p>If you're seeing this message, your browser might be experiencing issues loading our application.</p>
-              <button onclick="window.location.reload()">Refresh Page</button>
-              
-              <div style="margin-top: 30px; text-align: center;">
-                <img src="/public/lovable-uploads/ad65a632-e7ef-4c61-a20e-7b6ff282a87a.png" alt="Ice Guardian Device" style="max-width: 200px; border-radius: 8px;">
-                <p>Medical alert and health monitoring system for seniors and expatriates in Spain</p>
-              </div>
-            </div>
-          `;
-          
-          // Only replace if still showing loader
-          if (initialLoader.parentNode) {
-            initialLoader.parentNode.replaceChild(content, initialLoader);
-          }
-        }
-      }, 10000);
-    </script>
   </body>
 </html>

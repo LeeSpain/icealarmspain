@@ -1,84 +1,64 @@
 
-import React from 'react';
-import { AuthContext } from './context';
-import { AuthStateManager } from './AuthStateManager';
-import { User } from './types';
-import * as authFunctions from './authFunctions';
+import React, { createContext, useState, useEffect } from 'react';
+import { AuthContextType, User } from './types';
 
-interface AuthProviderProps {
+// Create the context with a default value
+export const AuthContext = createContext<AuthContextType | null>(null);
+
+// Mock user for development
+const mockUser: User = {
+  uid: 'mock-user',
+  id: 'mock-user',
+  email: 'user@example.com',
+  name: 'Demo User',
+  displayName: 'Demo User',
+  role: 'member',
+  profileCompleted: true,
+  status: 'active',
+  createdAt: new Date().toISOString(),
+  lastLogin: new Date().toISOString()
+};
+
+interface Props {
   children: React.ReactNode;
 }
 
-export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  console.log("AuthProvider rendering");
+export const AuthProvider: React.FC<Props> = ({ children }) => {
+  const [user, setUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
   
-  const signIn = async (email: string, password: string, rememberMe?: boolean) => {
-    try {
-      console.log("AuthProvider: signIn called with email:", email);
-      // Call the login function (aliased as signIn in authFunctions)
-      const user = await authFunctions.login(email, password, rememberMe || false);
-      console.log("AuthProvider: signIn success, user:", user);
-      return user;
-    } catch (error) {
-      console.error('Error signing in:', error);
-      throw error;
-    }
+  // Simplified auth provider - no actual authentication
+  useEffect(() => {
+    console.log('Auth provider initialized - authentication disabled');
+    // Just use the mock user for all interactions to prevent blank screens
+    setUser(mockUser);
+    setIsLoading(false);
+  }, []);
+
+  // Mock authentication functions that don't do anything
+  const authContextValue: AuthContextType = {
+    user,
+    profile: user,
+    isAuthenticated: !!user,
+    isLoading,
+    login: async () => mockUser,
+    signIn: async () => mockUser,
+    signUp: async () => mockUser,
+    logout: async () => {},
+    updateUserProfile: async () => {},
+    createUser: async () => mockUser,
+    getAllUsers: async () => [mockUser],
+    updateUserRole: async () => {},
+    deleteUser: async () => {}
   };
 
-  const signUp = async (email: string, password: string, userData?: any) => {
-    try {
-      console.log("AuthProvider: signUp called with email:", email);
-      const result = await authFunctions.signUp(email, password, userData);
-      if (result.error) {
-        throw result.error;
-      }
-      console.log("AuthProvider: signUp success, user:", result.user);
-      // Return just the user object, not the {user, error} structure
-      return result.user as User;
-    } catch (error) {
-      console.error('Error signing up:', error);
-      throw error;
-    }
-  };
-
-  const signOut = async () => {
-    try {
-      console.log("AuthProvider: signOut called");
-      // Use logout function instead of signOut
-      return await authFunctions.logout();
-    } catch (error) {
-      console.error('Error signing out:', error);
-      throw error;
-    }
-  };
-
+  console.log('AuthProvider rendering');
+  
   return (
-    <AuthStateManager>
-      {({ user, isLoading, wrappedUpdateUserProfile }) => {
-        console.log("AuthStateManager provided state: user=", user, "isLoading=", isLoading);
-        return (
-          <AuthContext.Provider
-            value={{
-              user,
-              isAuthenticated: !!user,
-              isLoading,
-              profile: user, // Use user as profile since they have the same structure
-              login: signIn,
-              signIn,
-              signUp,
-              logout: signOut,
-              updateUserProfile: wrappedUpdateUserProfile,
-              // Add required admin functions with stub implementations
-              createUser: signUp,
-              getAllUsers: async () => [],
-              updateUserRole: async () => {},
-              deleteUser: async () => {},
-            }}
-          >
-            {children}
-          </AuthContext.Provider>
-        );
-      }}
-    </AuthStateManager>
+    <AuthContext.Provider value={authContextValue}>
+      {children}
+    </AuthContext.Provider>
   );
 };
+
+export default AuthProvider;

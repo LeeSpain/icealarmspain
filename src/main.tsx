@@ -3,7 +3,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
 import './styles/index.css';
-import './utils/app-initialization'; // Add this import to ensure initialization
+import './utils/app-initialization'; // Keep initialization utility
 import ErrorBoundaryRoot from './components/layout/ErrorBoundaryRoot';
 
 // Simple function to help with debugging and diagnostics
@@ -94,25 +94,3 @@ if (typeof window !== 'undefined') {
     logAppStartup(`Unhandled promise rejection: ${event.reason?.message || 'Unknown reason'}`, event.reason);
   });
 }
-
-// Export a simple debug helper for console
-(window as any).debugApp = {
-  rerender: renderApp,
-  timestamp: new Date().toISOString(),
-  forceMockAuth: () => {
-    const mockUser = {
-      uid: `debug-user-${Date.now()}`,
-      id: `debug-user-${Date.now()}`,
-      email: `debug@example.com`,
-      name: 'Debug User',
-      displayName: 'Debug User',
-      role: 'member',
-      status: 'active',
-      profileCompleted: true,
-      createdAt: new Date().toISOString()
-    };
-    localStorage.setItem('currentUser', JSON.stringify(mockUser));
-    console.log('Mock authentication enabled');
-    window.location.reload();
-  }
-};

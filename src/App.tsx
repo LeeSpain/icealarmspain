@@ -5,12 +5,9 @@ import { Toaster } from "@/components/ui/toaster";
 import { LanguageProvider } from "@/context/LanguageContext";
 import { HelmetProvider } from "react-helmet-async";
 import './App.css';
-import { AuthProvider } from "./context/auth"; 
-import AuthGuard from "./components/auth/AuthGuard"; 
-import ErrorBoundary from "@/components/layout/ErrorBoundary";
 import ScrollToTop from "@/components/layout/ScrollToTop";
-import { isDevelopment, isDebugBuild } from "./utils/environment";
-import "./utils/build-verification";
+import ErrorBoundary from "@/components/layout/ErrorBoundary";
+import { isDevelopment } from "./utils/environment";
 
 // Add a global error handler to catch initialization errors
 if (typeof window !== 'undefined') {
@@ -26,42 +23,26 @@ function App() {
   return (
     <ErrorBoundary>
       <HelmetProvider>
-        <AuthProvider>
-          <LanguageProvider>
-            <Router>
-              <ScrollToTop />
-              <Routes>
-                {routes.map((route) => {
-                  console.log(`Registering route: ${route.path}`);
-                  
-                  // Protected routes with optional role restrictions
-                  if (route.protected) {
-                    return (
-                      <Route
-                        key={route.path}
-                        path={route.path}
-                        element={
-                          <AuthGuard allowedRoles={route.allowedRoles}>
-                            {route.element}
-                          </AuthGuard>
-                        }
-                      />
-                    );
-                  }
-                  // Regular routes
-                  return (
-                    <Route
-                      key={route.path}
-                      path={route.path}
-                      element={route.element}
-                    />
-                  );
-                })}
-              </Routes>
-            </Router>
-            <Toaster />
-          </LanguageProvider>
-        </AuthProvider>
+        <LanguageProvider>
+          <Router>
+            <ScrollToTop />
+            <Routes>
+              {routes.map((route) => {
+                console.log(`Registering route: ${route.path}`);
+                
+                // All routes render without authentication checks
+                return (
+                  <Route
+                    key={route.path}
+                    path={route.path}
+                    element={route.element}
+                  />
+                );
+              })}
+            </Routes>
+          </Router>
+          <Toaster />
+        </LanguageProvider>
       </HelmetProvider>
     </ErrorBoundary>
   );
