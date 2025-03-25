@@ -1,86 +1,84 @@
 
-/**
- * Environment utility functions for Ice Guardian Alert application
- */
+// Environment configuration
+export type Environment = 'development' | 'staging' | 'production' | 'test' | 'unknown';
 
-// Check if running in development mode
+// Get the current environment
+export const getEnvironment = (): Environment => {
+  const envVar = import.meta.env.VITE_ENVIRONMENT;
+  
+  if (typeof envVar === 'string') {
+    if (['development', 'staging', 'production', 'test'].includes(envVar)) {
+      return envVar as Environment;
+    }
+  }
+  
+  // Check MODE as fallback
+  if (import.meta.env.MODE === 'development') {
+    return 'development';
+  } else if (import.meta.env.MODE === 'production') {
+    return 'production';
+  }
+  
+  return 'unknown';
+};
+
+// Check if in development environment
 export const isDevelopment = (): boolean => {
-  return import.meta.env.DEV === true || import.meta.env.MODE === 'development';
+  return getEnvironment() === 'development' || import.meta.env.DEV === true;
 };
 
-// Check if running in production mode
+// Check if in production environment
 export const isProduction = (): boolean => {
-  return import.meta.env.PROD === true || import.meta.env.MODE === 'production';
+  return getEnvironment() === 'production' || import.meta.env.PROD === true;
 };
 
-// Check if this is a debug build
+// Check if in staging environment
+export const isStaging = (): boolean => {
+  return getEnvironment() === 'staging';
+};
+
+// Check if debug build
 export const isDebugBuild = (): boolean => {
   return import.meta.env.VITE_DEBUG_BUILD === 'true';
 };
 
-// Check if mock auth is enabled in development
+// Check if mock auth is enabled
 export const isMockAuthEnabled = (): boolean => {
-  return isDevelopment() && import.meta.env.VITE_ENABLE_MOCK_AUTH !== 'false';
-};
-
-// Get the current environment name
-export const getEnvironment = (): string => {
-  if (isProduction()) return 'production';
-  if (isDevelopment()) return 'development';
-  return import.meta.env.MODE || 'unknown';
+  // Enable mock auth by default in development, unless explicitly disabled
+  if (isDevelopment()) {
+    return import.meta.env.VITE_ENABLE_MOCK_AUTH !== 'false';
+  }
+  
+  // Disabled by default in production, unless explicitly enabled
+  return import.meta.env.VITE_ENABLE_MOCK_AUTH === 'true';
 };
 
 // Get an environment variable with a fallback
 export const getEnvVar = (name: string, fallback: string = ''): string => {
-  try {
-    const value = import.meta.env[name];
-    // Check explicitly for undefined, empty string, or null
-    if (value === undefined || value === '' || value === null) {
-      return fallback;
-    }
-    return value;
-  } catch (e) {
-    console.warn(`Failed to access env var ${name}, using fallback`, e);
-    return fallback;
-  }
+  const value = (import.meta.env as any)[name];
+  return value !== undefined ? value : fallback;
 };
 
-// Get a required environment variable (with fallback in both production and development)
-export const getRequiredEnvVar = (name: string, fallback: string = ''): string => {
-  try {
-    const value = import.meta.env[name];
-    if (value === undefined || value === '') {
-      const errorMsg = `Environment variable ${name} is missing`;
-      console.warn(errorMsg);
-      return fallback;
-    }
-    return value;
-  } catch (e) {
-    console.warn(`Failed to access env var ${name}, using fallback`, e);
-    return fallback;
+// Get a required environment variable - but with forgiving fallback for production
+export const getRequiredEnvVar = (name: string): string => {
+  const value = getEnvVar(name, '');
+  
+  if (!value && !isProduction()) {
+    console.warn(`Required environment variable ${name} is not set!`);
   }
+  
+  return value;
 };
 
-// Get detailed environment diagnostics for debugging
-export const getEnvironmentDiagnostics = (): Record<string, any> => {
+// Get diagnostic information about the environment
+export const getEnvironmentDiagnostics = () => {
   return {
+    environment: getEnvironment(),
+    isDevelopment: isDevelopment(),
+    isProduction: isProduction(),
+    isStaging: isStaging(),
+    isDebugBuild: isDebugBuild(),
+    mockAuthEnabled: isMockAuthEnabled(),
     mode: import.meta.env.MODE,
-    isDev: isDevelopment(),
-    isProd: isProduction(),
-    base: import.meta.env.BASE_URL,
-    mockAuth: isMockAuthEnabled(),
-    debugBuild: isDebugBuild(),
-    timestamp: new Date().toISOString(),
   };
-};
-
-// Return an easy-to-read summary of environment issues for debugging
-export const getEnvironmentSummary = (): string => {
-  const issues: string[] = [];
-  
-  if (issues.length === 0) {
-    return "Environment looks good! No issues detected.";
-  }
-  
-  return `Environment notes: ${issues.join(', ')}`;
 };

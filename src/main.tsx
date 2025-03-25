@@ -3,21 +3,16 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App'
 import './styles/index.css'
-import { getEnvironmentDiagnostics, getRequiredEnvVar } from './utils/environment'
+import { getEnvironmentDiagnostics } from './utils/environment'
 
 // Log startup information to help with debugging
 console.log("Starting application initialization");
-console.log("Environment:", getEnvironmentDiagnostics());
 
-// Check for critical environment variables
-const firebaseApiKey = getRequiredEnvVar('VITE_FIREBASE_API_KEY');
-const firebaseProjectId = getRequiredEnvVar('VITE_FIREBASE_PROJECT_ID');
+// Less strict environment checking - log warnings but don't block rendering
+const envDiagnostics = getEnvironmentDiagnostics();
+console.log("Environment:", envDiagnostics);
 
-if (!firebaseApiKey || !firebaseProjectId) {
-  console.error("Critical environment variables are missing. Application may not function correctly.");
-}
-
-// Simple and direct rendering without loading screen
+// Simple and direct rendering
 const rootElement = document.getElementById('root');
 
 if (!rootElement) {

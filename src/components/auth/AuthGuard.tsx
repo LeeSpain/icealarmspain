@@ -1,7 +1,8 @@
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/auth'; // Use relative path for consistency
+import LoadingSpinner from '../ui/loading-spinner';
 
 interface AuthGuardProps {
   children: React.ReactNode;
@@ -15,14 +16,15 @@ const AuthGuard: React.FC<AuthGuardProps> = ({ children, allowedRoles }) => {
   // For debugging
   console.log("AuthGuard: user=", user, "profile=", profile, "isLoading=", isLoading);
 
+  // Check role access
   const checkRoleAccess = () => {
     if (!allowedRoles || !profile) return true;
     return allowedRoles.includes(profile.role);
   };
 
+  // Show a brief loading state, but don't block rendering for too long
   if (isLoading) {
-    // You could return a loading spinner here
-    return <div className="flex items-center justify-center h-screen">Loading...</div>;
+    return <LoadingSpinner size="md" message="Loading..." />;
   }
 
   if (!user) {

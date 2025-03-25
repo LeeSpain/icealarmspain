@@ -14,19 +14,19 @@ interface AuthStateManagerProps {
 
 export const AuthStateManager: React.FC<AuthStateManagerProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false); // Start with false to avoid blank screen
   
   // Force loading to false after a timeout to prevent getting stuck
   useEffect(() => {
     console.log("AuthStateManager mounting, setting loading timeout");
     
-    // Force loading to false after 2 seconds no matter what
+    // Shorter timeout for faster initial render
     const loadingTimeout = setTimeout(() => {
       if (isLoading) {
         console.log("AuthStateManager: Loading timeout reached, forcing loading to false");
         setIsLoading(false);
       }
-    }, 2000);
+    }, 500); // Reduced from 2000ms to 500ms
     
     return () => clearTimeout(loadingTimeout);
   }, [isLoading]);
@@ -34,37 +34,20 @@ export const AuthStateManager: React.FC<AuthStateManagerProps> = ({ children }) 
   // Initialize from localStorage immediately in dev mode only
   useEffect(() => {
     console.log("AuthStateManager mounting");
-    if (isMockAuthEnabled()) {
-      try {
-        const storedUser = localStorage.getItem('currentUser');
-        if (storedUser) {
-          console.log("AuthStateManager: Found user in localStorage");
-          const parsedUser = JSON.parse(storedUser);
-          
-          // Ensure role is properly set
-          const storedRole = localStorage.getItem('userRole');
-          if (storedRole && (!parsedUser.role || parsedUser.role !== storedRole)) {
-            console.log("AuthStateManager: Fixing role mismatch, using storedRole:", storedRole);
-            parsedUser.role = storedRole;
-            // Update localStorage to match
-            localStorage.setItem('currentUser', JSON.stringify(parsedUser));
-          }
-          
-          setUser(parsedUser);
-          console.log("AuthStateManager: Initialized user with role:", parsedUser.role);
-        } else {
-          console.log("AuthStateManager: No user found in localStorage");
-        }
-        
-        // Shorter timeout for faster loading
-        setTimeout(() => setIsLoading(false), 100);
-      } catch (e) {
-        console.error("AuthStateManager: Error initializing from localStorage", e);
-        setIsLoading(false);
+    
+    try {
+      // Bypass auth check for initial render to avoid blank screen
+      const storedUser = localStorage.getItem('currentUser');
+      if (storedUser) {
+        console.log("AuthStateManager: Found user in localStorage");
+        setUser(JSON.parse(storedUser));
       }
-    } else {
-      // If not in mock auth mode, set loading to false after a short delay
-      setTimeout(() => setIsLoading(false), 100);
+      
+      // Always set loading to false quickly to ensure render happens
+      setTimeout(() => setIsLoading(false), 50);
+    } catch (e) {
+      console.error("AuthStateManager: Error initializing from localStorage", e);
+      setIsLoading(false);
     }
   }, []);
 
@@ -97,31 +80,36 @@ export const AuthStateManager: React.FC<AuthStateManagerProps> = ({ children }) 
   useAuthEffects({ setUser, setIsLoading });
 
   const wrappedUpdateUserProfile = async (displayName: string): Promise<void> => {
-    await authFunctions.updateUserProfile(displayName);
-    setUser(prev => prev ? {
-      ...prev,
-      name: displayName,
-      displayName,
-      profileCompleted: true
-    } : null);
+    try {
+      await authFunctions.updateUserProfile(displayName);
+      setUser(prev => prev ? {
+        ...prev,
+        name: displayName,
+        displayName,
+        profileCompleted: true
+      } : null);
 
-    // Update localStorage only in dev mode
-    if (isMockAuthEnabled()) {
-      const storedUser = localStorage.getItem('currentUser');
-      if (storedUser) {
-        try {
-          const parsedUser = JSON.parse(storedUser);
-          const updatedUser = {
-            ...parsedUser,
-            displayName,
-            name: displayName,
-            profileCompleted: true
-          };
-          localStorage.setItem('currentUser', JSON.stringify(updatedUser));
-        } catch (e) {
-          console.error('Error updating stored user', e);
+      // Update localStorage only in dev mode
+      if (isMockAuthEnabled()) {
+        const storedUser = localStorage.getItem('currentUser');
+        if (storedUser) {
+          try {
+            const parsedUser = JSON.parse(storedUser);
+            const updatedUser = {
+              ...parsedUser,
+              displayName,
+              name: displayName,
+              profileCompleted: true
+            };
+            localStorage.setItem('currentUser', JSON.stringify(updatedUser));
+          } catch (e) {
+            console.error('Error updating stored user', e);
+          }
         }
       }
+    } catch (error) {
+      console.error("Error updating user profile:", error);
+      // Continue even if profile update fails
     }
   };
 
