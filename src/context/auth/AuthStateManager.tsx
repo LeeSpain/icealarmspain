@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { User } from './types';
 import { useAuthEffects } from './useAuthEffects';
@@ -21,13 +20,13 @@ export const AuthStateManager: React.FC<AuthStateManagerProps> = ({ children }) 
   useEffect(() => {
     console.log("AuthStateManager mounting, setting loading timeout");
     
-    // Force loading to false after 5 seconds no matter what
+    // Force loading to false after 2 seconds no matter what
     const loadingTimeout = setTimeout(() => {
       if (isLoading) {
         console.log("AuthStateManager: Loading timeout reached, forcing loading to false");
         setIsLoading(false);
       }
-    }, 5000);
+    }, 2000);
     
     return () => clearTimeout(loadingTimeout);
   }, [isLoading]);
@@ -63,6 +62,9 @@ export const AuthStateManager: React.FC<AuthStateManagerProps> = ({ children }) 
         console.error("AuthStateManager: Error initializing from localStorage", e);
         setIsLoading(false);
       }
+    } else {
+      // If not in mock auth mode, set loading to false after a short delay
+      setTimeout(() => setIsLoading(false), 100);
     }
   }, []);
 

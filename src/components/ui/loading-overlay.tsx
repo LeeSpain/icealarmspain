@@ -1,6 +1,5 @@
 
 import React, { useEffect, useState } from "react";
-import { cn } from "@/lib/utils";
 
 interface LoadingOverlayProps {
   message?: string;
@@ -10,7 +9,7 @@ interface LoadingOverlayProps {
 
 const LoadingOverlay: React.FC<LoadingOverlayProps> = ({ 
   message = "Loading...",
-  timeout = 10000,
+  timeout = 5000,
   isVisible = true
 }) => {
   const [showError, setShowError] = useState(false);
