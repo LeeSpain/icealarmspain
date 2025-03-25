@@ -22,6 +22,40 @@ export const getEnvironment = (): string => {
   return 'unknown';
 };
 
+// Check if we're in development environment
+export const isDevelopment = (): boolean => {
+  return getEnvironment() === 'development' || import.meta.env.DEV === true;
+};
+
+// Check if we're in production environment
+export const isProduction = (): boolean => {
+  return getEnvironment() === 'production' || import.meta.env.PROD === true;
+};
+
+// Check if we're in staging environment
+export const isStaging = (): boolean => {
+  return getEnvironment() === 'staging';
+};
+
+// Check if we're in test environment
+export const isTest = (): boolean => {
+  return getEnvironment() === 'test';
+};
+
+// Get environment variable with fallback
+export const getEnvVar = (key: string, fallback: string = ''): string => {
+  return (import.meta.env[key] as string) || fallback;
+};
+
+// Get required environment variable (throws error if missing)
+export const getRequiredEnvVar = (key: string): string => {
+  const value = import.meta.env[key];
+  if (!value && isProduction()) {
+    throw new Error(`Missing required environment variable: ${key}`);
+  }
+  return (value as string) || '';
+};
+
 // Check if mock auth is enabled
 export const isMockAuthEnabled = (): boolean => {
   const enableMockAuth = import.meta.env.VITE_ENABLE_MOCK_AUTH;
