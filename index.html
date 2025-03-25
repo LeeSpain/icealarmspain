@@ -68,10 +68,10 @@
     <!-- Add manual timeout to hide loader if app doesn't load -->
     <script>
       window.addEventListener('load', function() {
-        // Set a timeout to force-remove the loading screen after 10 seconds
+        // Set a shorter timeout to force-remove the loading screen
         setTimeout(function() {
           const loader = document.getElementById('initial-loading');
-          if (loader && loader.style.opacity !== '0') {
+          if (loader) {
             console.log('Forcing loader removal after timeout');
             loader.style.opacity = '0';
             setTimeout(() => {
@@ -80,16 +80,33 @@
               }
             }, 300);
           }
-        }, 5000); // 5 second timeout
+        }, 3000); // Reduced from 5000 to 3000ms
       });
+
+      // Backup timeout - will always hide the loader even if the load event doesn't fire
+      setTimeout(function() {
+        const loader = document.getElementById('initial-loading');
+        if (loader) {
+          console.log('Backup timeout: Forcing loader removal');
+          loader.style.opacity = '0';
+          setTimeout(() => {
+            if (loader && loader.parentNode) {
+              loader.parentNode.removeChild(loader);
+            }
+          }, 300);
+        }
+      }, 4000); // 4 seconds absolute maximum
     </script>
   </head>
 
   <body>
-    <!-- Simple initial loading state -->
+    <!-- Simple initial loading state with a skip button -->
     <div id="initial-loading" class="initial-loading">
       <div class="spinner"></div>
       <p>Loading Ice Guardian Alert...</p>
+      <button onclick="document.getElementById('initial-loading').style.display='none'" style="margin-top:20px;padding:8px 16px;background:#0070f3;color:white;border:none;border-radius:4px;cursor:pointer;">
+        Skip Loading
+      </button>
     </div>
     
     <div id="root"></div>

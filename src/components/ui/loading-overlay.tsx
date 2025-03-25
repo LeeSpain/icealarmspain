@@ -1,5 +1,6 @@
 
 import React, { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button"; 
 
 interface LoadingOverlayProps {
   message?: string;
@@ -9,21 +10,32 @@ interface LoadingOverlayProps {
 
 const LoadingOverlay: React.FC<LoadingOverlayProps> = ({ 
   message = "Loading...",
-  timeout = 5000,
+  timeout = 3000, // Reduced from 5000 to 3000
   isVisible = true
 }) => {
   const [showError, setShowError] = useState(false);
+  const [forceHidden, setForceHidden] = useState(false);
   
   useEffect(() => {
     // Show error message if loading takes too long
-    const timer = setTimeout(() => {
+    const errorTimer = setTimeout(() => {
       setShowError(true);
     }, timeout);
     
-    return () => clearTimeout(timer);
+    // Force hide the loading overlay after additional timeout
+    // This ensures the app doesn't get stuck in loading state
+    const forceHideTimer = setTimeout(() => {
+      setForceHidden(true);
+    }, timeout + 2000); // 2 seconds after error is shown
+    
+    return () => {
+      clearTimeout(errorTimer);
+      clearTimeout(forceHideTimer);
+    };
   }, [timeout]);
   
-  if (!isVisible) return null;
+  // If manually set to not visible or force hidden by timeout
+  if (!isVisible || forceHidden) return null;
   
   return (
     <div className="fixed inset-0 flex flex-col items-center justify-center bg-white z-50">
@@ -33,11 +45,18 @@ const LoadingOverlay: React.FC<LoadingOverlayProps> = ({
       {showError && (
         <div className="mt-4 p-4 max-w-md text-center">
           <p className="font-semibold mb-2">Taking longer than expected?</p>
-          <ul className="text-sm text-gray-600 space-y-1 text-left">
+          <ul className="text-sm text-gray-600 space-y-1 text-left mb-4">
             <li>• Try refreshing the page</li>
             <li>• Check your internet connection</li>
             <li>• Try using a different browser</li>
           </ul>
+          <Button 
+            variant="outline" 
+            onClick={() => setForceHidden(true)}
+            className="text-sm"
+          >
+            Continue Anyway
+          </Button>
         </div>
       )}
     </div>
