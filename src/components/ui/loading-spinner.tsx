@@ -6,12 +6,16 @@ export interface LoadingSpinnerProps {
   size?: 'sm' | 'md' | 'lg';
   className?: string;
   color?: 'primary' | 'white' | 'gray';
+  fullPage?: boolean;
+  message?: string;
 }
 
 const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
   size = 'md',
   className,
-  color = 'primary'
+  color = 'primary',
+  fullPage = false,
+  message
 }) => {
   const sizeClasses = {
     sm: 'w-4 h-4 border-2',
@@ -25,7 +29,7 @@ const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
     gray: 'border-t-gray-400'
   };
 
-  return (
+  const spinner = (
     <div
       className={cn(
         'animate-spin rounded-full border-solid border-gray-200',
@@ -35,6 +39,17 @@ const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
       )}
     />
   );
+
+  if (fullPage) {
+    return (
+      <div className="fixed inset-0 flex flex-col items-center justify-center bg-white bg-opacity-80 z-50">
+        {spinner}
+        {message && <p className="mt-4 text-gray-600">{message}</p>}
+      </div>
+    );
+  }
+
+  return spinner;
 };
 
 export default LoadingSpinner;

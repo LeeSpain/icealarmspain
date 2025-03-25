@@ -10,6 +10,12 @@ export interface User {
   status: 'active' | 'pending' | 'suspended';
   profileCompleted: boolean;
   language: string;
+  photoURL?: string;
+  lastLogin?: string;
+  emailVerified?: boolean;
+  isAnonymous?: boolean;
+  providerData?: any[];
+  refreshToken?: string;
 }
 
 // User profile type

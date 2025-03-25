@@ -3,6 +3,17 @@
  * Email service functions
  */
 
+// Email log type
+export interface EmailLog {
+  id: string;
+  to: string;
+  subject: string;
+  body: string;
+  sentAt: string;
+  status: 'sent' | 'failed';
+  userId: string;
+}
+
 // Placeholder implementation for email sending
 export const sendEmail = async (
   to: string, 
@@ -90,4 +101,31 @@ export const sendEmergencyAlertEmail = async (
     ...result, 
     recipients
   };
+};
+
+// Get user email logs
+export const getUserEmailLogs = async (userId: string): Promise<{ data: EmailLog[], error: string | null }> => {
+  // Mock implementation
+  const mockLogs: EmailLog[] = [
+    {
+      id: '1',
+      to: 'contact@example.com',
+      subject: 'Test Notification',
+      body: 'This is a test notification.',
+      sentAt: new Date().toISOString(),
+      status: 'sent',
+      userId
+    },
+    {
+      id: '2',
+      to: 'emergency@example.com',
+      subject: 'Emergency Alert',
+      body: 'Emergency alert test.',
+      sentAt: new Date(Date.now() - 86400000).toISOString(), // 1 day ago
+      status: 'sent',
+      userId
+    }
+  ];
+  
+  return { data: mockLogs, error: null };
 };

@@ -1,21 +1,65 @@
+
 import React, { ReactNode, useEffect, useState, useContext } from 'react';
 import { User, AuthContextType } from './auth/types';
 import { AuthContext } from './auth/context';
-import { useAuthStateListener } from './auth/useAuthEffects';
+import { useAuthEffects } from './auth/useAuthEffects';
 import { showErrorToast } from '@/utils/error-handler';
 import { isMockAuthEnabled } from '@/utils/environment';
 
-// Add this export for the useAuth hook
-export const useAuth = () => useContext(AuthContext);
+// Export the useAuth hook
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (context === undefined) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
+};
 
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const { currentUser, loading, error } = useAuthStateListener();
+  // Initialize state
+  const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // Set up auth state listener
+  useEffect(() => {
+    if (isMockAuthEnabled()) {
+      // Mock auth for development
+      const timer = setTimeout(() => {
+        const mockUserJSON = localStorage.getItem('mockUser');
+        if (mockUserJSON) {
+          try {
+            const mockUser = JSON.parse(mockUserJSON);
+            setUser({
+              uid: mockUser.id || mockUser.uid || '12345',
+              id: mockUser.id || mockUser.uid || '12345',
+              email: mockUser.email || 'mock@example.com',
+              name: mockUser.name || mockUser.displayName || 'Mock User',
+              displayName: mockUser.displayName || mockUser.name || 'Mock User',
+              role: mockUser.role || 'member',
+              status: 'active',
+              profileCompleted: true,
+              language: 'en'
+            });
+          } catch (err) {
+            console.error('Error parsing mock user:', err);
+          }
+        }
+        setIsLoading(false);
+      }, 500);
+      
+      return () => clearTimeout(timer);
+    } else {
+      // Real Firebase auth state change listener
+      useAuthEffects({ setUser, setIsLoading });
+    }
+  }, []);
 
   // Log auth state for debugging
   useEffect(() => {
-    console.log('Auth state:', { currentUser, loading, error });
-  }, [currentUser, loading, error]);
+    console.log('Auth state:', { user, isLoading, error });
+  }, [user, isLoading, error]);
 
   // Handle auth errors
   useEffect(() => {
@@ -28,13 +72,13 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
    * Check if the user has a specific role or any of the provided roles
    */
   const hasRole = (role: string | string[]): boolean => {
-    if (!currentUser) return false;
+    if (!user) return false;
     
     if (Array.isArray(role)) {
-      return role.some(r => currentUser.role === r);
+      return role.some(r => user.role === r);
     }
     
-    return currentUser.role === role;
+    return user.role === role;
   };
 
   /**
@@ -62,6 +106,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             role: 'admin',
             profileCompleted: true,
             status: 'active',
+            language: 'en'
           };
           
           localStorage.setItem('mockUser', JSON.stringify(mockUser));
@@ -76,6 +121,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             role: 'member',
             profileCompleted: true,
             status: 'active',
+            language: 'en'
           };
           
           localStorage.setItem('mockUser', JSON.stringify(mockUser));
@@ -125,6 +171,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           role: 'member',
           profileCompleted: false,
           status: 'active',
+          language: 'en'
         };
         
         localStorage.setItem('mockUser', JSON.stringify(mockUser));
@@ -174,7 +221,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     
     try {
       if (isMockAuthEnabled()) {
-        if (!currentUser) throw new Error('No user logged in');
+        if (!user) throw new Error('No user logged in');
         
         const mockUser = JSON.parse(localStorage.getItem('mockUser') || '{}');
         const updatedUser = { ...mockUser, ...profileData };
@@ -223,6 +270,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           role: userData.role || 'member',
           profileCompleted: false,
           status: 'active',
+          language: 'en'
         };
         
         return { user: mockUser };
@@ -256,6 +304,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             role: 'admin',
             profileCompleted: true,
             status: 'active',
+            language: 'en'
           },
           {
             uid: '67890',
@@ -266,6 +315,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             role: 'member',
             profileCompleted: true,
             status: 'active',
+            language: 'en'
           },
         ];
       }
@@ -282,49 +332,51 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   /**
    * Update a user's role (admin function)
    */
-  const updateUserRole = async (userId: string, role: string): Promise<void> => {
+  const updateUserRole = async (userId: string, role: string): Promise<{ success: boolean; error?: string }> => {
     console.log('Admin updating user role:', userId, role);
     
     try {
       if (isMockAuthEnabled()) {
         console.log('Mock user role updated:', userId, role);
-        return;
+        return { success: true };
       }
       
       // Real role update would happen here
+      return { success: true };
       
     } catch (error) {
       console.error('Update user role error:', error);
-      throw error;
+      return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
     }
   };
 
   /**
    * Delete a user (admin function)
    */
-  const deleteUser = async (userId: string): Promise<void> => {
+  const deleteUser = async (userId: string): Promise<{ success: boolean; error?: string }> => {
     console.log('Admin deleting user:', userId);
     
     try {
       if (isMockAuthEnabled()) {
         console.log('Mock user deleted:', userId);
-        return;
+        return { success: true };
       }
       
       // Real user deletion would happen here
+      return { success: true };
       
     } catch (error) {
       console.error('Delete user error:', error);
-      throw error;
+      return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
     }
   };
 
   // Construct the auth context value
   const contextValue: AuthContextType = {
-    user: currentUser,
+    user,
     profile,
-    isAuthenticated: !!currentUser,
-    isLoading: loading,
+    isAuthenticated: !!user,
+    isLoading,
     login,
     signIn,
     signUp,
@@ -346,5 +398,4 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   );
 };
 
-export { AuthContext };
 export default AuthProvider;

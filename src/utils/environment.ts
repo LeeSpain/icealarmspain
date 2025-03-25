@@ -69,5 +69,28 @@ export const getEnvironmentDiagnostics = () => {
     buildTime: import.meta.env.VITE_BUILD_TIME || 'unknown',
     buildId: import.meta.env.VITE_BUILD_ID || 'unknown',
     nodeEnv: import.meta.env.NODE_ENV || 'unknown',
+    
+    // For backward compatibility with existing code
+    isDevelopment: isDevelopment(),
+    isProduction: isProduction(),
+    hasValidFirebaseConfig: hasValidFirebaseConfig()
   };
+};
+
+/**
+ * Get an environment variable, with an optional default value
+ */
+export const getEnvVar = (name: string, defaultValue: string = ''): string => {
+  return import.meta.env[name] || defaultValue;
+};
+
+/**
+ * Get a required environment variable, throws if not found
+ */
+export const getRequiredEnvVar = (name: string): string => {
+  const value = import.meta.env[name];
+  if (!value) {
+    throw new Error(`Required environment variable ${name} is not set`);
+  }
+  return value;
 };

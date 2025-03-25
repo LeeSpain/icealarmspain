@@ -68,64 +68,62 @@ export const useLoginFormState = ({
   };
   
   // Get redirect URL based on role
-  const getRedirectUrl = (role: string): string => {
-    console.log("Getting redirect URL for role:", role);
-    
-    // Make sure we're using exact paths that exist in App.tsx
-    switch (role) {
+  const getRedirectUrl = (role?: string | undefined): string => {
+    switch(role) {
       case 'admin': return '/admin';
       case 'callcenter': return '/call-center';
-      case 'technician': return '/dashboard'; // Default to dashboard for now
-      case 'support': return '/dashboard'; // Default to dashboard for now
       default: return '/dashboard';
     }
   };
 
-  // Handle form submission
+  // Handle login submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Form submitted with:", { email, password, rememberMe });
     
-    // Validation
+    if (externalLoading || isLoading) return;
+    
     const validationErrors = validateForm();
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
       return;
     }
     
-    // Clear errors and set loading
-    setErrors({});
     setError(null);
     setIsLoading(true);
     
+    // Handle "remember me"
+    if (rememberMe) {
+      localStorage.setItem('rememberedEmail', email);
+    } else {
+      localStorage.removeItem('rememberedEmail');
+    }
+    
     try {
-      // Call onSuccess callback if provided
       if (onSuccess) {
+        // Use custom success handler if provided
         await onSuccess(email, password, rememberMe);
       } else {
-        // Use the centralized login function
-        const user = await login(email, password, rememberMe);
-        console.log("LoginForm: Login successful, user:", user);
+        // Use default login behavior
+        const { user, error } = await login(email, password);
         
-        // Show success toast
+        if (error) {
+          throw error;
+        }
+        
+        // Show success message
         toast({
-          title: language === 'en' ? "Login Successful" : "Inicio de sesión exitoso",
-          description: language === 'en' 
-            ? `Welcome, ${email.split('@')[0]}!` 
-            : `Bienvenido, ${email.split('@')[0]}!`,
-          duration: 3000
+          title: language === 'en' ? "Login successful" : "Inicio de sesión exitoso",
+          description: language === 'en' ? "Welcome back!" : "¡Bienvenido de nuevo!",
         });
         
-        // Use direct window location change to ensure redirect works
-        const targetUrl = redirectTo || getRedirectUrl(user.role);
-        console.log("LoginForm: Redirecting to", targetUrl, "role:", user.role);
-        window.location.href = targetUrl;
+        // Navigate to the appropriate page
+        const targetPath = user?.role ? getRedirectUrl(user.role) : redirectTo || '/dashboard';
+        navigate(targetPath);
       }
     } catch (error) {
       console.error("Login error:", error);
-      setError(error instanceof Error 
-        ? error.message 
-        : language === 'en' ? "An unknown error occurred" : "Ha ocurrido un error desconocido");
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      setError(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -135,7 +133,7 @@ export const useLoginFormState = ({
     email,
     password,
     rememberMe,
-    isLoading: isLoading || externalLoading,
+    isLoading: externalLoading || isLoading,
     error,
     errors,
     handleChange,

@@ -14,9 +14,28 @@ export type AlertType = 'emergency' | 'medical' | 'activity' | 'all';
 
 export interface TestResult {
   id: string;
-  success: boolean;
   timestamp: string;
+  success: boolean;
   type: AlertType;
   recipients: string[];
-  errorMessage?: string;
+  error?: string;
+}
+
+export interface TestStatus {
+  id: string;
+  contactId: string;
+  type: 'sms' | 'email' | 'call' | 'all';
+  status: 'success' | 'failed' | 'pending';
+  timestamp: string;
+  message?: string;
+}
+
+export interface TestLog {
+  id: string;
+  userId: string;
+  type: 'sms' | 'email' | 'call' | 'all';
+  recipients: string[];
+  status: 'success' | 'failed' | 'pending';
+  timestamp: string;
+  message?: string;
 }
