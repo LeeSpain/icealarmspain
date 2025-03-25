@@ -19,7 +19,7 @@ export const signUp = async (
   
   try {
     const result = await authSignUp(email, password, {
-      displayName: userData?.displayName || userData?.display_name, // Use displayName, fallback to display_name if provided
+      displayName: userData?.displayName || email.split('@')[0],
       name: userData?.name || userData?.displayName || email.split('@')[0]
     });
     
