@@ -38,6 +38,15 @@
         cursor: pointer;
         margin-top: 16px;
       }
+      .initial-loader {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        text-align: center;
+        padding: 20px;
+      }
     </style>
     <!-- Preconnect to critical domains -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -45,10 +54,46 @@
   </head>
 
   <body>
-    <div id="root"></div>
+    <!-- Root element where React will mount -->
+    <div id="root">
+      <!-- Initial loader that will be replaced when React mounts -->
+      <div class="initial-loader">
+        <div>Loading application...</div>
+      </div>
+    </div>
     
     <!-- Add the GPT Engineer script tag back -->
     <script src="https://cdn.gpteng.co/gptengineer.js" type="module"></script>
     <script type="module" src="/src/main.tsx"></script>
+    
+    <!-- Fallback script to detect if app fails to load -->
+    <script>
+      // Allow 10 seconds for the app to initialize, then check if we're still showing the initial loader
+      setTimeout(function() {
+        var root = document.getElementById('root');
+        var initialLoader = document.querySelector('.initial-loader');
+        
+        // If initial loader is still in the DOM after timeout, app failed to initialize
+        if (initialLoader && root.contains(initialLoader)) {
+          console.error('Application failed to initialize within timeout period');
+          root.innerHTML = `
+            <div class="error-container">
+              <h2>Application Failed to Load</h2>
+              <p>The application could not be initialized. This could be due to configuration issues or network problems.</p>
+              <p>Check browser console for more details.</p>
+              <button onclick="window.location.reload()">Retry</button>
+              <div style="margin-top: 20px; font-size: 0.8rem; color: #666;">
+                <p>Debugging info:</p>
+                <ul style="text-align: left;">
+                  <li>URL: ${window.location.href}</li>
+                  <li>Time: ${new Date().toISOString()}</li>
+                  <li>User Agent: ${navigator.userAgent}</li>
+                </ul>
+              </div>
+            </div>
+          `;
+        }
+      }, 10000);
+    </script>
   </body>
 </html>

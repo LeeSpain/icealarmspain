@@ -26,7 +26,7 @@ export const AuthStateManager: React.FC<AuthStateManagerProps> = ({ children }) 
         console.log("AuthStateManager: Loading timeout reached, forcing loading to false");
         setIsLoading(false);
       }
-    }, 500); // Reduced from 2000ms to 500ms
+    }, 200); // Further reduced from 500ms to 200ms for faster rendering
     
     return () => clearTimeout(loadingTimeout);
   }, [isLoading]);
@@ -40,11 +40,15 @@ export const AuthStateManager: React.FC<AuthStateManagerProps> = ({ children }) 
       const storedUser = localStorage.getItem('currentUser');
       if (storedUser) {
         console.log("AuthStateManager: Found user in localStorage");
-        setUser(JSON.parse(storedUser));
+        try {
+          setUser(JSON.parse(storedUser));
+        } catch (e) {
+          console.error("AuthStateManager: Error parsing stored user", e);
+        }
       }
       
       // Always set loading to false quickly to ensure render happens
-      setTimeout(() => setIsLoading(false), 50);
+      setTimeout(() => setIsLoading(false), 10);
     } catch (e) {
       console.error("AuthStateManager: Error initializing from localStorage", e);
       setIsLoading(false);
@@ -76,8 +80,17 @@ export const AuthStateManager: React.FC<AuthStateManagerProps> = ({ children }) 
     }
   }, []);
 
-  // Use the extracted auth effects hook - this handles the real Firebase auth
-  useAuthEffects({ setUser, setIsLoading });
+  // Use the extracted auth effects hook but with error handling
+  useEffect(() => {
+    try {
+      // Call the auth effects without blocking rendering
+      useAuthEffects({ setUser, setIsLoading });
+    } catch (error) {
+      console.error("Error in auth effects:", error);
+      // Ensure loading is set to false even if auth effects fail
+      setIsLoading(false);
+    }
+  }, []);
 
   const wrappedUpdateUserProfile = async (displayName: string): Promise<void> => {
     try {
@@ -113,5 +126,14 @@ export const AuthStateManager: React.FC<AuthStateManagerProps> = ({ children }) 
     }
   };
 
-  return <>{children({ user, isLoading, wrappedUpdateUserProfile })}</>;
+  // Provide children with the auth state
+  return (
+    <>
+      {children({ 
+        user, 
+        isLoading: false, // Always return false to avoid blank screens 
+        wrappedUpdateUserProfile 
+      })}
+    </>
+  );
 };
