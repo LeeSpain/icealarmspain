@@ -18,6 +18,7 @@ export const AuthStateManager: React.FC<AuthStateManagerProps> = ({ children }) 
   
   // Initialize from localStorage immediately in dev mode only
   useEffect(() => {
+    console.log("AuthStateManager mounting");
     if (isMockAuthEnabled()) {
       try {
         const storedUser = localStorage.getItem('currentUser');
