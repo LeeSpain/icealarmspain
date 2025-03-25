@@ -1,5 +1,5 @@
 
-import React, { Suspense, useEffect, useState } from "react";
+import React, { Suspense } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { routes } from "./routes";
 import { Toaster } from "@/components/ui/toaster";
@@ -29,30 +29,9 @@ const LoadingFallback = () => (
 );
 
 function App() {
-  const [initialLoading, setInitialLoading] = useState(true);
-
-  useEffect(() => {
-    // Performance tracking for app initialization
-    const mountTime = Date.now() - appStartTime;
-    console.log(`App component mounted in ${mountTime}ms`);
-    
-    // Remove initial loading indicator immediately
-    const loadingIndicator = document.querySelector('.loading-indicator');
-    if (loadingIndicator) {
-      loadingIndicator.remove();
-      console.log("Loading indicator removed by App component");
-    }
-    
-    const loadingText = document.querySelector('.loading-text');
-    if (loadingText) {
-      loadingText.remove();
-      console.log("Loading text removed by App component");
-    }
-    
-    // Mark app as loaded - this happens only on the initial load
-    setInitialLoading(false);
-    window.appLoaded = true;
-  }, []);
+  // Performance tracking for app initialization
+  const mountTime = Date.now() - appStartTime;
+  console.log(`App component mounted in ${mountTime}ms`);
   
   return (
     <>
@@ -90,13 +69,6 @@ function App() {
           </AuthProvider>
         </HelmetProvider>
       </ErrorBoundaryRoot>
-      
-      {/* Only show on initial app load, not on page navigations */}
-      {initialLoading && (
-        <div className="fixed inset-0 bg-white bg-opacity-70 flex items-center justify-center z-50">
-          <LoadingSpinner size="lg" message="Loading Ice Guardian..." />
-        </div>
-      )}
     </>
   );
 }

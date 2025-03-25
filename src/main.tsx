@@ -89,6 +89,7 @@ function initApp() {
     
     // Flag to indicate app started loading
     window.appStarted = true;
+    window.appLoaded = true;
     
   } catch (error) {
     console.error("Fatal error during app initialization:", error);

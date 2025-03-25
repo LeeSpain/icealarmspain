@@ -28,23 +28,6 @@
         width: 100%;
       }
       
-      /* Loading indicator that will show only on initial page load */
-      .loading-indicator {
-        position: fixed;
-        top: 0; 
-        left: 0;
-        width: 100%;
-        height: 4px;
-        background-color: #38bdf8;
-        animation: loading 2s infinite;
-        z-index: 9999;
-      }
-      @keyframes loading {
-        0% { width: 0%; left: 0; }
-        50% { width: 70%; left: 15%; }
-        100% { width: 100%; left: 100%; }
-      }
-      
       /* Fallback content that will show if JS fails completely */
       #js-error-fallback {
         display: none;
@@ -56,17 +39,6 @@
         border-radius: 8px;
         box-shadow: 0 4px 12px rgba(0,0,0,0.1);
       }
-      
-      /* Add text below loading indicator for better user feedback */
-      .loading-text {
-        position: fixed;
-        top: 20px;
-        left: 0;
-        width: 100%;
-        text-align: center;
-        font-size: 14px;
-        color: #666;
-      }
     </style>
     
     <!-- Preload key resources -->
@@ -74,10 +46,6 @@
   </head>
 
   <body>
-    <!-- Loading indicator for initial page load only, removed by App.tsx -->
-    <div class="loading-indicator"></div>
-    <div class="loading-text">Loading Ice Guardian Alert...</div>
-    
     <!-- Root element where React will mount -->
     <div id="root"></div>
     
@@ -99,13 +67,6 @@
         if (!window.appStarted) {
           console.error("Application failed to start in 5 seconds");
           document.getElementById('js-error-fallback').style.display = 'block';
-          
-          // Hide loading indicator to avoid confusion
-          var loadingIndicator = document.querySelector('.loading-indicator');
-          if (loadingIndicator) loadingIndicator.style.display = 'none';
-          
-          var loadingText = document.querySelector('.loading-text');
-          if (loadingText) loadingText.style.display = 'none';
         }
       }, 5000);
     </script>
