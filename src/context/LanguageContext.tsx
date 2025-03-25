@@ -22,22 +22,34 @@ const LanguageContext = createContext<LanguageContextType>({
 });
 
 export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  // Initialize from localStorage first
   const [language, setLanguage] = useState<Language>(() => {
-    // Initialize from localStorage
     return (localStorage.getItem('language') as Language) || 'en';
   });
-  
-  // Get auth context, use optional chaining to handle case when auth context isn't ready
-  const auth = useAuth();
-  const profile = auth?.profile;
-  const isLoading = auth?.isLoading || false;
 
+  // Try to get auth context safely
+  let auth = null;
+  let profile = null;
+  let isLoading = false;
+
+  try {
+    // Conditionally try to use auth if we're inside an AuthProvider
+    const authContext = useAuth();
+    auth = authContext;
+    profile = authContext?.profile;
+    isLoading = authContext?.isLoading || false;
+  } catch (error) {
+    // If useAuth throws an error (e.g., we're not in an AuthProvider),
+    // just continue without auth integration
+    console.log("Auth context not available in LanguageProvider, continuing without user profile language preferences");
+  }
+  
   // When auth loads and profile is available, use profile language if set
   useEffect(() => {
-    if (!isLoading && profile && profile.language) {
+    if (auth && !isLoading && profile && profile.language) {
       setLanguage(profile.language as Language);
     }
-  }, [isLoading, profile]);
+  }, [isLoading, profile, auth]);
 
   // Save to localStorage whenever it changes
   useEffect(() => {
