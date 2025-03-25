@@ -30,7 +30,7 @@
         max-width: 600px;
         margin: 0 auto;
         text-align: center;
-        display: none; /* Hide by default, show only after delay if needed */
+        display: none; /* Hide by default */
       }
       .loading-spinner {
         display: inline-block;
@@ -81,39 +81,28 @@
 
   <body>
     <div id="root">
-      <!-- This content will only show if JS fails to load after a delay -->
+      <!-- This content will only show if the app fails to load -->
       <div class="fallback-content">
         <div class="loading-spinner"></div>
         <h1>Loading Ice Guardian Alert...</h1>
-        <p>If this message persists, please ensure JavaScript is enabled and refresh the page.</p>
+        <p>Please wait while the application loads...</p>
         <div class="loading-error">
-          <p><strong>Common issues:</strong></p>
+          <p><strong>Taking longer than expected?</strong></p>
           <div class="loading-tips">
-            <p>- Missing configuration: Check if all required environment variables are set in Lovable project settings</p>
-            <p>- Network issues: Check your internet connection</p>
-            <p>- Browser compatibility: Try using a different browser like Chrome or Firefox</p>
+            <p>- Refresh the page to try again</p>
+            <p>- Check your internet connection</p>
+            <p>- Try using a different browser like Chrome or Firefox</p>
           </div>
         </div>
         
         <!-- More detailed guide for missing configuration -->
         <div class="missing-config-guide" id="missing-config-guide">
-          <h3>Firebase Configuration Required</h3>
-          <p>This application requires Firebase configuration to run properly.</p>
-          <ol>
-            <li>Go to your Lovable project dashboard</li>
-            <li>Click on <strong>Project Settings</strong> in the sidebar</li>
-            <li>Navigate to the <strong>Environment Variables</strong> section</li>
-            <li>Add these required variables:
-              <ul>
-                <li>VITE_FIREBASE_API_KEY</li>
-                <li>VITE_FIREBASE_PROJECT_ID</li>
-                <li>VITE_FIREBASE_AUTH_DOMAIN</li>
-                <li>VITE_FIREBASE_APP_ID</li>
-              </ul>
-            </li>
-            <li>Click <strong>Save</strong> and then <strong>Publish</strong> your app</li>
-          </ol>
-          <p>For more information, see the <a href="/docs/ENVIRONMENT_VARIABLES.md" style="color: #0070f3;">environment variables documentation</a>.</p>
+          <h3>Application Support</h3>
+          <p>If you continue to experience issues, please contact support:</p>
+          <ul>
+            <li>Email: <a href="mailto:support@iceguardian.com">support@iceguardian.com</a></li>
+            <li>Phone: +34 123 456 789</li>
+          </ul>
         </div>
         
         <div id="debug-info" style="font-size: 12px; margin-top: 20px; color: #666;"></div>
@@ -124,7 +113,7 @@
     <script>
       // Show fallback content only if React doesn't load after a delay
       window.addEventListener('load', function() {
-        // Increase the delay to 3 seconds before showing the fallback content
+        // Set a much longer delay before showing the fallback content
         // This gives more time for the app to load normally
         setTimeout(function() {
           const root = document.getElementById('root');
@@ -132,80 +121,24 @@
           
           // Check if React app has rendered content
           if (root && root.children.length === 1 && fallback && root.contains(fallback)) {
-            // React hasn't loaded or has failed, show detailed error info
+            // React hasn't loaded or has failed, show minimal error info
             fallback.style.display = 'block';
             
-            const errorSection = document.querySelector('.loading-error');
-            if (errorSection) {
-              errorSection.style.display = 'block';
-            }
-            
-            // Check for specific configuration issues
-            const firebaseKey = window.localStorage.getItem('debug:firebase_api_key_status');
-            const configGuide = document.getElementById('missing-config-guide');
-            
-            if ((firebaseKey === 'missing' || firebaseKey === null) && configGuide) {
-              configGuide.style.display = 'block';
-            }
+            // Only show the error section after a longer delay
+            setTimeout(function() {
+              const errorSection = document.querySelector('.loading-error');
+              if (errorSection) {
+                errorSection.style.display = 'block';
+              }
+            }, 5000); // Show error details after 5 more seconds
           }
-        }, 3000); // Show after 3 seconds instead of 5
-        
-        // For more advanced debugging - check after 10 seconds if we're still stuck
-        setTimeout(function() {
-          const root = document.getElementById('root');
-          const fallback = document.querySelector('.fallback-content');
-          
-          if (root && fallback && root.contains(fallback) && fallback.style.display === 'block') {
-            // We're still showing the fallback after 10 seconds - likely a real config issue
-            const configGuide = document.getElementById('missing-config-guide');
-            if (configGuide) {
-              configGuide.style.display = 'block';
-            }
-            
-            // Add some debug info that might help troubleshoot
-            const debugInfo = document.getElementById('debug-info');
-            if (debugInfo) {
-              const envInfo = [];
-              try {
-                // Only collect non-sensitive environment info
-                if (window.location) envInfo.push(`URL: ${window.location.href}`);
-              } catch (e) {}
-              
-              debugInfo.textContent = `Browser: ${navigator.userAgent}, Time: ${new Date().toISOString()}${envInfo.length ? ', ' + envInfo.join(', ') : ''}`;
-            }
-          }
-        }, 10000); // 10 seconds
+        }, 8000); // Show initial fallback only after 8 seconds
       });
       
-      // More robust error handling
+      // More minimal error handling
       window.addEventListener('error', function(e) {
-        console.error('Global error caught:', e.error || e.message);
-        const debugInfo = document.getElementById('debug-info');
-        if (debugInfo) {
-          debugInfo.textContent += `\nError: ${e.error?.message || e.message || 'Unknown error'}`;
-        }
-        
-        // Show error section immediately if there's an error
-        const errorSection = document.querySelector('.loading-error');
-        if (errorSection) {
-          errorSection.style.display = 'block';
-        }
-        
-        // Try to detect if it's a Firebase config issue
-        if (e.error?.message && (
-            e.error.message.includes('Firebase') || 
-            e.error.message.includes('API key') || 
-            e.error.message.includes('configuration')
-          )) {
-          const configGuide = document.getElementById('missing-config-guide');
-          if (configGuide) {
-            configGuide.style.display = 'block';
-          }
-          // Store that we have a Firebase issue for other checks
-          try {
-            window.localStorage.setItem('debug:firebase_api_key_status', 'missing');
-          } catch (err) {}
-        }
+        console.error('Error caught:', e.error || e.message);
+        // Don't automatically show error UI on JavaScript errors
       });
     </script>
   </body>

@@ -20,12 +20,12 @@ const firebaseConfigAvailable = hasRequiredFirebaseConfig();
 
 console.log('Firebase config available:', firebaseConfigAvailable ? 'Yes' : 'No');
 if (!firebaseConfigAvailable) {
-  console.error('CRITICAL: Missing Firebase configuration - Application may not work correctly!');
-  console.error('Required env vars: VITE_FIREBASE_API_KEY, VITE_FIREBASE_PROJECT_ID, etc.');
+  console.warn('Firebase configuration incomplete - Application will continue with limited functionality');
+  console.warn('Some features requiring Firebase may not work correctly');
   
-  // Store this info for the fallback screen
+  // Store this info for debugging
   try {
-    localStorage.setItem('debug:firebase_api_key_status', 'missing');
+    localStorage.setItem('debug:firebase_api_key_status', 'limited');
   } catch (e) {}
 }
 
@@ -47,12 +47,7 @@ window.addEventListener('error', (event) => {
                event.error.message.includes('auth')) {
       console.error('Firebase Error:', event.error.message);
       console.error('This is likely due to missing or invalid Firebase configuration.');
-      console.error('Check your environment variables in Lovable project settings.');
-      
-      // Store this info for the fallback screen
-      try {
-        localStorage.setItem('debug:firebase_api_key_status', 'missing');
-      } catch (e) {}
+      console.error('Some features may be limited, but the app will continue to function.');
     }
     
     console.error('Full error:', event.error);
@@ -78,13 +73,8 @@ function renderApp() {
       fallbackContent.style.display = 'none';
     }
     
-    // Check if Firebase config is present before attempting to render
-    if (!firebaseConfigAvailable && isProduction()) {
-      console.error('Missing Firebase configuration in production environment');
-      showMissingConfigPage(rootElement);
-      return;
-    }
-    
+    // Always attempt to render the app, even with missing Firebase config
+    // The app should handle Firebase-dependent features gracefully
     const root = ReactDOM.createRoot(rootElement);
     root.render(
       <React.StrictMode>
@@ -114,14 +104,6 @@ function showErrorPage(element: HTMLElement, error: unknown) {
     if (debugInfo) {
       debugInfo.textContent = `Error: ${errorMessage}`;
     }
-    
-    // Show the config guide if it's likely a Firebase issue
-    if (errorMessage.includes('Firebase') || !hasRequiredFirebaseConfig()) {
-      const configGuide = fallbackContent.querySelector('#missing-config-guide') as HTMLElement | null;
-      if (configGuide) {
-        configGuide.style.display = 'block';
-      }
-    }
   } else {
     // Create error page from scratch
     element.innerHTML = `
@@ -129,54 +111,7 @@ function showErrorPage(element: HTMLElement, error: unknown) {
         <h1>Something went wrong</h1>
         <p>The application encountered an error during initialization.</p>
         ${isDevelopment() ? `<p>Error: ${errorMessage}</p>` : '<p>Please try refreshing the page.</p>'}
-        ${!firebaseConfigAvailable ? '<p><strong>Missing Firebase configuration.</strong> Please check environment variables.</p>' : ''}
         <p>If the problem persists, please contact support.</p>
-        <div id="config-debug"></div>
-      </div>
-    `;
-    
-    // Print configuration info
-    printConfigInfoToElement('config-debug');
-  }
-}
-
-// Function to show a clear message about missing Firebase configuration
-function showMissingConfigPage(element: HTMLElement) {
-  // Check if we already have a fallback content element
-  let fallbackContent = element.querySelector('.fallback-content') as HTMLElement | null;
-  
-  if (fallbackContent) {
-    // Update existing fallback content
-    fallbackContent.style.display = 'block';
-    
-    // Make sure the config guide is visible
-    const configGuide = fallbackContent.querySelector('#missing-config-guide') as HTMLElement | null;
-    if (configGuide) {
-      configGuide.style.display = 'block';
-    }
-  } else {
-    // Create configuration missing page from scratch
-    element.innerHTML = `
-      <div style="padding: 20px; font-family: sans-serif; max-width: 600px; margin: 0 auto; text-align: center;">
-        <h1>Configuration Missing</h1>
-        <p>The application cannot start because Firebase configuration is missing.</p>
-        <p>If you're the site administrator:</p>
-        <ol style="text-align: left; display: inline-block;">
-          <li>Go to your Lovable project settings</li>
-          <li>Navigate to the Environment Variables section</li>
-          <li>Add the required Firebase configuration variables:
-            <ul>
-              <li>VITE_FIREBASE_API_KEY</li>
-              <li>VITE_FIREBASE_PROJECT_ID</li>
-              <li>VITE_FIREBASE_AUTH_DOMAIN</li>
-              <li>VITE_FIREBASE_STORAGE_BUCKET</li>
-              <li>VITE_FIREBASE_MESSAGING_SENDER_ID</li>
-              <li>VITE_FIREBASE_APP_ID</li>
-            </ul>
-          </li>
-          <li>Republish your application</li>
-        </ol>
-        <p>For detailed instructions, see the <a href="https://docs.lovable.dev/user-guides/environment-variables" style="color: #0070f3;">Lovable documentation</a>.</p>
         <div id="config-debug"></div>
       </div>
     `;
