@@ -48,8 +48,8 @@ const AuthButtons: React.FC<AuthButtonsProps> = ({ isMobile = false, onClose }) 
   
   // Get profile display name or email
   const getDisplayName = () => {
-    if (profile && profile.display_name) {
-      return profile.display_name;
+    if (profile && profile.displayName) {
+      return profile.displayName;
     }
     
     if (user && user.email) {
