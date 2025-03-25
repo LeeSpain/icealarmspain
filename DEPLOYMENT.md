@@ -31,13 +31,14 @@ The application requires the following environment variables to be set:
 - `VITE_ENABLE_ANALYTICS` - Enable analytics (true/false)
 - `VITE_DEBUG_BUILD` - Enable extra debugging (true/false)
 
-## Build Commands
+## Lovable Deployment
 
-- `npm run build` - Standard build
-- `npm run build:development` - Build for development environment
-- `npm run build:staging` - Build for staging environment
-- `npm run build:production` - Build for production environment
-- `npm run build:debug` - Build for production with extra debugging enabled
+When deploying with Lovable:
+
+1. Go to the project settings in Lovable
+2. Navigate to the "Environment Variables" section
+3. Ensure all required environment variables are set for production
+4. Click "Publish" to deploy your application
 
 ## Troubleshooting Deployment Issues
 
@@ -46,8 +47,8 @@ The application requires the following environment variables to be set:
 If the application shows a blank screen after deployment, check the following:
 
 1. **Environment Variables**:
-   - Ensure all required environment variables are set in the deployment environment.
-   - For Firebase Hosting, set them in the Firebase console under Project Settings > Environment Variables.
+   - Ensure all required environment variables are set in the production environment.
+   - In Lovable, check Project Settings > Environment Variables.
 
 2. **Console Errors**:
    - Check the browser console for JavaScript errors.
@@ -58,24 +59,8 @@ If the application shows a blank screen after deployment, check the following:
    - Verify that APIs and services are accessible from the deployed environment.
 
 4. **Debug Build**:
-   - Try deploying with the debug build: `npm run build:debug`
+   - Try enabling the debug build by setting `VITE_DEBUG_BUILD=true` in environment variables
    - This adds extra logging and more verbose error messages.
-
-### Firebase Deployment
-
-When deploying to Firebase Hosting:
-
-1. Ensure the correct Firebase project is selected in `.firebaserc`
-2. Make sure your environment variables are set in the Firebase console
-3. Deploy with `firebase deploy` or `firebase deploy --only hosting`
-
-### Invalid Environment Variables
-
-If environment variables are not being properly injected during build:
-
-1. Check that you're using the correct prefix (`VITE_` for client-side variables)
-2. Verify that the deploy script is reading the variables correctly
-3. For CI/CD pipelines, ensure secrets are properly configured
 
 ## Post-Deployment Verification
 

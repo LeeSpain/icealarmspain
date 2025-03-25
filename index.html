@@ -68,13 +68,20 @@
               <div class="loading-spinner"></div>
               <h1>Loading Ice Guardian Alert...</h1>
               <p>If this message persists, please ensure JavaScript is enabled and refresh the page.</p>
+              <p>Missing configuration? Check if all required environment variables are set correctly.</p>
               <p id="debug-info" style="font-size: 12px; margin-top: 20px; color: #666;"></p>
             `;
             
             // Add some debug info that might help troubleshoot
             const debugInfo = fallback.querySelector('#debug-info');
             if (debugInfo) {
-              debugInfo.textContent = `Browser: ${navigator.userAgent}, Time: ${new Date().toISOString()}`;
+              const envInfo = [];
+              try {
+                // Only collect non-sensitive environment info
+                if (window.location) envInfo.push(`URL: ${window.location.href}`);
+              } catch (e) {}
+              
+              debugInfo.textContent = `Browser: ${navigator.userAgent}, Time: ${new Date().toISOString()}${envInfo.length ? ', ' + envInfo.join(', ') : ''}`;
             }
             
             if (root.children.length === 0) {

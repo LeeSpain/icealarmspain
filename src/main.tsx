@@ -14,82 +14,80 @@ console.log('Mode:', import.meta.env.MODE);
 console.log('Dev:', import.meta.env.DEV);
 console.log('Prod:', import.meta.env.PROD);
 
+// Check for Firebase configuration
+const firebaseConfigAvailable = import.meta.env.VITE_FIREBASE_API_KEY && 
+                               import.meta.env.VITE_FIREBASE_PROJECT_ID;
+
+console.log('Firebase config available:', firebaseConfigAvailable ? 'Yes' : 'No');
+
 // Add a global error handler to provide better error messages for context errors
 window.addEventListener('error', (event) => {
-  if (event.error && event.error.message && 
-      (event.error.message.includes('must be used within') || 
-       event.error.message.includes('Provider'))) {
-    console.error('React Context Error:', event.error.message);
-    console.error('This is likely due to a context being used outside its provider.');
-    console.error('Check the component structure and ensure providers are properly nested.');
+  if (event.error && event.error.message) {
+    console.error('Error caught:', event.error.message);
+    
+    if (event.error.message.includes('must be used within') || 
+        event.error.message.includes('Provider')) {
+      console.error('React Context Error:', event.error.message);
+      console.error('This is likely due to a context being used outside its provider.');
+      console.error('Check the component structure and ensure providers are properly nested.');
+    }
+    
     console.error('Full error:', event.error);
   }
 });
 
-// Check for required environment variables before attempting to render
-const requiredEnvVars = ['VITE_FIREBASE_API_KEY', 'VITE_FIREBASE_PROJECT_ID'];
-const missingVars = requiredEnvVars.filter(varName => !import.meta.env[varName]);
-
-if (missingVars.length > 0) {
-  console.error(`Missing required environment variables: ${missingVars.join(', ')}`);
-  // Show error in a more user-friendly way
+// Simple function to render the app with improved error handling
+function renderApp() {
   const rootElement = document.getElementById('root');
-  if (rootElement) {
-    rootElement.innerHTML = `
-      <div style="padding: 20px; font-family: sans-serif; max-width: 600px; margin: 0 auto; text-align: center;">
-        <h1>Configuration Error</h1>
-        <p>The application could not be initialized due to missing configuration.</p>
-        ${isDevelopment() ? `<p>Missing: ${missingVars.join(', ')}</p>` : ''}
-        <p>Please contact support if this issue persists.</p>
-      </div>
-    `;
+  
+  if (!rootElement) {
+    console.error("Root element not found! Cannot render React app.");
+    return;
   }
-} else {
-  // Simple function to render the app with improved error handling
-  function renderApp() {
-    const rootElement = document.getElementById('root');
-    
-    if (!rootElement) {
-      console.error("Root element not found! Cannot render React app.");
-      return;
+  
+  try {
+    console.log("Rendering React app to DOM...");
+    // Clear any existing content first
+    while (rootElement.firstChild) {
+      rootElement.removeChild(rootElement.firstChild);
     }
     
-    try {
-      console.log("Rendering React app to DOM...");
-      // Clear any existing content first
-      while (rootElement.firstChild) {
-        rootElement.removeChild(rootElement.firstChild);
-      }
-      
-      const root = ReactDOM.createRoot(rootElement);
-      root.render(
-        <React.StrictMode>
-          <App />
-        </React.StrictMode>
-      );
-      console.log("React app rendered successfully");
-    } catch (error) {
-      console.error("Error rendering React app:", error);
-      rootElement.innerHTML = `
-        <div style="padding: 20px; font-family: sans-serif; max-width: 600px; margin: 0 auto; text-align: center;">
-          <h1>Something went wrong</h1>
-          <p>The application encountered an error during initialization.</p>
-          <p>Error: ${error instanceof Error ? error.message : 'Unknown error'}</p>
-          <p>Please try refreshing the page. If the problem persists, contact support.</p>
-        </div>
-      `;
-    }
+    const root = ReactDOM.createRoot(rootElement);
+    root.render(
+      <React.StrictMode>
+        <App />
+      </React.StrictMode>
+    );
+    console.log("React app rendered successfully");
+  } catch (error) {
+    console.error("Error rendering React app:", error);
+    showErrorPage(rootElement, error);
   }
-
-  // Initial render
-  renderApp();
-
-  // Fallback timeout render attempt (last resort)
-  setTimeout(() => {
-    const rootElement = document.getElementById('root');
-    if (rootElement && (!rootElement.hasChildNodes() || rootElement.children.length === 0)) {
-      console.log("Root element is empty after timeout, attempting re-render");
-      renderApp();
-    }
-  }, 1000);
 }
+
+// Function to show a user-friendly error page
+function showErrorPage(element, error) {
+  const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+  
+  element.innerHTML = `
+    <div style="padding: 20px; font-family: sans-serif; max-width: 600px; margin: 0 auto; text-align: center;">
+      <h1>Something went wrong</h1>
+      <p>The application encountered an error during initialization.</p>
+      ${isDevelopment() ? `<p>Error: ${errorMessage}</p>` : '<p>Please try refreshing the page.</p>'}
+      ${!firebaseConfigAvailable ? '<p><strong>Missing Firebase configuration.</strong> Please check environment variables.</p>' : ''}
+      <p>If the problem persists, please contact support.</p>
+    </div>
+  `;
+}
+
+// Initial render
+renderApp();
+
+// Fallback timeout render attempt (last resort)
+setTimeout(() => {
+  const rootElement = document.getElementById('root');
+  if (rootElement && (!rootElement.hasChildNodes() || rootElement.children.length === 0)) {
+    console.log("Root element is empty after timeout, attempting re-render");
+    renderApp();
+  }
+}, 1000);
