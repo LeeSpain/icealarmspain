@@ -6,6 +6,14 @@ import './styles/index.css';
 import './utils/diagnostic-helper';
 import { getEnvironment, isProduction } from './utils/environment';
 
+// Declare global window properties
+declare global {
+  interface Window {
+    appLoaded?: boolean;
+    appStarted?: boolean;
+  }
+}
+
 // Console log for debugging - will show in production too
 console.log(`Application initializing - Environment: ${getEnvironment()}`);
 
