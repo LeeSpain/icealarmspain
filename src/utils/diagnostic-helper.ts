@@ -1,112 +1,88 @@
 
 /**
- * Diagnostic helper utility for troubleshooting production issues
+ * Diagnostic helper utility
+ * This file helps diagnose common deployment issues
  */
 
-// Function to check if the app is running
-export const checkAppHealth = () => {
+// Log environment variables (non-sensitive only)
+export const logEnvironmentInfo = () => {
   try {
-    const diagnostics = {
-      timestamp: new Date().toISOString(),
-      reactMounted: document.getElementById('root')?.childElementCount > 0,
-      documentReady: document.readyState,
-      url: window.location.href,
-      viewportWidth: window.innerWidth,
-      viewportHeight: window.innerHeight,
-      userAgent: navigator.userAgent,
-      language: navigator.language,
-      hasLocalStorage: !!window.localStorage,
-      hasSessionStorage: !!window.sessionStorage,
-      cookies: document.cookie ? 'present' : 'none',
-      envMode: (window as any).ENV_MODE || 'unknown'
-    };
-    
-    console.log('App Health Check:', diagnostics);
-    return diagnostics;
+    // Don't log sensitive information
+    console.log('Environment Info:', {
+      NODE_ENV: process.env.NODE_ENV || import.meta.env.MODE || 'unknown',
+      isProd: import.meta.env.PROD,
+      isDev: import.meta.env.DEV,
+      baseUrl: import.meta.env.BASE_URL,
+      environment: import.meta.env.VITE_ENVIRONMENT || 'not set',
+      firebaseConfigPresent: !!import.meta.env.VITE_FIREBASE_API_KEY && !!import.meta.env.VITE_FIREBASE_PROJECT_ID,
+      supabaseConfigPresent: !!import.meta.env.VITE_SUPABASE_URL && !!import.meta.env.VITE_SUPABASE_ANON_KEY
+    });
   } catch (error) {
-    console.error('Error running health check:', error);
-    return { error: String(error) };
+    console.error('Error logging environment info:', error);
   }
 };
 
-// Check for common issues
-export const detectCommonIssues = () => {
-  const issues = [];
-  
-  // Check for root element
-  if (!document.getElementById('root')) {
-    issues.push('Root element missing');
-  }
-  
-  // Check for CORS issues
+// Check for common deployment issues
+export const runDiagnostics = () => {
   try {
-    const corsIndicators = performance.getEntriesByType('resource')
-      .filter(entry => {
-        const url = (entry as any).name;
-        return url && (url.includes('firebase') || url.includes('supabase'));
-      });
+    // Check for required environment variables
+    const missingVars = [];
     
-    if (corsIndicators.length > 0) {
-      issues.push('Possible CORS issues with external services');
+    if (import.meta.env.PROD) {
+      if (!import.meta.env.VITE_FIREBASE_API_KEY) missingVars.push('VITE_FIREBASE_API_KEY');
+      if (!import.meta.env.VITE_FIREBASE_PROJECT_ID) missingVars.push('VITE_FIREBASE_PROJECT_ID');
     }
-  } catch (e) {
-    // Performance API might not be available
-  }
-  
-  // Check for localStorage errors
-  try {
-    localStorage.setItem('test', 'test');
-    localStorage.removeItem('test');
-  } catch (e) {
-    issues.push('localStorage access error');
-  }
-  
-  // Check for JavaScript errors
-  if (window.onerror) {
-    issues.push('JavaScript errors detected');
-  }
-  
-  return issues;
-};
-
-// Function that can be called from console to debug the app
-export const diagnoseApp = () => {
-  const health = checkAppHealth();
-  const issues = detectCommonIssues();
-  
-  console.log('=== APP DIAGNOSTICS ===');
-  console.log('Health:', health);
-  console.log('Detected Issues:', issues.length ? issues : 'None detected');
-  
-  // Try to get environment information
-  try {
-    const getEnvironment = require('./environment').getEnvironment;
-    const getEnvironmentDiagnostics = require('./environment').getEnvironmentDiagnostics;
     
-    console.log('Environment:', getEnvironment());
-    console.log('Environment Diagnostics:', getEnvironmentDiagnostics());
-  } catch (e) {
-    console.log('Could not load environment utilities');
+    if (missingVars.length > 0) {
+      console.error('⛔ Missing required environment variables:', missingVars.join(', '));
+      console.error('This will likely cause the application to fail or show a blank screen.');
+      return false;
+    }
+    
+    return true;
+  } catch (error) {
+    console.error('Error running diagnostics:', error);
+    return false;
   }
-  
-  return {
-    health,
-    issues,
-    timestamp: new Date().toISOString()
-  };
 };
 
-// Expose the diagnostic tools to the window object for console access
-if (typeof window !== 'undefined') {
-  (window as any).iceDiagnostics = {
-    diagnoseApp,
-    checkAppHealth,
-    detectCommonIssues
-  };
+// Create a global variable to track initialization status
+declare global {
+  interface Window {
+    ICE_APP_INITIALIZED?: boolean;
+    ICE_APP_ERRORS?: string[];
+  }
 }
 
-export default {
-  diagnoseApp,
-  checkAppHealth,
-  detectCommonIssues
+// Initialize the app diagnostics
+export const initDiagnostics = () => {
+  if (typeof window !== 'undefined') {
+    // Initialize error tracking
+    if (!Array.isArray(window.ICE_APP_ERRORS)) {
+      window.ICE_APP_ERRORS = [];
+    }
+    
+    // Log startup time
+    window.ICE_APP_INITIALIZED = false;
+    
+    // Log to console for debugging
+    console.log('🔍 Diagnostic helper initialized');
+    logEnvironmentInfo();
+    
+    // Run initial diagnostics
+    runDiagnostics();
+  }
 };
+
+// Call initDiagnostics immediately
+initDiagnostics();
+
+// Add unhandled error listener
+if (typeof window !== 'undefined') {
+  window.addEventListener('error', (event) => {
+    console.error('Global error caught:', event.error);
+    if (Array.isArray(window.ICE_APP_ERRORS)) {
+      window.ICE_APP_ERRORS.push(event.error?.message || 'Unknown error');
+    }
+  });
+}
