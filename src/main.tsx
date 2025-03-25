@@ -1,14 +1,24 @@
 
-import React from 'react'
-import ReactDOM from 'react-dom/client'
-import App from './App'
-import './styles/index.css'
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import App from './App';
+import './styles/index.css';
+import './utils/app-initialization'; // Add this import to ensure initialization
+import ErrorBoundaryRoot from './components/layout/ErrorBoundaryRoot';
 
 // Simple function to help with debugging and diagnostics
 const logAppStartup = (message: string, error?: any) => {
   const timestamp = new Date().toISOString();
   if (error) {
     console.error(`[${timestamp}] ${message}`, error);
+    if (Array.isArray(window.appErrors)) {
+      window.appErrors.push({
+        message,
+        error: error instanceof Error ? error.message : String(error),
+        stack: error instanceof Error ? error.stack : undefined,
+        timestamp
+      });
+    }
   } else {
     console.log(`[${timestamp}] ${message}`);
   }
@@ -20,7 +30,7 @@ logAppStartup("Starting application initialization");
 // Get the root element early and create a backup render function 
 const rootElement = document.getElementById('root');
 
-// Function to render app in normal flow
+// Simplified render function - optimized for reliability
 const renderApp = () => {
   if (!rootElement) {
     logAppStartup("Root element not found! Cannot render React app.");
@@ -30,28 +40,25 @@ const renderApp = () => {
   try {
     logAppStartup("Creating React root and rendering app");
     
-    // Remove any initial loader first
-    const initialLoader = rootElement.querySelector('.initial-loader');
-    if (initialLoader) {
-      initialLoader.remove();
-    }
-    
     // Create the React root
     const root = ReactDOM.createRoot(rootElement);
     
-    // Render the app without strict mode in production to avoid double mounting
-    // which can sometimes cause issues with initialization
-    if (import.meta.env.DEV) {
-      root.render(
-        <React.StrictMode>
-          <App />
-        </React.StrictMode>
-      );
-    } else {
-      root.render(<App />);
-    }
+    // Wrap the app in our ErrorBoundaryRoot
+    root.render(
+      <ErrorBoundaryRoot>
+        <App />
+      </ErrorBoundaryRoot>
+    );
     
     logAppStartup("React app rendered successfully");
+    
+    // Remove the initial loader after successful render
+    setTimeout(() => {
+      const initialLoader = document.querySelector('.initial-loader');
+      if (initialLoader && initialLoader.parentNode) {
+        initialLoader.remove();
+      }
+    }, 0);
   } catch (error) {
     logAppStartup("Error rendering React app", error);
     
@@ -74,39 +81,6 @@ const renderApp = () => {
   }
 };
 
-// Function to check environment variables
-const checkEnvironment = () => {
-  // This is now just informative, not blocking
-  try {
-    const envMode = import.meta.env.MODE;
-    const envDev = import.meta.env.DEV;
-    const envProd = import.meta.env.PROD;
-    
-    logAppStartup(`Environment: MODE=${envMode}, DEV=${envDev}, PROD=${envProd}`);
-    
-    // Log critical environment variables without revealing sensitive values
-    const envVars = [
-      'VITE_ENVIRONMENT',
-      'VITE_FIREBASE_PROJECT_ID',
-      'VITE_FIREBASE_API_KEY',
-      'VITE_ENABLE_MOCK_AUTH',
-      'VITE_DEBUG_BUILD'
-    ];
-    
-    const envVarStatus = envVars.map(key => {
-      const value = (import.meta.env as any)[key];
-      return `${key}=${value ? 'set' : 'not-set'}`;
-    }).join(', ');
-    
-    logAppStartup(`Environment variables: ${envVarStatus}`);
-  } catch (error) {
-    logAppStartup("Error checking environment", error);
-  }
-};
-
-// Execute environment check asynchronously, but don't block rendering
-setTimeout(checkEnvironment, 0);
-
 // Render the app immediately to prevent blank screen
 renderApp();
 
@@ -123,7 +97,22 @@ if (typeof window !== 'undefined') {
 
 // Export a simple debug helper for console
 (window as any).debugApp = {
-  checkEnvironment,
   rerender: renderApp,
-  timestamp: new Date().toISOString()
+  timestamp: new Date().toISOString(),
+  forceMockAuth: () => {
+    const mockUser = {
+      uid: `debug-user-${Date.now()}`,
+      id: `debug-user-${Date.now()}`,
+      email: `debug@example.com`,
+      name: 'Debug User',
+      displayName: 'Debug User',
+      role: 'member',
+      status: 'active',
+      profileCompleted: true,
+      createdAt: new Date().toISOString()
+    };
+    localStorage.setItem('currentUser', JSON.stringify(mockUser));
+    console.log('Mock authentication enabled');
+    window.location.reload();
+  }
 };

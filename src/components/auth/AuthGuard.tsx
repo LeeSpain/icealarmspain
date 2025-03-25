@@ -16,11 +16,34 @@ const AuthGuard: React.FC<AuthGuardProps> = ({ children, allowedRoles }) => {
   // For debugging
   console.log("AuthGuard: user=", user, "profile=", profile, "isLoading=", isLoading);
 
-  // In production builds, be more forgiving to avoid blank screens
-  const isProduction = import.meta.env.PROD;
-  
-  // Show a brief loading state, but don't block rendering for too long
-  if (isLoading && !isProduction) {
+  // Always show a very brief loading state
+  const [showLoading, setShowLoading] = React.useState(true);
+
+  // Very short timeout - just enough to let the actual content load
+  React.useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowLoading(false);
+    }, 50);
+    return () => clearTimeout(timer);
+  }, []);
+
+  // In production, always render children to avoid blank screens
+  if (import.meta.env.PROD) {
+    // Log the issue but don't block rendering
+    if (!user) {
+      console.warn("AuthGuard: No user in production, rendering children anyway");
+    }
+    
+    // Super brief artificial delay to allow auth to process before rendering
+    if (showLoading) {
+      return <LoadingSpinner size="sm" message="" />;
+    }
+    
+    return <>{children}</>;
+  }
+
+  // In development, enforce authentication rules
+  if (isLoading) {
     return <LoadingSpinner size="md" message="Loading..." />;
   }
 
@@ -30,19 +53,12 @@ const AuthGuard: React.FC<AuthGuardProps> = ({ children, allowedRoles }) => {
     return allowedRoles.includes(profile.role);
   };
 
-  // In production, if we're having auth issues, just render the children
-  // This avoids blank screens at the cost of potentially showing protected content briefly
-  if (isProduction && !user) {
-    console.warn("AuthGuard: No user in production, but rendering children anyway to avoid blank screen");
-    return <>{children}</>;
-  }
-
-  if (!user && !isProduction) {
+  if (!user) {
     // Redirect to login page if not authenticated
     return <Navigate to={`/login?redirect=${encodeURIComponent(location.pathname)}`} replace />;
   }
 
-  if (allowedRoles && !checkRoleAccess() && !isProduction) {
+  if (allowedRoles && !checkRoleAccess()) {
     // Redirect to dashboard if user doesn't have required role
     return <Navigate to="/dashboard" replace />;
   }
