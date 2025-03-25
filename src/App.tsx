@@ -10,6 +10,7 @@ import AuthGuard from "./components/auth/AuthGuard";
 import ErrorBoundary from "@/components/layout/ErrorBoundary";
 import ScrollToTop from "@/components/layout/ScrollToTop";
 import { isDevelopment, isDebugBuild } from "./utils/environment";
+import "./utils/build-verification";
 
 // Add a global error handler to catch initialization errors
 if (typeof window !== 'undefined') {
