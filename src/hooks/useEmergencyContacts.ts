@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { Contact, AlertType, TestResult } from '@/components/emergency-contacts/types';
 import { v4 as uuidv4 } from 'uuid';
@@ -8,7 +9,6 @@ export const testContactNotifications = async (contactId: string, type: AlertTyp
   await new Promise(resolve => setTimeout(resolve, 1500));
 
   const result: TestResult = {
-    id: `test-${Date.now()}`,
     timestamp: new Date().toISOString(), // Convert Date to string
     success: Math.random() > 0.2, // 80% success rate
     type: type,

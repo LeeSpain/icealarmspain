@@ -10,9 +10,14 @@ const mockContacts: Contact[] = [
     relationship: 'Family',
     phone: '555-123-4567',
     email: 'john.doe@example.com',
-    priority: 1,
+    priority: 1, // Changed to number
     receivesAlerts: true,
-    receivesUpdates: true
+    receivesUpdates: true,
+    notificationPreferences: {
+      sms: true,
+      email: true,
+      call: true
+    }
   },
   {
     id: '2',
@@ -20,9 +25,14 @@ const mockContacts: Contact[] = [
     relationship: 'Friend',
     phone: '555-987-6543',
     email: 'jane.smith@example.com',
-    priority: 2,
+    priority: 2, // Changed to number
     receivesAlerts: true,
-    receivesUpdates: false
+    receivesUpdates: false,
+    notificationPreferences: {
+      sms: true,
+      email: true,
+      call: false
+    }
   }
 ];
 

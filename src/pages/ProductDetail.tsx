@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import LoadingSpinner from '@/components/ui/loading-spinner';
@@ -48,11 +47,6 @@ const deviceData = [
   }
 ];
 
-// Define the props interface for DeviceDetail
-interface DeviceDetailProps {
-  device: any;
-}
-
 const ProductDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const [loading, setLoading] = useState(true);
@@ -100,7 +94,7 @@ const ProductDetail: React.FC = () => {
     );
   }
 
-  return <DeviceDetail device={product} />;
+  return <DeviceDetail device={product} index={0} language={language} />;
 };
 
 export default ProductDetail;

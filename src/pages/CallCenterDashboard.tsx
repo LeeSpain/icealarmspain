@@ -15,10 +15,11 @@ interface SidebarProps {
   user: User;
 }
 
+// Fix HeaderProps to match what the component expects
 interface HeaderProps {
+  user: User;
   collapsed: boolean;
   setCollapsed: (collapsed: boolean) => void;
-  user: User;
 }
 
 // Create a default export for this component
@@ -42,7 +43,12 @@ const CallCenterDashboard: React.FC = () => {
     role: 'callcenter',
     status: 'active',
     profileCompleted: true,
-    language: 'en'
+    language: 'en',
+    emailVerified: false,
+    isAnonymous: false,
+    providerData: [],
+    refreshToken: '',
+    photoURL: null
   };
 
   return (
