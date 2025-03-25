@@ -1,75 +1,69 @@
 
-import React, { Suspense } from "react";
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { routes } from "./routes";
 import { Toaster } from "@/components/ui/toaster";
 import { LanguageProvider } from "@/context/LanguageContext";
 import { HelmetProvider } from "react-helmet-async";
 import './App.css';
+import { AuthProvider } from "./context/auth"; 
+import AuthGuard from "./components/auth/AuthGuard"; 
+import ErrorBoundary from "@/components/layout/ErrorBoundary";
 import ScrollToTop from "@/components/layout/ScrollToTop";
-import { AuthProvider } from "./context/auth";
-import ErrorBoundaryRoot from "@/components/layout/ErrorBoundaryRoot";
-import { getEnvironment } from "@/utils/environment";
-import BasicDebug from "@/components/debug/BasicDebug";
-import EnhancedDebug from "@/components/debug/EnhancedDebug";
-import LoadingSpinner from "@/components/ui/loading-spinner";
+import { isDevelopment, isDebugBuild } from "./utils/environment";
+import "./utils/build-verification";
 
-// Import the Index page explicitly to ensure it's available
-import Index from "./pages/Index";
-
-// Initialize diagnostic information
-const appStartTime = Date.now();
-console.log(`App.tsx loading - Environment: ${getEnvironment()}`);
-
-// Simple fallback component when routes are loading
-const LoadingFallback = () => (
-  <div className="flex items-center justify-center min-h-[200px]">
-    <LoadingSpinner size="sm" />
-  </div>
-);
+// Add a global error handler to catch initialization errors
+if (typeof window !== 'undefined') {
+  window.addEventListener('error', (event) => {
+    console.error('Global error caught:', event.error);
+  });
+}
 
 function App() {
-  // Performance tracking for app initialization
-  const mountTime = Date.now() - appStartTime;
-  console.log(`App component mounted in ${mountTime}ms`);
+  // Log that App component is rendering (helps with debugging)
+  console.log("App component rendering");
   
   return (
-    <>
-      {/* Debug components render outside any providers */}
-      <BasicDebug />
-      <EnhancedDebug />
-      
-      <ErrorBoundaryRoot>
-        <HelmetProvider>
-          <AuthProvider>
-            <LanguageProvider>
-              <Router>
-                <ScrollToTop />
-                <Suspense fallback={<LoadingFallback />}>
-                  <Routes>
-                    {/* Explicitly add index route for extra safety */}
-                    <Route path="/" element={<Index />} />
-                    
-                    {/* Map all defined routes */}
-                    {routes.map((route) => (
+    <ErrorBoundary>
+      <HelmetProvider>
+        <AuthProvider>
+          <LanguageProvider>
+            <Router>
+              <ScrollToTop />
+              <Routes>
+                {routes.map((route) => {
+                  console.log(`Registering route: ${route.path}`);
+                  
+                  // Protected routes with optional role restrictions
+                  if (route.protected) {
+                    return (
                       <Route
                         key={route.path}
                         path={route.path}
-                        element={route.element}
+                        element={
+                          <AuthGuard allowedRoles={route.allowedRoles}>
+                            {route.element}
+                          </AuthGuard>
+                        }
                       />
-                    ))}
-                    
-                    {/* Fallback route */}
-                    <Route path="*" element={<Navigate to="/" />} />
-                  </Routes>
-                </Suspense>
-                <Toaster />
-              </Router>
-            </LanguageProvider>
-          </AuthProvider>
-        </HelmetProvider>
-      </ErrorBoundaryRoot>
-    </>
+                    );
+                  }
+                  // Regular routes
+                  return (
+                    <Route
+                      key={route.path}
+                      path={route.path}
+                      element={route.element}
+                    />
+                  );
+                })}
+              </Routes>
+            </Router>
+            <Toaster />
+          </LanguageProvider>
+        </AuthProvider>
+      </HelmetProvider>
+    </ErrorBoundary>
   );
 }
 

@@ -1,6 +1,5 @@
 
 import React, { useEffect } from 'react';
-import { isProduction, getEnvironment } from '@/utils/environment';
 
 const BasicDebug = () => {
   useEffect(() => {
@@ -19,8 +18,9 @@ const BasicDebug = () => {
     }
     
     // Log environment variables (safe ones only)
-    console.log("Environment:", getEnvironment());
-    console.log("Is Production:", isProduction());
+    console.log("Environment:", import.meta.env.MODE);
+    console.log("Is Production:", import.meta.env.PROD);
+    console.log("Is Development:", import.meta.env.DEV);
     
     // Check document structure
     console.log("Document structure:", {
@@ -30,31 +30,7 @@ const BasicDebug = () => {
       body: document.body ? true : false,
       rootElement: document.getElementById('root') ? true : false
     });
-    
-    // Run CSS test
-    const testCSS = () => {
-      const testDiv = document.createElement('div');
-      testDiv.className = 'bg-blue-500 text-white';
-      testDiv.style.position = 'absolute';
-      testDiv.style.top = '-9999px';
-      testDiv.style.left = '-9999px';
-      document.body.appendChild(testDiv);
-      
-      const styles = window.getComputedStyle(testDiv);
-      const hasCorrectStyles = styles.backgroundColor !== 'rgba(0, 0, 0, 0)';
-      
-      console.log("CSS test result:", hasCorrectStyles ? "CSS is working" : "CSS is not working properly");
-      document.body.removeChild(testDiv);
-      return hasCorrectStyles;
-    };
-    
-    testCSS();
   }, []);
-
-  // Don't show in production
-  if (isProduction()) {
-    return null;
-  }
 
   return (
     <div id="debug-component" className="fixed top-0 left-0 bg-red-500 text-white p-4 z-50">

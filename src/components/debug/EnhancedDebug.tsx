@@ -3,14 +3,13 @@ import React, { useEffect, useState } from 'react';
 import { isDevelopment, getEnvironment, getEnvironmentDiagnostics } from '@/utils/environment';
 
 /**
- * Enhanced debug component that shows detailed diagnostics
- * Only visible in development by default, can be toggled with Ctrl+Shift+D
+ * Enhanced debug component that shows detailed diagnostics in development mode
+ * and can be toggled with a keyboard shortcut
  */
 const EnhancedDebug = () => {
-  const [visible, setVisible] = useState(isDevelopment());
+  const [visible, setVisible] = useState(true);
   const [expanded, setExpanded] = useState(false);
   const [diagnostics, setDiagnostics] = useState<Record<string, unknown>>({});
-  const [domInfo, setDomInfo] = useState<Record<string, unknown>>({});
   
   useEffect(() => {
     console.log("EnhancedDebug component mounted");
@@ -29,22 +28,20 @@ const EnhancedDebug = () => {
     
     document.addEventListener('keydown', handleKeyDown);
     
-    // Collect DOM information
-    const rootElement = document.getElementById('root');
-    setDomInfo({
-      rootExists: !!rootElement,
-      rootChildNodes: rootElement?.childNodes.length || 0,
-      bodyChildNodes: document.body.childNodes.length,
-      windowInnerHeight: window.innerHeight,
-      windowInnerWidth: window.innerWidth,
-      userAgent: navigator.userAgent,
-      devicePixelRatio: window.devicePixelRatio,
-      scripts: document.scripts.length,
-      stylesheets: document.styleSheets.length
-    });
+    // Check if CSS is working by testing a style
+    const debugElement = document.getElementById('enhanced-debug');
+    if (debugElement) {
+      console.log("Debug element found in DOM");
+      console.log("Debug element styles:", {
+        backgroundColor: window.getComputedStyle(debugElement).backgroundColor,
+        color: window.getComputedStyle(debugElement).color
+      });
+    } else {
+      console.log("Debug element NOT found in DOM");
+    }
     
     // Log render verification
-    console.log("EnhancedDebug: React is successfully rendering components");
+    console.log("React is successfully rendering components");
     
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
@@ -87,24 +84,13 @@ const EnhancedDebug = () => {
           </pre>
           
           <h4 className="font-bold mb-2 mt-4">DOM Structure</h4>
-          <pre className="text-xs bg-amber-600 p-2 rounded overflow-auto max-h-40">
-            {JSON.stringify(domInfo, null, 2)}
-          </pre>
+          <div className="text-xs">
+            <p>Root Element: <strong>{document.getElementById('root') ? 'Found' : 'Not Found'}</strong></p>
+            <p>Child Nodes: <strong>{document.getElementById('root')?.childNodes.length || 0}</strong></p>
+          </div>
           
           <div className="mt-4">
             <p className="text-xs">Press <kbd>Ctrl+Shift+D</kbd> to toggle this panel</p>
-            <button
-              onClick={() => {
-                const root = document.getElementById('root');
-                if (root) {
-                  console.log('Root element HTML:', root.innerHTML.substring(0, 500) + '...');
-                  alert('Root element HTML logged to console');
-                }
-              }}
-              className="mt-2 px-2 py-1 bg-amber-700 rounded text-xs w-full"
-            >
-              Log Root Element HTML
-            </button>
           </div>
         </div>
       )}

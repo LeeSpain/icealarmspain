@@ -9,7 +9,10 @@ interface ProtectedRouteProps {
 }
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ 
-  children
+  children, 
+  adminOnly = false,
+  allowedRoles = [],
+  redirectPath
 }) => {
   // Just render the children with no authentication checks
   return <>{children}</>;

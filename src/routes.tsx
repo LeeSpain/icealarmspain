@@ -1,12 +1,10 @@
+
 import React from "react";
 import { RouteConfig } from "./routes/types";
 import { withLazyLoading } from "./utils/lazy-imports";
 import TestingPanel from "./components/test/TestingPanel";
 
-// Import Index directly to avoid lazy loading issues
-import Index from "./pages/Index";
-
-// Use lazy loading for other routes
+// Use lazy loading for better performance
 const SOSPendantPage = withLazyLoading(() => import("./pages/SOSPendantPage"), "Loading SOS Pendant page...");
 const MedicalDispenserPage = withLazyLoading(() => import("./pages/MedicalDispenserPage"), "Loading Medical Dispenser page...");
 const GlucoseMonitorPage = withLazyLoading(() => import("./pages/GlucoseMonitorPage"), "Loading Glucose Monitor page...");
@@ -18,10 +16,6 @@ import { routes as allRoutes } from "./routes/index";
 
 // Define the routes that we've already implemented and need to keep
 const customRoutes: RouteConfig[] = [
-  {
-    path: "/",
-    element: <Index />,
-  },
   {
     path: "/sos-pendant",
     element: <SOSPendantPage />,
@@ -67,8 +61,8 @@ const protectedRoutes = allRoutes.map(route => {
   return route;
 });
 
-// Combine the imported routes with our custom routes, ensuring custom routes take precedence
+// Combine the imported routes with our custom routes
 export const routes = [
-  ...customRoutes,
-  ...protectedRoutes.filter(route => !customRoutes.some(cr => cr.path === route.path))
+  ...protectedRoutes,
+  ...customRoutes
 ];

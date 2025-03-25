@@ -1,49 +1,84 @@
 
 import React from 'react';
 import { AuthContext } from './context';
-import { AuthContextType, User } from './types';
+import { AuthStateManager } from './AuthStateManager';
+import { User } from './types';
+import * as authFunctions from './authFunctions';
 
-// Create a dummy user that's always available
-const dummyUser: User = {
-  uid: 'dummy-user',
-  id: 'dummy-user',
-  email: 'user@example.com',
-  name: 'Demo User',
-  displayName: 'Demo User',
-  role: 'member',
-  profileCompleted: true,
-  status: 'active',
-  createdAt: new Date().toISOString(),
-  lastLogin: new Date().toISOString()
-};
-
-interface Props {
+interface AuthProviderProps {
   children: React.ReactNode;
 }
 
-export const AuthProvider: React.FC<Props> = ({ children }) => {
-  // Create a dummy auth context that always provides a user
-  const authContextValue: AuthContextType = {
-    user: dummyUser,
-    profile: dummyUser,
-    isAuthenticated: true, // Always authenticated
-    isLoading: false,
-    login: async () => dummyUser,
-    signIn: async () => dummyUser,
-    signUp: async () => dummyUser,
-    logout: async () => {},
-    updateUserProfile: async () => {},
-    createUser: async () => dummyUser,
-    getAllUsers: async () => [dummyUser],
-    updateUserRole: async () => {},
-    deleteUser: async () => {}
-  };
+export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
+  console.log("AuthProvider rendering");
   
+  const signIn = async (email: string, password: string, rememberMe?: boolean) => {
+    try {
+      console.log("AuthProvider: signIn called with email:", email);
+      // Call the login function (aliased as signIn in authFunctions)
+      const user = await authFunctions.login(email, password, rememberMe || false);
+      console.log("AuthProvider: signIn success, user:", user);
+      return user;
+    } catch (error) {
+      console.error('Error signing in:', error);
+      throw error;
+    }
+  };
+
+  const signUp = async (email: string, password: string, userData?: any) => {
+    try {
+      console.log("AuthProvider: signUp called with email:", email);
+      const result = await authFunctions.signUp(email, password, userData);
+      if (result.error) {
+        throw result.error;
+      }
+      console.log("AuthProvider: signUp success, user:", result.user);
+      // Return just the user object, not the {user, error} structure
+      return result.user as User;
+    } catch (error) {
+      console.error('Error signing up:', error);
+      throw error;
+    }
+  };
+
+  const signOut = async () => {
+    try {
+      console.log("AuthProvider: signOut called");
+      // Use logout function instead of signOut
+      return await authFunctions.logout();
+    } catch (error) {
+      console.error('Error signing out:', error);
+      throw error;
+    }
+  };
+
   return (
-    <AuthContext.Provider value={authContextValue}>
-      {children}
-    </AuthContext.Provider>
+    <AuthStateManager>
+      {({ user, isLoading, wrappedUpdateUserProfile }) => {
+        console.log("AuthStateManager provided state: user=", user, "isLoading=", isLoading);
+        return (
+          <AuthContext.Provider
+            value={{
+              user,
+              isAuthenticated: !!user,
+              isLoading,
+              profile: user, // Use user as profile since they have the same structure
+              login: signIn,
+              signIn,
+              signUp,
+              logout: signOut,
+              updateUserProfile: wrappedUpdateUserProfile,
+              // Add required admin functions with stub implementations
+              createUser: signUp,
+              getAllUsers: async () => [],
+              updateUserRole: async () => {},
+              deleteUser: async () => {},
+            }}
+          >
+            {children}
+          </AuthContext.Provider>
+        );
+      }}
+    </AuthStateManager>
   );
 };
-
-export default AuthProvider;
