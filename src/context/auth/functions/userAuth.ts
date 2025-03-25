@@ -35,7 +35,8 @@ export const login = async (
 // Sign out the current user
 export const logout = async (): Promise<void> => {
   try {
-    await firebaseSignOut(auth);
+    // Fix: Call firebaseSignOut without passing auth as an argument
+    await firebaseSignOut();
   } catch (error) {
     console.error('Logout error:', error);
     throw error;
