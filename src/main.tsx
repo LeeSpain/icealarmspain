@@ -71,11 +71,10 @@ function renderApp() {
   try {
     console.log("Rendering React app to DOM...");
     
-    // Clear any existing loading content
+    // Clear any existing loading content immediately
     const fallbackContent = rootElement.querySelector('.fallback-content') as HTMLElement | null;
     if (fallbackContent) {
-      // Keep the fallback content in the DOM but hide it
-      // This allows us to show it again if needed
+      // Immediately hide the fallback content
       fallbackContent.style.display = 'none';
     }
     
@@ -93,13 +92,6 @@ function renderApp() {
       </React.StrictMode>
     );
     console.log("React app rendered successfully");
-    
-    // If we get here, we've successfully rendered, so remove our loading indicator entirely
-    setTimeout(() => {
-      if (fallbackContent && fallbackContent.parentNode) {
-        fallbackContent.style.display = 'none';
-      }
-    }, 500);
   } catch (error) {
     console.error("Error rendering React app:", error);
     showErrorPage(rootElement, error);

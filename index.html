@@ -30,7 +30,7 @@
         max-width: 600px;
         margin: 0 auto;
         text-align: center;
-        display: none; /* Hide by default, show if loading takes too long */
+        display: none; /* Hide by default, show only after delay if needed */
       }
       .loading-spinner {
         display: inline-block;
@@ -81,12 +81,12 @@
 
   <body>
     <div id="root">
-      <!-- This content will show immediately if JS fails to load -->
-      <div class="fallback-content" style="display: block;">
+      <!-- This content will only show if JS fails to load after a delay -->
+      <div class="fallback-content">
         <div class="loading-spinner"></div>
         <h1>Loading Ice Guardian Alert...</h1>
         <p>If this message persists, please ensure JavaScript is enabled and refresh the page.</p>
-        <div class="loading-error" style="display: block;">
+        <div class="loading-error">
           <p><strong>Common issues:</strong></p>
           <div class="loading-tips">
             <p>- Missing configuration: Check if all required environment variables are set in Lovable project settings</p>
@@ -96,7 +96,7 @@
         </div>
         
         <!-- More detailed guide for missing configuration -->
-        <div class="missing-config-guide" id="missing-config-guide" style="display: block;">
+        <div class="missing-config-guide" id="missing-config-guide">
           <h3>Firebase Configuration Required</h3>
           <p>This application requires Firebase configuration to run properly.</p>
           <ol>
@@ -124,12 +124,14 @@
     <script>
       // Show fallback content only if React doesn't load after a delay
       window.addEventListener('load', function() {
+        // Increase the delay to 3 seconds before showing the fallback content
+        // This gives more time for the app to load normally
         setTimeout(function() {
           const root = document.getElementById('root');
           const fallback = document.querySelector('.fallback-content');
           
           // Check if React app has rendered content
-          if (root && root.children.length > 0 && fallback && root.contains(fallback)) {
+          if (root && root.children.length === 1 && fallback && root.contains(fallback)) {
             // React hasn't loaded or has failed, show detailed error info
             fallback.style.display = 'block';
             
@@ -146,7 +148,7 @@
               configGuide.style.display = 'block';
             }
           }
-        }, 5000); // Show after 5 seconds
+        }, 3000); // Show after 3 seconds instead of 5
         
         // For more advanced debugging - check after 10 seconds if we're still stuck
         setTimeout(function() {
