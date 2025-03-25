@@ -34,7 +34,11 @@ export const getEnvironment = (): string => {
 export const getEnvVar = (name: string, fallback: string = ''): string => {
   try {
     const value = import.meta.env[name];
-    return value !== undefined ? value : fallback;
+    // Check explicitly for undefined, empty string, or null
+    if (value === undefined || value === '' || value === null) {
+      return fallback;
+    }
+    return value;
   } catch (e) {
     console.warn(`Failed to access env var ${name}, using fallback`, e);
     return fallback;
@@ -51,7 +55,11 @@ export const getRequiredEnvVar = (name: string, fallback: string = ''): string =
       
       // In production, this is a critical error
       if (isProduction()) {
-        throw new Error(errorMsg);
+        // Instead of throwing, we'll just log in production to prevent white screens
+        console.error('CRITICAL:', errorMsg);
+        console.error('This may prevent the application from functioning correctly');
+        
+        return fallback;
       }
       
       // In development, we can use a fallback
@@ -60,7 +68,8 @@ export const getRequiredEnvVar = (name: string, fallback: string = ''): string =
     return value;
   } catch (e) {
     if (isProduction()) {
-      throw e;
+      console.error('Failed to access required env var in production:', name);
+      return fallback;
     }
     console.warn(`Failed to access required env var ${name}, using fallback in development`, e);
     return fallback;
@@ -70,13 +79,30 @@ export const getRequiredEnvVar = (name: string, fallback: string = ''): string =
 // Check if all required Firebase environment variables are set
 export const hasRequiredFirebaseConfig = (): boolean => {
   try {
-    return (
-      !!getEnvVar('VITE_FIREBASE_API_KEY') &&
-      !!getEnvVar('VITE_FIREBASE_PROJECT_ID') &&
-      !!getEnvVar('VITE_FIREBASE_AUTH_DOMAIN') &&
-      !!getEnvVar('VITE_FIREBASE_APP_ID')
-    );
+    // Check each Firebase config variable individually and log which ones are missing
+    const requiredVars = {
+      apiKey: !!getEnvVar('VITE_FIREBASE_API_KEY'),
+      projectId: !!getEnvVar('VITE_FIREBASE_PROJECT_ID'),
+      authDomain: !!getEnvVar('VITE_FIREBASE_AUTH_DOMAIN'),
+      appId: !!getEnvVar('VITE_FIREBASE_APP_ID')
+    };
+    
+    // Log the missing variables for easier debugging
+    const missingVars = Object.entries(requiredVars)
+      .filter(([_, exists]) => !exists)
+      .map(([key]) => key);
+    
+    if (missingVars.length > 0) {
+      console.warn('Missing Firebase configuration variables:', missingVars.join(', '));
+    }
+    
+    // Return true only if all required variables are present
+    return requiredVars.apiKey && 
+           requiredVars.projectId && 
+           requiredVars.authDomain && 
+           requiredVars.appId;
   } catch (e) {
+    console.error('Error checking Firebase configuration:', e);
     return false;
   }
 };
@@ -85,16 +111,31 @@ export const hasRequiredFirebaseConfig = (): boolean => {
 export const getEnvironmentDiagnostics = (): Record<string, any> => {
   return {
     mode: import.meta.env.MODE,
-    isDev: import.meta.env.DEV,
-    isProd: import.meta.env.PROD,
+    isDev: isDevelopment(),
+    isProd: isProduction(),
     base: import.meta.env.BASE_URL,
     mockAuth: isMockAuthEnabled(),
     debugBuild: isDebugBuild(),
-    firebaseApiKey: import.meta.env.VITE_FIREBASE_API_KEY ? 'set' : 'missing',
-    firebaseProjectId: import.meta.env.VITE_FIREBASE_PROJECT_ID ? 'set' : 'missing',
-    firebaseAuthDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN ? 'set' : 'missing',
-    firebaseAppId: import.meta.env.VITE_FIREBASE_APP_ID ? 'set' : 'missing',
+    firebaseApiKey: getEnvVar('VITE_FIREBASE_API_KEY') ? 'set' : 'missing',
+    firebaseProjectId: getEnvVar('VITE_FIREBASE_PROJECT_ID') ? 'set' : 'missing',
+    firebaseAuthDomain: getEnvVar('VITE_FIREBASE_AUTH_DOMAIN') ? 'set' : 'missing',
+    firebaseAppId: getEnvVar('VITE_FIREBASE_APP_ID') ? 'set' : 'missing',
     hasAllRequiredVars: hasRequiredFirebaseConfig() ? 'yes' : 'no',
     timestamp: new Date().toISOString(),
   };
+};
+
+// Return an easy-to-read summary of environment issues for debugging
+export const getEnvironmentSummary = (): string => {
+  const issues: string[] = [];
+  
+  if (!hasRequiredFirebaseConfig()) {
+    issues.push("Missing Firebase configuration");
+  }
+  
+  if (issues.length === 0) {
+    return "Environment looks good! No issues detected.";
+  }
+  
+  return `Environment issues detected:\n${issues.join('\n')}`;
 };

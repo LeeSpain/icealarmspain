@@ -1,6 +1,6 @@
 
 import { initializeApp } from 'firebase/app';
-import { getEnvVar, getRequiredEnvVar, isProduction } from '@/utils/environment';
+import { getEnvVar, getRequiredEnvVar, isProduction, isDevelopment } from '@/utils/environment';
 
 // Check if we have real Firebase config available
 export const hasRealFirebaseConfig = (): boolean => {
@@ -14,13 +14,17 @@ export const hasRealFirebaseConfig = (): boolean => {
 const getFirebaseConfig = () => {
   // Try to use environment variables first
   try {
-    // In production, we must have real Firebase config
+    // In production, we should have real Firebase config
     if (isProduction() && !hasRealFirebaseConfig()) {
       console.error('CRITICAL: Missing Firebase configuration in production environment!');
       console.error('Please set the required environment variables in your Lovable project settings');
-      throw new Error('Missing Firebase configuration in production');
+      
+      // Instead of throwing an error, we'll return null to allow the app to continue
+      // This will trigger a more user-friendly error message later in the process
+      return null;
     }
 
+    // Return config with fallbacks for development
     return {
       apiKey: getEnvVar('VITE_FIREBASE_API_KEY', 'fake-api-key-for-development'),
       authDomain: getEnvVar('VITE_FIREBASE_AUTH_DOMAIN', `${getEnvVar('VITE_FIREBASE_PROJECT_ID', 'fake-project-id')}.firebaseapp.com`),
@@ -34,7 +38,8 @@ const getFirebaseConfig = () => {
     console.error('Failed to load Firebase config:', e);
     
     if (isProduction()) {
-      throw e; // In production, fail immediately
+      console.error('This is a critical error in production');
+      return null; // Return null in production to trigger error handling
     }
     
     // Use development fallback values
@@ -55,13 +60,20 @@ const getFirebaseConfig = () => {
 let app;
 try {
   const config = getFirebaseConfig();
-  app = initializeApp(config);
-  console.log('Firebase initialized successfully with project:', config.projectId);
+  
+  if (!config) {
+    console.error('Failed to initialize Firebase: Configuration is null or undefined');
+    app = null;
+  } else {
+    app = initializeApp(config);
+    console.log('Firebase initialized successfully with project:', config.projectId);
+  }
 } catch (error) {
   console.error('Failed to initialize Firebase:', error);
   if (isProduction()) {
-    // In production, this will be caught by the error handler in main.tsx
-    throw error;
+    // In production, we'll set to null and handle this in the UI
+    console.error('This is a critical error in production');
+    app = null;
   } else {
     // In development, we can provide a mock Firebase app
     console.warn('Using mock Firebase implementation for development');

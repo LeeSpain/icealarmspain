@@ -56,12 +56,68 @@
         display: inline-block;
         color: #666;
       }
+      .missing-config-guide {
+        background-color: #fff8dc;
+        border: 1px solid #e2e8f0;
+        border-radius: 6px;
+        padding: 15px;
+        margin-top: 20px;
+        text-align: left;
+        display: none;
+      }
+      .missing-config-guide h3 {
+        margin-top: 0;
+        color: #d97706;
+      }
+      .missing-config-guide ol {
+        margin-left: 20px;
+        padding-left: 0;
+      }
+      .missing-config-guide li {
+        margin-bottom: 8px;
+      }
     </style>
   </head>
 
   <body>
     <div id="root">
-      <!-- This content will only show if JavaScript fails to load or initialize -->
+      <!-- This content will show immediately if JS fails to load -->
+      <div class="fallback-content" style="display: block;">
+        <div class="loading-spinner"></div>
+        <h1>Loading Ice Guardian Alert...</h1>
+        <p>If this message persists, please ensure JavaScript is enabled and refresh the page.</p>
+        <div class="loading-error" style="display: block;">
+          <p><strong>Common issues:</strong></p>
+          <div class="loading-tips">
+            <p>- Missing configuration: Check if all required environment variables are set in Lovable project settings</p>
+            <p>- Network issues: Check your internet connection</p>
+            <p>- Browser compatibility: Try using a different browser like Chrome or Firefox</p>
+          </div>
+        </div>
+        
+        <!-- More detailed guide for missing configuration -->
+        <div class="missing-config-guide" id="missing-config-guide" style="display: block;">
+          <h3>Firebase Configuration Required</h3>
+          <p>This application requires Firebase configuration to run properly.</p>
+          <ol>
+            <li>Go to your Lovable project dashboard</li>
+            <li>Click on <strong>Project Settings</strong> in the sidebar</li>
+            <li>Navigate to the <strong>Environment Variables</strong> section</li>
+            <li>Add these required variables:
+              <ul>
+                <li>VITE_FIREBASE_API_KEY</li>
+                <li>VITE_FIREBASE_PROJECT_ID</li>
+                <li>VITE_FIREBASE_AUTH_DOMAIN</li>
+                <li>VITE_FIREBASE_APP_ID</li>
+              </ul>
+            </li>
+            <li>Click <strong>Save</strong> and then <strong>Publish</strong> your app</li>
+          </ol>
+          <p>For more information, see the <a href="/docs/ENVIRONMENT_VARIABLES.md" style="color: #0070f3;">environment variables documentation</a>.</p>
+        </div>
+        
+        <div id="debug-info" style="font-size: 12px; margin-top: 20px; color: #666;"></div>
+      </div>
     </div>
     <script src="https://cdn.gpteng.co/gptengineer.js" type="module"></script>
     <script type="module" src="/src/main.tsx"></script>
@@ -70,36 +126,42 @@
       window.addEventListener('load', function() {
         setTimeout(function() {
           const root = document.getElementById('root');
-          if (!root || root.children.length === 0) {
-            // React hasn't loaded, show fallback
-            const fallback = document.createElement('div');
-            fallback.className = 'fallback-content';
+          const fallback = document.querySelector('.fallback-content');
+          
+          // Check if React app has rendered content
+          if (root && root.children.length > 0 && fallback && root.contains(fallback)) {
+            // React hasn't loaded or has failed, show detailed error info
             fallback.style.display = 'block';
-            fallback.innerHTML = `
-              <div class="loading-spinner"></div>
-              <h1>Loading Ice Guardian Alert...</h1>
-              <p>If this message persists, please ensure JavaScript is enabled and refresh the page.</p>
-              <div class="loading-error">
-                <p><strong>Common issues:</strong></p>
-                <div class="loading-tips">
-                  <p>- Missing configuration: Check if all required environment variables are set in Lovable project settings</p>
-                  <p>- Network issues: Check your internet connection</p>
-                  <p>- Browser compatibility: Try using a different browser like Chrome or Firefox</p>
-                </div>
-              </div>
-              <p id="debug-info" style="font-size: 12px; margin-top: 20px; color: #666;"></p>
-            `;
             
-            // Show error section after an additional delay
-            setTimeout(function() {
-              const errorSection = fallback.querySelector('.loading-error');
-              if (errorSection) {
-                errorSection.style.display = 'block';
-              }
-            }, 5000);
+            const errorSection = document.querySelector('.loading-error');
+            if (errorSection) {
+              errorSection.style.display = 'block';
+            }
+            
+            // Check for specific configuration issues
+            const firebaseKey = window.localStorage.getItem('debug:firebase_api_key_status');
+            const configGuide = document.getElementById('missing-config-guide');
+            
+            if ((firebaseKey === 'missing' || firebaseKey === null) && configGuide) {
+              configGuide.style.display = 'block';
+            }
+          }
+        }, 5000); // Show after 5 seconds
+        
+        // For more advanced debugging - check after 10 seconds if we're still stuck
+        setTimeout(function() {
+          const root = document.getElementById('root');
+          const fallback = document.querySelector('.fallback-content');
+          
+          if (root && fallback && root.contains(fallback) && fallback.style.display === 'block') {
+            // We're still showing the fallback after 10 seconds - likely a real config issue
+            const configGuide = document.getElementById('missing-config-guide');
+            if (configGuide) {
+              configGuide.style.display = 'block';
+            }
             
             // Add some debug info that might help troubleshoot
-            const debugInfo = fallback.querySelector('#debug-info');
+            const debugInfo = document.getElementById('debug-info');
             if (debugInfo) {
               const envInfo = [];
               try {
@@ -109,12 +171,8 @@
               
               debugInfo.textContent = `Browser: ${navigator.userAgent}, Time: ${new Date().toISOString()}${envInfo.length ? ', ' + envInfo.join(', ') : ''}`;
             }
-            
-            if (root.children.length === 0) {
-              root.appendChild(fallback);
-            }
           }
-        }, 3000); // 3 seconds
+        }, 10000); // 10 seconds
       });
       
       // More robust error handling
@@ -129,6 +187,22 @@
         const errorSection = document.querySelector('.loading-error');
         if (errorSection) {
           errorSection.style.display = 'block';
+        }
+        
+        // Try to detect if it's a Firebase config issue
+        if (e.error?.message && (
+            e.error.message.includes('Firebase') || 
+            e.error.message.includes('API key') || 
+            e.error.message.includes('configuration')
+          )) {
+          const configGuide = document.getElementById('missing-config-guide');
+          if (configGuide) {
+            configGuide.style.display = 'block';
+          }
+          // Store that we have a Firebase issue for other checks
+          try {
+            window.localStorage.setItem('debug:firebase_api_key_status', 'missing');
+          } catch (err) {}
         }
       });
     </script>
