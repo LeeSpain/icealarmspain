@@ -29,7 +29,7 @@ export const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
   const content = (
     <div className={cn(
       "flex flex-col items-center justify-center", 
-      fullPage ? "min-h-screen" : "",
+      fullPage ? "min-h-[50vh]" : "",
       className
     )}>
       <Loader2 className={cn("animate-spin text-primary mb-2", sizeClasses[size])} aria-hidden="true" />
@@ -41,7 +41,6 @@ export const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
     </div>
   );
   
-  // For accessibility, announce loading state to screen readers
   return (
     <>
       {content}

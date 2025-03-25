@@ -8,6 +8,7 @@ import './App.css';
 import { AuthProvider } from "./context/auth"; 
 import AuthGuard from "./components/auth/AuthGuard"; 
 import ErrorBoundary from "@/components/layout/ErrorBoundary";
+import ScrollToTop from "@/components/layout/ScrollToTop";
 import { isDevelopment, isDebugBuild } from "./utils/environment";
 
 // Add a global error handler to catch initialization errors
@@ -27,6 +28,7 @@ function App() {
         <AuthProvider>
           <LanguageProvider>
             <Router>
+              <ScrollToTop />
               <Routes>
                 {routes.map((route) => {
                   console.log(`Registering route: ${route.path}`);

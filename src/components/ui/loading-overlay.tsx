@@ -6,39 +6,40 @@ interface LoadingOverlayProps {
   message?: string;
   timeout?: number;
   isVisible?: boolean;
+  fullScreen?: boolean;
 }
 
 const LoadingOverlay: React.FC<LoadingOverlayProps> = ({ 
   message = "Loading...",
-  timeout = 3000, // Reduced from 5000 to 3000
-  isVisible = true
+  timeout = 3000,
+  isVisible = true,
+  fullScreen = false
 }) => {
   const [showError, setShowError] = useState(false);
   const [forceHidden, setForceHidden] = useState(false);
   
   useEffect(() => {
+    if (!isVisible) return;
+    
     // Show error message if loading takes too long
     const errorTimer = setTimeout(() => {
       setShowError(true);
     }, timeout);
     
-    // Force hide the loading overlay after additional timeout
-    // This ensures the app doesn't get stuck in loading state
-    const forceHideTimer = setTimeout(() => {
-      setForceHidden(true);
-    }, timeout + 2000); // 2 seconds after error is shown
-    
     return () => {
       clearTimeout(errorTimer);
-      clearTimeout(forceHideTimer);
     };
-  }, [timeout]);
+  }, [timeout, isVisible]);
   
   // If manually set to not visible or force hidden by timeout
   if (!isVisible || forceHidden) return null;
   
+  const containerStyles = fullScreen 
+    ? "fixed inset-0 flex flex-col items-center justify-center bg-white z-50" 
+    : "relative flex flex-col items-center justify-center p-4";
+  
   return (
-    <div className="fixed inset-0 flex flex-col items-center justify-center bg-white z-50">
+    <div className={containerStyles}>
       <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-ice-600 mb-4"></div>
       <p className="text-ice-700">{message}</p>
       
@@ -48,7 +49,6 @@ const LoadingOverlay: React.FC<LoadingOverlayProps> = ({
           <ul className="text-sm text-gray-600 space-y-1 text-left mb-4">
             <li>• Try refreshing the page</li>
             <li>• Check your internet connection</li>
-            <li>• Try using a different browser</li>
           </ul>
           <Button 
             variant="outline" 
