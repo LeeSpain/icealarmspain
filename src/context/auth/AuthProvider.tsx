@@ -1,48 +1,60 @@
 
 import React from 'react';
-import { AuthContextType } from './types';
 import { AuthContext } from './context';
-import * as authFunctions from './authFunctions';
 import { AuthStateManager } from './AuthStateManager';
+import { User } from './types';
+import * as authFunctions from './authFunctions';
 
-// Create the AuthProvider component
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+interface AuthProviderProps {
+  children: React.ReactNode;
+}
+
+export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
+  const signIn = async (email: string, password: string) => {
+    try {
+      return await authFunctions.signIn(email, password);
+    } catch (error) {
+      console.error('Error signing in:', error);
+      return { user: null, error };
+    }
+  };
+
+  const signUp = async (email: string, password: string) => {
+    try {
+      return await authFunctions.signUp(email, password);
+    } catch (error) {
+      console.error('Error signing up:', error);
+      return { user: null, error };
+    }
+  };
+
+  const signOut = async () => {
+    try {
+      return await authFunctions.signOut();
+    } catch (error) {
+      console.error('Error signing out:', error);
+      return { error };
+    }
+  };
+
   return (
     <AuthStateManager>
-      {({ user, isLoading, wrappedUpdateUserProfile }) => {
-        // Create the context value
-        const contextValue: AuthContextType = {
-          user,
-          isAuthenticated: !!user,
-          isLoading,
-          login: authFunctions.login,
-          signIn: authFunctions.signIn,
-          signUp: async (email, password, userData) => {
-            const result = await authFunctions.signUp(email, password, userData);
-            if (result.error) throw result.error;
-            if (!result.user) throw new Error('Failed to create user');
-            return result.user;
-          },
-          logout: authFunctions.logout,
-          updateUserProfile: wrappedUpdateUserProfile,
-          // Admin functions
-          createUser: async (email, password, userData) => {
-            const result = await authFunctions.createUser(email, password, userData);
-            if (result.error) throw result.error;
-            if (!result.user) throw new Error('Failed to create user');
-            return result.user;
-          },
-          getAllUsers: authFunctions.getAllUsers,
-          updateUserRole: authFunctions.updateUserRole,
-          deleteUser: authFunctions.deleteUser,
-        };
-
-        return (
-          <AuthContext.Provider value={contextValue}>
-            {children}
-          </AuthContext.Provider>
-        );
-      }}
+      {({ user, isLoading, wrappedUpdateUserProfile }) => (
+        <AuthContext.Provider
+          value={{
+            user,
+            isAuthenticated: !!user,
+            isLoading,
+            profile: user,
+            signIn,
+            signUp,
+            signOut,
+            updateUserProfile: wrappedUpdateUserProfile,
+          }}
+        >
+          {children}
+        </AuthContext.Provider>
+      )}
     </AuthStateManager>
   );
 };

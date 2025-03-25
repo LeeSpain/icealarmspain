@@ -1,44 +1,27 @@
-
-import { initializeApp } from 'firebase/app';
-import {
-  getAuth,
-  signInWithEmailAndPassword as firebaseSignIn,
-  createUserWithEmailAndPassword as firebaseSignUp,
-  signOut as firebaseSignOut,
-  onAuthStateChanged as firebaseAuthStateChanged,
-  updateProfile as firebaseUpdateProfile,
-  Auth,
-  User,
-  setPersistence as firebaseSetPersistence,
-  browserLocalPersistence,
-  browserSessionPersistence,
-  UserCredential
-} from 'firebase/auth';
+import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, updateProfile } from 'firebase/auth';
 import { getAnalytics } from 'firebase/analytics';
-import { getFirebaseConfig } from './config';
+import { app } from './config';
+import { isDevelopment } from '@/utils/environment';
 
-// Initialize Firebase with the config
-const app = initializeApp(getFirebaseConfig());
+// Initialize Firebase Authentication
+const auth = getAuth(app);
 
-// Export the auth instance
-export const auth: Auth = getAuth(app);
+// Initialize Firebase Analytics
+const analytics = getAnalytics(app);
 
-// Export analytics 
-export const analytics = getAnalytics(app);
-
-// Export Firebase auth methods with better naming
-export const signInWithEmailAndPassword = firebaseSignIn;
-export const createUserWithEmailAndPassword = firebaseSignUp;
-export const signOut = firebaseSignOut;
-export const onAuthStateChanged = firebaseAuthStateChanged;
-export const updateProfile = firebaseUpdateProfile;
-export const setPersistence = firebaseSetPersistence;
-
-// Re-export constants
+// Export Firebase authentication methods
 export { 
-  browserLocalPersistence, 
-  browserSessionPersistence 
+  auth, 
+  analytics,
+  onAuthStateChanged,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  signOut,
+  updateProfile
 };
 
-// Re-export types for easier access
-export type { User, UserCredential };
+// Enable auth emulator in development mode when explicitly configured
+if (isDevelopment() && import.meta.env.VITE_USE_FIREBASE_EMULATOR === 'true') {
+  console.log('Using Firebase Auth Emulator');
+  // connectAuthEmulator(auth, 'http://localhost:9099');
+}

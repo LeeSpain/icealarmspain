@@ -5,12 +5,10 @@ import { Toaster } from "@/components/ui/toaster";
 import { LanguageProvider } from "@/context/LanguageContext";
 import { HelmetProvider } from "react-helmet-async";
 import './App.css';
-import { AuthProvider } from "@/context/AuthContext";
+import { AuthProvider } from "@/context/auth";
 import AuthGuard from "@/components/auth/AuthGuard";
 import ErrorBoundary from "@/components/layout/ErrorBoundary";
 import { isDevelopment, isDebugBuild } from "./utils/environment";
-// Import EnhancedDebug but we won't use it by default
-// import EnhancedDebug from "./components/debug/EnhancedDebug";
 
 function App() {
   // Log that App component is rendering (helps with debugging)
@@ -21,9 +19,6 @@ function App() {
       <HelmetProvider>
         <AuthProvider>
           <LanguageProvider>
-            {/* Removed debug component to fix orange box in top-right */}
-            {/* {(isDevelopment() || isDebugBuild()) && <EnhancedDebug />} */}
-            
             <Router>
               <Routes>
                 {routes.map((route) => {
