@@ -1,10 +1,13 @@
 
-// Re-export everything from the auth context
-export * from './context';
+// Re-export all auth-related types and hooks
 export * from './types';
-export * from './AuthProvider';
 export * from './hooks';
 export * from './utils';
+export * from './authFunctions';
 
-// Explicitly re-export the useAuth hook for clarity
-export { useAuth } from './hooks';
+// Export the auth provider
+export { AuthProvider } from './AuthProvider';
+
+// Export the context itself, but avoid duplicate exports
+// by importing it directly from the source
+export { AuthContext } from './context';
