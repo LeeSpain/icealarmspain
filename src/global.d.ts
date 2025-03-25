@@ -1,4 +1,7 @@
 
+// Global type definitions for the application
+
+// Extend the Window interface to define global properties
 interface Window {
   // Build verification properties
   buildVerified?: boolean;
@@ -12,6 +15,8 @@ interface Window {
   appRendered?: boolean;
   appRenderFailed?: boolean;
   missingFirebaseConfig?: boolean;
+  
+  // Functions
   renderApp?: () => void;
   
   // Diagnostics

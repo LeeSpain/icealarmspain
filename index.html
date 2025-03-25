@@ -83,6 +83,31 @@
         text-align: left;
         display: none;
       }
+      .emergency-debug {
+        margin-top: 30px;
+        background-color: #f9f9f9;
+        border: 1px solid #ddd;
+        padding: 15px;
+        border-radius: 4px;
+        text-align: left;
+      }
+      .debug-section {
+        margin-bottom: 10px;
+      }
+      .debug-section h3 {
+        margin: 0 0 5px 0;
+        font-size: 16px;
+      }
+      .debug-info {
+        font-family: monospace;
+        white-space: pre-wrap;
+        font-size: 12px;
+        background: #f0f0f0;
+        padding: 10px;
+        border-radius: 3px;
+        max-height: 100px;
+        overflow: auto;
+      }
     </style>
   </head>
 
@@ -133,7 +158,33 @@
         </ol>
         <p>If you are the administrator, <a href="https://vercel.com/docs/concepts/projects/environment-variables" target="_blank">visit Vercel docs</a> for help with environment variables.</p>
       </div>
+      <div id="emergency-debug" class="emergency-debug" style="display: none;">
+        <h3>Emergency Diagnostic Information</h3>
+        <div class="debug-section">
+          <h4>Environment</h4>
+          <div id="env-debug" class="debug-info"></div>
+        </div>
+        <div class="debug-section">
+          <h4>Build Info</h4>
+          <div id="build-debug" class="debug-info"></div>
+        </div>
+        <div class="debug-section">
+          <h4>App Status</h4>
+          <div id="app-debug" class="debug-info"></div>
+        </div>
+        <div class="debug-section">
+          <h4>Last Events</h4>
+          <div id="events-debug" class="debug-info"></div>
+        </div>
+        <div class="debug-section">
+          <h4>Errors</h4>
+          <div id="errors-debug" class="debug-info"></div>
+        </div>
+      </div>
       <p id="debug-info" style="font-size: 12px; margin-top: 20px; color: #666;"></p>
+      <button id="show-emergency-debug" style="margin-top: 20px; padding: 8px 12px; background: #f0f0f0; border: 1px solid #ddd; border-radius: 4px; cursor: pointer;">
+        Show Technical Details
+      </button>
     </div>
 
     <script src="https://cdn.gpteng.co/gptengineer.js" type="module"></script>
@@ -234,6 +285,71 @@
                 firebaseFix.style.display = 'block';
               }
             }
+            
+            // Set up emergency debug button
+            const showDebugButton = document.getElementById('show-emergency-debug');
+            if (showDebugButton) {
+              showDebugButton.addEventListener('click', function() {
+                const emergencyDebug = document.getElementById('emergency-debug');
+                if (emergencyDebug) {
+                  emergencyDebug.style.display = 'block';
+                  
+                  // Populate debug sections
+                  try {
+                    // Environment info
+                    const envDebug = document.getElementById('env-debug');
+                    if (envDebug) {
+                      envDebug.textContent = JSON.stringify({
+                        userAgent: navigator.userAgent,
+                        language: navigator.language,
+                        timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                        screenSize: `${window.innerWidth}x${window.innerHeight}`,
+                        timestamp: new Date().toISOString()
+                      }, null, 2);
+                    }
+                    
+                    // Build info
+                    const buildDebug = document.getElementById('build-debug');
+                    if (buildDebug) {
+                      buildDebug.textContent = JSON.stringify(window.buildInfo || {
+                        buildVerified: window.buildVerified || false,
+                        missingFirebaseConfig: window.missingFirebaseConfig || false,
+                        timestamp: new Date().toISOString()
+                      }, null, 2);
+                    }
+                    
+                    // App status
+                    const appDebug = document.getElementById('app-debug');
+                    if (appDebug) {
+                      appDebug.textContent = JSON.stringify({
+                        appRendered: window.appRendered || false,
+                        appRenderFailed: window.appRenderFailed || false,
+                        renderAttempted: window.appDiagnostics?.renderAttempted || false,
+                        renderCompleted: window.appDiagnostics?.renderCompleted || false,
+                        secondAttempt: window.appDiagnostics?.secondAttempt || false
+                      }, null, 2);
+                    }
+                    
+                    // Events
+                    const eventsDebug = document.getElementById('events-debug');
+                    if (eventsDebug && window.appDiagnostics && window.appDiagnostics.events) {
+                      // Just show the last 5 events
+                      const lastEvents = window.appDiagnostics.events.slice(-5);
+                      eventsDebug.textContent = JSON.stringify(lastEvents, null, 2);
+                    }
+                    
+                    // Errors
+                    const errorsDebug = document.getElementById('errors-debug');
+                    if (errorsDebug && window.appDiagnostics && window.appDiagnostics.errors) {
+                      errorsDebug.textContent = JSON.stringify(window.appDiagnostics.errors, null, 2);
+                    }
+                  } catch (e) {
+                    console.error("Error populating debug info:", e);
+                  }
+                }
+                showDebugButton.style.display = 'none';
+              });
+            }
           }
         } catch (e) {
           console.error("Error showing fallback content:", e);
@@ -251,7 +367,7 @@
             logAppEvent('initializationTimeout');
             showFallbackContent({ message: 'App initialization timed out' });
           }
-        }, 12000); // Increased timeout for slower networks (from 8s to 12s)
+        }, 15000); // Increased timeout for slower networks to 15 seconds
         
         // Show loading spinner quicker on slow loads
         setTimeout(function() {
@@ -259,7 +375,7 @@
             document.getElementById('fallback-content').style.display = 'block';
             logAppEvent('showingLoadingSpinner');
           }
-        }, 800);  // Reduced from 1000ms to 800ms
+        }, 800);
         
         // Clear the timeout if app renders successfully
         document.addEventListener('react-rendered', function() {
@@ -331,8 +447,29 @@
               logAppEvent('emptyRootElementAfterDelay');
               showFallbackContent({ message: 'Application failed to initialize' });
             }
-          }, 2000);
+          }, 5000); // Increased from 2000 to 5000 ms to allow more time
         });
+        
+        // Add a super-fallback mechanism that checks again after a very long time
+        setTimeout(function() {
+          if (!window.appRendered) {
+            console.warn('Last resort fallback - app still not rendered after long wait');
+            logAppEvent('lastResortFallback');
+            
+            // Show the emergency fallback content
+            showFallbackContent({ message: 'Critical initialization timeout' });
+            
+            // Try to manually trigger a render if window.renderApp exists
+            if (typeof window.renderApp === 'function') {
+              console.log('Attempting last resort render via window.renderApp');
+              try {
+                window.renderApp();
+              } catch (e) {
+                console.error('Last resort render failed:', e);
+              }
+            }
+          }
+        }, 30000); // 30 seconds - truly last resort
       } catch (e) {
         console.error("Critical initialization error:", e);
         showFallbackContent({ message: 'Critical initialization error: ' + e.message });

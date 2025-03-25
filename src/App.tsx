@@ -10,6 +10,7 @@ import AuthGuard from "@/components/auth/AuthGuard";
 import ErrorBoundary from "@/components/layout/ErrorBoundary";
 import { isDevelopment, isDebugBuild, hasValidFirebaseConfig, isProduction } from "./utils/environment";
 import LoadingSpinner from "@/components/ui/loading-spinner";
+import DeploymentDebugger from "@/components/debug/DeploymentDebugger";
 
 // Standalone error component for Firebase configuration issues
 function ConfigErrorDisplay() {
@@ -39,6 +40,7 @@ function ConfigErrorDisplay() {
             For detailed instructions, see the <a href="https://github.com/yourusername/ice-guardian/blob/main/TROUBLESHOOTING.md" className="underline hover:text-blue-800">troubleshooting guide</a>.
           </p>
         </div>
+        <DeploymentDebugger />
       </div>
     </div>
   );
@@ -81,6 +83,7 @@ function MinimalApp() {
                   </ol>
                 </div>
               </div>
+              <DeploymentDebugger />
             </div>
           </div>
         </Router>
@@ -101,6 +104,14 @@ function App() {
   console.log("PROJECT_ID defined:", !!import.meta.env.VITE_FIREBASE_PROJECT_ID);
   console.log("Environment:", import.meta.env.MODE);
   console.log("Is Production:", isProduction());
+  
+  // Add diagnostic event 
+  if (window.appDiagnostics && window.appDiagnostics.events) {
+    window.appDiagnostics.events.push({
+      time: new Date().toISOString(),
+      event: 'App component rendering'
+    });
+  }
   
   // Use different approaches based on environment and config
   if (!validFirebaseConfig) {
@@ -152,6 +163,8 @@ function App() {
               </Routes>
             </Router>
             <Toaster />
+            {/* Always show the debugger in production for now until we resolve the issue */}
+            {isProduction() && <DeploymentDebugger visible={true} />}
           </LanguageProvider>
         </AuthProvider>
       </HelmetProvider>
