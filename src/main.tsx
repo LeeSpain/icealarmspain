@@ -1,3 +1,4 @@
+
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App'
@@ -71,7 +72,7 @@ function renderApp() {
     console.log("Rendering React app to DOM...");
     
     // Clear any existing loading content
-    const fallbackContent = rootElement.querySelector('.fallback-content');
+    const fallbackContent = rootElement.querySelector('.fallback-content') as HTMLElement | null;
     if (fallbackContent) {
       // Keep the fallback content in the DOM but hide it
       // This allows us to show it again if needed
@@ -106,25 +107,25 @@ function renderApp() {
 }
 
 // Function to show a user-friendly error page
-function showErrorPage(element, error) {
+function showErrorPage(element: HTMLElement, error: unknown) {
   const errorMessage = error instanceof Error ? error.message : 'Unknown error';
   
   // Check if we already have a fallback content element
-  let fallbackContent = element.querySelector('.fallback-content');
+  let fallbackContent = element.querySelector('.fallback-content') as HTMLElement | null;
   
   if (fallbackContent) {
     // Update existing fallback content
     fallbackContent.style.display = 'block';
     
     // Add the error message
-    const debugInfo = fallbackContent.querySelector('#debug-info');
+    const debugInfo = fallbackContent.querySelector('#debug-info') as HTMLElement | null;
     if (debugInfo) {
       debugInfo.textContent = `Error: ${errorMessage}`;
     }
     
     // Show the config guide if it's likely a Firebase issue
     if (errorMessage.includes('Firebase') || !hasRequiredFirebaseConfig()) {
-      const configGuide = fallbackContent.querySelector('#missing-config-guide');
+      const configGuide = fallbackContent.querySelector('#missing-config-guide') as HTMLElement | null;
       if (configGuide) {
         configGuide.style.display = 'block';
       }
@@ -148,16 +149,16 @@ function showErrorPage(element, error) {
 }
 
 // Function to show a clear message about missing Firebase configuration
-function showMissingConfigPage(element) {
+function showMissingConfigPage(element: HTMLElement) {
   // Check if we already have a fallback content element
-  let fallbackContent = element.querySelector('.fallback-content');
+  let fallbackContent = element.querySelector('.fallback-content') as HTMLElement | null;
   
   if (fallbackContent) {
     // Update existing fallback content
     fallbackContent.style.display = 'block';
     
     // Make sure the config guide is visible
-    const configGuide = fallbackContent.querySelector('#missing-config-guide');
+    const configGuide = fallbackContent.querySelector('#missing-config-guide') as HTMLElement | null;
     if (configGuide) {
       configGuide.style.display = 'block';
     }
