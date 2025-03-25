@@ -5,7 +5,7 @@ import { LogOut, User } from "lucide-react";
 import { ButtonCustom } from "@/components/ui/button-custom";
 import { useLanguage } from "@/context/LanguageContext";
 import { useToast } from "@/components/ui/use-toast";
-import { useAuth } from "@/context/AuthContext";
+import { useAuth } from "@/context/auth";
 import {
   DropdownMenu,
   DropdownMenuContent,
