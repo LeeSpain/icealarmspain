@@ -7,7 +7,7 @@ import NotFound from "./pages/NotFound";
 // Import routes from the routes directory
 import { routes as allRoutes } from "./routes/index";
 
-// Create a high-priority home route that loads immediately
+// Create a home route that loads immediately without any complexities
 const homeRoute: RouteConfig = {
   path: "/",
   element: <Index />

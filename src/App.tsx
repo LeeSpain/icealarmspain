@@ -1,5 +1,5 @@
 
-import React, { useEffect } from "react";
+import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { routes } from "./routes";
 import { Toaster } from "@/components/ui/toaster";
@@ -10,19 +10,12 @@ import ErrorBoundary from "@/components/layout/ErrorBoundary";
 import { AuthProvider } from "@/context/auth";
 
 function App() {
-  // Simple initialization - no complex checks
-  useEffect(() => {
-    console.log("App component mounted - simplified initialization");
-    document.title = "Ice Guardian Alert";
-    
-    // Force visibility directly
-    document.documentElement.style.visibility = 'visible';
-    document.body.style.visibility = 'visible';
-  }, []);
+  // Force title immediately
+  document.title = "Ice Guardian Alert";
   
   return (
     <ErrorBoundary>
-      <div className="App" style={{ visibility: 'visible' }}>
+      <div className="App" style={{ visibility: 'visible', display: 'block' }}>
         <HelmetProvider>
           <AuthProvider>
             <LanguageProvider>
