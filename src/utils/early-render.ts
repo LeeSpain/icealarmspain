@@ -73,7 +73,10 @@
   window.addEventListener('load', forceVisibility);
   
   // Expose a global function for manual triggering if needed
-  window.forceAppVisibility = forceVisibility;
+  // Fix: Correctly extend the Window interface
+  if (typeof window !== 'undefined') {
+    (window as any).forceAppVisibility = forceVisibility;
+  }
 })();
 
 export {};
