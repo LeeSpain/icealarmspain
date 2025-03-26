@@ -50,6 +50,22 @@ if (!rootElement) {
       if (errorDetails) {
         errorDetails.textContent = error instanceof Error ? error.message : 'Unknown error';
       }
+    } else {
+      // If error recovery element doesn't exist, create minimal error UI
+      if (rootElement) {
+        rootElement.innerHTML = `
+          <div style="padding: 20px; font-family: system-ui, sans-serif;">
+            <h2 style="color: #e11d48">Application Error</h2>
+            <p>We encountered an issue while loading the application.</p>
+            <p>Error: ${error instanceof Error ? error.message : 'Unknown error'}</p>
+            <button onclick="window.location.reload()" 
+                    style="padding: 8px 16px; background: #0284c7; color: white; 
+                           border: none; border-radius: 4px; cursor: pointer; margin-top: 10px;">
+              Reload Application
+            </button>
+          </div>
+        `;
+      }
     }
   }
 }
