@@ -4,6 +4,15 @@
  * This script helps identify build-specific issues
  */
 
+// Define the extended Performance interface to support memory
+interface ExtendedPerformance extends Performance {
+  memory?: {
+    usedJSHeapSize: number;
+    totalJSHeapSize: number;
+    jsHeapSizeLimit: number;
+  };
+}
+
 // Execute immediately
 (() => {
   try {
@@ -43,12 +52,11 @@
         console.log(`📄 Content elements: ${contentEls.length}`);
         
         // Log memory usage if available
-        if (performance && performance.memory) {
+        const extendedPerformance = performance as ExtendedPerformance;
+        if (extendedPerformance && extendedPerformance.memory) {
           console.log('💾 Memory:', {
-            // @ts-ignore - Not all browsers support this
-            usedJSHeapSize: Math.round(performance.memory.usedJSHeapSize / (1024 * 1024)) + 'MB',
-            // @ts-ignore - Not all browsers support this
-            totalJSHeapSize: Math.round(performance.memory.totalJSHeapSize / (1024 * 1024)) + 'MB',
+            usedJSHeapSize: Math.round(extendedPerformance.memory.usedJSHeapSize / (1024 * 1024)) + 'MB',
+            totalJSHeapSize: Math.round(extendedPerformance.memory.totalJSHeapSize / (1024 * 1024)) + 'MB',
           });
         }
       } catch (error) {
