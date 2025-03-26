@@ -1,23 +1,20 @@
 import React from "react";
 import { RouteConfig } from "./routes/types";
+import { withLazyLoading } from "./utils/lazy-imports";
 import TestingPanel from "./components/test/TestingPanel";
-import Index from "./pages/Index"; 
-import SOSPendantPage from "./pages/SOSPendantPage";
-import MedicalDispenserPage from "./pages/MedicalDispenserPage";
-import GlucoseMonitorPage from "./pages/GlucoseMonitorPage";
-import Signup from "./pages/signup";
-import Checkout from "./pages/Checkout";
-import NotFound from "./pages/NotFound";
+
+// Use lazy loading but with null fallbacks
+const SOSPendantPage = withLazyLoading(() => import("./pages/SOSPendantPage"), "Loading SOS Pendant page...");
+const MedicalDispenserPage = withLazyLoading(() => import("./pages/MedicalDispenserPage"), "Loading Medical Dispenser page...");
+const GlucoseMonitorPage = withLazyLoading(() => import("./pages/GlucoseMonitorPage"), "Loading Glucose Monitor page...");
+const Signup = withLazyLoading(() => import("./pages/signup"), "Loading Signup page...");
+const Checkout = withLazyLoading(() => import("./pages/Checkout"), "Loading Checkout page...");
 
 // Import routes from the routes directory
 import { routes as allRoutes } from "./routes/index";
 
 // Define the routes that we've already implemented and need to keep
 const customRoutes: RouteConfig[] = [
-  {
-    path: "/",
-    element: <Index />,  // Use Index component directly for homepage
-  },
   {
     path: "/sos-pendant",
     element: <SOSPendantPage />,
@@ -41,10 +38,6 @@ const customRoutes: RouteConfig[] = [
   {
     path: "/testing", // Testing route
     element: <TestingPanel />,
-  },
-  {
-    path: "*",
-    element: <NotFound />,
   }
 ];
 
@@ -69,6 +62,6 @@ const protectedRoutes = allRoutes.map(route => {
 
 // Combine the imported routes with our custom routes
 export const routes = [
-  ...customRoutes,  // Put custom routes first to ensure they take precedence
-  ...protectedRoutes.filter(route => route.path !== '*') // Filter out any extra wildcard routes
+  ...protectedRoutes,
+  ...customRoutes
 ];

@@ -9,7 +9,7 @@ interface LoadingSpinnerProps {
 }
 
 export const LoadingSpinner: React.FC<LoadingSpinnerProps> = () => {
-  // Always return null to prevent any loading spinners
+  // Return null to avoid any loading spinners
   return null;
 };
 
