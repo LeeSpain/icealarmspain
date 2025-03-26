@@ -8,7 +8,7 @@
     <meta name="description" content="Medical alert and health monitoring system for seniors and expatriates" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap">
     <style>
-      /* Critical render path styles */
+      /* Critical render path styles - force visibility */
       body, html, #root {
         margin: 0;
         padding: 0;
@@ -22,7 +22,7 @@
         opacity: 1 !important;
       }
       
-      /* Loading spinner - will be hidden by JavaScript */
+      /* Loading spinner - minimal and will be hidden by JavaScript */
       #initial-content {
         position: fixed;
         top: 0;
@@ -46,7 +46,7 @@
       }
     </style>
     <script>
-      // Minimal inline script for spinner hiding
+      // Minimal inline script for spinner hiding and visibility forcing
       function forceVisibility() {
         // Force visibility on HTML, body and root
         document.documentElement.style.cssText += 'visibility:visible!important;display:block!important;opacity:1!important;';
@@ -64,19 +64,14 @@
           try {
             if (spinner.parentNode) {
               spinner.parentNode.removeChild(spinner);
-              console.log('Spinner removed from DOM');
             }
-          } catch (e) {
-            console.error('Error removing spinner:', e);
-          }
+          } catch (e) {}
         }
       }
       
       // Call immediately and with timeouts
       forceVisibility();
-      setTimeout(forceVisibility, 100);
-      setTimeout(forceVisibility, 500);
-      setTimeout(forceVisibility, 1000);
+      [100, 300, 500, 1000].forEach(delay => setTimeout(forceVisibility, delay));
       
       // Add to window object
       window.forceAppVisibility = forceVisibility;
@@ -87,11 +82,11 @@
     </script>
   </head>
   <body>
-    <!-- Loading spinner that will be hidden once content loads -->
+    <!-- Simple loading spinner -->
     <div id="initial-content">
       <div style="text-align: center; padding: 20px;">
         <div style="display: inline-block; width: 30px; height: 30px; border: 3px solid #0284c7; border-radius: 50%; border-top-color: transparent; animation: spin 1s linear infinite;"></div>
-        <p style="margin-top: 15px; font-family: 'Inter', system-ui, sans-serif;">Loading Ice Guardian Alert...</p>
+        <p style="margin-top: 15px; font-family: 'Inter', system-ui, sans-serif;">Loading...</p>
       </div>
     </div>
     

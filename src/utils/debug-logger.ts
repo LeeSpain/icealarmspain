@@ -13,23 +13,27 @@ export const debug = (message: string, data?: any): void => {
   }
 };
 
+// Make more aggressive to always show content
 export const forceVisibility = (): void => {
   try {
     if (typeof document === 'undefined') return;
     
-    // Force visibility on HTML, body and root
-    document.documentElement.style.cssText += 'visibility:visible!important;display:block!important;';
-    document.body.style.cssText += 'visibility:visible!important;display:block!important;';
+    // Force visibility on HTML, body and root with !important flags
+    document.documentElement.style.cssText += 'visibility:visible!important;display:block!important;opacity:1!important;';
+    document.body.style.cssText += 'visibility:visible!important;display:block!important;opacity:1!important;';
     
     const root = document.getElementById('root');
     if (root) {
-      root.style.cssText += 'visibility:visible!important;display:block!important;';
+      root.style.cssText += 'visibility:visible!important;display:block!important;opacity:1!important;';
     }
     
     // Hide spinner with multiple methods for redundancy
     const spinner = document.getElementById('initial-content');
     if (spinner) {
       spinner.style.display = 'none';
+      spinner.style.opacity = '0';
+      spinner.style.visibility = 'hidden';
+      
       if (spinner.parentNode) {
         try {
           spinner.parentNode.removeChild(spinner);
@@ -38,6 +42,20 @@ export const forceVisibility = (): void => {
         }
       }
     }
+    
+    // Remove any blocker elements that might be hiding content
+    document.querySelectorAll('[id*="loading"], [id*="spinner"], [class*="loading"], [class*="spinner"]').forEach(el => {
+      if (el instanceof HTMLElement) {
+        el.style.display = 'none';
+        if (el.parentNode) {
+          try {
+            el.parentNode.removeChild(el);
+          } catch (e) {
+            // Ignore removal errors
+          }
+        }
+      }
+    });
     
     debug('Force visibility applied');
   } catch (e) {
@@ -48,5 +66,12 @@ export const forceVisibility = (): void => {
 // Call immediately
 forceVisibility();
 
-// Call again after a slight delay
-setTimeout(forceVisibility, 100);
+// Call again with multiple timeouts for redundancy
+[100, 300, 500, 1000, 2000].forEach(delay => {
+  setTimeout(forceVisibility, delay);
+});
+
+// Add to window object for global access
+if (typeof window !== 'undefined') {
+  (window as any).forceAppVisibility = forceVisibility;
+}
