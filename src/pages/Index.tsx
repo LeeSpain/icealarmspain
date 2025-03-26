@@ -1,15 +1,11 @@
 
-import React, { useEffect, useCallback, useRef } from "react";
+import React, { useEffect, useCallback } from "react";
 import Hero from "@/components/Hero";
-import DeviceShowcase from "@/components/DeviceShowcase";
-import ExpatInfo from "@/components/ExpatInfo";
 import { useLanguage } from "@/context/LanguageContext";
-import DashboardPreview from "@/components/dashboard/DashboardPreview";
-import SectionDivider from "@/components/layout/SectionDivider";
-import SectionWrapper from "@/components/layout/SectionWrapper";
 import { Helmet } from "react-helmet-async";
 import Layout from "@/components/layout/Layout";
-import { getEnvironment } from "@/utils/environment";
+import SectionDivider from "@/components/layout/SectionDivider";
+import SectionWrapper from "@/components/layout/SectionWrapper";
 
 const Index: React.FC = () => {
   console.log("Index component rendering - SHOULD BE VISIBLE");
@@ -74,22 +70,6 @@ const Index: React.FC = () => {
         
         {/* Section Divider with enhanced styling */}
         <SectionDivider />
-        
-        {/* Dashboard Example Section with consistent spacing */}
-        <SectionWrapper>
-          <DashboardPreview />
-        </SectionWrapper>
-        
-        {/* Device Showcase with consistent spacing */}
-        <SectionWrapper>
-          <DeviceShowcase />
-        </SectionWrapper>
-        
-        {/* Section Divider with enhanced styling */}
-        <SectionDivider variant="white-to-ice" />
-        
-        {/* ExpatInfo has its own spacing adjustments now */}
-        <ExpatInfo />
       </main>
     </Layout>
   );
