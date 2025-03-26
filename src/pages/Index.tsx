@@ -1,47 +1,52 @@
 
 import React, { useEffect } from "react";
+import Hero from "@/components/Hero";
+import DeviceShowcase from "@/components/DeviceShowcase";
+import ExpatInfo from "@/components/ExpatInfo";
+import { useLanguage } from "@/context/LanguageContext";
+import { Helmet } from "react-helmet-async";
 import Layout from "@/components/layout/Layout";
+import SectionDivider from "@/components/layout/SectionDivider";
+import SectionWrapper from "@/components/layout/SectionWrapper";
 import { debug } from "@/utils/debug-logger";
+import RenderingDebugger from "@/components/debug/RenderingDebugger";
 
 const Index: React.FC = () => {
+  const { language } = useLanguage();
+  
   useEffect(() => {
     debug("Index page mounted");
-    console.log("Index page rendered successfully");
+    console.log("Index page rendered");
+    
+    // Log to console for debugging
+    console.log("App is running:", {
+      time: new Date().toISOString(),
+      environment: import.meta.env.MODE,
+      dev: import.meta.env.DEV
+    });
   }, []);
   
   return (
     <Layout>
+      <Helmet>
+        <title>Ice Guardian Alert - Home</title>
+        <meta name="description" content="ICE Alarm España provides reliable emergency alert systems for seniors and individuals with medical conditions in Spain." />
+      </Helmet>
+      
       <div className="flex-grow relative bg-white">
-        <div className="container mx-auto px-4 py-16">
-          <h1 className="text-4xl font-bold text-blue-600 mb-6">Ice Guardian Alert</h1>
-          <p className="text-xl mb-8">Welcome to Ice Guardian Alert - your medical alert system for seniors and expatriates in Spain.</p>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div className="bg-blue-50 p-6 rounded-lg shadow-md">
-              <h2 className="text-xl font-semibold mb-4">24/7 Monitoring</h2>
-              <p>Round-the-clock alert monitoring for peace of mind.</p>
-            </div>
-            
-            <div className="bg-blue-50 p-6 rounded-lg shadow-md">
-              <h2 className="text-xl font-semibold mb-4">Easy to Use</h2>
-              <p>Simple, intuitive devices designed for seniors.</p>
-            </div>
-            
-            <div className="bg-blue-50 p-6 rounded-lg shadow-md">
-              <h2 className="text-xl font-semibold mb-4">Multilingual Support</h2>
-              <p>Support in multiple languages for the expatriate community.</p>
-            </div>
-          </div>
-          
-          <div className="mt-12 bg-white p-8 border border-gray-200 rounded-lg shadow-sm">
-            <h2 className="text-2xl font-bold mb-4">Get Started Today</h2>
-            <p className="mb-6">Join thousands of satisfied customers who trust Ice Guardian Alert for their safety needs.</p>
-            <button className="bg-blue-600 text-white px-6 py-3 rounded-md hover:bg-blue-700 transition-colors">
-              Learn More
-            </button>
-          </div>
+        <div id="page-content" className="min-h-screen">
+          <Hero />
+          <SectionDivider />
+          <SectionWrapper>
+            <DeviceShowcase />
+          </SectionWrapper>
+          <SectionDivider variant="white-to-ice" />
+          <ExpatInfo />
         </div>
       </div>
+      
+      {/* Add the debugging indicator in production only */}
+      {!import.meta.env.DEV && <RenderingDebugger />}
     </Layout>
   );
 };

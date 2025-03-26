@@ -1,6 +1,6 @@
 
 /**
- * Enhanced debug utility with aggressive DOM visibility enforcement
+ * Simple debug utility that won't interfere with rendering
  */
 
 export const debug = (message: string, data?: any): void => {
@@ -13,57 +13,40 @@ export const debug = (message: string, data?: any): void => {
   }
 };
 
-export const forceVisibility = (recursive = false): void => {
+export const forceVisibility = (): void => {
   try {
     if (typeof document === 'undefined') return;
     
-    // Super aggressive approach - force ALL elements to be visible
-    document.documentElement.style.cssText = 'visibility:visible!important;display:block!important;opacity:1!important;';
-    document.body.style.cssText = 'visibility:visible!important;display:block!important;opacity:1!important;';
+    // Force visibility on HTML, body and root
+    document.documentElement.style.cssText += 'visibility:visible!important;display:block!important;';
+    document.body.style.cssText += 'visibility:visible!important;display:block!important;';
     
     const root = document.getElementById('root');
     if (root) {
-      root.style.cssText = 'visibility:visible!important;display:block!important;opacity:1!important;';
+      root.style.cssText += 'visibility:visible!important;display:block!important;';
     }
     
-    // Hide spinner with multiple methods
+    // Hide spinner with multiple methods for redundancy
     const spinner = document.getElementById('initial-content');
     if (spinner) {
-      spinner.style.cssText = 'display:none!important;visibility:hidden!important;opacity:0!important;';
-      try {
-        spinner.parentNode?.removeChild(spinner);
-      } catch (e) {
-        // Ignore removal errors
+      spinner.style.display = 'none';
+      if (spinner.parentNode) {
+        try {
+          spinner.parentNode.removeChild(spinner);
+        } catch (e) {
+          // Ignore removal errors
+        }
       }
     }
     
-    // If we're in recursive mode, force ALL elements in the DOM to be visible
-    if (recursive) {
-      try {
-        const allElements = document.querySelectorAll('*');
-        allElements.forEach(el => {
-          if (el instanceof HTMLElement) {
-            if (el.id !== 'initial-content') { // Don't show the spinner
-              el.style.cssText += 'visibility:visible!important;opacity:1!important;';
-            }
-          }
-        });
-      } catch (e) {
-        // Ignore errors
-      }
-    }
+    debug('Force visibility applied');
   } catch (e) {
-    console.error('Error in forceVisibility:', e);
+    // Swallow errors to prevent crashes
   }
 };
 
-// Call immediately in non-recursive mode
+// Call immediately
 forceVisibility();
 
-// Call again with a slight delay in recursive mode 
-setTimeout(() => forceVisibility(true), 500);
-
-// Add window method for external access
-if (typeof window !== 'undefined') {
-  window.forceAppVisibility = forceVisibility;
-}
+// Call again after a slight delay
+setTimeout(forceVisibility, 100);

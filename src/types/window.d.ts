@@ -8,7 +8,6 @@ interface Window {
   appComponentMounted?: boolean;
   recoveryAttempted?: boolean;
   forceAppVisibility?: () => void;
-  rescueDom?: () => void;
   
   // Define loading stages with proper types
   loadingStages?: Record<string, boolean>;
