@@ -10,7 +10,7 @@ import { callCenterRoutes } from "./routes/callCenterRoutes";
 
 // Create a flat array of routes with direct imports
 export const routes: RouteConfig[] = [
-  // Home route
+  // Home route with highest priority
   {
     path: "/",
     element: <Index />

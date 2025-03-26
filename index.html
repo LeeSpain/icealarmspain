@@ -8,7 +8,7 @@
     <meta name="description" content="Medical alert and health monitoring system for seniors and expatriates" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap">
     <style>
-      /* Core styles for immediate visibility */
+      /* Critical styles for immediate visibility */
       body, html, #root {
         margin: 0;
         padding: 0;
@@ -22,13 +22,17 @@
         opacity: 1 !important;
       }
       
-      /* Force immediate render */
-      .App {
-        display: block !important;
-        visibility: visible !important;
-        opacity: 1 !important;
+      /* Remove any loading state or spinner */
+      .loading-screen, .loading-indicator, .spinner {
+        display: none !important;
       }
     </style>
+    <script>
+      // Immediate render script - runs before DOM is parsed
+      document.documentElement.style.display = 'block';
+      document.documentElement.style.visibility = 'visible';
+      document.documentElement.style.opacity = '1';
+    </script>
   </head>
 
   <body>
@@ -41,15 +45,7 @@
     
     <div id="root"></div>
     
+    <script src="https://cdn.gpteng.co/gptengineer.js" type="module"></script>
     <script type="module" src="/src/main.tsx"></script>
-    
-    <!-- Immediate render script -->
-    <script>
-      // Ensure immediate visibility
-      document.documentElement.style.visibility = 'visible';
-      document.documentElement.style.opacity = '1';
-      document.body.style.visibility = 'visible';
-      document.body.style.opacity = '1';
-    </script>
   </body>
 </html>

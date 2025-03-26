@@ -4,19 +4,20 @@ import ReactDOM from 'react-dom/client'
 import App from './App'
 import './styles/index.css'
 
-// Find root element
-const rootElement = document.getElementById('root');
+// Import the instant render utility first to ensure it runs before anything else
+import './utils/instant-render'
 
-// If no root element, create one
-if (!rootElement) {
-  console.error("Root element not found! Creating it...");
-  const newRoot = document.createElement('div');
-  newRoot.id = 'root';
-  document.body.appendChild(newRoot);
-  ReactDOM.createRoot(newRoot).render(<App />);
+// Simple direct rendering - no error handling or complex logic
+const rootElement = document.getElementById('root')
+if (rootElement) {
+  ReactDOM.createRoot(rootElement).render(<App />)
 } else {
-  // Render app
-  ReactDOM.createRoot(rootElement).render(<App />);
+  console.error("Root element not found")
+  // Create a root element if missing
+  const newRoot = document.createElement('div')
+  newRoot.id = 'root'
+  document.body.appendChild(newRoot)
+  ReactDOM.createRoot(newRoot).render(<App />)
 }
 
-console.log("Main.tsx completed - App should be visible");
+console.log("Application rendered")

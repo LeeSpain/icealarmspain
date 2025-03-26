@@ -1,25 +1,23 @@
 
 /**
- * Simplified fallback utility
- * Only shows fallback if page doesn't render within 3 seconds
+ * Minimal fallback utility
+ * Only shows fallback if page doesn't render within 1 second
  */
 
 (() => {
-  console.log("Simplified fallback utility running");
-  
-  // Much shorter timeout (3 seconds instead of previous longer timeouts)
+  // Much shorter timeout (1 second instead of 3 seconds)
   setTimeout(() => {
     const root = document.getElementById('root');
-    const app = document.querySelector('.App');
     
-    if (!app || (root && !root.innerHTML.includes('Hero'))) {
-      console.error('Application failed to render fully within timeout');
+    // Only show fallback if root is empty
+    if (root && (!root.innerHTML || root.innerHTML.includes('Loading'))) {
+      console.log('Fallback triggered - forcing App to render');
       
       // Force visibility
       document.documentElement.style.visibility = 'visible';
       document.body.style.visibility = 'visible';
     }
-  }, 3000);
+  }, 1000);
 })();
 
 export {};
