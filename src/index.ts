@@ -2,6 +2,9 @@
 // Import build verification first for better diagnostics
 import './utils/build-verification';
 
+// Import our new renderer rescue utility FIRST
+import './utils/renderer-rescue';
+
 // Import startup recovery - ONLY this one recovery utility
 import './utils/startup-recovery';
 

@@ -7,11 +7,27 @@ import './styles/index.css'
 // Log for debugging
 console.log('Application starting up');
 
+// Function to ensure spinner is hidden
+function hideSpinner() {
+  const initialContent = document.getElementById('initial-content');
+  if (initialContent) {
+    initialContent.style.opacity = '0';
+    setTimeout(() => {
+      initialContent.style.display = 'none';
+      console.log('Spinner hidden from main.tsx');
+    }, 100);
+  }
+}
+
+// Call it immediately
+hideSpinner();
+
 // Get the root element
 const rootElement = document.getElementById('root');
 
 if (!rootElement) {
   console.error('Root element not found');
+  hideSpinner(); // Hide spinner even if root not found
 } else {
   try {
     // Create root and render
@@ -23,33 +39,31 @@ if (!rootElement) {
     console.log('React mounted successfully');
     
     // Hide the initial content after React renders - GUARANTEED SPINNER REMOVAL
-    const initialContent = document.getElementById('initial-content');
-    if (initialContent) {
-      initialContent.style.opacity = '0';
-      setTimeout(() => {
-        initialContent.style.display = 'none';
-        console.log('Spinner hidden after successful React mount');
-      }, 300);
-    }
+    hideSpinner();
     
     // Mark that the app has been loaded in the window object
     if (typeof window !== 'undefined') {
-      if (!window.renderingStages) {
-        window.renderingStages = {};
-      }
+      // Safely initialize window properties
+      window.renderingStages = window.renderingStages || {};
       window.renderingStages.appMounted = true;
       window.renderingStages.appRendered = true;
       
       // Call forceAppVisibility as a final safety measure
-      if (window.forceAppVisibility) {
-        setTimeout(() => {
-          window.forceAppVisibility();
-        }, 1000);
+      if (typeof window.forceAppVisibility === 'function') {
+        window.forceAppVisibility();
+        console.log('forceAppVisibility called');
+      } else {
+        console.log('forceAppVisibility not available');
+        hideSpinner(); // Call our local function instead
       }
     }
     
+    // One more safety timeout
+    setTimeout(hideSpinner, 500);
+    
   } catch (error) {
     console.error('Error rendering React app:', error);
+    hideSpinner(); // Hide spinner even on error
     
     // Basic error fallback
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
@@ -67,12 +81,9 @@ if (!rootElement) {
           </button>
         </div>
       `;
-      
-      // Hide the initial spinner
-      const initialContent = document.getElementById('initial-content');
-      if (initialContent) {
-        initialContent.style.display = 'none';
-      }
     }
   }
 }
+
+// Final safety measure
+setTimeout(hideSpinner, 1000);

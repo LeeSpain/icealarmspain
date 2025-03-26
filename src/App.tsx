@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster";
 import { LanguageProvider } from "@/context/LanguageContext";
@@ -14,9 +14,37 @@ import ErrorBoundary from "./components/layout/ErrorBoundary";
 import RenderingDebugger from "./components/debug/RenderingDebugger";
 
 function App() {
-  React.useEffect(() => {
+  useEffect(() => {
     console.log("App component mounted");
-    checkEnvVariables();
+    
+    // Check env variables
+    try {
+      checkEnvVariables();
+    } catch (e) {
+      console.error("Error checking env variables:", e);
+    }
+    
+    // Force hide the spinner as a backup method
+    const hideSpinner = () => {
+      const spinner = document.getElementById('initial-content');
+      if (spinner) {
+        spinner.style.opacity = '0';
+        setTimeout(() => {
+          spinner.style.display = 'none';
+          console.log("Spinner hidden from App component");
+        }, 100);
+      }
+    };
+    
+    // Call immediately and with a delay
+    hideSpinner();
+    setTimeout(hideSpinner, 500);
+    
+    // Also record in the window object that App has mounted
+    if (typeof window !== 'undefined') {
+      if (!window.renderingStages) window.renderingStages = {};
+      window.renderingStages.appComponentMounted = true;
+    }
   }, []);
   
   return (

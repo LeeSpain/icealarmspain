@@ -67,6 +67,20 @@
       window.renderingStages = window.renderingStages || {};
       window.loadingStages.htmlLoaded = true;
       
+      // NEW: Create a direct function to completely remove the spinner
+      function removeSpinner() {
+        var spinner = document.getElementById('initial-content');
+        if (spinner) {
+          spinner.style.display = 'none';
+          console.log('Spinner forcefully removed');
+        }
+      }
+      
+      // NEW: Add multiple timeouts with different durations to ensure spinner is hidden
+      setTimeout(removeSpinner, 1000);
+      setTimeout(removeSpinner, 2000);
+      setTimeout(removeSpinner, 3000);
+      
       // Setup multiple spinner timeouts for guaranteed hide
       setTimeout(function() {
         var spinner = document.getElementById('initial-content');
@@ -88,17 +102,24 @@
         }
       }, 8000);
       
-      // Force app visibility function
-      window.forceAppVisibility = function() {
+      // NEW: Add a final backup to ensure spinner is hidden
+      setTimeout(function() {
         var spinner = document.getElementById('initial-content');
         if (spinner) {
-          spinner.style.opacity = '0';
-          setTimeout(function() {
-            spinner.style.display = 'none';
-          }, 300);
-          console.log('Force app visibility called manually');
+          document.body.removeChild(spinner);
+          console.log('Spinner element completely removed from DOM');
         }
+      }, 10000);
+      
+      // Force app visibility function
+      window.forceAppVisibility = function() {
+        removeSpinner();
       };
+      
+      // NEW: Add a DOMContentLoaded listener to hide spinner when DOM is ready
+      document.addEventListener('DOMContentLoaded', function() {
+        setTimeout(removeSpinner, 500);
+      });
     </script>
   </head>
   <body>

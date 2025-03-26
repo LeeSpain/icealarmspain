@@ -8,6 +8,21 @@
 (function() {
   console.log('🚀 Startup recovery running - simplified version');
   
+  // Function to hide spinner
+  function hideSpinner() {
+    const initialContent = document.getElementById('initial-content');
+    if (initialContent) {
+      initialContent.style.opacity = '0';
+      setTimeout(() => {
+        initialContent.style.display = 'none';
+        console.log('Spinner hidden by startup-recovery');
+      }, 100);
+    }
+  }
+  
+  // Call immediately
+  hideSpinner();
+  
   // Initialize loading stages tracking for debugging
   if (typeof window !== 'undefined') {
     // Safely initialize window properties
@@ -25,6 +40,7 @@
     if (window.loadingStages) {
       window.loadingStages.recoverySkipped = true;
     }
+    hideSpinner();
     return;
   }
   
@@ -53,13 +69,7 @@
       console.log('React app detected - loaded successfully');
       
       // Hide the initial loading spinner
-      const initialContent = document.getElementById('initial-content');
-      if (initialContent) {
-        initialContent.style.opacity = '0';
-        setTimeout(() => {
-          initialContent.style.display = 'none';
-        }, 300);
-      }
+      hideSpinner();
       
       return true;
     }
@@ -87,10 +97,7 @@
         `;
         
         // Force hide the spinner
-        const initialContent = document.getElementById('initial-content');
-        if (initialContent) {
-          initialContent.style.display = 'none';
-        }
+        hideSpinner();
       }
       
       return false;
@@ -105,16 +112,7 @@
       window.loadingStages.firstCheck = true;
     }
     checkAppLoaded();
-    
-    // Force hide spinner if app still not detected
-    if (!reactMounted) {
-      const initialContent = document.getElementById('initial-content');
-      if (initialContent) {
-        setTimeout(() => {
-          initialContent.style.opacity = '0.5'; // Indicate it's taking longer
-        }, 300);
-      }
-    }
+    hideSpinner();
   }, 1000);
   
   setTimeout(() => {
@@ -122,17 +120,7 @@
       window.loadingStages.secondCheck = true;
     }
     checkAppLoaded();
-    
-    // Definitely hide spinner by now
-    if (!reactMounted) {
-      const initialContent = document.getElementById('initial-content');
-      if (initialContent) {
-        initialContent.style.opacity = '0';
-        setTimeout(() => {
-          initialContent.style.display = 'none';
-        }, 300);
-      }
-    }
+    hideSpinner();
   }, 2500);
   
   // Final check - if not mounted by now, show static content but DO NOT auto-reload
@@ -148,10 +136,7 @@
       }
       
       // Hide the initial loading spinner
-      const initialContent = document.getElementById('initial-content');
-      if (initialContent) {
-        initialContent.style.display = 'none';
-      }
+      hideSpinner();
       
       // Add recovery content without auto-reload
       const root = document.getElementById('root');
@@ -168,14 +153,11 @@
             </button>
           </div>
         `;
-        
-        // Force hide spinner (one more time for safety)
-        const initialContent = document.getElementById('initial-content');
-        if (initialContent) {
-          initialContent.style.display = 'none';
-        }
       }
     }
+    
+    // Always hide spinner
+    hideSpinner();
   }, 4000);
 })();
 

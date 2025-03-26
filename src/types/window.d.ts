@@ -1,4 +1,7 @@
 
+/**
+ * Window interface extensions for our application
+ */
 interface Window {
   appLoaded?: boolean;
   appStarted?: boolean;
