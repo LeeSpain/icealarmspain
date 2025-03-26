@@ -1,4 +1,5 @@
 
+import React, { useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { routes } from "./routes";
 import { Toaster } from "@/components/ui/toaster";
@@ -61,7 +62,7 @@ function App() {
   };
   
   // Use useEffect to hide loading indicator after render
-  React.useEffect(() => {
+  useEffect(() => {
     hideLoadingIndicator();
   }, []);
   

@@ -70,6 +70,15 @@ export function isDebugBuild(): boolean {
 }
 
 /**
+ * Check if mock authentication is enabled
+ * Used for development and testing purposes
+ */
+export function isMockAuthEnabled(): boolean {
+  // Enable mock auth in development by default or if explicitly enabled
+  return isDevelopment() || getEnvVar('VITE_ENABLE_MOCK_AUTH', 'false') === 'true';
+}
+
+/**
  * Safely get environment variable with a fallback
  */
 export function getEnvVar(key: string, fallback: string): string {
@@ -105,6 +114,7 @@ export function getEnvironmentDiagnostics() {
     production: isProduction(),
     staging: isStaging(),
     debugBuild: isDebugBuild(),
+    mockAuthEnabled: isMockAuthEnabled(),
     hasFirebaseConfig: !!getEnvVar('VITE_FIREBASE_PROJECT_ID', ''),
     hasSupabaseConfig: !!getEnvVar('VITE_SUPABASE_URL', ''),
   };
