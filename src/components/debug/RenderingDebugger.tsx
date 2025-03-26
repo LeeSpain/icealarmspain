@@ -12,18 +12,21 @@ const RenderingDebugger: React.FC = () => {
     console.log("RenderingDebugger mounted - app is rendering!");
     
     // Record rendering success
-    if (!window.renderingStages) {
-      window.renderingStages = {};
+    if (typeof window !== 'undefined') {
+      // Safely initialize window properties
+      if (!window.renderingStages) {
+        window.renderingStages = {};
+      }
+      
+      // Mark the debugger as mounted
+      window.renderingStages.debuggerMounted = true;
+      
+      // Update loading info from window
+      setLoadInfo({
+        loadingStages: window.loadingStages || {},
+        renderingStages: window.renderingStages || {}
+      });
     }
-    
-    // Mark the debugger as mounted
-    window.renderingStages.debuggerMounted = true;
-    
-    // Update loading info from window
-    setLoadInfo({
-      loadingStages: window.loadingStages || {},
-      renderingStages: window.renderingStages || {}
-    });
     
     // Hide after 10 seconds in production
     if (import.meta.env.PROD) {

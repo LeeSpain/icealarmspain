@@ -67,14 +67,38 @@
       window.renderingStages = window.renderingStages || {};
       window.loadingStages.htmlLoaded = true;
       
-      // Setup automatic spinner timeout - hide spinner after 15 seconds regardless
+      // Setup multiple spinner timeouts for guaranteed hide
+      setTimeout(function() {
+        var spinner = document.getElementById('initial-content');
+        if (spinner) {
+          spinner.style.opacity = '0';
+          setTimeout(function() {
+            spinner.style.display = 'none';
+          }, 300);
+          console.log('Forced hiding of spinner after 5 second timeout');
+        }
+      }, 5000);
+      
+      // Absolute fallback - guarantee we don't show spinner forever
       setTimeout(function() {
         var spinner = document.getElementById('initial-content');
         if (spinner) {
           spinner.style.display = 'none';
-          console.log('Forced hiding of spinner after timeout');
+          console.log('Emergency forced hiding of spinner after 8 seconds');
         }
-      }, 15000);
+      }, 8000);
+      
+      // Force app visibility function
+      window.forceAppVisibility = function() {
+        var spinner = document.getElementById('initial-content');
+        if (spinner) {
+          spinner.style.opacity = '0';
+          setTimeout(function() {
+            spinner.style.display = 'none';
+          }, 300);
+          console.log('Force app visibility called manually');
+        }
+      };
     </script>
   </head>
   <body>

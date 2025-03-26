@@ -6,7 +6,7 @@ interface Window {
   recoveryAttempted?: boolean;
   forceAppVisibility?: () => void;
   
-  // Define loading stages with proper types - allow any stage name
+  // Define loading stages with proper types
   loadingStages?: Record<string, boolean>;
   renderingStages?: Record<string, boolean>;
 }

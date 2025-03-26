@@ -5,13 +5,9 @@
 
 // Initialize window debug properties if they don't exist
 if (typeof window !== 'undefined') {
-  if (!window.loadingStages) {
-    window.loadingStages = {};
-  }
-  
-  if (!window.renderingStages) {
-    window.renderingStages = {};
-  }
+  // Safely initialize window properties
+  window.loadingStages = window.loadingStages || {};
+  window.renderingStages = window.renderingStages || {};
   
   // Record the verification started
   window.loadingStages.buildVerificationStarted = true;

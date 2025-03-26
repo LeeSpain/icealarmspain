@@ -10,14 +10,12 @@
   
   // Initialize loading stages tracking for debugging
   if (typeof window !== 'undefined') {
-    if (!window.loadingStages) {
-      window.loadingStages = {};
-    }
+    // Safely initialize window properties
+    window.loadingStages = window.loadingStages || {};
+    window.renderingStages = window.renderingStages || {};
+    window.recoveryAttempted = window.recoveryAttempted || false;
     
-    if (!window.renderingStages) {
-      window.renderingStages = {};
-    }
-    
+    // Mark recovery started
     window.loadingStages.recoveryStarted = true;
   }
   
@@ -57,7 +55,10 @@
       // Hide the initial loading spinner
       const initialContent = document.getElementById('initial-content');
       if (initialContent) {
-        initialContent.style.display = 'none';
+        initialContent.style.opacity = '0';
+        setTimeout(() => {
+          initialContent.style.display = 'none';
+        }, 300);
       }
       
       return true;
@@ -84,6 +85,12 @@
             </button>
           </div>
         `;
+        
+        // Force hide the spinner
+        const initialContent = document.getElementById('initial-content');
+        if (initialContent) {
+          initialContent.style.display = 'none';
+        }
       }
       
       return false;
@@ -98,14 +105,35 @@
       window.loadingStages.firstCheck = true;
     }
     checkAppLoaded();
-  }, 100);
+    
+    // Force hide spinner if app still not detected
+    if (!reactMounted) {
+      const initialContent = document.getElementById('initial-content');
+      if (initialContent) {
+        setTimeout(() => {
+          initialContent.style.opacity = '0.5'; // Indicate it's taking longer
+        }, 300);
+      }
+    }
+  }, 1000);
   
   setTimeout(() => {
     if (window.loadingStages) {
       window.loadingStages.secondCheck = true;
     }
     checkAppLoaded();
-  }, 1000);
+    
+    // Definitely hide spinner by now
+    if (!reactMounted) {
+      const initialContent = document.getElementById('initial-content');
+      if (initialContent) {
+        initialContent.style.opacity = '0';
+        setTimeout(() => {
+          initialContent.style.display = 'none';
+        }, 300);
+      }
+    }
+  }, 2500);
   
   // Final check - if not mounted by now, show static content but DO NOT auto-reload
   setTimeout(() => {
@@ -140,9 +168,15 @@
             </button>
           </div>
         `;
+        
+        // Force hide spinner (one more time for safety)
+        const initialContent = document.getElementById('initial-content');
+        if (initialContent) {
+          initialContent.style.display = 'none';
+        }
       }
     }
-  }, 3000);
+  }, 4000);
 })();
 
 export {};

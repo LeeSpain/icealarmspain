@@ -22,19 +22,30 @@ if (!rootElement) {
     
     console.log('React mounted successfully');
     
-    // Hide the initial content after React renders
+    // Hide the initial content after React renders - GUARANTEED SPINNER REMOVAL
     const initialContent = document.getElementById('initial-content');
     if (initialContent) {
       initialContent.style.opacity = '0';
       setTimeout(() => {
         initialContent.style.display = 'none';
+        console.log('Spinner hidden after successful React mount');
       }, 300);
     }
     
     // Mark that the app has been loaded in the window object
-    if (window.renderingStages) {
+    if (typeof window !== 'undefined') {
+      if (!window.renderingStages) {
+        window.renderingStages = {};
+      }
       window.renderingStages.appMounted = true;
       window.renderingStages.appRendered = true;
+      
+      // Call forceAppVisibility as a final safety measure
+      if (window.forceAppVisibility) {
+        setTimeout(() => {
+          window.forceAppVisibility();
+        }, 1000);
+      }
     }
     
   } catch (error) {
