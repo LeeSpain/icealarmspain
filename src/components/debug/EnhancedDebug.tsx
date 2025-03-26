@@ -1,99 +1,63 @@
 
 import React, { useEffect, useState } from 'react';
-import { isDevelopment, getEnvironment, getEnvironmentDiagnostics } from '@/utils/environment';
 
-/**
- * Enhanced debug component that shows detailed diagnostics in development mode
- * and can be toggled with a keyboard shortcut
- */
 const EnhancedDebug = () => {
-  const [visible, setVisible] = useState(true);
-  const [expanded, setExpanded] = useState(false);
-  const [diagnostics, setDiagnostics] = useState<Record<string, unknown>>({});
+  const [domInfo, setDomInfo] = useState({
+    rootExists: false,
+    appExists: false,
+    bodyChildCount: 0,
+    rootChildCount: 0
+  });
   
   useEffect(() => {
     console.log("EnhancedDebug component mounted");
     
-    // Get environment diagnostics
-    const envDiagnostics = getEnvironmentDiagnostics();
-    setDiagnostics(envDiagnostics);
-    
-    // Setup keyboard shortcut to toggle visibility (Ctrl+Shift+D)
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.ctrlKey && e.shiftKey && e.key === 'D') {
-        setVisible(prev => !prev);
-        e.preventDefault();
-      }
-    };
-    
-    document.addEventListener('keydown', handleKeyDown);
-    
-    // Check if CSS is working by testing a style
-    const debugElement = document.getElementById('enhanced-debug');
-    if (debugElement) {
-      console.log("Debug element found in DOM");
-      console.log("Debug element styles:", {
-        backgroundColor: window.getComputedStyle(debugElement).backgroundColor,
-        color: window.getComputedStyle(debugElement).color
+    // Gather DOM information
+    const gatherInfo = () => {
+      const root = document.getElementById('root');
+      const app = document.querySelector('.App');
+      
+      setDomInfo({
+        rootExists: !!root,
+        appExists: !!app,
+        bodyChildCount: document.body?.children.length || 0,
+        rootChildCount: root?.children.length || 0
       });
-    } else {
-      console.log("Debug element NOT found in DOM");
-    }
-    
-    // Log render verification
-    console.log("React is successfully rendering components");
-    
-    return () => {
-      document.removeEventListener('keydown', handleKeyDown);
     };
+    
+    // Initial check
+    gatherInfo();
+    
+    // Set up periodic checks
+    const interval = setInterval(gatherInfo, 1000);
+    
+    // Clean up on unmount
+    return () => clearInterval(interval);
   }, []);
-
-  if (!visible) return null;
   
   return (
-    <div id="enhanced-debug" className="fixed top-0 right-0 bg-amber-500 text-white p-4 z-50 max-w-md shadow-lg rounded-bl-lg">
-      <div className="flex justify-between items-center">
-        <h3 className="font-bold">Debug Panel</h3>
-        <div className="space-x-2">
-          <button 
-            onClick={() => setExpanded(!expanded)} 
-            className="px-2 py-1 bg-amber-600 rounded text-xs"
-          >
-            {expanded ? 'Collapse' : 'Expand'}
-          </button>
-          <button 
-            onClick={() => setVisible(false)} 
-            className="px-2 py-1 bg-amber-700 rounded text-xs"
-          >
-            Hide
-          </button>
-        </div>
+    <div className="fixed bottom-0 right-0 bg-black bg-opacity-80 text-white p-4 z-50 font-mono text-sm">
+      <h3 className="font-bold mb-2">Rendering Diagnostics</h3>
+      <ul>
+        <li>Root element: {domInfo.rootExists ? '✅' : '❌'}</li>
+        <li>App component: {domInfo.appExists ? '✅' : '❌'}</li>
+        <li>Body children: {domInfo.bodyChildCount}</li>
+        <li>Root children: {domInfo.rootChildCount}</li>
+      </ul>
+      <div className="mt-3">
+        <button 
+          onClick={() => window.location.reload()} 
+          className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 mr-2"
+        >
+          Reload
+        </button>
+        <button 
+          onClick={() => document.body.innerHTML = '<div class="p-4"><h1>Manual Recovery</h1><p>The app has been reset to recover from a rendering issue.</p><button onclick="window.location.reload()" class="px-3 py-1 bg-blue-500 text-white rounded">Try Again</button></div>'} 
+          className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600"
+        >
+          Emergency Reset
+        </button>
       </div>
-      
-      <div className="text-sm mt-2">
-        <p>Environment: <strong>{getEnvironment()}</strong></p>
-        <p>Dev Mode: <strong>{isDevelopment() ? 'Yes' : 'No'}</strong></p>
-        <p>Render Status: <strong>Active</strong></p>
-      </div>
-      
-      {expanded && (
-        <div className="mt-4 border-t border-amber-400 pt-2">
-          <h4 className="font-bold mb-2">Environment Diagnostics</h4>
-          <pre className="text-xs bg-amber-600 p-2 rounded overflow-auto max-h-40">
-            {JSON.stringify(diagnostics, null, 2)}
-          </pre>
-          
-          <h4 className="font-bold mb-2 mt-4">DOM Structure</h4>
-          <div className="text-xs">
-            <p>Root Element: <strong>{document.getElementById('root') ? 'Found' : 'Not Found'}</strong></p>
-            <p>Child Nodes: <strong>{document.getElementById('root')?.childNodes.length || 0}</strong></p>
-          </div>
-          
-          <div className="mt-4">
-            <p className="text-xs">Press <kbd>Ctrl+Shift+D</kbd> to toggle this panel</p>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

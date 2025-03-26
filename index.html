@@ -8,21 +8,37 @@
     <meta name="description" content="Medical alert and health monitoring system for seniors and expatriates" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&display=swap">
     <style>
-      /* Force everything to be visible immediately */
-      html, body, #root, .App {
+      /* Ensure immediate visibility */
+      body, html, #root {
         margin: 0;
         padding: 0;
-        font-family: 'Inter', sans-serif;
-        background-color: white !important;
+        font-family: 'Inter', system-ui, sans-serif;
+        background: white !important;
         color: black !important;
+        display: block !important;
         visibility: visible !important;
         opacity: 1 !important;
-        display: block !important;
       }
       
-      /* Hide any "Not found" text that might appear */
-      body > *:not(#root):not(script) {
-        display: none !important;
+      /* Initial loading indicator that doesn't rely on React */
+      .initial-loader {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        text-align: center;
+      }
+      .initial-loader-spinner {
+        display: inline-block;
+        width: 40px;
+        height: 40px;
+        border: 3px solid rgba(0,0,0,0.1);
+        border-radius: 50%;
+        border-top-color: #3b82f6;
+        animation: spin 1s ease-in-out infinite;
+      }
+      @keyframes spin {
+        to { transform: rotate(360deg); }
       }
     </style>
   </head>
@@ -35,7 +51,13 @@
       </div>
     </noscript>
     
-    <div id="root"></div>
+    <!-- Initial loader that doesn't depend on React -->
+    <div id="root">
+      <div class="initial-loader">
+        <div class="initial-loader-spinner"></div>
+        <p style="margin-top: 1rem;">Ice Guardian Alert</p>
+      </div>
+    </div>
     
     <script type="module" src="/src/main.tsx"></script>
   </body>
