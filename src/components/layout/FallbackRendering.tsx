@@ -6,7 +6,7 @@ interface Props {
 }
 
 const FallbackRendering: React.FC<Props> = () => {
-  // Return null immediately with no rendering delay
+  // Return null to prevent any loading indicators
   return null;
 };
 

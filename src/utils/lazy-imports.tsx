@@ -9,8 +9,7 @@ export function lazyImport<T extends React.ComponentType<any>>(
 
 // Create a higher-order component for lazy loading page components
 export const withLazyLoading = <P extends object>(
-  importFunc: () => Promise<{ default: React.ComponentType<P> }>,
-  loadingMessage?: string
+  importFunc: () => Promise<{ default: React.ComponentType<P> }>
 ) => {
   const LazyComponent = React.lazy(importFunc);
   
