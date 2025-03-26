@@ -10,8 +10,8 @@
     <meta property="og:image" content="/og-image.png" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&display=swap">
     <style>
-      /* Critical rendering styles - Force visibility */
-      html, body {
+      /* Critical styling to ensure content is visible */
+      html, body, #root, .App {
         margin: 0;
         padding: 0;
         font-family: 'Inter', sans-serif;
@@ -22,29 +22,14 @@
         min-height: 100vh;
         width: 100%;
         overflow-x: hidden;
+        display: block !important;
       }
-      #root {
-        min-height: 100vh;
-        width: 100%;
-        visibility: visible !important;
-        opacity: 1 !important;
-        display: flex !important;
-        flex-direction: column !important;
-      }
-      /* Avoid layout shifts */
-      .App {
-        min-height: 100vh;
-        display: flex !important;
-        flex-direction: column !important;
-        visibility: visible !important;
-        opacity: 1 !important;
-      }
-      /* Hide "Not found" text */
+      
+      /* Hide any "Not found" text outside the root */
       body > *:not(#root):not(script) {
         display: none !important;
       }
     </style>
-    <!-- Preconnect to critical domains -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
   </head>
 
@@ -54,5 +39,19 @@
     <!-- Add the GPT Engineer script tag -->
     <script src="https://cdn.gpteng.co/gptengineer.js" type="module"></script>
     <script type="module" src="/src/main.tsx"></script>
+    
+    <!-- Fallback to ensure visibility -->
+    <script>
+      // Simple fallback script to ensure visibility
+      document.addEventListener('DOMContentLoaded', function() {
+        document.documentElement.style.visibility = 'visible';
+        document.body.style.visibility = 'visible';
+        const root = document.getElementById('root');
+        if (root) {
+          root.style.visibility = 'visible';
+          root.style.display = 'block';
+        }
+      });
+    </script>
   </body>
 </html>

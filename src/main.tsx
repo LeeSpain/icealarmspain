@@ -3,22 +3,19 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App'
 import './styles/index.css'
-import './utils/build-verification'
-import './utils/check-render'
+import './utils/force-render' // Import the force render utility
 
-// Force immediate rendering with no delay
+// Immediately try to render the app
 const rootElement = document.getElementById('root');
 
 if (!rootElement) {
   console.error("Root element not found! Cannot render React app.");
 } else {
   try {
-    // Create root and render immediately 
+    // Create root and render immediately with minimal overhead
     const root = ReactDOM.createRoot(rootElement);
     root.render(
-      <React.StrictMode>
-        <App />
-      </React.StrictMode>
+      <App />
     );
     
     console.log("App rendered successfully");

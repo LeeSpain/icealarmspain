@@ -13,16 +13,10 @@ const NotFound = () => {
   const effectiveRole = user?.role || storedRole;
 
   useEffect(() => {
-    // Immediately update title and log error
+    // Immediately update title
     document.title = "Page Not Found - Ice Guardian Alert";
-    
-    console.error(
-      "404 Error: User attempted to access non-existent route:",
-      location.pathname,
-      "Auth state:",
-      { isAuthenticated, userRole: effectiveRole, userId: user?.id }
-    );
-  }, [location.pathname, isAuthenticated, user, effectiveRole]);
+    console.log("404 Component rendering for path:", location.pathname);
+  }, [location.pathname]);
 
   const getDashboardLink = () => {
     if (!isAuthenticated) return "/login";
