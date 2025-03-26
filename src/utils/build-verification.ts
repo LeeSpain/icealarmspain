@@ -13,7 +13,9 @@ if (typeof window !== 'undefined') {
     window.renderingStages = {};
   }
   
-  window.loadingStages.buildVerificationStarted = true;
+  if (window.loadingStages) {
+    window.loadingStages.buildVerificationStarted = true;
+  }
 }
 
 // Log build environment details
@@ -30,7 +32,7 @@ const checkCriticalEnvVars = () => {
   
   console.log('Environment vars check:', envVars);
   
-  if (typeof window !== 'undefined') {
+  if (typeof window !== 'undefined' && window.loadingStages) {
     window.loadingStages.envVarsChecked = true;
   }
 };

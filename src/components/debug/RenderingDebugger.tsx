@@ -12,10 +12,12 @@ const RenderingDebugger: React.FC = () => {
     console.log("RenderingDebugger mounted - app is rendering!");
     
     // Record rendering success
+    if (!window.renderingStages) {
+      window.renderingStages = {};
+    }
+    
     if (window.renderingStages) {
       window.renderingStages.debuggerMounted = true;
-    } else {
-      window.renderingStages = { debuggerMounted: true };
     }
     
     // Update loading info from window
