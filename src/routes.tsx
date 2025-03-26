@@ -8,7 +8,7 @@ import { dashboardRoutes } from "./routes/dashboardRoutes";
 import { adminRoutes } from "./routes/adminRoutes";
 import { callCenterRoutes } from "./routes/callCenterRoutes";
 
-// Create a flat array of routes with direct imports
+// Create a flat array of all routes with direct imports
 export const routes: RouteConfig[] = [
   // Home route with highest priority
   {
@@ -16,13 +16,13 @@ export const routes: RouteConfig[] = [
     element: <Index />
   },
   
-  // Then all other routes
+  // All other routes in order of importance
   ...mainRoutes.filter(route => route.path !== "/"),
   ...dashboardRoutes,
   ...adminRoutes,
   ...callCenterRoutes,
   
-  // Not found route
+  // Not found route as fallback
   {
     path: "*",
     element: <NotFound />,

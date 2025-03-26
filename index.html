@@ -22,28 +22,26 @@
         opacity: 1 !important;
       }
       
-      /* Remove any loading state or spinner */
+      /* Remove any loading indicators */
       .loading-screen, .loading-indicator, .spinner {
         display: none !important;
       }
     </style>
     <script>
-      // Immediate render script - runs before DOM is parsed
-      document.documentElement.style.display = 'block';
+      // Force immediate rendering
       document.documentElement.style.visibility = 'visible';
+      document.documentElement.style.display = 'block';
       document.documentElement.style.opacity = '1';
     </script>
   </head>
-
   <body>
-    <noscript>
-      <div style="text-align: center; padding: 2rem; font-family: system-ui, sans-serif;">
-        <h1>JavaScript is required</h1>
-        <p>Please enable JavaScript to use Ice Guardian Alert.</p>
+    <div id="root">
+      <!-- Immediate fallback content that will be replaced -->
+      <div style="display: flex; justify-content: center; align-items: center; height: 100vh; flex-direction: column;">
+        <h1 style="font-size: 24px; margin-bottom: 16px;">Ice Guardian Alert</h1>
+        <p>Loading content...</p>
       </div>
-    </noscript>
-    
-    <div id="root"></div>
+    </div>
     
     <script src="https://cdn.gpteng.co/gptengineer.js" type="module"></script>
     <script type="module" src="/src/main.tsx"></script>

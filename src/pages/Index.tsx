@@ -15,8 +15,10 @@ const Index: React.FC = () => {
   
   useEffect(() => {
     debug("Index page mounted");
+    // Force visibility on render
     document.body.style.visibility = 'visible';
     document.body.style.opacity = '1';
+    console.log("Index page rendered");
   }, []);
   
   return (

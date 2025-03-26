@@ -9,7 +9,7 @@ interface LoadingOverlayProps {
 }
 
 const LoadingOverlay: React.FC<LoadingOverlayProps> = () => {
-  // Always return null to prevent loading overlays
+  // Never render loading overlays
   return null;
 };
 
