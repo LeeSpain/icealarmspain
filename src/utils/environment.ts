@@ -1,6 +1,6 @@
 
 /**
- * Environment utilities to help with debugging
+ * Environment utilities to help with debugging and configuration
  */
 
 // Check if running in development mode
@@ -11,6 +11,30 @@ export const isDevelopment = () => {
 // Get current environment name
 export const getEnvironment = () => {
   return import.meta.env.MODE || 'unknown';
+};
+
+// Check if in production environment
+export const isProduction = () => {
+  return import.meta.env.PROD === true;
+};
+
+// Get an environment variable with a fallback
+export const getEnvVar = (key: string, fallback: string = '') => {
+  return import.meta.env[key] || fallback;
+};
+
+// Get a required environment variable (throws in production if missing)
+export const getRequiredEnvVar = (key: string) => {
+  const value = import.meta.env[key];
+  if (!value && isProduction()) {
+    throw new Error(`Required environment variable ${key} is not set`);
+  }
+  return value || '';
+};
+
+// Check if mock auth is enabled (for development)
+export const isMockAuthEnabled = () => {
+  return getEnvVar('VITE_ENABLE_MOCK_AUTH', 'false') === 'true';
 };
 
 // Get detailed environment diagnostics
@@ -53,5 +77,9 @@ export default {
   isDevelopment,
   getEnvironment,
   getEnvironmentDiagnostics,
-  isRenderingWorking
+  isRenderingWorking,
+  isProduction,
+  getEnvVar,
+  getRequiredEnvVar,
+  isMockAuthEnabled
 };
