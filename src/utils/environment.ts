@@ -1,86 +1,111 @@
 
+// Environment detection utility
+// This helps with detecting which environment we're running in
+
+export type Environment = 'development' | 'staging' | 'production' | 'test';
+
 /**
- * Environment utility functions for Ice Guardian Alert application
+ * Get the current environment the app is running in
  */
-
-// Check if running in development mode
-export const isDevelopment = (): boolean => {
-  return import.meta.env.DEV === true || import.meta.env.MODE === 'development';
-};
-
-// Check if running in production mode
-export const isProduction = (): boolean => {
-  return import.meta.env.PROD === true || import.meta.env.MODE === 'production';
-};
-
-// Check if this is a debug build
-export const isDebugBuild = (): boolean => {
-  return import.meta.env.VITE_DEBUG_BUILD === 'true';
-};
-
-// Check if mock auth is enabled in development
-export const isMockAuthEnabled = (): boolean => {
-  return isDevelopment() && import.meta.env.VITE_ENABLE_MOCK_AUTH !== 'false';
-};
-
-// Get the current environment name
-export const getEnvironment = (): string => {
-  if (isProduction()) return 'production';
-  if (isDevelopment()) return 'development';
-  return import.meta.env.MODE || 'unknown';
-};
-
-// Get an environment variable with a fallback
-export const getEnvVar = (name: string, fallback: string = ''): string => {
-  try {
-    const value = import.meta.env[name];
-    // Check explicitly for undefined, empty string, or null
-    if (value === undefined || value === '' || value === null) {
-      return fallback;
+export function getEnvironment(): Environment {
+  // Check for explicit environment variable
+  const envVar = getEnvVar('VITE_ENVIRONMENT', '');
+  
+  if (envVar) {
+    if (envVar === 'development' || envVar === 'staging' || envVar === 'production' || envVar === 'test') {
+      return envVar;
     }
-    return value;
-  } catch (e) {
-    console.warn(`Failed to access env var ${name}, using fallback`, e);
-    return fallback;
   }
-};
-
-// Get a required environment variable (with fallback in both production and development)
-export const getRequiredEnvVar = (name: string, fallback: string = ''): string => {
-  try {
-    const value = import.meta.env[name];
-    if (value === undefined || value === '') {
-      const errorMsg = `Environment variable ${name} is missing`;
-      console.warn(errorMsg);
-      return fallback;
-    }
-    return value;
-  } catch (e) {
-    console.warn(`Failed to access env var ${name}, using fallback`, e);
-    return fallback;
+  
+  // Fallback to NODE_ENV
+  if (import.meta.env.MODE === 'production') {
+    return 'production';
   }
-};
+  
+  if (import.meta.env.MODE === 'development') {
+    return 'development';
+  }
+  
+  if (import.meta.env.MODE === 'test') {
+    return 'test';
+  }
+  
+  // Assume development as the default
+  return 'development';
+}
 
-// Get detailed environment diagnostics for debugging
-export const getEnvironmentDiagnostics = (): Record<string, any> => {
+/**
+ * Check if we're in development environment
+ */
+export function isDevelopment(): boolean {
+  return getEnvironment() === 'development';
+}
+
+/**
+ * Check if we're in production environment
+ */
+export function isProduction(): boolean {
+  return getEnvironment() === 'production';
+}
+
+/**
+ * Check if we're in staging environment
+ */
+export function isStaging(): boolean {
+  return getEnvironment() === 'staging';
+}
+
+/**
+ * Check if we're in test environment
+ */
+export function isTest(): boolean {
+  return getEnvironment() === 'test';
+}
+
+/**
+ * Check if debug build is enabled
+ */
+export function isDebugBuild(): boolean {
+  return getEnvVar('VITE_DEBUG_BUILD', 'false') === 'true';
+}
+
+/**
+ * Safely get environment variable with a fallback
+ */
+export function getEnvVar(key: string, fallback: string): string {
+  if (typeof import.meta.env[key] !== 'undefined') {
+    return import.meta.env[key];
+  }
+  return fallback;
+}
+
+/**
+ * Get a required environment variable
+ * Throws an error if the variable is not defined in production
+ */
+export function getRequiredEnvVar(key: string): string {
+  const value = getEnvVar(key, '');
+  
+  if (!value && isProduction()) {
+    throw new Error(`Missing required environment variable: ${key}`);
+  }
+  
+  return value;
+}
+
+/**
+ * Get environment diagnostics for debugging
+ * Only includes non-sensitive information
+ */
+export function getEnvironmentDiagnostics() {
   return {
+    environment: getEnvironment(),
     mode: import.meta.env.MODE,
-    isDev: isDevelopment(),
-    isProd: isProduction(),
-    base: import.meta.env.BASE_URL,
-    mockAuth: isMockAuthEnabled(),
+    development: isDevelopment(),
+    production: isProduction(),
+    staging: isStaging(),
     debugBuild: isDebugBuild(),
-    timestamp: new Date().toISOString(),
+    hasFirebaseConfig: !!getEnvVar('VITE_FIREBASE_PROJECT_ID', ''),
+    hasSupabaseConfig: !!getEnvVar('VITE_SUPABASE_URL', ''),
   };
-};
-
-// Return an easy-to-read summary of environment issues for debugging
-export const getEnvironmentSummary = (): string => {
-  const issues: string[] = [];
-  
-  if (issues.length === 0) {
-    return "Environment looks good! No issues detected.";
-  }
-  
-  return `Environment notes: ${issues.join(', ')}`;
-};
+}

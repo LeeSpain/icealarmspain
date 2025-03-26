@@ -10,6 +10,7 @@
     <meta property="og:image" content="/og-image.png" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&display=swap">
     <link rel="preload" href="/src/styles/index.css" as="style">
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
     <style>
       /* Critical rendering styles - Force visibility */
       html, body {
@@ -20,13 +21,16 @@
         color: black !important;
         visibility: visible !important;
         opacity: 1 !important;
+        min-height: 100vh;
+        width: 100%;
       }
       #root {
         min-height: 100vh;
         width: 100%;
         visibility: visible !important;
         opacity: 1 !important;
-        display: block !important;
+        display: flex !important;
+        flex-direction: column !important;
       }
       .error-container {
         max-width: 500px;
@@ -43,13 +47,98 @@
         cursor: pointer;
         margin-top: 16px;
       }
+      .loading-indicator {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: white;
+        z-index: 9999;
+      }
+      .loading-spinner {
+        width: 50px;
+        height: 50px;
+        border: 5px solid #f3f3f3;
+        border-top: 5px solid #0070f3;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
     </style>
     <!-- Preconnect to critical domains -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
   </head>
 
   <body>
+    <!-- Immediate visual feedback -->
+    <div id="loading-indicator" class="loading-indicator">
+      <div class="loading-spinner"></div>
+      <p id="loading-message" style="margin-left: 20px;">Loading application...</p>
+    </div>
+    
     <div id="root"></div>
+    
+    <!-- Simple script to track loading progress -->
+    <script>
+      // Track loading stages
+      window.loadingStages = {
+        htmlLoaded: true,
+        mainScriptStarted: false,
+        reactInitialized: false,
+        appRendered: false
+      };
+      
+      // Update loading message
+      function updateLoadingMessage(message) {
+        const loadingMessage = document.getElementById('loading-message');
+        if (loadingMessage) {
+          loadingMessage.textContent = message;
+        }
+      }
+      
+      // Hide loading indicator when app is ready
+      function hideLoadingIndicator() {
+        const loadingIndicator = document.getElementById('loading-indicator');
+        if (loadingIndicator) {
+          loadingIndicator.style.opacity = '0';
+          loadingIndicator.style.transition = 'opacity 0.5s';
+          setTimeout(() => {
+            loadingIndicator.style.display = 'none';
+          }, 500);
+        }
+      }
+      
+      // Show error message if loading takes too long
+      setTimeout(() => {
+        if (!window.loadingStages.appRendered) {
+          updateLoadingMessage('Loading is taking longer than expected...');
+        }
+      }, 5000);
+      
+      // Show critical error if app doesn't load
+      setTimeout(() => {
+        if (!window.loadingStages.appRendered) {
+          const root = document.getElementById('root');
+          if (root && root.children.length === 0) {
+            hideLoadingIndicator();
+            root.innerHTML = `
+              <div class="error-container">
+                <h3>Failed to load application</h3>
+                <p>The application didn't load properly. This might be due to network issues or missing configuration.</p>
+                <button onclick="window.location.reload()">Refresh Page</button>
+              </div>
+            `;
+          }
+        }
+      }, 15000);
+    </script>
     
     <!-- Add the GPT Engineer script tag back -->
     <script src="https://cdn.gpteng.co/gptengineer.js" type="module"></script>
