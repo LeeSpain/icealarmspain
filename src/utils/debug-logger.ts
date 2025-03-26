@@ -1,6 +1,6 @@
 
 /**
- * Simple debug utility that won't interfere with rendering
+ * Simple debug utility with enhanced visibility forcing
  */
 
 export const debug = (message: string, data?: any): void => {
@@ -19,32 +19,35 @@ export const forceVisibility = (): void => {
     if (typeof document === 'undefined') return;
     
     // Force visibility on HTML, body and root with !important flags
-    document.documentElement.style.cssText += 'visibility:visible!important;display:block!important;opacity:1!important;';
-    document.body.style.cssText += 'visibility:visible!important;display:block!important;opacity:1!important;';
+    document.documentElement.style.cssText = 'visibility:visible!important;display:block!important;opacity:1!important;';
+    document.body.style.cssText = 'visibility:visible!important;display:block!important;opacity:1!important;';
     
     const root = document.getElementById('root');
     if (root) {
-      root.style.cssText += 'visibility:visible!important;display:block!important;opacity:1!important;';
+      root.style.cssText = 'visibility:visible!important;display:block!important;opacity:1!important;';
     }
     
-    // Hide spinner with multiple methods for redundancy
+    // Immediately remove spinner - no animation or delay
     const spinner = document.getElementById('initial-content');
     if (spinner) {
-      spinner.style.display = 'none';
-      spinner.style.opacity = '0';
-      spinner.style.visibility = 'hidden';
-      
       if (spinner.parentNode) {
         try {
           spinner.parentNode.removeChild(spinner);
+          console.log('Spinner completely removed');
         } catch (e) {
-          // Ignore removal errors
+          // If removal fails, hide with multiple methods
+          spinner.style.display = 'none';
+          spinner.style.opacity = '0';
+          spinner.style.visibility = 'hidden';
+          spinner.innerHTML = '';
+          console.log('Spinner hidden with CSS');
         }
       }
     }
     
-    // Remove any blocker elements that might be hiding content
-    document.querySelectorAll('[id*="loading"], [id*="spinner"], [class*="loading"], [class*="spinner"]').forEach(el => {
+    // Remove ANY loading indicators across the page
+    const loadingElements = document.querySelectorAll('[id*="loading"], [id*="spinner"], [class*="loading"], [class*="spinner"]');
+    loadingElements.forEach(el => {
       if (el instanceof HTMLElement) {
         el.style.display = 'none';
         if (el.parentNode) {
@@ -57,7 +60,7 @@ export const forceVisibility = (): void => {
       }
     });
     
-    debug('Force visibility applied');
+    debug('Force visibility applied - ALL loading elements removed');
   } catch (e) {
     // Swallow errors to prevent crashes
   }
@@ -66,10 +69,10 @@ export const forceVisibility = (): void => {
 // Call immediately
 forceVisibility();
 
-// Call again with multiple timeouts for redundancy
-[100, 300, 500, 1000, 2000].forEach(delay => {
-  setTimeout(forceVisibility, delay);
-});
+// Call again after a very short timeout to ensure it runs after any other scripts
+setTimeout(forceVisibility, 0);
+setTimeout(forceVisibility, 50);
+setTimeout(forceVisibility, 100);
 
 // Add to window object for global access
 if (typeof window !== 'undefined') {

@@ -7,32 +7,58 @@ import './styles/index.css'
 // Import our minimal renderer rescue utility FIRST
 import './utils/renderer-rescue';
 
-console.log('Application starting up with minimal version');
+console.log('Application starting up - forcing immediate visibility');
 
-// Simplified spinner removal
-function hideSpinner() {
+// Immediately remove spinner without any timeouts
+function forceRemoveSpinner() {
   try {
+    // Immediately force visibility on all root elements
+    document.documentElement.style.cssText += 'visibility:visible!important;display:block!important;opacity:1!important;';
+    document.body.style.cssText += 'visibility:visible!important;display:block!important;opacity:1!important;';
+    
+    if (document.getElementById('root')) {
+      document.getElementById('root').style.cssText += 'visibility:visible!important;display:block!important;opacity:1!important;';
+    }
+    
+    // Immediately remove the spinner
     const spinner = document.getElementById('initial-content');
     if (spinner) {
-      spinner.style.display = 'none';
       if (spinner.parentNode) {
         try {
           spinner.parentNode.removeChild(spinner);
+          console.log('Initial spinner removed immediately');
         } catch (e) {
-          // Ignore removal errors
+          // Fallback to hide if removal fails
+          spinner.style.display = 'none';
+          spinner.style.visibility = 'hidden';
+          spinner.style.opacity = '0';
+          console.log('Initial spinner hidden via styles');
         }
       }
     }
+    
+    // Remove any other loading elements
+    document.querySelectorAll('[id*="loading"], [id*="spinner"], [class*="loading"], [class*="spinner"]').forEach(el => {
+      if (el instanceof HTMLElement) {
+        el.style.display = 'none';
+        if (el.parentNode) {
+          try {
+            el.parentNode.removeChild(el);
+          } catch (e) {
+            // Ignore removal errors
+          }
+        }
+      }
+    });
   } catch (e) {
-    // Catch all errors to prevent crashes
+    console.error('Error in forceRemoveSpinner:', e);
   }
 }
 
-// Call immediately and with multiple timeouts for redundancy
-hideSpinner();
-[100, 300, 500, 1000].forEach(delay => setTimeout(hideSpinner, delay));
+// Call immediately before any async operations
+forceRemoveSpinner();
 
-// Minimal root element handling
+// Get root element - create one if it doesn't exist
 const rootElement = document.getElementById('root');
 
 if (!rootElement) {
@@ -60,17 +86,17 @@ if (!rootElement) {
   }
 } else {
   try {
-    // Force root element to be visible
-    rootElement.style.cssText = 'visibility:visible!important;display:block!important;';
+    // Force root element to be visible again
+    rootElement.style.cssText = 'visibility:visible!important;display:block!important;opacity:1!important;';
     
-    // Create root and render with error handling
+    // Create root and render with minimal error handling
     const root = ReactDOM.createRoot(rootElement);
     root.render(<App />);
     
-    console.log('React mounted successfully with minimal approach');
+    console.log('React mounted successfully');
     
-    // Hide spinner again after React renders
-    hideSpinner();
+    // Remove spinner again after React renders
+    forceRemoveSpinner();
   } catch (error) {
     console.error('Error rendering React app:', error);
     
@@ -89,13 +115,5 @@ if (!rootElement) {
   }
 }
 
-// Additional safety measures
-[100, 300, 500, 1000, 2000].forEach(delay => {
-  setTimeout(hideSpinner, delay);
-  setTimeout(() => {
-    document.documentElement.style.visibility = 'visible';
-    document.body.style.visibility = 'visible';
-    const root = document.getElementById('root');
-    if (root) root.style.visibility = 'visible';
-  }, delay);
-});
+// Call once more for extra safety
+setTimeout(forceRemoveSpinner, 100);

@@ -7,9 +7,12 @@ interface LoadingIndicatorProps {
   forceShow?: boolean;
 }
 
-// This component is intentionally disabled and will never show
+/**
+ * This component is intentionally disabled to prevent loading indicators
+ * from causing the blank/loading screen issue
+ */
 const LoadingIndicator: React.FC<LoadingIndicatorProps> = () => {
-  // Always return null, even when forceShow is true
+  // Return null to prevent any loading indicators from being rendered
   return null;
 };
 

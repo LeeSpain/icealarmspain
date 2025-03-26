@@ -22,19 +22,11 @@
         opacity: 1 !important;
       }
       
-      /* Loading spinner - minimal and will be hidden by JavaScript */
+      /* Simple loading text instead of spinner */
       #initial-content {
         position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: white;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        z-index: 9999;
-        transition: opacity 0.3s;
+        display: none; /* Hide by default */
+        z-index: -9999; /* Push behind other elements */
       }
       
       /* Fallback content if JavaScript fails */
@@ -46,52 +38,22 @@
       }
     </style>
     <script>
-      // Minimal inline script for spinner hiding and visibility forcing
-      function forceVisibility() {
-        // Force visibility on HTML, body and root
-        document.documentElement.style.cssText += 'visibility:visible!important;display:block!important;opacity:1!important;';
-        document.body.style.cssText += 'visibility:visible!important;display:block!important;opacity:1!important;';
+      // Extremely minimal critical script - just set visibility
+      document.documentElement.style.cssText = 'visibility:visible!important;display:block!important;opacity:1!important;';
+      document.addEventListener('DOMContentLoaded', function() {
+        document.documentElement.style.cssText = 'visibility:visible!important;display:block!important;opacity:1!important;';
+        document.body.style.cssText = 'visibility:visible!important;display:block!important;opacity:1!important;';
         
         const root = document.getElementById('root');
         if (root) {
-          root.style.cssText += 'visibility:visible!important;display:block!important;opacity:1!important;';
+          root.style.cssText = 'visibility:visible!important;display:block!important;opacity:1!important;';
         }
-        
-        // Hide spinner with multiple methods
-        const spinner = document.getElementById('initial-content');
-        if (spinner) {
-          spinner.style.cssText = 'display:none!important;';
-          try {
-            if (spinner.parentNode) {
-              spinner.parentNode.removeChild(spinner);
-            }
-          } catch (e) {}
-        }
-      }
-      
-      // Call immediately and with timeouts
-      forceVisibility();
-      [100, 300, 500, 1000].forEach(delay => setTimeout(forceVisibility, delay));
-      
-      // Add to window object
-      window.forceAppVisibility = forceVisibility;
-      
-      // Listen for load events
-      document.addEventListener('DOMContentLoaded', forceVisibility);
-      window.addEventListener('load', forceVisibility);
+      });
     </script>
   </head>
   <body>
-    <!-- Simple loading spinner -->
-    <div id="initial-content">
-      <div style="text-align: center; padding: 20px;">
-        <div style="display: inline-block; width: 30px; height: 30px; border: 3px solid #0284c7; border-radius: 50%; border-top-color: transparent; animation: spin 1s linear infinite;"></div>
-        <p style="margin-top: 15px; font-family: 'Inter', system-ui, sans-serif;">Loading...</p>
-      </div>
-    </div>
-    
-    <!-- The React root -->
-    <div id="root"></div>
+    <!-- Minimal root div -->
+    <div id="root" style="visibility:visible!important;display:block!important;"></div>
     
     <!-- Fallback content for noscript browsers -->
     <noscript>
@@ -102,17 +64,8 @@
       </div>
     </noscript>
     
+    <!-- GPT Engineer script (required) -->
     <script src="https://cdn.gpteng.co/gptengineer.js" type="module"></script>
     <script type="module" src="/src/main.tsx"></script>
-    
-    <!-- Backup visibility enforcement -->
-    <script>
-      // Call force visibility again after scripts load
-      setTimeout(function() {
-        if (window.forceAppVisibility) {
-          window.forceAppVisibility();
-        }
-      }, 2000);
-    </script>
   </body>
 </html>
