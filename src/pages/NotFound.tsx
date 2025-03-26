@@ -7,21 +7,31 @@ import { useAuth } from "@/context/auth";
 
 const NotFound = () => {
   const location = useLocation();
-  const { isAuthenticated, user } = useAuth();
-  const storedRole = localStorage.getItem('userRole');
-  const effectiveRole = user?.role || storedRole;
+  
+  // Use try/catch to prevent errors if auth context is not available
+  let isAuthenticated = false;
+  let user = null;
+  let effectiveRole = '';
+  
+  try {
+    const auth = useAuth();
+    isAuthenticated = auth.isAuthenticated;
+    user = auth.user;
+    const storedRole = localStorage.getItem('userRole');
+    effectiveRole = user?.role || storedRole || '';
+  } catch (error) {
+    console.error("Auth context not available:", error);
+  }
 
   useEffect(() => {
     console.error(
       "404 Error: User attempted to access non-existent route:",
-      location.pathname,
-      "Auth state:",
-      { isAuthenticated, userRole: effectiveRole, userId: user?.id }
+      location.pathname
     );
-  }, [location.pathname, isAuthenticated, user, effectiveRole]);
+  }, [location.pathname]);
 
   const getDashboardLink = () => {
-    if (!isAuthenticated) return "/login";
+    if (!isAuthenticated) return "/";
     
     switch (effectiveRole) {
       case 'admin':
@@ -48,9 +58,11 @@ const NotFound = () => {
               <Link to={getDashboardLink()} className="inline-block bg-ice-600 text-white px-6 py-3 rounded-md hover:bg-ice-700 transition-colors">
                 Return to {effectiveRole === 'admin' ? 'Admin Dashboard' : effectiveRole === 'callcenter' ? 'Call Center' : 'Dashboard'}
               </Link>
-              <p className="text-sm text-gray-500 mt-2">
-                Logged in as: {user?.email} ({effectiveRole})
-              </p>
+              {user && (
+                <p className="text-sm text-gray-500 mt-2">
+                  Logged in as: {user.email} ({effectiveRole})
+                </p>
+              )}
             </div>
           ) : (
             <Link to="/" className="inline-block bg-ice-600 text-white px-6 py-3 rounded-md hover:bg-ice-700 transition-colors">

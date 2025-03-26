@@ -10,36 +10,18 @@ import Checkout from "../pages/Checkout";
 import NotFound from "../pages/NotFound";
 import { RouteConfig } from './types';
 import Layout from '../components/layout/Layout';
-import Hero from "../components/Hero";
-import DeviceShowcase from "../components/DeviceShowcase";
-import Pricing from "../components/Pricing";
-import ExpatInfo from "../components/ExpatInfo";
-import Testimonials from "../components/Testimonials";
+import Index from "../pages/Index"; // Importing Index directly
 import SOSPendantPage from "../pages/SOSPendantPage";
 import MedicalDispenserPage from "../pages/MedicalDispenserPage";
 import GlucoseMonitorPage from "../pages/GlucoseMonitorPage";
 import InvestorPage from "../pages/InvestorPage";
 import HelpSupportPage from "../pages/HelpSupportPage";
 import Commercial from "../pages/Commercial";
-import Index from "../pages/Index"; // Import Index component
-
-// Landing page component
-const Landing = () => {
-  return (
-    <>
-      <Hero />
-      <DeviceShowcase />
-      <Pricing />
-      <ExpatInfo />
-      <Testimonials />
-    </>
-  );
-};
 
 export const mainRoutes: RouteConfig[] = [
   {
     path: "/",
-    element: <Layout><Index /></Layout> // Use Index component for the root path
+    element: <Layout><Index /></Layout>
   },
   {
     path: "/about",
@@ -102,4 +84,3 @@ export const mainRoutes: RouteConfig[] = [
     element: <Layout><NotFound /></Layout>
   }
 ];
-

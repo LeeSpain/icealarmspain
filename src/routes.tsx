@@ -4,12 +4,12 @@ import { withLazyLoading } from "./utils/lazy-imports";
 import TestingPanel from "./components/test/TestingPanel";
 import Index from "./pages/Index"; // Import the Index component directly
 
-// Use lazy loading but with null fallbacks
-const SOSPendantPage = withLazyLoading(() => import("./pages/SOSPendantPage"), "Loading SOS Pendant page...");
-const MedicalDispenserPage = withLazyLoading(() => import("./pages/MedicalDispenserPage"), "Loading Medical Dispenser page...");
-const GlucoseMonitorPage = withLazyLoading(() => import("./pages/GlucoseMonitorPage"), "Loading Glucose Monitor page...");
-const Signup = withLazyLoading(() => import("./pages/signup"), "Loading Signup page...");
-const Checkout = withLazyLoading(() => import("./pages/Checkout"), "Loading Checkout page...");
+// Use lazy loading with null fallbacks for other pages
+const SOSPendantPage = withLazyLoading(() => import("./pages/SOSPendantPage"));
+const MedicalDispenserPage = withLazyLoading(() => import("./pages/MedicalDispenserPage"));
+const GlucoseMonitorPage = withLazyLoading(() => import("./pages/GlucoseMonitorPage"));
+const Signup = withLazyLoading(() => import("./pages/signup"));
+const Checkout = withLazyLoading(() => import("./pages/Checkout"));
 
 // Import routes from the routes directory
 import { routes as allRoutes } from "./routes/index";
@@ -18,7 +18,7 @@ import { routes as allRoutes } from "./routes/index";
 const customRoutes: RouteConfig[] = [
   {
     path: "/",
-    element: <Index />, // Use the Index component directly for the root route
+    element: <Index />,  // Use Index component directly for homepage
   },
   {
     path: "/sos-pendant",
@@ -66,8 +66,7 @@ const protectedRoutes = allRoutes.map(route => {
 });
 
 // Combine the imported routes with our custom routes
-// Make sure the root route is first in the array
 export const routes = [
-  ...customRoutes, // Place customRoutes first to prioritize them
+  ...customRoutes,  // Put custom routes first to ensure they take precedence
   ...protectedRoutes
 ];

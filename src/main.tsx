@@ -3,7 +3,6 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App'
 import './styles/index.css'
-import './utils/check-render'
 
 console.log("Starting application initialization");
 
@@ -21,6 +20,12 @@ if (!rootElement) {
     rootElement.style.minHeight = '100vh';
     rootElement.style.visibility = 'visible';
     rootElement.style.opacity = '1';
+    rootElement.style.width = '100%';
+    rootElement.style.overflow = 'hidden';
+    
+    document.body.style.visibility = 'visible';
+    document.body.style.opacity = '1';
+    document.body.style.backgroundColor = 'white';
     
     const root = ReactDOM.createRoot(rootElement);
     
