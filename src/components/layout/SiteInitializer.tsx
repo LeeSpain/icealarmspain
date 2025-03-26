@@ -9,34 +9,43 @@ const SiteInitializer = () => {
   useEffect(() => {
     console.log("SiteInitializer running - forcing visibility");
     
-    // Ensure the page is visible
-    document.documentElement.style.visibility = 'visible';
-    document.body.style.visibility = 'visible';
-    
-    // Force root to be visible
-    const root = document.getElementById('root');
-    if (root) {
-      root.style.visibility = 'visible';
-      root.style.display = 'block';
-    }
-
-    // Force App to be visible
-    const app = document.querySelector('.App');
-    if (app instanceof HTMLElement) {
-      app.style.visibility = 'visible';
-      app.style.display = 'block';
-    }
-    
-    // Hide any "Not found" text outside the root
-    const nonRootElements = document.body.querySelectorAll('body > *:not(#root):not(script)');
-    nonRootElements.forEach(el => {
-      if (el instanceof HTMLElement && el.textContent?.includes('Not found')) {
-        el.style.display = 'none';
+    const forceVisibility = () => {
+      // Ensure the page is visible
+      document.documentElement.style.visibility = 'visible';
+      document.body.style.visibility = 'visible';
+      
+      // Force root to be visible
+      const root = document.getElementById('root');
+      if (root) {
+        root.style.visibility = 'visible';
+        root.style.display = 'block';
       }
-    });
+  
+      // Force App to be visible
+      const app = document.querySelector('.App');
+      if (app instanceof HTMLElement) {
+        app.style.visibility = 'visible';
+        app.style.display = 'block';
+      }
+      
+      // Hide any "Not found" text outside the root
+      const nonRootElements = document.body.querySelectorAll('body > *:not(#root):not(script)');
+      nonRootElements.forEach(el => {
+        if (el instanceof HTMLElement && el.textContent?.includes('Not found')) {
+          el.style.display = 'none';
+        }
+      });
+    };
     
-    // Set page title again for redundancy
-    document.title = "Ice Guardian Alert";
+    // Apply visibility fixes multiple times to ensure they take effect
+    forceVisibility();
+    
+    // Set multiple timers to ensure fixes are applied
+    const timers = [
+      setTimeout(forceVisibility, 100),
+      setTimeout(forceVisibility, 500),
+      setTimeout(forceVisibility, 1000)
+    ];
     
     // Add visual feedback for loading
     const loadingTimeout = setTimeout(() => {
@@ -49,13 +58,21 @@ const SiteInitializer = () => {
           <div style="padding: 20px; text-align: center;">
             <h2>Ice Guardian Alert is loading...</h2>
             <p>If this message persists, please refresh the page.</p>
+            <button onclick="window.location.reload()" 
+              style="padding: 8px 16px; background: #0070f3; color: white; 
+              border: none; border-radius: 4px; cursor: pointer; margin-top: 20px;">
+              Refresh Page
+            </button>
           </div>
         `;
         root.appendChild(emergencyDiv);
       }
     }, 3000);
     
-    return () => clearTimeout(loadingTimeout);
+    return () => {
+      clearTimeout(loadingTimeout);
+      timers.forEach(clearTimeout);
+    };
   }, []);
   
   return null;

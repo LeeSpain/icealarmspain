@@ -1,45 +1,74 @@
 
 /**
- * This utility helps verify if the build is working correctly
- * It should run immediately when imported and log to console
+ * Build verification utility
+ * This script helps identify build-specific issues
  */
 
-import { getEnvironmentDiagnostics, getEnvironment } from './environment';
-
-// Self-executing function for immediate checking
-(function verifyBuild() {
+// Execute immediately
+(() => {
   try {
-    console.log('🔍 Build verification running...');
-    console.log('🌍 Environment:', getEnvironment());
+    console.log('🔍 Build verification starting');
     
-    // Log environment variables (non-sensitive only)
-    const envDiagnostics = getEnvironmentDiagnostics();
-    console.log('🌍 Environment diagnostics:', envDiagnostics);
-    
-    // Check for common issues
-    const checks = {
-      documentExists: typeof document !== 'undefined',
-      windowExists: typeof window !== 'undefined',
-      rootElementExists: document && document.getElementById('root') !== null
+    // Log environment information
+    const env = {
+      environment: import.meta.env.VITE_ENVIRONMENT || 'unknown',
+      buildTime: import.meta.env.VITE_BUILD_TIME || 'unknown',
+      buildMode: import.meta.env.MODE || 'unknown',
+      debug: import.meta.env.VITE_DEBUG_BUILD === 'true',
     };
     
-    console.log('🧪 Environment checks:', checks);
+    console.log('📊 Environment:', env);
     
-    if (!checks.rootElementExists) {
-      console.error('❌ Root element not found! This will prevent the app from rendering.');
-    }
+    // Check for critical resources
+    setTimeout(() => {
+      try {
+        // Verify DOM structure
+        const rootEl = document.getElementById('root');
+        if (!rootEl) {
+          console.error('❌ Root element missing');
+        } else {
+          console.log('✅ Root element exists');
+        }
+        
+        // Verify React has initialized
+        const appEl = document.querySelector('.App');
+        if (!appEl) {
+          console.error('❌ App element missing - React may not have initialized');
+        } else {
+          console.log('✅ App element exists - React has initialized');
+        }
+        
+        // Verify route rendering
+        const contentEls = document.querySelectorAll('#root > .App > *');
+        console.log(`📄 Content elements: ${contentEls.length}`);
+        
+        // Log memory usage if available
+        if (performance && performance.memory) {
+          console.log('💾 Memory:', {
+            // @ts-ignore - Not all browsers support this
+            usedJSHeapSize: Math.round(performance.memory.usedJSHeapSize / (1024 * 1024)) + 'MB',
+            // @ts-ignore - Not all browsers support this
+            totalJSHeapSize: Math.round(performance.memory.totalJSHeapSize / (1024 * 1024)) + 'MB',
+          });
+        }
+      } catch (error) {
+        console.error('Error during build verification checks:', error);
+      }
+    }, 1000);
     
-    // Check DOM structure
-    if (document && document.body) {
-      console.log('📃 Document structure check - Body children count:', document.body.children.length);
-      console.log('📃 Document structure check - Root element visible:', 
-        document.getElementById('root')?.style.display !== 'none');
-    }
+    // Add a window property to indicate build verification ran
+    window.__ICE_GUARDIAN_BUILD_VERIFIED = true;
     
-    console.log('✅ Build verification completed');
   } catch (error) {
-    console.error('❌ Build verification failed:', error);
+    console.error('Build verification error:', error);
   }
 })();
 
-export default {};
+// Add build info to window for debugging
+declare global {
+  interface Window {
+    __ICE_GUARDIAN_BUILD_VERIFIED?: boolean;
+  }
+}
+
+export {};
