@@ -17,7 +17,7 @@ if (!rootElement) {
     // Create root and render
     const root = ReactDOM.createRoot(rootElement);
     
-    // Standard rendering path with React strict mode in dev only
+    // Standard rendering path
     root.render(
       import.meta.env.DEV ? (
         <React.StrictMode>
