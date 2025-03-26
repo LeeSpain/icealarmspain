@@ -24,17 +24,6 @@ export const forceVisibility = (recursive = false): void => {
     const root = document.getElementById('root');
     if (root) {
       root.style.cssText = 'visibility:visible!important;display:block!important;opacity:1!important;';
-      
-      // Add fallback content if empty
-      if (root.innerHTML.trim() === '') {
-        debug('Root element was empty, adding fallback content');
-        root.innerHTML = `
-          <div style="padding: 20px; font-family: system-ui, sans-serif;">
-            <h1 style="color: #0284c7; margin-bottom: 16px;">Ice Guardian Alert</h1>
-            <p>Loading application content...</p>
-          </div>
-        `;
-      }
     }
     
     // Hide spinner with multiple methods
@@ -43,9 +32,8 @@ export const forceVisibility = (recursive = false): void => {
       spinner.style.cssText = 'display:none!important;visibility:hidden!important;opacity:0!important;';
       try {
         spinner.parentNode?.removeChild(spinner);
-        debug('Spinner aggressively removed');
       } catch (e) {
-        debug('Error removing spinner:', e);
+        // Ignore removal errors
       }
     }
     
@@ -55,16 +43,15 @@ export const forceVisibility = (recursive = false): void => {
         const allElements = document.querySelectorAll('*');
         allElements.forEach(el => {
           if (el instanceof HTMLElement) {
-            el.style.cssText += 'visibility:visible!important;display:block!important;opacity:1!important;';
+            if (el.id !== 'initial-content') { // Don't show the spinner
+              el.style.cssText += 'visibility:visible!important;opacity:1!important;';
+            }
           }
         });
-        debug('Applied visibility to all DOM elements');
       } catch (e) {
-        debug('Error applying visibility to all elements:', e);
+        // Ignore errors
       }
     }
-    
-    debug('Enhanced force visibility applied');
   } catch (e) {
     console.error('Error in forceVisibility:', e);
   }
@@ -75,11 +62,6 @@ forceVisibility();
 
 // Call again with a slight delay in recursive mode 
 setTimeout(() => forceVisibility(true), 500);
-
-// Add multiple calls with increasing timeouts for redundancy
-[1000, 2000, 3000, 5000].forEach(delay => {
-  setTimeout(() => forceVisibility(true), delay);
-});
 
 // Add window method for external access
 if (typeof window !== 'undefined') {

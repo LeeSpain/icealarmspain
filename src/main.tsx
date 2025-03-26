@@ -8,7 +8,7 @@ import App from './App';
 import './styles/index.css';
 
 // Log for debugging
-console.log('🚀 Application starting with ultra-minimal mode');
+console.log('🚀 Application starting with React 18 createRoot');
 
 // Immediately hide spinner
 (function removeSpinner() {
@@ -65,7 +65,7 @@ function renderReact() {
     const root = ReactDOM.createRoot(rootElement);
     root.render(<App />);
     
-    console.log('⚛️ React mounted in minimal mode');
+    console.log('⚛️ React mounted successfully');
   } catch (error) {
     console.error('Error rendering React app:', error);
     
@@ -88,11 +88,11 @@ function renderReact() {
   }
 }
 
-// Render React with a very small delay to ensure DOM is ready
-setTimeout(renderReact, 10);
+// Render React immediately - don't delay
+renderReact();
 
 // Multiple safety timeouts for spinner removal and ensuring root visibility
-[100, 500, 1000, 2000, 3000, 5000].forEach(delay => {
+[100, 500, 1000, 2000, 3000].forEach(delay => {
   setTimeout(() => {
     ensureRootVisible();
     const spinner = document.getElementById('initial-content');
