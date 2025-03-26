@@ -4,6 +4,18 @@ import type { Database } from './types';
 import { toast } from '@/hooks/use-toast';
 import { getEnvVar, getRequiredEnvVar, isDevelopment, isProduction } from '@/utils/environment';
 
+// Define types for our database entities
+export interface ContactSubmission {
+  id?: string;
+  name: string;
+  email: string;
+  subject: string;
+  message: string;
+  user_id?: string | null;
+  status?: string;
+  created_at?: string;
+}
+
 // Create a single supabase client for interacting with your database
 const supabaseUrl = getEnvVar('VITE_SUPABASE_URL', '');
 const supabaseAnonKey = getEnvVar('VITE_SUPABASE_ANON_KEY', '');
@@ -78,7 +90,7 @@ export async function supabaseOperation<T = any>(
   }
 }
 
-export const createContactSubmission = async (submission: any) => {
+export const createContactSubmission = async (submission: ContactSubmission) => {
   return supabaseOperation(
     () => (supabase as any).from('contact_submissions').insert(submission),
     { context: 'Contact Form' }
