@@ -7,7 +7,7 @@ const ScrollToTop = () => {
   const { pathname } = useLocation();
 
   useEffect(() => {
-    // Immediate scroll with no delay
+    // Only scroll, no delay
     window.scrollTo(0, 0);
   }, [pathname]);
 
