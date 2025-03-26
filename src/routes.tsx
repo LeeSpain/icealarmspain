@@ -1,3 +1,4 @@
+
 import React from "react";
 import { RouteConfig } from "./routes/types";
 import { withLazyLoading } from "./utils/lazy-imports";
@@ -60,7 +61,7 @@ const protectedRoutes = allRoutes.map(route => {
   return route;
 });
 
-// Combine the imported routes with our custom routes
+// Combine the imported routes with our custom routes - mainRoutes need to come first for proper priority
 export const routes = [
   ...protectedRoutes,
   ...customRoutes
