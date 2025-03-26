@@ -21,14 +21,30 @@ const FallbackRendering: React.FC<Props> = ({ fallbackTimeout = 10000 }) => {
         appContentFound: !!appContent,
         rootElementFound: !!rootElement,
         rootChildrenCount: rootElement ? rootElement.children.length : 0,
-        isReactInitialized: !!(window as any).renderingStages?.rootCreated
+        appContentChildren: appContent ? appContent.children.length : 0,
+        isReactInitialized: !!(window as any).renderingStages?.rootCreated,
+        appLoaded: !!(window as any).appLoaded
       });
       
-      if (!appContent || !appContent.children.length || 
-          (rootElement && rootElement.children.length <= 1) ||
-          document.body.innerHTML.includes('Loading application content...')) {
+      // Only show fallback if all these conditions suggest the app hasn't rendered
+      const appNotRendered = (
+        !appContent || 
+        !rootElement || 
+        rootElement.children.length === 0 || 
+        (appContent && appContent.children.length === 0) ||
+        document.body.innerHTML.includes('Loading application content...')
+      );
+      
+      // Check if the app has explicitly marked itself as loaded
+      const appExplicitlyLoaded = (window as any).appLoaded === true || 
+                                 (window as any).renderingStages?.appRendered === true;
+      
+      // Only show fallback if app is clearly not rendered AND not explicitly marked as loaded
+      if (appNotRendered && !appExplicitlyLoaded) {
         console.error('Rendering fallback content due to slow or failed app initialization');
         setShowFallback(true);
+      } else {
+        console.log('App appears to be loaded correctly, not showing fallback');
       }
     }, fallbackTimeout);
     
