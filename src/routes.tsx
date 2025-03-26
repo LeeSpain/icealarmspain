@@ -16,7 +16,7 @@ export const routes: RouteConfig[] = [
     element: <Index />
   },
   
-  // All other routes, filtering out any duplicate home routes
+  // All other routes
   ...mainRoutes.filter(route => route.path !== "/"),
   ...dashboardRoutes,
   ...adminRoutes,

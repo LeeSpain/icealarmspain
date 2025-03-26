@@ -10,9 +10,9 @@ import HeroBackground from "./hero/HeroBackground";
 const Hero: React.FC = () => {
   const { language } = useLanguage();
   const location = useLocation();
-  const isHomepage = location.pathname === "/" || location.pathname === "";
   
-  console.log("Hero component rendering", { isHomepage, path: location.pathname });
+  // Debug the component rendering
+  console.log("Hero component rendering", { path: location.pathname });
 
   return (
     <section 

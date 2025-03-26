@@ -7,6 +7,8 @@ interface LoadingIndicatorProps {
 }
 
 const LoadingIndicator: React.FC<LoadingIndicatorProps> = ({ size = 'medium', message }) => {
+  console.log("Rendering LoadingIndicator with message:", message);
+  
   return (
     <div className="flex flex-col items-center justify-center p-4">
       <div className="text-center">

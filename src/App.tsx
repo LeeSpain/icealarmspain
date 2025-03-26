@@ -1,6 +1,6 @@
 
 import React, { useEffect } from "react";
-import { BrowserRouter as Router, Routes, Route, useNavigate } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster";
 import { LanguageProvider } from "@/context/LanguageContext";
 import { HelmetProvider } from "react-helmet-async";
@@ -11,10 +11,14 @@ import { AuthProvider } from "@/context/auth";
 // Import routes
 import { routes } from "./routes";
 
-// Add a simple debug component
+// App debugging component
 const AppDebug = () => {
   useEffect(() => {
-    console.log("App mounted and rendering");
+    console.log("App mounted and rendering with routes:", routes.length);
+    // Log the first few routes for debugging
+    routes.slice(0, 3).forEach(route => {
+      console.log(`Route: ${route.path}`);
+    });
   }, []);
   
   return null;
@@ -22,7 +26,7 @@ const AppDebug = () => {
 
 function App() {
   // Log app startup
-  console.log("App starting up");
+  console.log("App component rendering");
 
   return (
     <ErrorBoundary>

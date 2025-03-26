@@ -12,32 +12,36 @@ import SectionWrapper from "@/components/layout/SectionWrapper";
 const Index: React.FC = () => {
   const { language } = useLanguage();
   
-  // Add debug logging
+  // Enhanced debug logging
   useEffect(() => {
-    console.log("Index page rendered");
+    console.log("Index page mounted and rendering");
+    
+    // Check if hero component is available
+    setTimeout(() => {
+      const heroElement = document.getElementById('home');
+      console.log("Hero element found:", !!heroElement);
+    }, 100);
+    
   }, []);
-  
-  // Prepare SEO data based on language
-  const seoDescription = language === 'en' 
-    ? "ICE Alarm España provides reliable emergency alert systems for seniors and individuals with medical conditions in Spain."
-    : "ICE Alarm España ofrece sistemas de alerta de emergencia confiables para personas mayores e individuos con condiciones médicas en España.";
   
   return (
     <Layout>
       <Helmet>
         <title>Ice Guardian Alert - Home</title>
-        <meta name="description" content={seoDescription} />
+        <meta name="description" content="ICE Alarm España provides reliable emergency alert systems for seniors and individuals with medical conditions in Spain." />
       </Helmet>
       
-      <main className="flex-grow relative bg-white">
-        <Hero />
-        <SectionDivider />
-        <SectionWrapper>
-          <DeviceShowcase />
-        </SectionWrapper>
-        <SectionDivider variant="white-to-ice" />
-        <ExpatInfo />
-      </main>
+      <div className="flex-grow relative bg-white">
+        <div id="page-content" className="min-h-screen">
+          <Hero />
+          <SectionDivider />
+          <SectionWrapper>
+            <DeviceShowcase />
+          </SectionWrapper>
+          <SectionDivider variant="white-to-ice" />
+          <ExpatInfo />
+        </div>
+      </div>
     </Layout>
   );
 };
