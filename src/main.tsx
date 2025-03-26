@@ -22,10 +22,8 @@ if (!rootElement) {
     rootElement.style.visibility = 'visible';
     rootElement.style.opacity = '1';
     
-    // Create root outside of setTimeout to avoid delay
+    // Create root and render immediately
     const root = ReactDOM.createRoot(rootElement);
-    
-    // Render immediately
     root.render(<App />);
     
     console.log("App rendered successfully");

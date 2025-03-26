@@ -55,6 +55,11 @@ const Index: React.FC = () => {
     ? "ICE Alarm España provides reliable emergency alert systems for seniors and individuals with medical conditions in Spain."
     : "ICE Alarm España ofrece sistemas de alerta de emergencia confiables para personas mayores e individuos con condiciones médicas en España.";
   
+  // Force immediate rendering to prevent "Not Found" flash
+  useEffect(() => {
+    document.title = "Ice Guardian Alert - Home";
+  }, []);
+  
   return (
     <Layout>
       <Helmet>

@@ -18,12 +18,8 @@ function App() {
   useEffect(() => {
     console.log("Routes configuration:", routes.map(r => r.path));
     
-    // Set routes as ready after a small delay to ensure DOM is ready
-    const timer = setTimeout(() => {
-      setRoutesReady(true);
-    }, 50);
-    
-    return () => clearTimeout(timer);
+    // Set routes as ready immediately to prevent flash
+    setRoutesReady(true);
   }, []);
   
   return (
@@ -34,6 +30,11 @@ function App() {
             <LanguageProvider>
               <Router>
                 <ScrollToTop />
+                {!routesReady && (
+                  <div className="flex h-screen w-full items-center justify-center">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-ice-600"></div>
+                  </div>
+                )}
                 {routesReady && (
                   <Routes>
                     {routes.map((route) => (

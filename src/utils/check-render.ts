@@ -37,7 +37,7 @@
       console.error('❌ Root element not found!');
     }
     
-    // Add a fallback element if nothing is rendering
+    // Add a fallback element if nothing is rendering, but with a short timeout
     setTimeout(() => {
       const root = document.getElementById('root');
       if (root && root.children.length === 0) {
@@ -52,7 +52,7 @@
           </div>
         `;
       }
-    }, 3000); // Increased timeout for more reliable detection
+    }, 2000); // Reduced timeout for faster detection
     
     // Set up observer to monitor DOM changes
     const observer = new MutationObserver((mutations) => {
