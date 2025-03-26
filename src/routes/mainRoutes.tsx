@@ -17,6 +17,7 @@ import GlucoseMonitorPage from "../pages/GlucoseMonitorPage";
 import InvestorPage from "../pages/InvestorPage";
 import HelpSupportPage from "../pages/HelpSupportPage";
 import Commercial from "../pages/Commercial";
+import DevicesPage from "../pages/DevicesPage";
 
 // Define home route first for priority - use direct component import instead of Landing component
 const homeRoute: RouteConfig = {
@@ -49,7 +50,7 @@ const otherRoutes: RouteConfig[] = [
   },
   {
     path: "/devices",
-    element: <Layout><Products /></Layout>
+    element: <Layout><DevicesPage /></Layout>
   },
   {
     path: "/products/:id",
