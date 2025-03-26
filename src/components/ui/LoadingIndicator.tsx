@@ -8,7 +8,6 @@ interface LoadingIndicatorProps {
 }
 
 const LoadingIndicator: React.FC<LoadingIndicatorProps> = () => {
-  // Never render loading indicators
   return null;
 };
 

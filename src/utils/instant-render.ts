@@ -1,7 +1,7 @@
 
 /**
  * Simple instant render utility
- * Forces immediate rendering without complex logic
+ * Forces immediate rendering without any loading screens
  */
 
 console.log("⚡ Rendering application...");
@@ -21,9 +21,20 @@ if (root) {
 
 // Apply when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
-  console.log("DOM loaded - forcing visibility");
-  document.documentElement.style.visibility = 'visible';
-  document.body.style.visibility = 'visible';
+  // Remove any "Not found" messages outside the react app
+  document.querySelectorAll('body > *:not(#root):not(script)').forEach(el => {
+    if (el instanceof HTMLElement) {
+      el.style.display = 'none';
+    }
+  });
+  
+  // Hide any loading messages within the app
+  const loadingElements = document.querySelectorAll('.loading-screen, .loading-indicator');
+  loadingElements.forEach(el => {
+    if (el instanceof HTMLElement) {
+      el.style.display = 'none';
+    }
+  });
 });
 
 export {};

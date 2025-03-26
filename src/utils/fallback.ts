@@ -1,11 +1,11 @@
 
 /**
  * Minimal fallback utility
- * Only shows fallback if page doesn't render within 500ms
+ * Only shows fallback if page doesn't render within 100ms
  */
 
 (() => {
-  // Shorter timeout (500ms instead of 1 second)
+  // Very short timeout (100ms instead of 500ms)
   setTimeout(() => {
     const root = document.getElementById('root');
     
@@ -20,7 +20,7 @@
       document.documentElement.style.visibility = 'visible';
       document.body.style.visibility = 'visible';
     }
-  }, 500);
+  }, 100);
 })();
 
 export {};

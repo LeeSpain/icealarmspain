@@ -1,5 +1,5 @@
 
-import React, { useEffect } from "react";
+import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster";
 import { LanguageProvider } from "@/context/LanguageContext";
@@ -11,13 +11,6 @@ import NotFound from "./pages/NotFound";
 import { routes } from "./routes";
 
 function App() {
-  // Force visibility on mount
-  useEffect(() => {
-    document.documentElement.style.visibility = 'visible';
-    document.body.style.visibility = 'visible';
-    console.log("App component mounted");
-  }, []);
-
   return (
     <div className="App">
       <HelmetProvider>
