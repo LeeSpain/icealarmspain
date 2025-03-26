@@ -54,11 +54,12 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
       };
     }
     
-    return null; // Default case, no header
+    // For other pages, don't show a header by default
+    return null;
   };
   
   const headerContent = getHeaderContent();
-
+  
   return (
     <div className="flex flex-col min-h-screen">
       <Navbar />
