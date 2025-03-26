@@ -6,23 +6,38 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Ice Guardian Alert</title>
     <meta name="description" content="Medical alert and health monitoring system for seniors and expatriates" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap">
     <style>
-      /* Ensure immediate visibility */
+      /* Core styles for immediate visibility */
       body, html, #root {
         margin: 0;
         padding: 0;
         font-family: 'Inter', system-ui, sans-serif;
-        background: white !important;
-        color: black !important;
-        display: block !important;
-        visibility: visible !important;
-        opacity: 1 !important;
+        height: 100%;
+        width: 100%;
+        background: white;
+        color: black;
+        display: block;
+        visibility: visible;
+        opacity: 1;
+      }
+      
+      /* Basic fallback content in case React doesn't load */
+      .fallback-content {
+        display: none;
+        padding: 2rem;
+        text-align: center;
+        font-family: system-ui, sans-serif;
+      }
+      
+      /* Show fallback content if app doesn't load quickly */
+      body.js-loading .fallback-content {
+        display: block;
       }
     </style>
   </head>
 
-  <body>
+  <body class="js-loading">
     <noscript>
       <div style="text-align: center; padding: 2rem; font-family: system-ui, sans-serif;">
         <h1>JavaScript is required</h1>
@@ -31,6 +46,25 @@
     </noscript>
     
     <div id="root"></div>
+    
+    <!-- Fallback content that will be hidden once app loads -->
+    <div class="fallback-content">
+      <h1>Ice Guardian Alert</h1>
+      <p>Loading application...</p>
+    </div>
+    
+    <script>
+      // Remove js-loading class once the script loads
+      document.body.classList.remove('js-loading');
+      
+      // Set a timeout to show error message if app doesn't load
+      setTimeout(function() {
+        if (!document.querySelector('.App')) {
+          console.error('App failed to initialize after 5s');
+          document.body.classList.add('js-loading');
+        }
+      }, 5000);
+    </script>
     
     <script type="module" src="/src/main.tsx"></script>
   </body>

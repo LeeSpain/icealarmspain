@@ -6,9 +6,14 @@ interface LoadingIndicatorProps {
   message?: string;
 }
 
-// No-op component that doesn't render any spinners
-const LoadingIndicator: React.FC<LoadingIndicatorProps> = () => {
-  return null;
+const LoadingIndicator: React.FC<LoadingIndicatorProps> = ({ size = 'medium', message }) => {
+  return (
+    <div className="flex flex-col items-center justify-center p-4">
+      <div className="text-center">
+        {message && <p className="text-muted-foreground mt-2">{message}</p>}
+      </div>
+    </div>
+  );
 };
 
 export default LoadingIndicator;

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import AboutUs from "../pages/AboutUs";
 import Contact from "../pages/Contact";
@@ -19,15 +18,14 @@ import HelpSupportPage from "../pages/HelpSupportPage";
 import Commercial from "../pages/Commercial";
 import DevicesPage from "../pages/DevicesPage";
 
-// Define home route first for priority - use direct component import instead of Landing component
-const homeRoute: RouteConfig = {
-  path: "/",
-  element: <Layout><Index /></Layout>,
-  priority: "highest" // Custom property to indicate highest priority
-};
-
-// Define other routes
-const otherRoutes: RouteConfig[] = [
+// Define all main routes, including home route
+export const mainRoutes: RouteConfig[] = [
+  // Home route
+  {
+    path: "/",
+    element: <Index />
+  },
+  // Other routes
   {
     path: "/about",
     element: <Layout><AboutUs /></Layout>
@@ -83,16 +81,5 @@ const otherRoutes: RouteConfig[] = [
   {
     path: "/commercial",
     element: <Layout><Commercial /></Layout>
-  },
-  {
-    path: "*",
-    element: <Layout><NotFound /></Layout>,
-    priority: "lowest" // Make sure this route has lowest priority
   }
-];
-
-// Export routes with home route first for proper priority
-export const mainRoutes: RouteConfig[] = [
-  homeRoute,
-  ...otherRoutes
 ];

@@ -58,22 +58,39 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
   };
   
   const headerContent = getHeaderContent();
-
-  return (
-    <div className="flex flex-col min-h-screen">
-      <Navbar />
-      {headerContent && (
-        <PageHeader 
-          title={headerContent.title} 
-          subtitle={headerContent.subtitle} 
-        />
-      )}
-      <main className="flex-grow">
-        {children}
-      </main>
-      <Footer />
-    </div>
-  );
+  
+  // Add some basic error handling
+  try {
+    return (
+      <div className="flex flex-col min-h-screen">
+        <Navbar />
+        {headerContent && (
+          <PageHeader 
+            title={headerContent.title} 
+            subtitle={headerContent.subtitle} 
+          />
+        )}
+        <main className="flex-grow">
+          {children}
+        </main>
+        <Footer />
+      </div>
+    );
+  } catch (error) {
+    console.error("Error rendering Layout:", error);
+    return (
+      <div className="p-8 text-center">
+        <h1 className="text-2xl font-bold mb-4">Something went wrong</h1>
+        <p className="mb-4">There was an error rendering the page layout.</p>
+        <button 
+          onClick={() => window.location.reload()} 
+          className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+        >
+          Reload Page
+        </button>
+      </div>
+    );
+  }
 };
 
 export default Layout;
