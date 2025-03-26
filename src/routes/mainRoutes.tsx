@@ -21,6 +21,7 @@ import GlucoseMonitorPage from "../pages/GlucoseMonitorPage";
 import InvestorPage from "../pages/InvestorPage";
 import HelpSupportPage from "../pages/HelpSupportPage";
 import Commercial from "../pages/Commercial";
+import Index from "../pages/Index"; // Import Index component
 
 // Landing page component
 const Landing = () => {
@@ -38,7 +39,7 @@ const Landing = () => {
 export const mainRoutes: RouteConfig[] = [
   {
     path: "/",
-    element: <Layout><Landing /></Layout>
+    element: <Layout><Index /></Layout> // Use Index component for the root path
   },
   {
     path: "/about",
@@ -101,3 +102,4 @@ export const mainRoutes: RouteConfig[] = [
     element: <Layout><NotFound /></Layout>
   }
 ];
+

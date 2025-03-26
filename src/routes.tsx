@@ -2,6 +2,7 @@ import React from "react";
 import { RouteConfig } from "./routes/types";
 import { withLazyLoading } from "./utils/lazy-imports";
 import TestingPanel from "./components/test/TestingPanel";
+import Index from "./pages/Index"; // Import the Index component directly
 
 // Use lazy loading but with null fallbacks
 const SOSPendantPage = withLazyLoading(() => import("./pages/SOSPendantPage"), "Loading SOS Pendant page...");
@@ -15,6 +16,10 @@ import { routes as allRoutes } from "./routes/index";
 
 // Define the routes that we've already implemented and need to keep
 const customRoutes: RouteConfig[] = [
+  {
+    path: "/",
+    element: <Index />, // Use the Index component directly for the root route
+  },
   {
     path: "/sos-pendant",
     element: <SOSPendantPage />,
@@ -61,7 +66,8 @@ const protectedRoutes = allRoutes.map(route => {
 });
 
 // Combine the imported routes with our custom routes
+// Make sure the root route is first in the array
 export const routes = [
-  ...protectedRoutes,
-  ...customRoutes
+  ...customRoutes, // Place customRoutes first to prioritize them
+  ...protectedRoutes
 ];
