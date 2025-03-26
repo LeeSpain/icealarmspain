@@ -11,11 +11,19 @@ import NotFound from "./pages/NotFound";
 import { routes } from "./routes";
 import { checkEnvVariables } from "./utils/env-check";
 import ErrorBoundary from "./components/layout/ErrorBoundary";
-import RenderingDebugger from "./components/debug/RenderingDebugger";
+import { forceVisibility } from "./utils/debug-logger";
 
 function App() {
   useEffect(() => {
-    console.log("App component mounted - ENHANCED VERSION");
+    console.log("App component mounted - MINIMAL VERSION");
+    
+    // Force visibility using our utility
+    forceVisibility();
+    
+    // Multiple safety calls with timeouts
+    [100, 500, 1000, 2000].forEach(delay => {
+      setTimeout(forceVisibility, delay);
+    });
     
     // Check env variables
     try {
@@ -24,61 +32,12 @@ function App() {
       console.error("Error checking env variables:", e);
     }
     
-    // More aggressive spinner handling
-    const hideSpinner = () => {
-      const spinner = document.getElementById('initial-content');
-      if (spinner) {
-        // First make it invisible
-        spinner.style.opacity = '0';
-        spinner.style.display = 'none';
-        console.log("Spinner hidden from App component");
-        
-        // Then try to completely remove it
-        try {
-          if (spinner.parentNode) {
-            spinner.parentNode.removeChild(spinner);
-            console.log("Spinner completely removed from DOM");
-          }
-        } catch (err) {
-          console.error("Error removing spinner:", err);
-        }
-      }
-      
-      // Force root to be visible
-      const root = document.getElementById('root');
-      if (root) {
-        root.style.visibility = 'visible';
-        root.style.display = 'block';
-        root.style.opacity = '1';
-      }
-    };
-    
-    // Call immediately and with multiple delays for redundancy
-    hideSpinner();
-    [100, 500, 1000, 2000].forEach(delay => {
-      setTimeout(hideSpinner, delay);
-    });
-    
-    // Also record in the window object that App has mounted
-    if (typeof window !== 'undefined') {
-      if (!window.renderingStages) window.renderingStages = {};
-      window.renderingStages.appComponentMounted = true;
-      
-      // Ensure forceAppVisibility is defined and call it
-      if (typeof window.forceAppVisibility === 'function') {
-        window.forceAppVisibility();
-      } else {
-        window.forceAppVisibility = hideSpinner;
-        window.forceAppVisibility();
-      }
-    }
-    
     return () => {
       console.log("App component unmounting");
     };
   }, []);
   
-  // Use React.StrictMode only in development
+  // Simplified App content
   const AppContent = (
     <ErrorBoundary>
       <div className="App">
@@ -110,7 +69,6 @@ function App() {
           </AuthProvider>
         </HelmetProvider>
       </div>
-      <RenderingDebugger />
     </ErrorBoundary>
   );
   

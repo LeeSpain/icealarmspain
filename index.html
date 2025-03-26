@@ -19,9 +19,10 @@
         color: black;
         visibility: visible !important;
         display: block !important;
+        opacity: 1 !important;
       }
       
-      /* Add a fallback visible content that will show immediately */
+      /* Loading spinner - will be hidden by JavaScript */
       #initial-content {
         position: fixed;
         top: 0;
@@ -36,40 +37,6 @@
         transition: opacity 0.3s;
       }
       
-      /* Error recovery - hidden by default */
-      .js-error-recovery {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: white;
-        z-index: 10000;
-        padding: 20px;
-        overflow: auto;
-        font-family: system-ui, sans-serif;
-      }
-      .error-btn {
-        padding: 8px 16px;
-        background: #0284c7;
-        color: white;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-        margin-top: 10px;
-      }
-      @keyframes spin {
-        to { transform: rotate(360deg); }
-      }
-      
-      /* Ensure the app has a minimum viable styling */
-      #root {
-        min-height: 100vh;
-        display: block !important;
-        visibility: visible !important;
-      }
-      
       /* Fallback content if JavaScript fails */
       noscript {
         display: block;
@@ -79,103 +46,48 @@
       }
     </style>
     <script>
-      // Initialize loading stages immediately in the head
-      window.loadingStages = window.loadingStages || {};
-      window.renderingStages = window.renderingStages || {};
-      window.loadingStages.htmlLoaded = true;
-      
-      // Create a direct function to completely remove the spinner
-      function removeSpinner() {
-        var spinner = document.getElementById('initial-content');
-        if (spinner) {
-          spinner.style.display = 'none';
-          console.log('Spinner forcefully removed');
-          // Also try to remove from DOM completely
-          if (spinner.parentNode) {
-            try {
-              spinner.parentNode.removeChild(spinner);
-              console.log('Spinner element completely removed from DOM');
-            } catch (e) {
-              console.error('Error removing spinner:', e);
-            }
-          }
+      // Minimal inline script for spinner hiding
+      function forceVisibility() {
+        // Force visibility on HTML, body and root
+        document.documentElement.style.cssText += 'visibility:visible!important;display:block!important;opacity:1!important;';
+        document.body.style.cssText += 'visibility:visible!important;display:block!important;opacity:1!important;';
+        
+        const root = document.getElementById('root');
+        if (root) {
+          root.style.cssText += 'visibility:visible!important;display:block!important;opacity:1!important;';
         }
         
-        // Force root to be visible
-        var root = document.getElementById('root');
-        if (root) {
-          root.style.visibility = 'visible';
-          root.style.display = 'block';
+        // Hide spinner with multiple methods
+        const spinner = document.getElementById('initial-content');
+        if (spinner) {
+          spinner.style.cssText = 'display:none!important;';
+          try {
+            if (spinner.parentNode) {
+              spinner.parentNode.removeChild(spinner);
+              console.log('Spinner removed from DOM');
+            }
+          } catch (e) {
+            console.error('Error removing spinner:', e);
+          }
         }
       }
       
-      // AGGRESSIVE: Call the removal function at various times
-      setTimeout(removeSpinner, 100);  // Very quick initial removal
-      setTimeout(removeSpinner, 500);  // Half-second timeout
-      setTimeout(removeSpinner, 1000); // 1 second timeout
-      setTimeout(removeSpinner, 2000); // 2 second timeout
-      setTimeout(removeSpinner, 3000); // 3 second timeout
+      // Call immediately and with timeouts
+      forceVisibility();
+      setTimeout(forceVisibility, 100);
+      setTimeout(forceVisibility, 500);
+      setTimeout(forceVisibility, 1000);
       
-      // Setup multiple spinner timeouts for guaranteed hide
-      setTimeout(function() {
-        var spinner = document.getElementById('initial-content');
-        if (spinner) {
-          spinner.style.opacity = '0';
-          spinner.style.display = 'none';
-          console.log('Forced hiding of spinner after 5 second timeout');
-        }
-      }, 5000);
+      // Add to window object
+      window.forceAppVisibility = forceVisibility;
       
-      // Absolute fallback - guarantee we don't show spinner forever
-      setTimeout(function() {
-        var spinner = document.getElementById('initial-content');
-        if (spinner) {
-          spinner.style.display = 'none';
-          console.log('Emergency forced hiding of spinner after 8 seconds');
-        }
-      }, 8000);
-      
-      // Final backup to completely remove spinner from DOM
-      setTimeout(function() {
-        var spinner = document.getElementById('initial-content');
-        if (spinner && spinner.parentNode) {
-          spinner.parentNode.removeChild(spinner);
-          console.log('Spinner element completely removed from DOM');
-        }
-      }, 10000);
-      
-      // Force app visibility function - ENHANCED VERSION
-      window.forceAppVisibility = function() {
-        removeSpinner();
-        
-        // Also ensure the root element is visible
-        var root = document.getElementById('root');
-        if (root) {
-          root.style.visibility = 'visible';
-          root.style.display = 'block';
-          root.style.opacity = '1';
-        }
-        
-        // Force the entire document to be visible
-        document.body.style.visibility = 'visible';
-        document.body.style.display = 'block';
-        document.documentElement.style.visibility = 'visible';
-      };
-      
-      // Add event listeners for various loading events
-      document.addEventListener('DOMContentLoaded', function() {
-        setTimeout(removeSpinner, 100);
-        console.log('DOMContentLoaded: Removing spinner');
-      });
-      
-      window.addEventListener('load', function() {
-        setTimeout(removeSpinner, 100);
-        console.log('Window load: Removing spinner');
-      });
+      // Listen for load events
+      document.addEventListener('DOMContentLoaded', forceVisibility);
+      window.addEventListener('load', forceVisibility);
     </script>
   </head>
   <body>
-    <!-- Fallback content that will be hidden once React loads -->
+    <!-- Loading spinner that will be hidden once content loads -->
     <div id="initial-content">
       <div style="text-align: center; padding: 20px;">
         <div style="display: inline-block; width: 30px; height: 30px; border: 3px solid #0284c7; border-radius: 50%; border-top-color: transparent; animation: spin 1s linear infinite;"></div>
@@ -197,5 +109,15 @@
     
     <script src="https://cdn.gpteng.co/gptengineer.js" type="module"></script>
     <script type="module" src="/src/main.tsx"></script>
+    
+    <!-- Backup visibility enforcement -->
+    <script>
+      // Call force visibility again after scripts load
+      setTimeout(function() {
+        if (window.forceAppVisibility) {
+          window.forceAppVisibility();
+        }
+      }, 2000);
+    </script>
   </body>
 </html>

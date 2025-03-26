@@ -1,50 +1,52 @@
 
 /**
- * Simple debug logger for Ice Guardian site
+ * Simple debug utility that won't interfere with rendering
  */
 
-// Enable logging in all environments to help debugging
-const ENABLE_LOGS = true;
-
-// Main debug function
-export function debug(message: string, data?: any) {
-  if (!ENABLE_LOGS) return;
-  
-  console.log(`[Debug] ${message}`, data !== undefined ? data : '');
-}
-
-// Error logging
-export function error(message: string, data?: any) {
-  console.error(`[Error] ${message}`, data !== undefined ? data : '');
-}
-
-// Warning logging
-export function warn(message: string, data?: any) {
-  console.warn(`[Warning] ${message}`, data !== undefined ? data : '');
-}
-
-// Info logging
-export function info(message: string, data?: any) {
-  if (!ENABLE_LOGS) return;
-  
-  console.info(`[Info] ${message}`, data !== undefined ? data : '');
-}
-
-// Log component mounting
-export function logMount(componentName: string) {
-  debug(`${componentName} mounted`);
-}
-
-// Log component unmounting
-export function logUnmount(componentName: string) {
-  debug(`${componentName} unmounted`);
-}
-
-export default {
-  debug,
-  error,
-  warn,
-  info,
-  logMount,
-  logUnmount
+export const debug = (message: string, data?: any): void => {
+  try {
+    if (typeof window !== 'undefined') {
+      console.log(`🔍 ${message}`, data || '');
+    }
+  } catch (e) {
+    // Swallow errors in logging to prevent crashes
+  }
 };
+
+export const forceVisibility = (): void => {
+  try {
+    if (typeof document === 'undefined') return;
+    
+    // Force visibility on HTML, body and root
+    document.documentElement.style.cssText += 'visibility:visible!important;display:block!important;';
+    document.body.style.cssText += 'visibility:visible!important;display:block!important;';
+    
+    const root = document.getElementById('root');
+    if (root) {
+      root.style.cssText += 'visibility:visible!important;display:block!important;';
+    }
+    
+    // Hide spinner with multiple methods for redundancy
+    const spinner = document.getElementById('initial-content');
+    if (spinner) {
+      spinner.style.display = 'none';
+      if (spinner.parentNode) {
+        try {
+          spinner.parentNode.removeChild(spinner);
+        } catch (e) {
+          // Ignore removal errors
+        }
+      }
+    }
+    
+    debug('Force visibility applied');
+  } catch (e) {
+    // Swallow errors to prevent crashes
+  }
+};
+
+// Call immediately
+forceVisibility();
+
+// Call again after a slight delay
+setTimeout(forceVisibility, 100);
