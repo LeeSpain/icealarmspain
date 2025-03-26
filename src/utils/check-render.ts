@@ -30,6 +30,11 @@
       root.style.minHeight = '100vh';
       root.style.visibility = 'visible';
       root.style.opacity = '1';
+      
+      // Log if there's content in the root
+      console.log('🔍 Root element content count:', root.childNodes.length);
+    } else {
+      console.error('❌ Root element not found!');
     }
     
     // Add a fallback element if nothing is rendering

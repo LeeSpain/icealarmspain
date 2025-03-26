@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { routes } from "./routes";
 import { Toaster } from "@/components/ui/toaster";
@@ -12,6 +12,11 @@ import { AuthProvider } from "@/context/auth";
 
 function App() {
   console.log("App component rendering");
+  
+  // Log all routes for debugging
+  useEffect(() => {
+    console.log("Routes configuration:", routes.map(r => r.path));
+  }, []);
   
   return (
     <ErrorBoundary>
