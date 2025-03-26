@@ -18,25 +18,13 @@ export const useAuthEffects = ({ setUser, setIsLoading }: UseAuthEffectsProps) =
     };
   }, []);
 
-  // Initialize auth state
+  // Initialize auth state with minimal delay
   useEffect(() => {
-    console.log('Initializing auth state');
-    
-    // Check for recently logged out flag to prevent auto-login after logout
-    const recentlyLoggedOut = sessionStorage.getItem('recentlyLoggedOut');
-    if (recentlyLoggedOut) {
-      console.log('Recently logged out, not restoring from localStorage');
-      sessionStorage.removeItem('recentlyLoggedOut');
-      setUser(null);
-      return;
-    }
-    
-    // Get the current user from localStorage
+    // Get the current user synchronously from localStorage
     try {
       const currentUser = getCurrentUser();
       
       if (currentUser && isMounted.current) {
-        console.log('Found stored user:', currentUser.email);
         setUser(currentUser);
       } else {
         setUser(null);
@@ -44,6 +32,9 @@ export const useAuthEffects = ({ setUser, setIsLoading }: UseAuthEffectsProps) =
     } catch (error) {
       console.error('Error getting current user:', error);
       setUser(null);
+    } finally {
+      // Always set loading to false immediately
+      setIsLoading(false);
     }
   }, [setUser, setIsLoading]);
 
@@ -54,10 +45,8 @@ export const useAuthEffects = ({ setUser, setIsLoading }: UseAuthEffectsProps) =
         try {
           if (e.newValue) {
             const parsedUser = JSON.parse(e.newValue);
-            console.log("Storage event - user updated:", parsedUser.email);
             setUser(parsedUser);
           } else {
-            console.log("Storage event - user removed");
             setUser(null);
           }
         } catch (error) {

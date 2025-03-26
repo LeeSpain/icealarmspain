@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { routes } from "./routes";
 import { Toaster } from "@/components/ui/toaster";
@@ -9,12 +9,17 @@ import './App.css';
 import ErrorBoundary from "@/components/layout/ErrorBoundary";
 import ScrollToTop from "@/components/layout/ScrollToTop";
 import { AuthProvider } from "@/context/auth";
+import SiteInitializer from "@/components/layout/SiteInitializer";
 
 function App() {
-  console.log("App component rendering");
+  // Force title update immediately
+  useEffect(() => {
+    document.title = "Ice Guardian Alert";
+  }, []);
   
   return (
     <ErrorBoundary>
+      <SiteInitializer />
       <div className="App" style={{ visibility: 'visible', opacity: 1 }}>
         <HelmetProvider>
           <AuthProvider>

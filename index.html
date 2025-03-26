@@ -31,6 +31,18 @@
         display: flex !important;
         flex-direction: column !important;
       }
+      /* Avoid layout shifts */
+      .App {
+        min-height: 100vh;
+        display: flex !important;
+        flex-direction: column !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+      }
+      /* Hide "Not found" text */
+      body > *:not(#root):not(script) {
+        display: none !important;
+      }
     </style>
     <!-- Preconnect to critical domains -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -39,7 +51,7 @@
   <body>
     <div id="root"></div>
     
-    <!-- Add the GPT Engineer script tag back -->
+    <!-- Add the GPT Engineer script tag -->
     <script src="https://cdn.gpteng.co/gptengineer.js" type="module"></script>
     <script type="module" src="/src/main.tsx"></script>
   </body>

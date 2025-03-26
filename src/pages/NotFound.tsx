@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { useAuth } from "@/context/auth";
+import { AlertCircle } from "lucide-react";
 
 const NotFound = () => {
   const location = useLocation();
@@ -12,6 +13,9 @@ const NotFound = () => {
   const effectiveRole = user?.role || storedRole;
 
   useEffect(() => {
+    // Immediately update title and log error
+    document.title = "Page Not Found - Ice Guardian Alert";
+    
     console.error(
       "404 Error: User attempted to access non-existent route:",
       location.pathname,
@@ -38,6 +42,7 @@ const NotFound = () => {
       <Navbar />
       <div className="flex-grow flex items-center justify-center bg-gray-100 pt-20">
         <div className="bg-white p-8 rounded-lg shadow-md max-w-md w-full text-center">
+          <AlertCircle className="h-12 w-12 text-red-600 mx-auto mb-4" />
           <h1 className="text-4xl font-bold mb-4 text-red-600">404</h1>
           <p className="text-xl text-gray-600 mb-4">Page Not Found</p>
           <p className="text-gray-500 mb-6">
