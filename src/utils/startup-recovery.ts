@@ -7,6 +7,13 @@
 (function() {
   console.log('🚀 Startup recovery running - simplified version');
   
+  // Declare recoveryAttempted property in a type-safe way
+  declare global {
+    interface Window {
+      recoveryAttempted?: boolean;
+    }
+  }
+  
   // Global flag to prevent multiple recovery attempts
   if (window.recoveryAttempted) {
     console.log('Recovery already attempted, skipping to prevent loops');
