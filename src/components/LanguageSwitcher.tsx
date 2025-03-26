@@ -11,14 +11,24 @@ interface LanguageSwitcherProps {
 
 const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({ className }) => {
   const { language, setLanguage } = useLanguage();
-  const { user, updateUserProfile } = useAuth();
+  let user = null;
+  let updateUserProfile = null;
+  
+  // Try to use auth safely - if it fails, we'll just not have user profile updates
+  try {
+    const auth = useAuth();
+    user = auth?.user;
+    updateUserProfile = auth?.updateUserProfile;
+  } catch (error) {
+    console.log("Auth context not available in LanguageSwitcher");
+  }
   
   const handleLanguageChange = async (newLanguage: 'en' | 'es') => {
     // Update the language context
     setLanguage(newLanguage);
     
-    // If user is authenticated, store language preference in their profile
-    if (user) {
+    // If user is authenticated and updateUserProfile is available, store language preference in their profile
+    if (user && updateUserProfile) {
       try {
         await updateUserProfile(user.displayName || '');
         // We don't update language directly in profile as our auth implementation

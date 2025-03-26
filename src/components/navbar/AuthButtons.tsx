@@ -5,7 +5,6 @@ import { LogOut, User } from "lucide-react";
 import { ButtonCustom } from "@/components/ui/button-custom";
 import { useLanguage } from "@/context/LanguageContext";
 import { useToast } from "@/components/ui/use-toast";
-import { useAuth } from "../../context/auth"; // Use relative path for consistency
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -24,10 +23,27 @@ const AuthButtons: React.FC<AuthButtonsProps> = ({ isMobile = false, onClose }) 
   const { language } = useLanguage();
   const { toast } = useToast();
   const navigate = useNavigate();
-  const { user, profile, logout } = useAuth();
   
-  // For debugging
-  console.log("AuthButtons: user=", user, "profile=", profile);
+  // Try to use auth safely
+  let user = null;
+  let profile = null;
+  let logout = () => {
+    console.log("Logout not available");
+    navigate('/');
+  };
+  
+  try {
+    // Import dynamically to avoid issues when AuthProvider is not available
+    const auth = require("../../context/auth").useAuth();
+    user = auth?.user;
+    profile = auth?.profile;
+    logout = auth?.logout || logout;
+    
+    // For debugging
+    console.log("AuthButtons: user=", user, "profile=", profile);
+  } catch (error) {
+    console.log("Auth context not available in AuthButtons, using fallback behavior");
+  }
   
   const loginText = language === 'en' ? "Login" : "Iniciar Sesión";
   const signupText = language === 'en' ? "Sign Up" : "Registrarse";
