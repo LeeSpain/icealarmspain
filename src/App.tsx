@@ -1,5 +1,5 @@
 
-import React, { useEffect } from "react";
+import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster";
 import { LanguageProvider } from "@/context/LanguageContext";
@@ -12,26 +12,12 @@ import { routes } from "./routes";
 import { checkEnvVariables } from "./utils/env-check";
 import ErrorBoundary from "./components/layout/ErrorBoundary";
 
-// Import our anti-loading-message utility
-import "./utils/prevent-loading-message";
-
+// Simplified App component with minimal dependencies
 function App() {
-  useEffect(() => {
-    // Only run basic initialization
+  React.useEffect(() => {
     console.log("App component mounted");
-    
-    // Check environment variables in production
     checkEnvVariables();
-    
-    // Mark app as mounted
     window.appComponentMounted = true;
-    
-    // Clear any loading text that might still be in the DOM
-    const root = document.getElementById('root');
-    if (root && (root.innerHTML.includes('Loading') || root.innerHTML.includes('Ice Guardian Alert'))) {
-      console.log('Clearing any remaining loading text from App component');
-      root.innerHTML = '';
-    }
   }, []);
   
   return (

@@ -9,6 +9,7 @@ import Layout from "@/components/layout/Layout";
 import SectionDivider from "@/components/layout/SectionDivider";
 import SectionWrapper from "@/components/layout/SectionWrapper";
 import { debug } from "@/utils/debug-logger";
+import RenderingDebugger from "@/components/debug/RenderingDebugger";
 
 const Index: React.FC = () => {
   const { language } = useLanguage();
@@ -16,6 +17,13 @@ const Index: React.FC = () => {
   useEffect(() => {
     debug("Index page mounted");
     console.log("Index page rendered");
+    
+    // Log to console for debugging
+    console.log("App is running:", {
+      time: new Date().toISOString(),
+      environment: import.meta.env.MODE,
+      dev: import.meta.env.DEV
+    });
   }, []);
   
   return (
@@ -36,6 +44,9 @@ const Index: React.FC = () => {
           <ExpatInfo />
         </div>
       </div>
+      
+      {/* Add the debugging indicator in production only */}
+      {!import.meta.env.DEV && <RenderingDebugger />}
     </Layout>
   );
 };

@@ -26,19 +26,23 @@ export function checkEnvVariables() {
   
   if (missingVars.length > 0) {
     console.error('⚠️ Missing critical environment variables:', missingVars);
-    console.error('This may cause the app to show a blank screen in production.');
     
     // Add visible error message to help debugging in production
     const root = document.getElementById('root');
     if (root) {
-      root.innerHTML = `
-        <div style="font-family: system-ui, sans-serif; padding: 20px; max-width: 800px; margin: 0 auto; line-height: 1.5">
-          <h1 style="color: #e11d48">Configuration Error</h1>
-          <p>The application couldn't load due to missing environment variables:</p>
-          <pre style="background: #f1f5f9; padding: 12px; border-radius: 4px; overflow: auto">${missingVars.join('\n')}</pre>
-          <p>Please check your deployment configuration.</p>
-        </div>
+      // Clear any existing content
+      root.innerHTML = '';
+      
+      // Add error message
+      const errorDiv = document.createElement('div');
+      errorDiv.style.cssText = 'font-family: system-ui, sans-serif; padding: 20px; max-width: 800px; margin: 0 auto; line-height: 1.5';
+      errorDiv.innerHTML = `
+        <h1 style="color: #e11d48">Configuration Error</h1>
+        <p>The application couldn't load due to missing environment variables:</p>
+        <pre style="background: #f1f5f9; padding: 12px; border-radius: 4px; overflow: auto">${missingVars.join('\n')}</pre>
+        <p>Please check your deployment configuration.</p>
       `;
+      root.appendChild(errorDiv);
     }
   } else {
     console.log('✅ All required environment variables present');

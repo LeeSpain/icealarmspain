@@ -1,40 +1,24 @@
 
-// Import early render utility first - must be the first import
-import './utils/early-render'
-import './utils/instant-render'
-import './utils/check-render'
-
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App'
 import './styles/index.css'
 
-// Force immediate rendering
-document.documentElement.style.setProperty('--app-loaded', 'true');
+// Simple console log for debugging
+console.log('Application starting up');
 
-// Clear any loading text immediately
+// Get the root element
 const rootElement = document.getElementById('root');
-if (rootElement && (rootElement.innerHTML.includes('Loading') || rootElement.innerHTML.includes('Ice Guardian Alert'))) {
-  console.log('Clearing loading text before render');
-  rootElement.innerHTML = '';
-}
 
-// Force visibility
-if (rootElement) {
-  rootElement.style.cssText = 'visibility:visible!important;display:block!important;opacity:1!important;';
-}
-
-// Simple render function
-function renderApp() {
-  console.log('Rendering app (single attempt)');
-  
+if (!rootElement) {
+  console.error('Root element not found');
+} else {
   try {
-    if (!rootElement) {
-      throw new Error('Root element not found');
-    }
+    // Create root and render
+    const root = ReactDOM.createRoot(rootElement);
     
     // Standard rendering path with React strict mode in dev only
-    ReactDOM.createRoot(rootElement).render(
+    root.render(
       import.meta.env.DEV ? (
         <React.StrictMode>
           <App />
@@ -44,7 +28,16 @@ function renderApp() {
       )
     );
     
-    console.log('React app mounted successfully');
+    console.log('React mounted successfully');
+    
+    // Hide the initial content after React renders
+    const initialContent = document.getElementById('initial-content');
+    if (initialContent) {
+      initialContent.style.opacity = '0';
+      setTimeout(() => {
+        initialContent.style.display = 'none';
+      }, 300);
+    }
     
   } catch (error) {
     console.error('Error rendering React app:', error);
@@ -61,17 +54,5 @@ function renderApp() {
   }
 }
 
-// Start rendering immediately (only once)
-renderApp();
-
-// Set timeout to reload if app doesn't show anything
-setTimeout(() => {
-  const appElement = document.querySelector('.App');
-  if (!appElement) {
-    console.log('App not rendered after timeout, reloading');
-    window.location.reload();
-  }
-}, 5000);
-
-// Expose a global flag that indicates React is loaded
+// Expose a global flag for debugging
 window.appLoaded = true;
