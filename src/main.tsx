@@ -3,7 +3,6 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App'
 import './styles/index.css'
-import './utils/check-render'  // Import the render check utility
 
 console.log("Starting application initialization");
 
@@ -21,10 +20,16 @@ if (!rootElement) {
     rootElement.style.minHeight = '100vh';
     rootElement.style.visibility = 'visible';
     rootElement.style.opacity = '1';
+    rootElement.style.width = '100%';
+    rootElement.style.overflow = 'hidden';
+    
+    document.body.style.visibility = 'visible';
+    document.body.style.opacity = '1';
+    document.body.style.backgroundColor = 'white';
     
     const root = ReactDOM.createRoot(rootElement);
     
-    // Render the app synchronously
+    // Disable StrictMode to prevent double-rendering in development
     root.render(<App />);
     
     console.log("App rendered successfully");

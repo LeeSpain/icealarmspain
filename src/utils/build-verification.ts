@@ -1,37 +1,45 @@
 
-// Build verification utility to help diagnose loading issues
-console.log("Build verification loaded");
+/**
+ * This utility helps verify if the build is working correctly
+ * It should run immediately when imported and log to console
+ */
 
-// Create global variables to track loading stages
-declare global {
-  interface Window {
-    loadingStages: Record<string, boolean>;
-    renderingStages: Record<string, boolean>;
+import { getEnvironmentDiagnostics, getEnvironment } from './environment';
+
+// Self-executing function for immediate checking
+(function verifyBuild() {
+  try {
+    console.log('🔍 Build verification running...');
+    console.log('🌍 Environment:', getEnvironment());
+    
+    // Log environment variables (non-sensitive only)
+    const envDiagnostics = getEnvironmentDiagnostics();
+    console.log('🌍 Environment diagnostics:', envDiagnostics);
+    
+    // Check for common issues
+    const checks = {
+      documentExists: typeof document !== 'undefined',
+      windowExists: typeof window !== 'undefined',
+      rootElementExists: document && document.getElementById('root') !== null
+    };
+    
+    console.log('🧪 Environment checks:', checks);
+    
+    if (!checks.rootElementExists) {
+      console.error('❌ Root element not found! This will prevent the app from rendering.');
+    }
+    
+    // Check DOM structure
+    if (document && document.body) {
+      console.log('📃 Document structure check - Body children count:', document.body.children.length);
+      console.log('📃 Document structure check - Root element visible:', 
+        document.getElementById('root')?.style.display !== 'none');
+    }
+    
+    console.log('✅ Build verification completed');
+  } catch (error) {
+    console.error('❌ Build verification failed:', error);
   }
-}
+})();
 
-// Initialize tracking objects
-window.loadingStages = window.loadingStages || {};
-window.renderingStages = window.renderingStages || {};
-
-// Track that the build verification has loaded
-window.loadingStages.buildVerificationLoaded = true;
-
-// Log environment information
-console.log("Environment:", import.meta.env.MODE);
-console.log("Debug build:", import.meta.env.VITE_DEBUG_BUILD === "true");
-
-// Check Firebase configuration
-const firebaseApiKey = import.meta.env.VITE_FIREBASE_API_KEY;
-const firebaseProjectId = import.meta.env.VITE_FIREBASE_PROJECT_ID;
-
-if (firebaseApiKey && firebaseProjectId) {
-  console.log("Firebase configuration available");
-  window.loadingStages.firebaseConfigAvailable = true;
-} else {
-  console.warn("Firebase configuration incomplete or missing");
-  window.loadingStages.firebaseConfigAvailable = false;
-}
-
-// Export an empty object to satisfy module requirements
-export {};
+export default {};
