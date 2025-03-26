@@ -11,8 +11,8 @@ import NotFound from "./pages/NotFound";
 import { routes } from "./routes";
 import { checkEnvVariables } from "./utils/env-check";
 import ErrorBoundary from "./components/layout/ErrorBoundary";
+import RenderingDebugger from "./components/debug/RenderingDebugger";
 
-// Simple and stable App component
 function App() {
   React.useEffect(() => {
     console.log("App component mounted");
@@ -50,6 +50,7 @@ function App() {
           </AuthProvider>
         </HelmetProvider>
       </div>
+      <RenderingDebugger />
     </ErrorBoundary>
   );
 }

@@ -29,8 +29,18 @@ if (import.meta.env.PROD) {
     if (root) {
       const hasContent = root.children.length > 0;
       console.log(`Root element check: ${hasContent ? 'has content' : 'empty'}`);
+      
+      // Record the check in window object for debugging
+      if (window.loadingStages) {
+        window.loadingStages.rootElementChecked = true;
+        window.loadingStages.rootHasContent = hasContent;
+      }
     } else {
       console.error('❌ Root element not found');
+      if (window.loadingStages) {
+        window.loadingStages.rootElementChecked = true;
+        window.loadingStages.rootElementMissing = true;
+      }
     }
   }, 2000);
 }

@@ -3,16 +3,35 @@ import React, { useEffect, useState } from 'react';
 
 const RenderingDebugger: React.FC = () => {
   const [isVisible, setIsVisible] = useState(true);
+  const [loadInfo, setLoadInfo] = useState<{
+    loadingStages?: Record<string, boolean>;
+    renderingStages?: Record<string, boolean>;
+  }>({});
   
   useEffect(() => {
     console.log("RenderingDebugger mounted - app is rendering!");
     
-    // Hide after 10 seconds
-    const timer = setTimeout(() => {
-      setIsVisible(false);
-    }, 10000);
+    // Record rendering success
+    if (window.renderingStages) {
+      window.renderingStages.debuggerMounted = true;
+    } else {
+      window.renderingStages = { debuggerMounted: true };
+    }
     
-    return () => clearTimeout(timer);
+    // Update loading info from window
+    setLoadInfo({
+      loadingStages: window.loadingStages || {},
+      renderingStages: window.renderingStages || {}
+    });
+    
+    // Hide after 10 seconds in production
+    if (import.meta.env.PROD) {
+      const timer = setTimeout(() => {
+        setIsVisible(false);
+      }, 10000);
+      
+      return () => clearTimeout(timer);
+    }
   }, []);
   
   if (!isVisible) return null;

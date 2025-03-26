@@ -1,9 +1,9 @@
 
-// Import startup recovery first - ONLY this one recovery utility
-import './utils/startup-recovery';
+// Import build verification first for better diagnostics
+import './utils/build-verification';
 
-// Import production diagnostic for production environments
-import './utils/production-diagnostic';
+// Import startup recovery - ONLY this one recovery utility
+import './utils/startup-recovery';
 
 // This file is a simple entry point for easier imports
 export * from './App';

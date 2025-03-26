@@ -57,6 +57,9 @@
         cursor: pointer;
         margin-top: 10px;
       }
+      @keyframes spin {
+        to { transform: rotate(360deg); }
+      }
     </style>
   </head>
   <body>
@@ -71,21 +74,7 @@
     <!-- The React root -->
     <div id="root"></div>
     
-    <!-- Error recovery UI - hidden by default -->
-    <div class="js-error-recovery">
-      <h2>Application Error</h2>
-      <p>We encountered an issue while loading the application.</p>
-      <p>Error: <span id="error-details">Unknown error</span></p>
-      <button class="error-btn" onclick="window.location.reload()">Reload Application</button>
-    </div>
-    
     <script src="https://cdn.gpteng.co/gptengineer.js" type="module"></script>
     <script type="module" src="/src/main.tsx"></script>
-    
-    <style>
-      @keyframes spin {
-        to { transform: rotate(360deg); }
-      }
-    </style>
   </body>
 </html>

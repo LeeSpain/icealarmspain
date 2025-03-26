@@ -8,20 +8,30 @@
 declare global {
   interface Window {
     recoveryAttempted?: boolean;
+    loadingStages?: Record<string, boolean>;
+    renderingStages?: Record<string, boolean>;
   }
 }
 
 (function() {
   console.log('🚀 Startup recovery running - simplified version');
   
+  // Initialize loading stages tracking for debugging
+  if (!window.loadingStages) {
+    window.loadingStages = {};
+  }
+  window.loadingStages.recoveryStarted = true;
+  
   // Global flag to prevent multiple recovery attempts
   if (window.recoveryAttempted) {
     console.log('Recovery already attempted, skipping to prevent loops');
+    window.loadingStages.recoverySkipped = true;
     return;
   }
   
   // Mark recovery as attempted
   window.recoveryAttempted = true;
+  window.loadingStages.recoveryAttempted = true;
   
   // Flag to track if React has mounted
   let reactMounted = false;
@@ -34,6 +44,7 @@ declare global {
     // Mark as mounted if we see the App
     if (app) {
       reactMounted = true;
+      window.loadingStages.reactAppDetected = true;
       console.log('React app detected - loaded successfully');
       return true;
     }
@@ -41,8 +52,9 @@ declare global {
     // If we have a root but no content, something might be wrong
     if (root && (!app || !root.children.length || root.innerHTML === '')) {
       console.log('Empty root detected, adding minimal content');
+      window.loadingStages.emptyRootDetected = true;
       
-      // Add minimal content to prevent blank screen - but no auto reload
+      // Add minimal content to prevent blank screen - but NO auto reload
       if (root.innerHTML === '') {
         root.innerHTML = `
           <div class="App" style="font-family: system-ui, sans-serif; padding: 20px; max-width: 1200px; margin: 0 auto;">
@@ -64,14 +76,24 @@ declare global {
     return false;
   };
   
-  // Check a few times with increasing delays
-  setTimeout(checkAppLoaded, 100);
-  setTimeout(checkAppLoaded, 1000);
+  // Check a few times with increasing delays, but DO NOT auto-reload
+  setTimeout(() => {
+    window.loadingStages.firstCheck = true;
+    checkAppLoaded();
+  }, 100);
+  
+  setTimeout(() => {
+    window.loadingStages.secondCheck = true;
+    checkAppLoaded();
+  }, 1000);
   
   // Final check - if not mounted by now, show static content but DO NOT auto-reload
   setTimeout(() => {
+    window.loadingStages.finalCheck = true;
+    
     if (!reactMounted && !checkAppLoaded()) {
       console.log('React app not mounted after timeout - showing static content');
+      window.loadingStages.staticContentShown = true;
       
       // Add recovery content without auto-reload
       const root = document.getElementById('root');
