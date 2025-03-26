@@ -10,9 +10,20 @@
   // Force visibility immediately
   document.documentElement.style.visibility = 'visible';
   document.body.style.visibility = 'visible';
+  document.body.style.display = 'block';
   
-  if (document.body) {
-    document.body.style.display = 'block';
+  // Check if there's static text in the root element
+  const root = document.getElementById('root');
+  if (root) {
+    // Clear any loading text
+    if (root.innerHTML.includes('Loading content') || 
+        root.innerHTML.includes('Ice Guardian Alert')) {
+      console.log('Clearing loading text from root');
+      root.innerHTML = '';
+    }
+    
+    root.style.visibility = 'visible';
+    root.style.display = 'block';
   }
   
   // Clear any loading elements
@@ -25,8 +36,8 @@
     });
     
     // Check if the root element has loading content
-    const root = document.getElementById('root');
-    if (root && root.innerHTML.includes('Loading content')) {
+    if (root && (root.innerHTML.includes('Loading content') || 
+                 root.innerHTML.includes('Ice Guardian Alert'))) {
       root.innerHTML = '';
     }
   };
@@ -34,8 +45,8 @@
   // Apply immediately and after a short delay
   removeLoadingElements();
   setTimeout(removeLoadingElements, 0);
+  setTimeout(removeLoadingElements, 10);
   setTimeout(removeLoadingElements, 50);
-  setTimeout(removeLoadingElements, 100);
 })();
 
 export {};

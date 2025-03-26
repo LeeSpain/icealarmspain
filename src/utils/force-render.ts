@@ -35,8 +35,12 @@
     if (root) {
       root.style.visibility = 'visible';
       root.style.opacity = '1';
+      root.style.display = 'block';
+      
       // Make sure no residual loading text
-      if (root.innerHTML.includes('Loading')) {
+      if (root.innerHTML.includes('Loading') || 
+          root.innerHTML.includes('Ice Guardian Alert')) {
+        console.log('Clearing loading text from root');
         root.innerHTML = '';
       }
     }
@@ -48,18 +52,25 @@
       app.style.opacity = '1';
       app.style.display = 'block';
     }
+    
+    // Remove any loading-related elements
+    document.querySelectorAll('.loading-indicator, .loading-screen, .loading, .page-transition').forEach(el => {
+      if (el instanceof HTMLElement) {
+        el.style.display = 'none';
+      }
+    });
   };
   
   // Apply immediately
   forceVisibility();
   
-  // Apply again after short delays
+  // Apply again after short delays - using more frequent checks
   setTimeout(forceVisibility, 0);
+  setTimeout(forceVisibility, 10);
+  setTimeout(forceVisibility, 25);
   setTimeout(forceVisibility, 50);
   setTimeout(forceVisibility, 100);
   setTimeout(forceVisibility, 250);
-  setTimeout(forceVisibility, 500);
-  setTimeout(forceVisibility, 1000);
   
   // Apply when DOM is ready
   if (document.readyState === 'loading') {

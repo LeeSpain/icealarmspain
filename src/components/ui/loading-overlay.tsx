@@ -8,8 +8,9 @@ interface LoadingOverlayProps {
   fullScreen?: boolean;
 }
 
+// This component is intentionally disabled and will never show
 const LoadingOverlay: React.FC<LoadingOverlayProps> = () => {
-  return null;
+  return null; // Never render anything
 };
 
 export default LoadingOverlay;

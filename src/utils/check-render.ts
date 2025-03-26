@@ -17,6 +17,7 @@
     document.documentElement.style.opacity = '1';
     document.body.style.visibility = 'visible';
     document.body.style.opacity = '1';
+    document.body.style.display = 'block';
     
     // Force root element to be visible
     const root = document.getElementById('root');
@@ -24,6 +25,14 @@
       root.style.display = 'block';
       root.style.visibility = 'visible';
       root.style.opacity = '1';
+      
+      // Clear any loading text
+      if (root.innerHTML.includes('Loading') || 
+          root.innerHTML.includes('Ice Guardian Alert') ||
+          root.innerHTML.includes('Not found')) {
+        console.log('Clearing loading text from root');
+        root.innerHTML = '';
+      }
     }
   
     // Force App to be visible
@@ -43,19 +52,27 @@
     }
     
     // Remove any stray loading indicators
-    document.querySelectorAll('.loading-indicator').forEach(el => {
+    document.querySelectorAll('.loading-indicator, .loading-screen, .loading, .page-transition').forEach(el => {
+      if (el instanceof HTMLElement) {
+        el.style.display = 'none';
+      }
+    });
+    
+    // Remove any elements outside the root that might show unwanted content
+    document.querySelectorAll('body > *:not(#root):not(script)').forEach(el => {
       if (el instanceof HTMLElement) {
         el.style.display = 'none';
       }
     });
   };
   
-  // Apply immediately and repeatedly
+  // Apply immediately and repeatedly with shorter intervals
   forceVisibility();
+  setTimeout(forceVisibility, 10);
+  setTimeout(forceVisibility, 50);
   setTimeout(forceVisibility, 100);
+  setTimeout(forceVisibility, 250);
   setTimeout(forceVisibility, 500);
-  setTimeout(forceVisibility, 1000);
-  setTimeout(forceVisibility, 2000);
   
   // Apply when DOM is ready
   if (document.readyState === 'loading') {
