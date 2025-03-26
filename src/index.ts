@@ -1,5 +1,8 @@
 
-// Import our new minimal renderer rescue utility FIRST
+// Import our ultra-minimal DOM rescue utility FIRST
+import './utils/dom-rescue';
+
+// Then import renderer rescue 
 import './utils/renderer-rescue';
 
 // Export App

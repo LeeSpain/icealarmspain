@@ -8,7 +8,7 @@
     <meta name="description" content="Medical alert and health monitoring system for seniors and expatriates" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap">
     <style>
-      /* Critical render path styles */
+      /* Critical render path styles - ULTRA MINIMAL VERSION */
       body, html, #root {
         margin: 0;
         padding: 0;
@@ -22,7 +22,7 @@
         opacity: 1 !important;
       }
       
-      /* Loading spinner - will be hidden by JavaScript */
+      /* Loading spinner styling */
       #initial-content {
         position: fixed;
         top: 0;
@@ -36,54 +36,88 @@
         z-index: 9999;
         transition: opacity 0.3s;
       }
-      
-      /* Fallback content if JavaScript fails */
-      noscript {
-        display: block;
-        padding: 20px;
-        text-align: center;
-        font-family: system-ui, sans-serif;
-      }
     </style>
+    <!-- Ultra minimal inline script for aggressive spinner handling -->
     <script>
-      // Minimal inline script for spinner hiding
-      function forceVisibility() {
-        // Force visibility on HTML, body and root
-        document.documentElement.style.cssText += 'visibility:visible!important;display:block!important;opacity:1!important;';
-        document.body.style.cssText += 'visibility:visible!important;display:block!important;opacity:1!important;';
-        
-        const root = document.getElementById('root');
-        if (root) {
-          root.style.cssText += 'visibility:visible!important;display:block!important;opacity:1!important;';
-        }
-        
-        // Hide spinner with multiple methods
-        const spinner = document.getElementById('initial-content');
-        if (spinner) {
-          spinner.style.cssText = 'display:none!important;';
-          try {
+      // Set a flag to indicate the page is loading
+      window.pageLoading = true;
+      
+      function hideSpinner() {
+        try {
+          var spinner = document.getElementById('initial-content');
+          if (spinner) {
+            spinner.style.display = 'none';
+            spinner.style.visibility = 'hidden';
+            spinner.style.opacity = '0';
+            
+            // Try to remove it completely
             if (spinner.parentNode) {
-              spinner.parentNode.removeChild(spinner);
-              console.log('Spinner removed from DOM');
+              try {
+                spinner.parentNode.removeChild(spinner);
+                console.log('Spinner removed by inline script');
+              } catch (e) {
+                console.error('Error removing spinner:', e);
+              }
             }
-          } catch (e) {
-            console.error('Error removing spinner:', e);
           }
+        } catch (e) {
+          console.error('Error in hideSpinner:', e);
         }
       }
       
-      // Call immediately and with timeouts
-      forceVisibility();
-      setTimeout(forceVisibility, 100);
-      setTimeout(forceVisibility, 500);
-      setTimeout(forceVisibility, 1000);
+      function forceRootVisible() {
+        try {
+          // Force visibility on all critical elements
+          document.documentElement.style.cssText += 'visibility:visible!important;display:block!important;opacity:1!important;';
+          document.body.style.cssText += 'visibility:visible!important;display:block!important;opacity:1!important;';
+          
+          var root = document.getElementById('root');
+          if (root) {
+            root.style.cssText += 'visibility:visible!important;display:block!important;opacity:1!important;';
+            
+            // If root is empty, add fallback content
+            if (!root.innerHTML || root.innerHTML.trim() === '') {
+              root.innerHTML = '<div style="padding: 20px; font-family: system-ui, sans-serif;"><h1 style="color: #0284c7">Ice Guardian Alert</h1><p>Application is loading...</p></div>';
+              console.log('Added fallback content to empty root');
+            }
+          }
+        } catch (e) {
+          console.error('Error in forceRootVisible:', e);
+        }
+      }
+      
+      // Call immediately
+      hideSpinner();
+      forceRootVisible();
+      
+      // Call again with timeouts
+      setTimeout(hideSpinner, 10);
+      setTimeout(forceRootVisible, 20);
+      setTimeout(hideSpinner, 100);
+      setTimeout(forceRootVisible, 200);
       
       // Add to window object
-      window.forceAppVisibility = forceVisibility;
+      window.forceAppVisibility = function() {
+        hideSpinner();
+        forceRootVisible();
+      };
       
-      // Listen for load events
-      document.addEventListener('DOMContentLoaded', forceVisibility);
-      window.addEventListener('load', forceVisibility);
+      // Detect page load completion
+      window.addEventListener('load', function() {
+        window.pageLoading = false;
+        console.log('Page load event fired');
+        hideSpinner();
+        forceRootVisible();
+        
+        // Final check for content after a delay
+        setTimeout(function() {
+          var root = document.getElementById('root');
+          if (root && (!root.innerHTML || root.innerHTML.trim() === '')) {
+            console.error('Root still empty after load, adding emergency content');
+            root.innerHTML = '<div style="padding: 20px; font-family: system-ui, sans-serif;"><h1 style="color: #e11d48">Loading Error</h1><p>There was a problem loading the application.</p><button onclick="window.location.reload()" style="padding: 8px 16px; background: #0284c7; color: white; border: none; border-radius: 4px; cursor: pointer; margin-top: 10px;">Reload Page</button></div>';
+          }
+        }, 5000);
+      });
     </script>
   </head>
   <body>
@@ -96,7 +130,13 @@
     </div>
     
     <!-- The React root -->
-    <div id="root"></div>
+    <div id="root">
+      <!-- Fallback content -->
+      <div style="padding: 20px; font-family: system-ui, sans-serif;">
+        <h1 style="color: #0284c7">Ice Guardian Alert</h1>
+        <p>Application is loading...</p>
+      </div>
+    </div>
     
     <!-- Fallback content for noscript browsers -->
     <noscript>
@@ -107,17 +147,38 @@
       </div>
     </noscript>
     
+    <!-- Load the GPTE script first -->
     <script src="https://cdn.gpteng.co/gptengineer.js" type="module"></script>
+    
+    <!-- Load the application script -->
     <script type="module" src="/src/main.tsx"></script>
     
-    <!-- Backup visibility enforcement -->
+    <!-- Extra script to ensure visibility after scripts load -->
     <script>
-      // Call force visibility again after scripts load
-      setTimeout(function() {
-        if (window.forceAppVisibility) {
-          window.forceAppVisibility();
+      (function() {
+        function finalCheck() {
+          if (window.forceAppVisibility) {
+            window.forceAppVisibility();
+            console.log('Final visibility check completed');
+          }
+          
+          var root = document.getElementById('root');
+          if (root && (!root.innerHTML || root.innerHTML.trim() === '')) {
+            console.error('Root still empty in final check, adding emergency content');
+            root.innerHTML = '<div style="padding: 20px; font-family: system-ui, sans-serif;"><h1 style="color: #e11d48">Loading Error</h1><p>There was a problem loading the application.</p><button onclick="window.location.reload()" style="padding: 8px 16px; background: #0284c7; color: white; border: none; border-radius: 4px; cursor: pointer; margin-top: 10px;">Reload Page</button></div>';
+          }
         }
-      }, 2000);
+        
+        // Call with delay
+        setTimeout(finalCheck, 2000);
+        setTimeout(finalCheck, 5000);
+      })();
     </script>
+    
+    <style>
+      @keyframes spin {
+        to { transform: rotate(360deg); }
+      }
+    </style>
   </body>
 </html>
