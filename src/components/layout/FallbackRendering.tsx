@@ -9,14 +9,26 @@ const FallbackRendering: React.FC<Props> = ({ fallbackTimeout = 10000 }) => {
   const [showFallback, setShowFallback] = useState(false);
   
   useEffect(() => {
+    console.log("FallbackRendering component mounted, setting timeout", fallbackTimeout);
+    
     // Show fallback content if the app hasn't rendered properly after timeout
     const timer = setTimeout(() => {
+      // Check if app has meaningful content
       const appContent = document.querySelector('.App');
       const rootElement = document.getElementById('root');
       
-      if (!appContent || (rootElement && rootElement.children.length <= 1)) {
-        setShowFallback(true);
+      console.log("FallbackRendering timeout reached, checking content", {
+        appContentFound: !!appContent,
+        rootElementFound: !!rootElement,
+        rootChildrenCount: rootElement ? rootElement.children.length : 0,
+        isReactInitialized: !!(window as any).renderingStages?.rootCreated
+      });
+      
+      if (!appContent || !appContent.children.length || 
+          (rootElement && rootElement.children.length <= 1) ||
+          document.body.innerHTML.includes('Loading application content...')) {
         console.error('Rendering fallback content due to slow or failed app initialization');
+        setShowFallback(true);
       }
     }, fallbackTimeout);
     
@@ -71,6 +83,39 @@ const FallbackRendering: React.FC<Props> = ({ fallbackTimeout = 10000 }) => {
       >
         Refresh Page
       </button>
+      
+      {/* Additional technical details for debugging */}
+      <div style={{ marginTop: '2rem', borderTop: '1px solid #eaeaea', paddingTop: '1rem', width: '100%', maxWidth: '500px' }}>
+        <h4>Debug Info</h4>
+        <button 
+          onClick={() => {
+            const debugPanel = document.querySelector('.debug-panel');
+            if (debugPanel) {
+              (debugPanel as HTMLElement).style.display = 'block';
+            }
+          }}
+          style={{
+            backgroundColor: '#f0f0f0',
+            color: '#333',
+            border: 'none',
+            padding: '5px 10px',
+            borderRadius: '4px',
+            cursor: 'pointer',
+            fontSize: '14px',
+            marginBottom: '10px'
+          }}
+        >
+          Show Debug Panel
+        </button>
+        <div style={{ fontSize: '12px', fontFamily: 'monospace', backgroundColor: '#f0f0f0', padding: '10px', borderRadius: '4px' }}>
+          <p>App Start: {(window as any).appStarted ? 'Yes' : 'No'}</p>
+          <p>App Loaded: {(window as any).appLoaded ? 'Yes' : 'No'}</p>
+          <p>React Initialized: {(window as any).renderingStages?.rootCreated ? 'Yes' : 'No'}</p>
+          <p>App Rendered: {(window as any).renderingStages?.appRendered ? 'Yes' : 'No'}</p>
+          <p>DOM Root Found: {document.getElementById('root') ? 'Yes' : 'No'}</p>
+          <p>DOM Root Children: {document.getElementById('root')?.children.length || 0}</p>
+        </div>
+      </div>
     </div>
   );
 };

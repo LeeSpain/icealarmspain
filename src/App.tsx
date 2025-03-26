@@ -1,5 +1,5 @@
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { routes } from "./routes";
 import { Toaster } from "@/components/ui/toaster";
@@ -31,6 +31,9 @@ function App() {
   // Log that App component is rendering (helps with debugging)
   console.log("App component rendering");
   
+  // State to track if app is fully rendered
+  const [isAppRendered, setIsAppRendered] = useState(false);
+  
   // Update the loading message in DOM
   if (typeof document !== 'undefined') {
     const loadingMessage = document.getElementById('loading-message');
@@ -61,9 +64,22 @@ function App() {
     }
   };
   
-  // Use useEffect to hide loading indicator after render
+  // Use useEffect to hide loading indicator after render and set app as rendered
   useEffect(() => {
     hideLoadingIndicator();
+    
+    // Set a timeout to mark app as fully rendered
+    setTimeout(() => {
+      setIsAppRendered(true);
+      console.log("App marked as fully rendered");
+      
+      // Make sure app is visible
+      const appElement = document.querySelector('.App');
+      if (appElement) {
+        (appElement as HTMLElement).style.visibility = 'visible';
+        (appElement as HTMLElement).style.opacity = '1';
+      }
+    }, 100);
   }, []);
   
   // Show debug panel in development or if debug build is enabled
@@ -71,50 +87,52 @@ function App() {
   
   return (
     <ErrorBoundary>
-      <HelmetProvider>
-        <AuthProvider>
-          <LanguageProvider>
-            <Router>
-              <ScrollToTop />
-              <Routes>
-                {routes.map((route) => {
-                  console.log(`Registering route: ${route.path}`);
-                  
-                  // Protected routes with optional role restrictions
-                  if (route.protected) {
+      <div className="App" style={{ visibility: 'visible', opacity: 1 }}>
+        <HelmetProvider>
+          <AuthProvider>
+            <LanguageProvider>
+              <Router>
+                <ScrollToTop />
+                <Routes>
+                  {routes.map((route) => {
+                    console.log(`Registering route: ${route.path}`);
+                    
+                    // Protected routes with optional role restrictions
+                    if (route.protected) {
+                      return (
+                        <Route
+                          key={route.path}
+                          path={route.path}
+                          element={
+                            <AuthGuard allowedRoles={route.allowedRoles}>
+                              {route.element}
+                            </AuthGuard>
+                          }
+                        />
+                      );
+                    }
+                    // Regular routes
                     return (
                       <Route
                         key={route.path}
                         path={route.path}
-                        element={
-                          <AuthGuard allowedRoles={route.allowedRoles}>
-                            {route.element}
-                          </AuthGuard>
-                        }
+                        element={route.element}
                       />
                     );
-                  }
-                  // Regular routes
-                  return (
-                    <Route
-                      key={route.path}
-                      path={route.path}
-                      element={route.element}
-                    />
-                  );
-                })}
-              </Routes>
-            </Router>
-            <Toaster />
-            
-            {/* Fallback rendering in case the app doesn't load properly */}
-            <FallbackRendering fallbackTimeout={15000} />
-            
-            {/* Debug panel to help diagnose issues */}
-            {showDebugPanel && <DebugPanel />}
-          </LanguageProvider>
-        </AuthProvider>
-      </HelmetProvider>
+                  })}
+                </Routes>
+              </Router>
+              <Toaster />
+              
+              {/* Fallback rendering in case the app doesn't load properly */}
+              <FallbackRendering fallbackTimeout={15000} />
+              
+              {/* Debug panel to help diagnose issues */}
+              {showDebugPanel && <DebugPanel />}
+            </LanguageProvider>
+          </AuthProvider>
+        </HelmetProvider>
+      </div>
     </ErrorBoundary>
   );
 }
