@@ -19,27 +19,6 @@
         visibility: visible !important;
         opacity: 1 !important;
       }
-      
-      /* Initial loading indicator that doesn't rely on React */
-      .initial-loader {
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        text-align: center;
-      }
-      .initial-loader-spinner {
-        display: inline-block;
-        width: 40px;
-        height: 40px;
-        border: 3px solid rgba(0,0,0,0.1);
-        border-radius: 50%;
-        border-top-color: #3b82f6;
-        animation: spin 1s ease-in-out infinite;
-      }
-      @keyframes spin {
-        to { transform: rotate(360deg); }
-      }
     </style>
   </head>
 
@@ -51,13 +30,7 @@
       </div>
     </noscript>
     
-    <!-- Initial loader that doesn't depend on React -->
-    <div id="root">
-      <div class="initial-loader">
-        <div class="initial-loader-spinner"></div>
-        <p style="margin-top: 1rem;">Ice Guardian Alert</p>
-      </div>
-    </div>
+    <div id="root"></div>
     
     <script type="module" src="/src/main.tsx"></script>
   </body>
