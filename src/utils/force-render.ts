@@ -37,10 +37,11 @@
       root.style.opacity = '1';
       root.style.display = 'block';
       
-      // Make sure no residual loading text
+      // Make sure no residual "Not found" or loading text
       if (root.innerHTML.includes('Loading') || 
-          root.innerHTML.includes('Ice Guardian Alert')) {
-        console.log('Clearing loading text from root');
+          root.innerHTML.includes('Ice Guardian Alert') ||
+          root.innerHTML.includes('Not found')) {
+        console.log('Clearing loading/not found text from root');
         root.innerHTML = '';
       }
     }
@@ -64,13 +65,14 @@
   // Apply immediately
   forceVisibility();
   
-  // Apply again after short delays - using more frequent checks
+  // Apply again after short delays - using more frequent checks (milliseconds)
   setTimeout(forceVisibility, 0);
+  setTimeout(forceVisibility, 5);
   setTimeout(forceVisibility, 10);
+  setTimeout(forceVisibility, 15);
   setTimeout(forceVisibility, 25);
   setTimeout(forceVisibility, 50);
   setTimeout(forceVisibility, 100);
-  setTimeout(forceVisibility, 250);
   
   // Apply when DOM is ready
   if (document.readyState === 'loading') {

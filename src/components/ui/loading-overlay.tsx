@@ -10,7 +10,8 @@ interface LoadingOverlayProps {
 
 // This component is intentionally disabled and will never show
 const LoadingOverlay: React.FC<LoadingOverlayProps> = () => {
-  return null; // Never render anything
+  // Always return null to ensure no loading overlay is ever shown
+  return null;
 };
 
 export default LoadingOverlay;

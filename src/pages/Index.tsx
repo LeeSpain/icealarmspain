@@ -18,6 +18,14 @@ const Index: React.FC = () => {
     // Force visibility on render
     document.body.style.visibility = 'visible';
     document.body.style.opacity = '1';
+    
+    // Hide any "Not found" messages
+    document.querySelectorAll('body > *:not(#root):not(script)').forEach(el => {
+      if (el instanceof HTMLElement) {
+        el.style.display = 'none';
+      }
+    });
+    
     console.log("Index page rendered");
   }, []);
   

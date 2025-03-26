@@ -26,12 +26,26 @@
       .loading-screen, .loading-indicator, .spinner {
         display: none !important;
       }
+      
+      /* Hide "Not found" that appears before React mounts */
+      body > *:not(#root):not(script) {
+        display: none !important;
+      }
     </style>
     <script>
       // Force immediate rendering
       document.documentElement.style.visibility = 'visible';
       document.documentElement.style.display = 'block';
       document.documentElement.style.opacity = '1';
+      
+      // Immediately hide any non-root elements that might show "Not found"
+      document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('body > *:not(#root):not(script)').forEach(el => {
+          if (el instanceof HTMLElement) {
+            el.style.display = 'none';
+          }
+        });
+      });
     </script>
   </head>
   <body>

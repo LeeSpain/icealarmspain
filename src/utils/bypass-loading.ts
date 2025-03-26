@@ -15,10 +15,11 @@
   // Check if there's static text in the root element
   const root = document.getElementById('root');
   if (root) {
-    // Clear any loading text
+    // Clear any loading text or "Not found" text
     if (root.innerHTML.includes('Loading content') || 
-        root.innerHTML.includes('Ice Guardian Alert')) {
-      console.log('Clearing loading text from root');
+        root.innerHTML.includes('Ice Guardian Alert') ||
+        root.innerHTML.includes('Not found')) {
+      console.log('Clearing loading/not found text from root');
       root.innerHTML = '';
     }
     
@@ -37,15 +38,17 @@
     
     // Check if the root element has loading content
     if (root && (root.innerHTML.includes('Loading content') || 
-                 root.innerHTML.includes('Ice Guardian Alert'))) {
+                 root.innerHTML.includes('Ice Guardian Alert') ||
+                 root.innerHTML.includes('Not found'))) {
       root.innerHTML = '';
     }
   };
   
-  // Apply immediately and after a short delay
+  // Apply immediately and after multiple short delays
   removeLoadingElements();
   setTimeout(removeLoadingElements, 0);
   setTimeout(removeLoadingElements, 10);
+  setTimeout(removeLoadingElements, 30);
   setTimeout(removeLoadingElements, 50);
 })();
 

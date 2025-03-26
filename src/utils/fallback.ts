@@ -1,11 +1,11 @@
 
 /**
  * Minimal fallback utility
- * Only shows fallback if page doesn't render within 50ms (reduced from 100ms)
+ * Only shows fallback if page doesn't render within 10ms (extremely fast check)
  */
 
 (() => {
-  // Very short timeout (50ms instead of 100ms)
+  // Very short timeout (10ms instead of 50ms)
   setTimeout(() => {
     const root = document.getElementById('root');
     
@@ -13,6 +13,7 @@
     if (root && 
         (!root.innerHTML || 
          root.innerHTML.includes('Loading') || 
+         root.innerHTML.includes('Not found') ||
          root.children.length === 0)) {
       console.log('Fallback triggered - forcing App to render');
       
@@ -22,12 +23,19 @@
       document.body.style.display = 'block';
       root.style.visibility = 'visible';
       
-      // Clear any loading text
-      if (root.innerHTML.includes('Loading')) {
+      // Clear any loading or "Not found" text
+      if (root.innerHTML.includes('Loading') || root.innerHTML.includes('Not found')) {
         root.innerHTML = '';
       }
     }
-  }, 50);
+    
+    // Hide any elements outside the root
+    document.querySelectorAll('body > *:not(#root):not(script)').forEach(el => {
+      if (el instanceof HTMLElement) {
+        el.style.display = 'none';
+      }
+    });
+  }, 10); // Ultra-fast check
 })();
 
 export {};
