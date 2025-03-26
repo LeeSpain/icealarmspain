@@ -1,84 +1,81 @@
 
-import React from 'react';
-import { AuthContext } from './context';
-import { AuthStateManager } from './AuthStateManager';
-import { User } from './types';
-import * as authFunctions from './authFunctions';
+import React, { createContext, useState, useContext, useEffect } from 'react';
 
-interface AuthProviderProps {
-  children: React.ReactNode;
-}
+type User = {
+  uid: string;
+  email: string;
+  displayName: string;
+  role: string;
+};
 
-export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  console.log("AuthProvider rendering");
+type AuthContextType = {
+  user: User | null;
+  isAuthenticated: boolean;
+  login: (email: string, password: string) => Promise<void>;
+  logout: () => Promise<void>;
+};
+
+// Create a context with a default value
+const AuthContext = createContext<AuthContextType | null>(null);
+
+// Export the hook for using auth
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
+};
+
+// Simple mock user for demo purposes
+const DEMO_USER = {
+  uid: 'demo-user',
+  email: 'demo@icealarm.es',
+  displayName: 'Demo User',
+  role: 'member'
+};
+
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [user, setUser] = useState<User | null>(null);
   
-  const signIn = async (email: string, password: string, rememberMe?: boolean) => {
-    try {
-      console.log("AuthProvider: signIn called with email:", email);
-      // Call the login function (aliased as signIn in authFunctions)
-      const user = await authFunctions.login(email, password, rememberMe || false);
-      console.log("AuthProvider: signIn success, user:", user);
-      return user;
-    } catch (error) {
-      console.error('Error signing in:', error);
-      throw error;
-    }
-  };
-
-  const signUp = async (email: string, password: string, userData?: any) => {
-    try {
-      console.log("AuthProvider: signUp called with email:", email);
-      const result = await authFunctions.signUp(email, password, userData);
-      if (result.error) {
-        throw result.error;
+  // Initialize from localStorage
+  useEffect(() => {
+    const storedUser = localStorage.getItem('currentUser');
+    if (storedUser) {
+      try {
+        setUser(JSON.parse(storedUser));
+      } catch (error) {
+        console.error('Error parsing stored user:', error);
+        localStorage.removeItem('currentUser');
       }
-      console.log("AuthProvider: signUp success, user:", result.user);
-      // Return just the user object, not the {user, error} structure
-      return result.user as User;
-    } catch (error) {
-      console.error('Error signing up:', error);
-      throw error;
     }
+  }, []);
+  
+  // Simple login function
+  const login = async (email: string, password: string) => {
+    // For demo, always succeed with the demo user
+    setUser(DEMO_USER);
+    localStorage.setItem('currentUser', JSON.stringify(DEMO_USER));
   };
-
-  const signOut = async () => {
-    try {
-      console.log("AuthProvider: signOut called");
-      // Use logout function instead of signOut
-      return await authFunctions.logout();
-    } catch (error) {
-      console.error('Error signing out:', error);
-      throw error;
-    }
+  
+  // Simple logout function
+  const logout = async () => {
+    setUser(null);
+    localStorage.removeItem('currentUser');
   };
-
+  
+  const value = {
+    user,
+    isAuthenticated: !!user,
+    login,
+    logout
+  };
+  
   return (
-    <AuthStateManager>
-      {({ user, isLoading, wrappedUpdateUserProfile }) => {
-        console.log("AuthStateManager provided state: user=", user, "isLoading=", isLoading);
-        return (
-          <AuthContext.Provider
-            value={{
-              user,
-              isAuthenticated: !!user,
-              isLoading,
-              profile: user, // Use user as profile since they have the same structure
-              login: signIn,
-              signIn,
-              signUp,
-              logout: signOut,
-              updateUserProfile: wrappedUpdateUserProfile,
-              // Add required admin functions with stub implementations
-              createUser: signUp,
-              getAllUsers: async () => [],
-              updateUserRole: async () => {},
-              deleteUser: async () => {},
-            }}
-          >
-            {children}
-          </AuthContext.Provider>
-        );
-      }}
-    </AuthStateManager>
+    <AuthContext.Provider value={value}>
+      {children}
+    </AuthContext.Provider>
   );
 };
+
+export default AuthProvider;
