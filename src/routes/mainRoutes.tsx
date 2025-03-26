@@ -10,11 +10,7 @@ import Checkout from "../pages/Checkout";
 import NotFound from "../pages/NotFound";
 import { RouteConfig } from './types';
 import Layout from '../components/layout/Layout';
-import Hero from "../components/Hero";
-import DeviceShowcase from "../components/DeviceShowcase";
-import Pricing from "../components/Pricing";
-import ExpatInfo from "../components/ExpatInfo";
-import Testimonials from "../components/Testimonials";
+import Index from "../pages/Index"; // Direct import for faster loading
 import SOSPendantPage from "../pages/SOSPendantPage";
 import MedicalDispenserPage from "../pages/MedicalDispenserPage";
 import GlucoseMonitorPage from "../pages/GlucoseMonitorPage";
@@ -22,23 +18,11 @@ import InvestorPage from "../pages/InvestorPage";
 import HelpSupportPage from "../pages/HelpSupportPage";
 import Commercial from "../pages/Commercial";
 
-// Landing page component
-const Landing = () => {
-  return (
-    <>
-      <Hero />
-      <DeviceShowcase />
-      <Pricing />
-      <ExpatInfo />
-      <Testimonials />
-    </>
-  );
-};
-
-// Define home route first for priority
+// Define home route first for priority - use direct component import instead of Landing component
 const homeRoute: RouteConfig = {
   path: "/",
-  element: <Layout><Landing /></Layout>
+  element: <Layout><Index /></Layout>,
+  priority: "highest" // Custom property to indicate highest priority
 };
 
 // Define other routes
@@ -101,7 +85,8 @@ const otherRoutes: RouteConfig[] = [
   },
   {
     path: "*",
-    element: <Layout><NotFound /></Layout>
+    element: <Layout><NotFound /></Layout>,
+    priority: "lowest" // Make sure this route has lowest priority
   }
 ];
 

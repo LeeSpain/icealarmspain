@@ -9,17 +9,26 @@ import './App.css';
 import ErrorBoundary from "@/components/layout/ErrorBoundary";
 import ScrollToTop from "@/components/layout/ScrollToTop";
 import { AuthProvider } from "@/context/auth";
+import LoadingIndicator from "@/components/ui/LoadingIndicator";
 
 function App() {
   console.log("App component rendering");
+  const [isInitializing, setIsInitializing] = useState(true);
   const [routesReady, setRoutesReady] = useState(false);
   
-  // Log all routes for debugging
+  // Immediate initialization effect
   useEffect(() => {
     console.log("Routes configuration:", routes.map(r => r.path));
     
     // Set routes as ready immediately to prevent flash
     setRoutesReady(true);
+    
+    // Short delay before removing initialization state to ensure DOM is ready
+    const timer = setTimeout(() => {
+      setIsInitializing(false);
+    }, 10);
+    
+    return () => clearTimeout(timer);
   }, []);
   
   return (
@@ -30,12 +39,11 @@ function App() {
             <LanguageProvider>
               <Router>
                 <ScrollToTop />
-                {!routesReady && (
+                {isInitializing ? (
                   <div className="flex h-screen w-full items-center justify-center">
-                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-ice-600"></div>
+                    <LoadingIndicator size="large" message="Loading Ice Guardian Alert..." />
                   </div>
-                )}
-                {routesReady && (
+                ) : (
                   <Routes>
                     {routes.map((route) => (
                       <Route
