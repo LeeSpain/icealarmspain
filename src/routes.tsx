@@ -10,14 +10,14 @@ import { callCenterRoutes } from "./routes/callCenterRoutes";
 
 // Create a flat array of routes with direct imports
 export const routes: RouteConfig[] = [
-  // Home route explicitly defined first
+  // Home route explicitly defined first for priority
   {
     path: "/",
     element: <Index />
   },
   
-  // All other routes
-  ...mainRoutes.filter(route => route.path !== "/"), // Skip duplicate home routes
+  // All other routes, filtering out any duplicate home routes
+  ...mainRoutes.filter(route => route.path !== "/"),
   ...dashboardRoutes,
   ...adminRoutes,
   ...callCenterRoutes,

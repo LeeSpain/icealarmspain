@@ -6,7 +6,6 @@ import HeroHeader from "./hero/HeroHeader";
 import FeatureCards from "./hero/FeatureCards";
 import DashboardPreview from "./hero/DashboardPreview";
 import HeroBackground from "./hero/HeroBackground";
-import RenderingDebugger from "./debug/RenderingDebugger";
 
 const Hero: React.FC = () => {
   const { language } = useLanguage();
@@ -21,9 +20,6 @@ const Hero: React.FC = () => {
       className="relative pt-24 pb-12 overflow-hidden bg-white"
     >
       <HeroBackground />
-      
-      {/* Add debugging component in development */}
-      {import.meta.env.DEV && <RenderingDebugger />}
       
       <div className="container mx-auto px-4 md:px-6 relative z-10">
         <div className="max-w-5xl mx-auto">

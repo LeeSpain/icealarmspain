@@ -22,22 +22,16 @@
         opacity: 1;
       }
       
-      /* Basic fallback content in case React doesn't load */
-      .fallback-content {
-        display: none;
-        padding: 2rem;
-        text-align: center;
-        font-family: system-ui, sans-serif;
-      }
-      
-      /* Show fallback content if app doesn't load quickly */
-      body.js-loading .fallback-content {
-        display: block;
+      /* Immediate render critical content */
+      .App {
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
       }
     </style>
   </head>
 
-  <body class="js-loading">
+  <body>
     <noscript>
       <div style="text-align: center; padding: 2rem; font-family: system-ui, sans-serif;">
         <h1>JavaScript is required</h1>
@@ -45,26 +39,13 @@
       </div>
     </noscript>
     
-    <div id="root"></div>
-    
-    <!-- Fallback content that will be hidden once app loads -->
-    <div class="fallback-content">
-      <h1>Ice Guardian Alert</h1>
-      <p>Loading application...</p>
+    <div id="root">
+      <!-- Inline fallback to ensure something renders -->
+      <div style="text-align: center; padding: 2rem; font-family: 'Inter', system-ui, sans-serif;">
+        <h1>Ice Guardian Alert</h1>
+        <p>Loading application...</p>
+      </div>
     </div>
-    
-    <script>
-      // Remove js-loading class once the script loads
-      document.body.classList.remove('js-loading');
-      
-      // Set a timeout to show error message if app doesn't load
-      setTimeout(function() {
-        if (!document.querySelector('.App')) {
-          console.error('App failed to initialize after 5s');
-          document.body.classList.add('js-loading');
-        }
-      }, 5000);
-    </script>
     
     <script type="module" src="/src/main.tsx"></script>
   </body>
