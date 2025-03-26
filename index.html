@@ -19,21 +19,12 @@
         opacity: 1 !important;
         display: block !important;
       }
-    </style>
-    <script>
-      // Force visibility immediately
-      document.documentElement.style.visibility = 'visible';
-      document.documentElement.style.display = 'block';
       
-      // Remove any loading content if it exists
-      window.onload = function() {
-        var root = document.getElementById('root');
-        var loading = document.querySelector('.initial-loading');
-        if (loading && root && loading.parentNode === root) {
-          loading.remove();
-        }
-      };
-    </script>
+      /* Hide any "Not found" text that might appear */
+      body > *:not(#root):not(script) {
+        display: none !important;
+      }
+    </style>
   </head>
 
   <body>
@@ -44,11 +35,8 @@
       </div>
     </noscript>
     
-    <div id="root">
-      <!-- No loading content here -->
-    </div>
+    <div id="root"></div>
     
-    <!-- Main application script -->
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

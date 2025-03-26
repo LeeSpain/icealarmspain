@@ -8,8 +8,8 @@ interface LoadingSpinnerProps {
   fullPage?: boolean;
 }
 
+// Completely disabled loading spinner that returns null
 export const LoadingSpinner: React.FC<LoadingSpinnerProps> = () => {
-  // Return null to completely disable all loading spinners
   return null;
 };
 

@@ -1,6 +1,6 @@
 
 /**
- * This utility forces immediate rendering of the app
+ * Aggressive force rendering utility
  * Import in main.tsx to ensure it runs early
  */
 
@@ -9,6 +9,15 @@
   
   // Define a function to force visibility
   const forceVisibility = () => {
+    // Hide any "Not found" messages
+    if (typeof document !== 'undefined') {
+      document.querySelectorAll('body > *:not(#root):not(script)').forEach(el => {
+        if (el instanceof HTMLElement) {
+          el.style.display = 'none';
+        }
+      });
+    }
+    
     // Force document and body to be visible
     if (document.documentElement) {
       document.documentElement.style.visibility = 'visible';
@@ -26,7 +35,10 @@
     if (root) {
       root.style.visibility = 'visible';
       root.style.opacity = '1';
-      root.innerHTML = root.innerHTML.replace('Loading...', '');
+      // Make sure no residual loading text
+      if (root.innerHTML.includes('Loading')) {
+        root.innerHTML = '';
+      }
     }
     
     // Force App to be visible
@@ -34,9 +46,8 @@
     if (app instanceof HTMLElement) {
       app.style.visibility = 'visible';
       app.style.opacity = '1';
+      app.style.display = 'block';
     }
-    
-    console.log("🚀 Force visibility applied");
   };
   
   // Apply immediately
@@ -44,11 +55,18 @@
   
   // Apply again after short delays
   setTimeout(forceVisibility, 0);
+  setTimeout(forceVisibility, 50);
   setTimeout(forceVisibility, 100);
+  setTimeout(forceVisibility, 250);
   setTimeout(forceVisibility, 500);
+  setTimeout(forceVisibility, 1000);
   
   // Apply when DOM is ready
-  document.addEventListener('DOMContentLoaded', forceVisibility);
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', forceVisibility);
+  } else {
+    forceVisibility();
+  }
   
   // Apply after window load
   window.addEventListener('load', forceVisibility);

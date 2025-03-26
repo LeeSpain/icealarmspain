@@ -4,10 +4,19 @@ import ReactDOM from 'react-dom/client'
 import App from './App'
 import './styles/index.css'
 import './utils/force-render'
+import './utils/check-render'
+import './utils/instant-render'
 
 // Force immediate visibility
 document.documentElement.style.visibility = 'visible';
 document.body.style.visibility = 'visible';
+
+// Remove any "Not found" text outside the root
+document.querySelectorAll('body > *:not(#root):not(script)').forEach(el => {
+  if (el instanceof HTMLElement) {
+    el.style.display = 'none';
+  }
+});
 
 // Simple direct rendering
 console.log("Forcing immediate rendering");

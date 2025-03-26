@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { routes } from "./routes";
 import { Toaster } from "@/components/ui/toaster";
@@ -12,6 +12,19 @@ import { AuthProvider } from "@/context/auth";
 function App() {
   // Force title immediately
   document.title = "Ice Guardian Alert";
+  
+  // Force visibility on mount
+  useEffect(() => {
+    document.documentElement.style.visibility = 'visible';
+    document.body.style.visibility = 'visible';
+    document.body.style.display = 'block';
+    
+    const root = document.getElementById('root');
+    if (root) {
+      root.style.visibility = 'visible';
+      root.style.display = 'block';
+    }
+  }, []);
   
   return (
     <ErrorBoundary>

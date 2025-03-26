@@ -4,24 +4,19 @@ import { RouteConfig } from "./routes/types";
 import Index from "./pages/Index"; 
 import NotFound from "./pages/NotFound"; 
 
-// Import routes from the routes directory
-import { routes as allRoutes } from "./routes/index";
-
-// Create a home route that loads immediately without any complexities
-const homeRoute: RouteConfig = {
-  path: "/",
-  element: <Index />
-};
-
-// Create a catch-all route for 404 errors
-const notFoundRoute: RouteConfig = {
-  path: "*",
-  element: <NotFound />,
-};
-
-// Combine all routes with a carefully controlled order
-export const routes = [
-  homeRoute,     // Home route first with highest priority
-  ...allRoutes,  // Then all other routes
-  notFoundRoute, // Catch-all route last
+// Create a flat array of routes with default direct imports
+export const routes: RouteConfig[] = [
+  {
+    path: "/",
+    element: <Index />
+  },
+  // Import other main routes directly to avoid any async loading issues
+  ...require("./routes/mainRoutes").mainRoutes,
+  ...require("./routes/dashboardRoutes").dashboardRoutes,
+  ...require("./routes/adminRoutes").adminRoutes,
+  ...require("./routes/callCenterRoutes").callCenterRoutes,
+  {
+    path: "*",
+    element: <NotFound />,
+  }
 ];

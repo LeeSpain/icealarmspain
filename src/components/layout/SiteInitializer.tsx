@@ -2,16 +2,16 @@
 import { useEffect } from 'react';
 
 /**
- * This component ensures the site is visible and properly initialized
- * It has been simplified to avoid any complex operations that might cause loading to hang
+ * Extremely simplified initializer that only forces visibility
  */
 const SiteInitializer = () => {
   useEffect(() => {
-    console.log("SiteInitializer running - simplified version");
+    console.log("SiteInitializer running - ultra simple version");
     
-    // Simple visibility enforcement
+    // Force document and body to be visible
     document.documentElement.style.visibility = 'visible';
     document.body.style.visibility = 'visible';
+    document.body.style.display = 'block';
     
     // Force root to be visible
     const root = document.getElementById('root');
@@ -20,15 +20,12 @@ const SiteInitializer = () => {
       root.style.display = 'block';
     }
     
-    // Forcibly remove any loading content after 2 seconds
-    const timer = setTimeout(() => {
-      const loadingEl = document.querySelector('.initial-loading');
-      if (loadingEl && loadingEl.parentNode === root) {
-        loadingEl.remove();
+    // Hide any "Not found" messages outside the root
+    document.querySelectorAll('body > *:not(#root):not(script)').forEach(el => {
+      if (el instanceof HTMLElement && el.textContent?.includes('Not found')) {
+        el.style.display = 'none';
       }
-    }, 2000);
-    
-    return () => clearTimeout(timer);
+    });
   }, []);
   
   return null;
