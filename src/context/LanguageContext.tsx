@@ -1,6 +1,5 @@
 
 import React, { createContext, useState, useContext, useEffect } from 'react';
-import { useAuth } from './auth'; // Updated to use the new auth implementation
 
 export type Language = 'en' | 'es';
 
@@ -26,30 +25,6 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const [language, setLanguage] = useState<Language>(() => {
     return (localStorage.getItem('language') as Language) || 'en';
   });
-
-  // Try to get auth context safely
-  let auth = null;
-  let profile = null;
-  let isLoading = false;
-
-  try {
-    // Conditionally try to use auth if we're inside an AuthProvider
-    const authContext = useAuth();
-    auth = authContext;
-    profile = authContext?.profile;
-    isLoading = authContext?.isLoading || false;
-  } catch (error) {
-    // If useAuth throws an error (e.g., we're not in an AuthProvider),
-    // just continue without auth integration
-    console.log("Auth context not available in LanguageProvider, continuing without user profile language preferences");
-  }
-  
-  // When auth loads and profile is available, use profile language if set
-  useEffect(() => {
-    if (auth && !isLoading && profile && profile.language) {
-      setLanguage(profile.language as Language);
-    }
-  }, [isLoading, profile, auth]);
 
   // Save to localStorage whenever it changes
   useEffect(() => {

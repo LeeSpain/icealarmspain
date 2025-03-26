@@ -6,10 +6,8 @@ import { Toaster } from "@/components/ui/toaster";
 import { LanguageProvider } from "@/context/LanguageContext";
 import { HelmetProvider } from "react-helmet-async";
 import './App.css';
-import { AuthProvider } from "./context/auth/AuthProvider"; 
 import ErrorBoundary from "@/components/layout/ErrorBoundary";
 import ScrollToTop from "@/components/layout/ScrollToTop";
-import { isDevelopment } from "./utils/environment";
 
 function App() {
   console.log("App component rendering");
@@ -35,23 +33,21 @@ function App() {
     <ErrorBoundary>
       <div className="App" style={{ visibility: 'visible', opacity: 1 }}>
         <HelmetProvider>
-          <AuthProvider>
-            <LanguageProvider>
-              <Router>
-                <ScrollToTop />
-                <Routes>
-                  {routes.map((route) => (
-                    <Route
-                      key={route.path}
-                      path={route.path}
-                      element={route.element}
-                    />
-                  ))}
-                </Routes>
-              </Router>
+          <LanguageProvider>
+            <Router>
+              <ScrollToTop />
+              <Routes>
+                {routes.map((route) => (
+                  <Route
+                    key={route.path}
+                    path={route.path}
+                    element={route.element}
+                  />
+                ))}
+              </Routes>
               <Toaster />
-            </LanguageProvider>
-          </AuthProvider>
+            </Router>
+          </LanguageProvider>
         </HelmetProvider>
       </div>
     </ErrorBoundary>
