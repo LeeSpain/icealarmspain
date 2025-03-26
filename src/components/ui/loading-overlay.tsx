@@ -9,9 +9,7 @@ interface LoadingOverlayProps {
   fullScreen?: boolean;
 }
 
-const LoadingOverlay: React.FC<LoadingOverlayProps> = ({ 
-  isVisible = false
-}) => {
+const LoadingOverlay: React.FC<LoadingOverlayProps> = () => {
   // Always return null to prevent loading overlays
   return null;
 };

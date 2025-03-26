@@ -1,5 +1,5 @@
 
-import React, { useEffect, useCallback, useRef } from "react";
+import React, { useEffect, useCallback } from "react";
 import Hero from "@/components/Hero";
 import DeviceShowcase from "@/components/DeviceShowcase";
 import ExpatInfo from "@/components/ExpatInfo";
@@ -9,7 +9,6 @@ import SectionDivider from "@/components/layout/SectionDivider";
 import SectionWrapper from "@/components/layout/SectionWrapper";
 import { Helmet } from "react-helmet-async";
 import Layout from "@/components/layout/Layout";
-import { getEnvironment } from "@/utils/environment";
 
 const Index: React.FC = () => {
   console.log("Index component rendering - SHOULD BE VISIBLE");
@@ -49,6 +48,18 @@ const Index: React.FC = () => {
       });
     };
   }, [handleAnchorClick]);
+  
+  // Force visibility of the component
+  useEffect(() => {
+    const rootElement = document.getElementById('root');
+    if (rootElement) {
+      rootElement.style.visibility = 'visible';
+      rootElement.style.opacity = '1';
+    }
+    
+    document.body.style.visibility = 'visible';
+    document.body.style.opacity = '1';
+  }, []);
   
   // Prepare SEO data based on language
   const seoDescription = language === 'en' 

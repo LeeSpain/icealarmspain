@@ -1,15 +1,13 @@
 import React from "react";
 import { RouteConfig } from "./routes/types";
-import { withLazyLoading } from "./utils/lazy-imports";
 import TestingPanel from "./components/test/TestingPanel";
-import Index from "./pages/Index"; // Import the Index component directly
-
-// Use lazy loading with null fallbacks for other pages
-const SOSPendantPage = withLazyLoading(() => import("./pages/SOSPendantPage"));
-const MedicalDispenserPage = withLazyLoading(() => import("./pages/MedicalDispenserPage"));
-const GlucoseMonitorPage = withLazyLoading(() => import("./pages/GlucoseMonitorPage"));
-const Signup = withLazyLoading(() => import("./pages/signup"));
-const Checkout = withLazyLoading(() => import("./pages/Checkout"));
+import Index from "./pages/Index"; 
+import SOSPendantPage from "./pages/SOSPendantPage";
+import MedicalDispenserPage from "./pages/MedicalDispenserPage";
+import GlucoseMonitorPage from "./pages/GlucoseMonitorPage";
+import Signup from "./pages/signup";
+import Checkout from "./pages/Checkout";
+import NotFound from "./pages/NotFound";
 
 // Import routes from the routes directory
 import { routes as allRoutes } from "./routes/index";
@@ -43,6 +41,10 @@ const customRoutes: RouteConfig[] = [
   {
     path: "/testing", // Testing route
     element: <TestingPanel />,
+  },
+  {
+    path: "*",
+    element: <NotFound />,
   }
 ];
 
@@ -68,5 +70,5 @@ const protectedRoutes = allRoutes.map(route => {
 // Combine the imported routes with our custom routes
 export const routes = [
   ...customRoutes,  // Put custom routes first to ensure they take precedence
-  ...protectedRoutes
+  ...protectedRoutes.filter(route => route.path !== '*') // Filter out any extra wildcard routes
 ];
