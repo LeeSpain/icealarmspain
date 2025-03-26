@@ -7,19 +7,10 @@ const ScrollToTop = () => {
   const { pathname } = useLocation();
 
   useEffect(() => {
-    // Only log in development to avoid cluttering the console in production
-    if (import.meta.env.DEV) {
-      console.log("ScrollToTop - Navigation detected:", pathname);
-    }
-    
-    // Smooth scroll to top
-    window.scrollTo({
-      top: 0,
-      behavior: 'auto' // Changed from 'smooth' to 'auto' to prevent animation delays
-    });
+    // Only scroll, no delay
+    window.scrollTo(0, 0);
   }, [pathname]);
 
-  // This component doesn't render anything
   return null;
 };
 

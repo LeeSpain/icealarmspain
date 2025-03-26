@@ -15,21 +15,6 @@ const Index: React.FC = () => {
   console.log("Index component rendering - SHOULD BE VISIBLE");
   const { language } = useLanguage();
   
-  // Reference to track if component is mounted
-  const isMounted = useRef(true);
-  
-  // Log environment information for debugging
-  useEffect(() => {
-    console.log("Index component mounted");
-    console.log("Current environment:", getEnvironment());
-    console.log("Language:", language);
-    
-    // Cleanup function
-    return () => {
-      isMounted.current = false;
-    };
-  }, [language]);
-  
   // Define the scroll handler function using useCallback to avoid recreating it on each render
   const handleAnchorClick = useCallback((e: Event) => {
     e.preventDefault();
@@ -49,11 +34,6 @@ const Index: React.FC = () => {
   
   // Smooth scroll implementation with proper cleanup
   useEffect(() => {
-    console.log("Setting up smooth scroll");
-    
-    // Reset the mounted ref on mount
-    isMounted.current = true;
-    
     // Select all anchor links that start with #
     const anchorLinks = document.querySelectorAll('a[href^="#"]');
     
@@ -64,14 +44,11 @@ const Index: React.FC = () => {
     
     // Cleanup function
     return () => {
-      isMounted.current = false;
       anchorLinks.forEach(anchor => {
         anchor.removeEventListener('click', handleAnchorClick);
       });
     };
   }, [handleAnchorClick]);
-  
-  console.log("Index about to render JSX");
   
   // Prepare SEO data based on language
   const seoDescription = language === 'en' 

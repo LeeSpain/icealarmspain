@@ -23,12 +23,8 @@ if (!rootElement) {
     
     const root = ReactDOM.createRoot(rootElement);
     
-    // Render the app
-    root.render(
-      <React.StrictMode>
-        <App />
-      </React.StrictMode>
-    );
+    // Disable StrictMode to prevent double-rendering in development
+    root.render(<App />);
     
     console.log("App rendered successfully");
   } catch (error) {

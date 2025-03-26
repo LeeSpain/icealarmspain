@@ -6,7 +6,7 @@ interface Props {
 }
 
 const FallbackRendering: React.FC<Props> = () => {
-  // This component should do nothing now that we're removing loading screens
+  // Return null immediately with no rendering delay
   return null;
 };
 

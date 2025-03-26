@@ -1,10 +1,9 @@
-
 import React from "react";
 import { RouteConfig } from "./routes/types";
 import { withLazyLoading } from "./utils/lazy-imports";
 import TestingPanel from "./components/test/TestingPanel";
 
-// Use lazy loading for better performance
+// Use lazy loading but with null fallbacks
 const SOSPendantPage = withLazyLoading(() => import("./pages/SOSPendantPage"), "Loading SOS Pendant page...");
 const MedicalDispenserPage = withLazyLoading(() => import("./pages/MedicalDispenserPage"), "Loading Medical Dispenser page...");
 const GlucoseMonitorPage = withLazyLoading(() => import("./pages/GlucoseMonitorPage"), "Loading Glucose Monitor page...");
