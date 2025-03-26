@@ -9,20 +9,20 @@
   console.log('🚀 Startup recovery running - simplified version');
   
   // Initialize loading stages tracking for debugging
-  if (!window.loadingStages) {
-    window.loadingStages = {};
-  }
-  
-  if (!window.renderingStages) {
-    window.renderingStages = {};
-  }
-  
-  if (window.loadingStages) {
+  if (typeof window !== 'undefined') {
+    if (!window.loadingStages) {
+      window.loadingStages = {};
+    }
+    
+    if (!window.renderingStages) {
+      window.renderingStages = {};
+    }
+    
     window.loadingStages.recoveryStarted = true;
   }
   
   // Check for existing recovery attempt
-  if (window.recoveryAttempted) {
+  if (typeof window !== 'undefined' && window.recoveryAttempted) {
     console.log('Recovery already attempted, skipping to prevent loops');
     if (window.loadingStages) {
       window.loadingStages.recoverySkipped = true;
@@ -31,9 +31,11 @@
   }
   
   // Mark recovery as attempted
-  window.recoveryAttempted = true;
-  if (window.loadingStages) {
-    window.loadingStages.recoveryAttempted = true;
+  if (typeof window !== 'undefined') {
+    window.recoveryAttempted = true;
+    if (window.loadingStages) {
+      window.loadingStages.recoveryAttempted = true;
+    }
   }
   
   // Flag to track if React has mounted
@@ -51,6 +53,13 @@
         window.loadingStages.reactAppDetected = true;
       }
       console.log('React app detected - loaded successfully');
+      
+      // Hide the initial loading spinner
+      const initialContent = document.getElementById('initial-content');
+      if (initialContent) {
+        initialContent.style.display = 'none';
+      }
+      
       return true;
     }
     
@@ -108,6 +117,12 @@
       console.log('React app not mounted after timeout - showing static content');
       if (window.loadingStages) {
         window.loadingStages.staticContentShown = true;
+      }
+      
+      // Hide the initial loading spinner
+      const initialContent = document.getElementById('initial-content');
+      if (initialContent) {
+        initialContent.style.display = 'none';
       }
       
       // Add recovery content without auto-reload

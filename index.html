@@ -61,6 +61,21 @@
         to { transform: rotate(360deg); }
       }
     </style>
+    <script>
+      // Initialize loading stages immediately in the head
+      window.loadingStages = window.loadingStages || {};
+      window.renderingStages = window.renderingStages || {};
+      window.loadingStages.htmlLoaded = true;
+      
+      // Setup automatic spinner timeout - hide spinner after 15 seconds regardless
+      setTimeout(function() {
+        var spinner = document.getElementById('initial-content');
+        if (spinner) {
+          spinner.style.display = 'none';
+          console.log('Forced hiding of spinner after timeout');
+        }
+      }, 15000);
+    </script>
   </head>
   <body>
     <!-- Fallback content that will be hidden once React loads -->

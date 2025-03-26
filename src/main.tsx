@@ -31,6 +31,12 @@ if (!rootElement) {
       }, 300);
     }
     
+    // Mark that the app has been loaded in the window object
+    if (window.renderingStages) {
+      window.renderingStages.appMounted = true;
+      window.renderingStages.appRendered = true;
+    }
+    
   } catch (error) {
     console.error('Error rendering React app:', error);
     
@@ -50,6 +56,12 @@ if (!rootElement) {
           </button>
         </div>
       `;
+      
+      // Hide the initial spinner
+      const initialContent = document.getElementById('initial-content');
+      if (initialContent) {
+        initialContent.style.display = 'none';
+      }
     }
   }
 }

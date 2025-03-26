@@ -16,9 +16,8 @@ const RenderingDebugger: React.FC = () => {
       window.renderingStages = {};
     }
     
-    if (window.renderingStages) {
-      window.renderingStages.debuggerMounted = true;
-    }
+    // Mark the debugger as mounted
+    window.renderingStages.debuggerMounted = true;
     
     // Update loading info from window
     setLoadInfo({

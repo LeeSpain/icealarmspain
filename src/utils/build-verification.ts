@@ -13,9 +13,8 @@ if (typeof window !== 'undefined') {
     window.renderingStages = {};
   }
   
-  if (window.loadingStages) {
-    window.loadingStages.buildVerificationStarted = true;
-  }
+  // Record the verification started
+  window.loadingStages.buildVerificationStarted = true;
 }
 
 // Log build environment details
