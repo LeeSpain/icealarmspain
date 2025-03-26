@@ -10,7 +10,7 @@
     <meta property="og:image" content="/og-image.png" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&display=swap">
     <style>
-      /* Critical styling to ensure content is visible */
+      /* Critical CSS to ensure content is visible immediately */
       html, body, #root, .App {
         margin: 0;
         padding: 0;
@@ -29,28 +29,82 @@
       body > *:not(#root):not(script) {
         display: none !important;
       }
+      
+      /* Fallback content styling */
+      .fallback-content {
+        text-align: center;
+        padding: 2rem;
+        max-width: 600px;
+        margin: 0 auto;
+      }
     </style>
     <link rel="preconnect" href="https://fonts.googleapis.com">
+    <!-- Add immediate visibility script -->
+    <script>
+      // Force immediate visibility
+      document.documentElement.style.visibility = 'visible';
+      document.documentElement.style.display = 'block';
+    </script>
   </head>
 
   <body>
-    <div id="root"></div>
+    <!-- Add emergency fallback content -->
+    <noscript>
+      <div class="fallback-content">
+        <h1>JavaScript is required</h1>
+        <p>Please enable JavaScript to use Ice Guardian Alert.</p>
+      </div>
+    </noscript>
     
-    <!-- Add the GPT Engineer script tag -->
+    <!-- Root element for React -->
+    <div id="root">
+      <!-- Initial loading state to show immediately -->
+      <div style="text-align: center; padding: 2rem;">
+        <h1>Ice Guardian Alert</h1>
+        <p>Loading...</p>
+      </div>
+    </div>
+    
+    <!-- GPT Engineer script tag -->
     <script src="https://cdn.gpteng.co/gptengineer.js" type="module"></script>
+    
+    <!-- Main application script -->
     <script type="module" src="/src/main.tsx"></script>
     
-    <!-- Fallback to ensure visibility -->
+    <!-- Fallback script to ensure visibility -->
     <script>
-      // Simple fallback script to ensure visibility
+      // Emergency visibility enforcement
       document.addEventListener('DOMContentLoaded', function() {
         document.documentElement.style.visibility = 'visible';
         document.body.style.visibility = 'visible';
+        
         const root = document.getElementById('root');
         if (root) {
           root.style.visibility = 'visible';
           root.style.display = 'block';
         }
+        
+        // Check if app loaded after 5 seconds
+        setTimeout(function() {
+          const app = document.querySelector('.App');
+          if (!app) {
+            console.error('App failed to load properly');
+            const root = document.getElementById('root');
+            if (root) {
+              root.innerHTML = `
+                <div style="text-align: center; padding: 2rem;">
+                  <h1>Ice Guardian Alert</h1>
+                  <p>Something went wrong. Please refresh the page.</p>
+                  <button onclick="window.location.reload()" 
+                    style="padding: 8px 16px; background: #0070f3; color: white; 
+                    border: none; border-radius: 4px; cursor: pointer; margin-top: 20px;">
+                    Refresh Page
+                  </button>
+                </div>
+              `;
+            }
+          }
+        }, 5000);
       });
     </script>
   </body>

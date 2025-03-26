@@ -17,9 +17,7 @@
     // Force root to be visible
     const root = document.getElementById('root');
     if (root) {
-      root.style.display = 'flex';
-      root.style.flexDirection = 'column';
-      root.style.minHeight = '100vh';
+      root.style.display = 'block';
       root.style.visibility = 'visible';
       root.style.opacity = '1';
     }
@@ -29,9 +27,7 @@
     if (app) {
       (app as HTMLElement).style.visibility = 'visible';
       (app as HTMLElement).style.opacity = '1';
-      (app as HTMLElement).style.display = 'flex';
-      (app as HTMLElement).style.flexDirection = 'column';
-      (app as HTMLElement).style.minHeight = '100vh';
+      (app as HTMLElement).style.display = 'block';
     }
 
     // Force body and html to be visible
@@ -39,6 +35,14 @@
     document.body.style.opacity = '1';
     document.documentElement.style.visibility = 'visible';
     document.documentElement.style.opacity = '1';
+    
+    // Hide any "Not found" text outside the root
+    const nonRootElements = document.body.querySelectorAll('body > *:not(#root):not(script)');
+    nonRootElements.forEach(el => {
+      if (el instanceof HTMLElement && el.textContent?.includes('Not found')) {
+        el.style.display = 'none';
+      }
+    });
   };
   
   // Apply visibility fixes repeatedly
@@ -59,9 +63,16 @@
     setVisibility();
   });
   
-  // Start observing
+  // Start observing once body is available
   if (document.body) {
     observer.observe(document.body, { childList: true, subtree: true });
+  } else {
+    // If body isn't available yet, wait for it
+    document.addEventListener('DOMContentLoaded', () => {
+      if (document.body) {
+        observer.observe(document.body, { childList: true, subtree: true });
+      }
+    });
   }
 })();
 

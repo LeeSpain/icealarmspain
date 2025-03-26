@@ -16,6 +16,15 @@ const NotFound = () => {
     // Immediately update title
     document.title = "Page Not Found - Ice Guardian Alert";
     console.log("404 Component rendering for path:", location.pathname);
+    
+    // Force visibility of root elements
+    document.documentElement.style.visibility = 'visible';
+    document.body.style.visibility = 'visible';
+    const root = document.getElementById('root');
+    if (root) {
+      root.style.visibility = 'visible';
+      root.style.display = 'block';
+    }
   }, [location.pathname]);
 
   const getDashboardLink = () => {
