@@ -27,13 +27,16 @@
       root.style.opacity = '1';
       root.style.display = 'block';
       
-      // Clear any loading text - this is critical to prevent flashing
-      if (root.innerHTML.includes('Loading')) {
+      // AGGRESSIVELY clear any loading text
+      if (root.innerHTML.includes('Loading') || 
+          root.innerHTML.includes('Ice Guardian Alert') || 
+          root.innerHTML.includes('Not found')) {
+        console.log('Clearing loading text from root element');
         root.innerHTML = '';
       }
     }
     
-    // Remove any fallback content outside the root
+    // Hide any fallback content outside the root
     document.querySelectorAll('[id*="fallback"], [id*="app-fallback"]').forEach(el => {
       if (el instanceof HTMLElement) {
         el.style.display = 'none';
@@ -47,6 +50,8 @@
   // Execute again with minimal delays for reliability
   setTimeout(forceVisibility, 0);
   setTimeout(forceVisibility, 10);
+  setTimeout(forceVisibility, 100);
+  setTimeout(forceVisibility, 1000);
   
   // Execute when DOM is loaded
   if (document.readyState === 'loading') {
@@ -58,6 +63,15 @@
   
   // Expose a global function for manual triggering
   window.forceAppVisibility = forceVisibility;
+  
+  // Auto-refresh if we still see loading text after 3 seconds
+  setTimeout(() => {
+    const root = document.getElementById('root');
+    if (root && (root.innerHTML.includes('Loading') || root.innerHTML.includes('Ice Guardian Alert'))) {
+      console.log('Still showing loading text after 3 seconds - reloading page');
+      window.location.reload();
+    }
+  }, 3000);
 })();
 
 export {};

@@ -47,13 +47,6 @@
         el.style.display = 'none';
       }
     });
-    
-    // Hide any fallback content
-    document.querySelectorAll('#app-fallback').forEach(el => {
-      if (el instanceof HTMLElement) {
-        el.style.display = 'none';
-      }
-    });
   };
   
   // Execute immediately
@@ -62,6 +55,10 @@
   // Try multiple ultra-fast timings
   setTimeout(showEverything, 0);
   setTimeout(showEverything, 1);
+  setTimeout(showEverything, 5);
+  setTimeout(showEverything, 10);
+  setTimeout(showEverything, 50);
+  setTimeout(showEverything, 100);
   
   // Try DOM ready event
   if (document.readyState !== 'loading') {
@@ -72,6 +69,15 @@
   
   // Final attempt on window load
   window.addEventListener('load', showEverything, { once: true });
+  
+  // Auto-reload if we still see loading text after 4 seconds
+  setTimeout(() => {
+    const root = document.getElementById('root');
+    if (root && (root.innerHTML.includes('Loading') || root.innerHTML.includes('Ice Guardian Alert'))) {
+      console.log('Still showing loading text after timeout - reloading page');
+      window.location.reload();
+    }
+  }, 4000);
 })();
 
 export {};

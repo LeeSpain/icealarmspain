@@ -12,6 +12,9 @@ import { routes } from "./routes";
 import { checkEnvVariables } from "./utils/env-check";
 import ErrorBoundary from "./components/layout/ErrorBoundary";
 
+// Import our anti-loading-message utility
+import "./utils/prevent-loading-message";
+
 function App() {
   useEffect(() => {
     // Only run basic initialization
@@ -22,6 +25,13 @@ function App() {
     
     // Mark app as mounted
     window.appComponentMounted = true;
+    
+    // Clear any loading text that might still be in the DOM
+    const root = document.getElementById('root');
+    if (root && (root.innerHTML.includes('Loading') || root.innerHTML.includes('Ice Guardian Alert'))) {
+      console.log('Clearing any remaining loading text from App component');
+      root.innerHTML = '';
+    }
   }, []);
   
   return (

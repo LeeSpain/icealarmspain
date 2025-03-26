@@ -27,11 +27,6 @@
         transition: none !important;
       }
       
-      /* Remove fallback related content */
-      #app-fallback {
-        display: none !important;
-      }
-      
       /* Error recovery - hidden by default */
       .js-error-recovery {
         display: none;
@@ -62,10 +57,14 @@
       document.documentElement.style.visibility = 'visible';
       document.documentElement.style.display = 'block';
       
-      // Setup error handling
-      window.addEventListener('error', function(e) {
-        console.error('Caught global error:', e.message);
-      });
+      // Auto-reload if we detect the loading text after 3 seconds
+      setTimeout(function() {
+        var root = document.getElementById('root');
+        if (root && (root.innerHTML.includes('Loading') || root.innerHTML.includes('Ice Guardian Alert'))) {
+          console.log('Detected loading text after timeout, refreshing page');
+          window.location.reload();
+        }
+      }, 3000);
     </script>
   </head>
   <body>
