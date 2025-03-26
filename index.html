@@ -8,7 +8,7 @@
     <meta name="description" content="Medical alert and health monitoring system for seniors and expatriates" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap">
     <style>
-      /* Critical styles for immediate visibility */
+      /* Critical render path styles - must be inline */
       body, html, #root {
         margin: 0;
         padding: 0;
@@ -17,40 +17,11 @@
         width: 100%;
         background: white;
         color: black;
-        display: block !important;
-        visibility: visible !important;
-        opacity: 1 !important;
-      }
-      
-      /* Remove any loading indicators */
-      .loading-screen, .loading-indicator, .spinner {
-        display: none !important;
-      }
-      
-      /* Hide "Not found" that appears before React mounts */
-      body > *:not(#root):not(script) {
-        display: none !important;
       }
     </style>
-    <script>
-      // Force immediate rendering
-      document.documentElement.style.visibility = 'visible';
-      document.documentElement.style.display = 'block';
-      document.documentElement.style.opacity = '1';
-      
-      // Immediately hide any non-root elements that might show "Not found"
-      document.addEventListener('DOMContentLoaded', () => {
-        document.querySelectorAll('body > *:not(#root):not(script)').forEach(el => {
-          if (el instanceof HTMLElement) {
-            el.style.display = 'none';
-          }
-        });
-      });
-    </script>
   </head>
   <body>
     <div id="root"></div>
-    
     <script src="https://cdn.gpteng.co/gptengineer.js" type="module"></script>
     <script type="module" src="/src/main.tsx"></script>
   </body>

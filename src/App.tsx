@@ -9,30 +9,14 @@ import { AuthProvider } from "@/context/auth";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import { routes } from "./routes";
+import { checkEnvVariables } from "./utils/env-check";
 
 function App() {
-  // Force immediate visibility when App mounts
   useEffect(() => {
-    // Force visibility of critical elements
-    document.documentElement.style.visibility = 'visible';
-    document.body.style.visibility = 'visible';
-    document.body.style.display = 'block';
+    // Check environment variables in production
+    checkEnvVariables();
     
-    const root = document.getElementById('root');
-    if (root) {
-      root.style.visibility = 'visible';
-      root.style.display = 'block';
-      root.style.opacity = '1';
-    }
-    
-    // Hide any "Not found" messages outside the root
-    document.querySelectorAll('body > *:not(#root):not(script)').forEach(el => {
-      if (el instanceof HTMLElement) {
-        el.style.display = 'none';
-      }
-    });
-    
-    console.log("App component mounted and forced visibility");
+    console.log("App component mounted");
   }, []);
 
   return (
