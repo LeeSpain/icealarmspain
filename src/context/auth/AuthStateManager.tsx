@@ -14,22 +14,7 @@ interface AuthStateManagerProps {
 
 export const AuthStateManager: React.FC<AuthStateManagerProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  
-  // Force loading to false after a timeout to prevent getting stuck
-  useEffect(() => {
-    console.log("AuthStateManager mounting, setting loading timeout");
-    
-    // Force loading to false after 2 seconds no matter what
-    const loadingTimeout = setTimeout(() => {
-      if (isLoading) {
-        console.log("AuthStateManager: Loading timeout reached, forcing loading to false");
-        setIsLoading(false);
-      }
-    }, 2000);
-    
-    return () => clearTimeout(loadingTimeout);
-  }, [isLoading]);
+  const [isLoading, setIsLoading] = useState(false);
   
   // Initialize from localStorage immediately in dev mode only
   useEffect(() => {
@@ -55,16 +40,9 @@ export const AuthStateManager: React.FC<AuthStateManagerProps> = ({ children }) 
         } else {
           console.log("AuthStateManager: No user found in localStorage");
         }
-        
-        // Shorter timeout for faster loading
-        setTimeout(() => setIsLoading(false), 100);
       } catch (e) {
         console.error("AuthStateManager: Error initializing from localStorage", e);
-        setIsLoading(false);
       }
-    } else {
-      // If not in mock auth mode, set loading to false after a short delay
-      setTimeout(() => setIsLoading(false), 100);
     }
   }, []);
 

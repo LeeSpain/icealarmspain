@@ -1,5 +1,5 @@
 
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { routes } from "./routes";
 import { Toaster } from "@/components/ui/toaster";
@@ -9,27 +9,9 @@ import './App.css';
 import ErrorBoundary from "@/components/layout/ErrorBoundary";
 import ScrollToTop from "@/components/layout/ScrollToTop";
 import { AuthProvider } from "@/context/auth";
-import LoadingIndicator from "@/components/ui/LoadingIndicator";
 
 function App() {
   console.log("App component rendering");
-  const [isInitializing, setIsInitializing] = useState(true);
-  const [routesReady, setRoutesReady] = useState(false);
-  
-  // Immediate initialization effect
-  useEffect(() => {
-    console.log("Routes configuration:", routes.map(r => r.path));
-    
-    // Set routes as ready immediately to prevent flash
-    setRoutesReady(true);
-    
-    // Short delay before removing initialization state to ensure DOM is ready
-    const timer = setTimeout(() => {
-      setIsInitializing(false);
-    }, 10);
-    
-    return () => clearTimeout(timer);
-  }, []);
   
   return (
     <ErrorBoundary>
@@ -39,21 +21,15 @@ function App() {
             <LanguageProvider>
               <Router>
                 <ScrollToTop />
-                {isInitializing ? (
-                  <div className="flex h-screen w-full items-center justify-center">
-                    <LoadingIndicator size="large" message="Loading Ice Guardian Alert..." />
-                  </div>
-                ) : (
-                  <Routes>
-                    {routes.map((route) => (
-                      <Route
-                        key={route.path}
-                        path={route.path}
-                        element={route.element}
-                      />
-                    ))}
-                  </Routes>
-                )}
+                <Routes>
+                  {routes.map((route) => (
+                    <Route
+                      key={route.path}
+                      path={route.path}
+                      element={route.element}
+                    />
+                  ))}
+                </Routes>
                 <Toaster />
               </Router>
             </LanguageProvider>

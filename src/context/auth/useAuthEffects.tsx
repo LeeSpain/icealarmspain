@@ -22,16 +22,12 @@ export const useAuthEffects = ({ setUser, setIsLoading }: UseAuthEffectsProps) =
   useEffect(() => {
     console.log('Initializing auth state');
     
-    // Set loading to true initially
-    setIsLoading(true);
-    
     // Check for recently logged out flag to prevent auto-login after logout
     const recentlyLoggedOut = sessionStorage.getItem('recentlyLoggedOut');
     if (recentlyLoggedOut) {
       console.log('Recently logged out, not restoring from localStorage');
       sessionStorage.removeItem('recentlyLoggedOut');
       setUser(null);
-      setIsLoading(false);
       return;
     }
     
@@ -49,26 +45,6 @@ export const useAuthEffects = ({ setUser, setIsLoading }: UseAuthEffectsProps) =
       console.error('Error getting current user:', error);
       setUser(null);
     }
-    
-    // Set loading to false
-    setTimeout(() => {
-      if (isMounted.current) {
-        setIsLoading(false);
-      }
-    }, 100);
-    
-    // Set a timeout to ensure loading state is not stuck forever
-    const loadingTimeout = setTimeout(() => {
-      if (isMounted.current) {
-        console.log('Authentication loading timeout reached - forcing loading to false');
-        setIsLoading(false);
-      }
-    }, 1000);
-
-    // Cleanup timeout
-    return () => {
-      clearTimeout(loadingTimeout);
-    };
   }, [setUser, setIsLoading]);
 
   // Listen for storage changes
