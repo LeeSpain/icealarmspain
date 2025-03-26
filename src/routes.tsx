@@ -10,7 +10,8 @@ import { callCenterRoutes } from "./routes/callCenterRoutes";
 
 // Create a flat array of all routes with direct imports to speed up loading
 export const routes: RouteConfig[] = [
-  // Home route with highest priority
+  // Home route with highest priority - define first for cleaner code organization
+  // but the Route component in App.tsx is what actually gives it priority
   {
     path: "/",
     element: <Index />
@@ -28,3 +29,6 @@ export const routes: RouteConfig[] = [
     element: <NotFound />,
   }
 ];
+
+// Export individually for direct access
+export { mainRoutes, dashboardRoutes, adminRoutes, callCenterRoutes };

@@ -18,10 +18,98 @@
         background: white;
         color: black;
       }
+      /* Immediate visibility enforcement */
+      html, body, #root { 
+        visibility: visible !important;
+        opacity: 1 !important;
+        display: block !important;
+      }
+      /* Initial loading state */
+      .app-loading {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: white;
+        z-index: 9999;
+        transition: opacity 0.3s;
+      }
+      /* Error recovery */
+      .js-error-recovery {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: white;
+        z-index: 10000;
+        padding: 20px;
+        overflow: auto;
+      }
+      .error-btn {
+        padding: 8px 16px;
+        background: #0284c7;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        margin-top: 10px;
+      }
     </style>
+    <!-- Immediate script to ensure content renders -->
+    <script>
+      // Force visibility as early as possible
+      document.documentElement.style.visibility = 'visible';
+      document.documentElement.style.display = 'block';
+      
+      // Setup error handling
+      window.addEventListener('error', function(e) {
+        console.error('Caught global error:', e.message);
+        const errorRecovery = document.querySelector('.js-error-recovery');
+        if (errorRecovery) {
+          errorRecovery.style.display = 'block';
+          const errorDetails = document.getElementById('error-details');
+          if (errorDetails) {
+            errorDetails.textContent = e.message;
+          }
+        }
+      });
+      
+      // Delayed check to ensure rendering
+      setTimeout(function() {
+        const root = document.getElementById('root');
+        if (root && (!root.innerHTML || root.innerHTML.trim() === '')) {
+          console.log('Root is empty after timeout - forcing reload');
+          window.location.reload();
+        }
+      }, 5000);
+    </script>
   </head>
   <body>
-    <div id="root"></div>
+    <!-- Initial content that will be replaced when React mounts -->
+    <div id="root">
+      <div style="display: flex; justify-content: center; align-items: center; height: 100vh; width: 100%;">
+        <div style="text-align: center;">
+          <h2>Ice Guardian Alert</h2>
+          <p>Loading application...</p>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Error recovery UI - hidden by default -->
+    <div class="js-error-recovery">
+      <h2>Application Error</h2>
+      <p>We encountered an issue while loading the application.</p>
+      <p>Error: <span id="error-details">Unknown error</span></p>
+      <button class="error-btn" onclick="window.location.reload()">Reload Application</button>
+      <button class="error-btn" onclick="localStorage.clear(); window.location.reload()">Clear Cache and Reload</button>
+    </div>
+    
     <script src="https://cdn.gpteng.co/gptengineer.js" type="module"></script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
