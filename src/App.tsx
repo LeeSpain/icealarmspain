@@ -15,7 +15,7 @@ import RenderingDebugger from "./components/debug/RenderingDebugger";
 
 function App() {
   useEffect(() => {
-    console.log("App component mounted");
+    console.log("App component mounted - ENHANCED VERSION");
     
     // Check env variables
     try {
@@ -24,30 +24,62 @@ function App() {
       console.error("Error checking env variables:", e);
     }
     
-    // Force hide the spinner as a backup method
+    // More aggressive spinner handling
     const hideSpinner = () => {
       const spinner = document.getElementById('initial-content');
       if (spinner) {
+        // First make it invisible
         spinner.style.opacity = '0';
-        setTimeout(() => {
-          spinner.style.display = 'none';
-          console.log("Spinner hidden from App component");
-        }, 100);
+        spinner.style.display = 'none';
+        console.log("Spinner hidden from App component");
+        
+        // Then try to completely remove it
+        try {
+          if (spinner.parentNode) {
+            spinner.parentNode.removeChild(spinner);
+            console.log("Spinner completely removed from DOM");
+          }
+        } catch (err) {
+          console.error("Error removing spinner:", err);
+        }
+      }
+      
+      // Force root to be visible
+      const root = document.getElementById('root');
+      if (root) {
+        root.style.visibility = 'visible';
+        root.style.display = 'block';
+        root.style.opacity = '1';
       }
     };
     
-    // Call immediately and with a delay
+    // Call immediately and with multiple delays for redundancy
     hideSpinner();
-    setTimeout(hideSpinner, 500);
+    [100, 500, 1000, 2000].forEach(delay => {
+      setTimeout(hideSpinner, delay);
+    });
     
     // Also record in the window object that App has mounted
     if (typeof window !== 'undefined') {
       if (!window.renderingStages) window.renderingStages = {};
       window.renderingStages.appComponentMounted = true;
+      
+      // Ensure forceAppVisibility is defined and call it
+      if (typeof window.forceAppVisibility === 'function') {
+        window.forceAppVisibility();
+      } else {
+        window.forceAppVisibility = hideSpinner;
+        window.forceAppVisibility();
+      }
     }
+    
+    return () => {
+      console.log("App component unmounting");
+    };
   }, []);
   
-  return (
+  // Use React.StrictMode only in development
+  const AppContent = (
     <ErrorBoundary>
       <div className="App">
         <HelmetProvider>
@@ -81,6 +113,8 @@ function App() {
       <RenderingDebugger />
     </ErrorBoundary>
   );
+  
+  return AppContent;
 }
 
 export default App;

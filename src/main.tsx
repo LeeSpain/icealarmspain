@@ -4,6 +4,15 @@ import ReactDOM from 'react-dom/client'
 import App from './App'
 import './styles/index.css'
 
+// Import build verification first for better diagnostics
+import './utils/build-verification';
+
+// Import our enhanced renderer rescue utility FIRST
+import './utils/renderer-rescue';
+
+// Import startup recovery - ONLY this one recovery utility
+import './utils/startup-recovery';
+
 // Log for debugging
 console.log('Application starting up');
 
@@ -11,11 +20,20 @@ console.log('Application starting up');
 function hideSpinner() {
   const initialContent = document.getElementById('initial-content');
   if (initialContent) {
+    // First make it invisible
     initialContent.style.opacity = '0';
-    setTimeout(() => {
-      initialContent.style.display = 'none';
-      console.log('Spinner hidden from main.tsx');
-    }, 100);
+    initialContent.style.display = 'none';
+    console.log('Spinner hidden from main.tsx');
+    
+    // Then try to completely remove it
+    try {
+      if (initialContent.parentNode) {
+        initialContent.parentNode.removeChild(initialContent);
+        console.log('Spinner completely removed from DOM in main.tsx');
+      }
+    } catch (err) {
+      console.error('Error removing spinner:', err);
+    }
   }
 }
 
@@ -28,8 +46,28 @@ const rootElement = document.getElementById('root');
 if (!rootElement) {
   console.error('Root element not found');
   hideSpinner(); // Hide spinner even if root not found
+  
+  // Add a fallback root element if missing
+  const newRoot = document.createElement('div');
+  newRoot.id = 'root';
+  document.body.appendChild(newRoot);
+  console.log('Created new root element');
+  
+  // Try mounting again with the new root
+  try {
+    const root = ReactDOM.createRoot(newRoot);
+    root.render(<App />);
+    console.log('React mounted on dynamically created root');
+  } catch (error) {
+    console.error('Error rendering to dynamically created root:', error);
+  }
 } else {
   try {
+    // Force root element to be visible
+    rootElement.style.visibility = 'visible';
+    rootElement.style.display = 'block';
+    rootElement.style.opacity = '1';
+    
     // Create root and render
     const root = ReactDOM.createRoot(rootElement);
     
@@ -58,8 +96,10 @@ if (!rootElement) {
       }
     }
     
-    // One more safety timeout
-    setTimeout(hideSpinner, 500);
+    // Multiple safety timeouts
+    [100, 500, 1000, 2000].forEach(delay => {
+      setTimeout(hideSpinner, delay);
+    });
     
   } catch (error) {
     console.error('Error rendering React app:', error);
@@ -85,5 +125,7 @@ if (!rootElement) {
   }
 }
 
-// Final safety measure
-setTimeout(hideSpinner, 1000);
+// Multiple safety timeouts for guaranteed execution
+[100, 500, 1000, 2000, 5000].forEach(delay => {
+  setTimeout(hideSpinner, delay);
+});

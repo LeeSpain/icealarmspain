@@ -17,6 +17,8 @@
         width: 100%;
         background: white;
         color: black;
+        visibility: visible !important;
+        display: block !important;
       }
       
       /* Add a fallback visible content that will show immediately */
@@ -60,6 +62,21 @@
       @keyframes spin {
         to { transform: rotate(360deg); }
       }
+      
+      /* Ensure the app has a minimum viable styling */
+      #root {
+        min-height: 100vh;
+        display: block !important;
+        visibility: visible !important;
+      }
+      
+      /* Fallback content if JavaScript fails */
+      noscript {
+        display: block;
+        padding: 20px;
+        text-align: center;
+        font-family: system-ui, sans-serif;
+      }
     </style>
     <script>
       // Initialize loading stages immediately in the head
@@ -67,28 +84,44 @@
       window.renderingStages = window.renderingStages || {};
       window.loadingStages.htmlLoaded = true;
       
-      // NEW: Create a direct function to completely remove the spinner
+      // Create a direct function to completely remove the spinner
       function removeSpinner() {
         var spinner = document.getElementById('initial-content');
         if (spinner) {
           spinner.style.display = 'none';
           console.log('Spinner forcefully removed');
+          // Also try to remove from DOM completely
+          if (spinner.parentNode) {
+            try {
+              spinner.parentNode.removeChild(spinner);
+              console.log('Spinner element completely removed from DOM');
+            } catch (e) {
+              console.error('Error removing spinner:', e);
+            }
+          }
+        }
+        
+        // Force root to be visible
+        var root = document.getElementById('root');
+        if (root) {
+          root.style.visibility = 'visible';
+          root.style.display = 'block';
         }
       }
       
-      // NEW: Add multiple timeouts with different durations to ensure spinner is hidden
-      setTimeout(removeSpinner, 1000);
-      setTimeout(removeSpinner, 2000);
-      setTimeout(removeSpinner, 3000);
+      // AGGRESSIVE: Call the removal function at various times
+      setTimeout(removeSpinner, 100);  // Very quick initial removal
+      setTimeout(removeSpinner, 500);  // Half-second timeout
+      setTimeout(removeSpinner, 1000); // 1 second timeout
+      setTimeout(removeSpinner, 2000); // 2 second timeout
+      setTimeout(removeSpinner, 3000); // 3 second timeout
       
       // Setup multiple spinner timeouts for guaranteed hide
       setTimeout(function() {
         var spinner = document.getElementById('initial-content');
         if (spinner) {
           spinner.style.opacity = '0';
-          setTimeout(function() {
-            spinner.style.display = 'none';
-          }, 300);
+          spinner.style.display = 'none';
           console.log('Forced hiding of spinner after 5 second timeout');
         }
       }, 5000);
@@ -102,23 +135,42 @@
         }
       }, 8000);
       
-      // NEW: Add a final backup to ensure spinner is hidden
+      // Final backup to completely remove spinner from DOM
       setTimeout(function() {
         var spinner = document.getElementById('initial-content');
-        if (spinner) {
-          document.body.removeChild(spinner);
+        if (spinner && spinner.parentNode) {
+          spinner.parentNode.removeChild(spinner);
           console.log('Spinner element completely removed from DOM');
         }
       }, 10000);
       
-      // Force app visibility function
+      // Force app visibility function - ENHANCED VERSION
       window.forceAppVisibility = function() {
         removeSpinner();
+        
+        // Also ensure the root element is visible
+        var root = document.getElementById('root');
+        if (root) {
+          root.style.visibility = 'visible';
+          root.style.display = 'block';
+          root.style.opacity = '1';
+        }
+        
+        // Force the entire document to be visible
+        document.body.style.visibility = 'visible';
+        document.body.style.display = 'block';
+        document.documentElement.style.visibility = 'visible';
       };
       
-      // NEW: Add a DOMContentLoaded listener to hide spinner when DOM is ready
+      // Add event listeners for various loading events
       document.addEventListener('DOMContentLoaded', function() {
-        setTimeout(removeSpinner, 500);
+        setTimeout(removeSpinner, 100);
+        console.log('DOMContentLoaded: Removing spinner');
+      });
+      
+      window.addEventListener('load', function() {
+        setTimeout(removeSpinner, 100);
+        console.log('Window load: Removing spinner');
       });
     </script>
   </head>
@@ -133,6 +185,15 @@
     
     <!-- The React root -->
     <div id="root"></div>
+    
+    <!-- Fallback content for noscript browsers -->
+    <noscript>
+      <div style="padding: 20px; text-align: center;">
+        <h2>JavaScript Required</h2>
+        <p>Ice Guardian Alert requires JavaScript to be enabled in your browser.</p>
+        <p>Please enable JavaScript and reload the page.</p>
+      </div>
+    </noscript>
     
     <script src="https://cdn.gpteng.co/gptengineer.js" type="module"></script>
     <script type="module" src="/src/main.tsx"></script>
