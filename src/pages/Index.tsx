@@ -3,6 +3,7 @@ import React, { useEffect } from "react";
 import Hero from "@/components/Hero";
 import DeviceShowcase from "@/components/DeviceShowcase";
 import ExpatInfo from "@/components/ExpatInfo";
+import MembershipShowcase from "@/components/membership/MembershipShowcase";
 import { useLanguage } from "@/context/LanguageContext";
 import { Helmet } from "react-helmet-async";
 import Layout from "@/components/layout/Layout";
@@ -58,6 +59,10 @@ const Index: React.FC = () => {
             <DeviceShowcase />
           </SectionWrapper>
           <SectionDivider variant="white-to-ice" />
+          <SectionWrapper>
+            <MembershipShowcase />
+          </SectionWrapper>
+          <SectionDivider />
           <ExpatInfo />
         </div>
       </div>
