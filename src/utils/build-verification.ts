@@ -32,12 +32,13 @@ if (missingVars.length > 0) {
   console.log('✅ All critical environment variables present');
 }
 
-// Log browser environment
+// Log browser environment with TypeScript-safe property checks
 console.log('Browser environment:', {
   userAgent: navigator.userAgent,
   language: navigator.language,
   online: navigator.onLine,
-  memory: navigator.deviceMemory,
+  // Check if deviceMemory exists before accessing it
+  memory: 'deviceMemory' in navigator ? (navigator as any).deviceMemory : 'not available',
   cores: navigator.hardwareConcurrency
 });
 

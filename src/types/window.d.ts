@@ -2,6 +2,7 @@
 interface Window {
   appLoaded?: boolean;
   appStarted?: boolean;
+  appComponentMounted?: boolean;
   loadingStages?: {
     htmlLoaded: boolean;
     mainScriptStarted: boolean;
@@ -14,4 +15,5 @@ interface Window {
     appMounted: boolean;
     appRendered: boolean;
   };
+  forceAppVisibility?: () => void;
 }
