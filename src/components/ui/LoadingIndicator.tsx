@@ -4,11 +4,16 @@ import React from 'react';
 interface LoadingIndicatorProps {
   size?: 'small' | 'medium' | 'large';
   message?: string;
+  forceShow?: boolean;
 }
 
-const LoadingIndicator: React.FC<LoadingIndicatorProps> = ({ size = 'medium', message }) => {
-  // Log the component rendering
-  console.log("Rendering LoadingIndicator with message:", message);
+const LoadingIndicator: React.FC<LoadingIndicatorProps> = ({ 
+  size = 'medium', 
+  message,
+  forceShow = false
+}) => {
+  // Only show if explicitly forced
+  if (!forceShow) return null;
   
   // Size classes
   const sizeClasses = {

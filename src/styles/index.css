@@ -8,8 +8,8 @@
 /* Finally import animation styles */
 @import './animations.css';
 
-/* Immediate critical styles */
-body {
+/* Critical immediate visibility styles */
+body, html, #root, .App {
   background-color: white !important;
   color: black !important;
   margin: 0;
@@ -17,17 +17,9 @@ body {
   min-height: 100vh;
   width: 100%;
   font-family: 'Inter', sans-serif;
-  opacity: 1 !important; /* Ensure immediate visibility */
-  visibility: visible !important; /* Ensure immediate visibility */
-}
-
-#root {
-  min-height: 100vh;
-  width: 100%;
-  display: flex !important;
-  flex-direction: column !important;
-  opacity: 1 !important; /* Ensure immediate visibility */
-  visibility: visible !important; /* Ensure immediate visibility */
+  opacity: 1 !important;
+  visibility: visible !important;
+  display: block !important;
 }
 
 /* Force elements to be visible */

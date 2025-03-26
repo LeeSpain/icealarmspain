@@ -13,19 +13,10 @@ import { debug } from "@/utils/debug-logger";
 const Index: React.FC = () => {
   const { language } = useLanguage();
   
-  // Enhanced debug logging
   useEffect(() => {
-    debug("Index page mounted and rendering");
-    
-    // Force visibility
-    document.body.style.opacity = '1';
+    debug("Index page mounted");
     document.body.style.visibility = 'visible';
-    
-    // Check if hero component is available
-    setTimeout(() => {
-      const heroElement = document.getElementById('home');
-      debug("Hero element found:", { exists: !!heroElement });
-    }, 100);
+    document.body.style.opacity = '1';
   }, []);
   
   return (
