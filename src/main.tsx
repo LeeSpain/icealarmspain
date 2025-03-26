@@ -4,14 +4,8 @@ import ReactDOM from 'react-dom/client'
 import App from './App'
 import './styles/index.css'
 
-// Simple initialization flags
-if (typeof window !== 'undefined') {
-  window.appStarted = true;
-}
-
 console.log("Starting application initialization");
 
-// Simple and direct rendering
 const rootElement = document.getElementById('root');
 
 if (!rootElement) {
@@ -29,16 +23,6 @@ if (!rootElement) {
     
     const root = ReactDOM.createRoot(rootElement);
     
-    // Set a flag to indicate React initialized
-    if (typeof window !== 'undefined') {
-      window.renderingStages = {
-        mainStarted: true,
-        rootCreated: true,
-        appMounted: false,
-        appRendered: false
-      };
-    }
-
     // Render the app
     root.render(
       <React.StrictMode>
@@ -46,20 +30,7 @@ if (!rootElement) {
       </React.StrictMode>
     );
     
-    // Set app mounted flag
-    if (typeof window !== 'undefined') {
-      window.renderingStages.appMounted = true;
-    }
-    
-    // Set a flag to indicate the app has fully loaded
-    setTimeout(() => {
-      if (typeof window !== 'undefined') {
-        window.appLoaded = true;
-        window.renderingStages.appRendered = true;
-      }
-      console.log("App rendered successfully");
-    }, 100);
-    
+    console.log("App rendered successfully");
   } catch (error) {
     console.error("Error setting up React app:", error);
   }

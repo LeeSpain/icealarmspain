@@ -1,5 +1,5 @@
 
-import React, { useEffect } from "react";
+import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { routes } from "./routes";
 import { Toaster } from "@/components/ui/toaster";
@@ -12,23 +12,6 @@ import { AuthProvider } from "@/context/auth";
 
 function App() {
   console.log("App component rendering");
-  
-  // Hide loading indicator once app is mounted
-  useEffect(() => {
-    const loadingIndicator = document.getElementById('loading-indicator');
-    if (loadingIndicator) {
-      loadingIndicator.style.opacity = '0';
-      loadingIndicator.style.transition = 'opacity 0.5s';
-      setTimeout(() => {
-        loadingIndicator.style.display = 'none';
-      }, 500);
-    }
-    
-    // Mark app as loaded
-    if (typeof window !== 'undefined') {
-      window.appLoaded = true;
-    }
-  }, []);
   
   return (
     <ErrorBoundary>

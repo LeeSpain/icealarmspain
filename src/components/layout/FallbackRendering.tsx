@@ -6,8 +6,7 @@ interface Props {
 }
 
 const FallbackRendering: React.FC<Props> = () => {
-  // This component is now simplified to never show the fallback
-  // since we're fixing the root issue instead
+  // This component should do nothing now that we're removing loading screens
   return null;
 };
 

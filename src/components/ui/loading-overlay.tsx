@@ -1,5 +1,5 @@
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button"; 
 
 interface LoadingOverlayProps {
@@ -12,24 +12,11 @@ interface LoadingOverlayProps {
 const LoadingOverlay: React.FC<LoadingOverlayProps> = ({ 
   message = "Loading...",
   timeout = 3000,
-  isVisible = true,
+  isVisible = false, // Changed to false by default
   fullScreen = false
 }) => {
   const [showError, setShowError] = useState(false);
   const [forceHidden, setForceHidden] = useState(false);
-  
-  useEffect(() => {
-    if (!isVisible) return;
-    
-    // Show error message if loading takes too long
-    const errorTimer = setTimeout(() => {
-      setShowError(true);
-    }, timeout);
-    
-    return () => {
-      clearTimeout(errorTimer);
-    };
-  }, [timeout, isVisible]);
   
   // If manually set to not visible or force hidden by timeout
   if (!isVisible || forceHidden) return null;
