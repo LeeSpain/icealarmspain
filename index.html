@@ -20,7 +20,19 @@
         visibility: visible !important;
         display: block !important;
       }
-      /* Error recovery */
+      
+      /* Prevent any "loading" flashes */
+      #root {
+        opacity: 1 !important;
+        transition: none !important;
+      }
+      
+      /* Remove fallback related content */
+      #app-fallback {
+        display: none !important;
+      }
+      
+      /* Error recovery - hidden by default */
       .js-error-recovery {
         display: none;
         position: fixed;
@@ -43,21 +55,6 @@
         cursor: pointer;
         margin-top: 10px;
       }
-      /* Immediate fallback content */
-      #app-fallback {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: white;
-        z-index: 9998;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        text-align: center;
-        font-family: system-ui, sans-serif;
-      }
     </style>
     <!-- Immediate script to ensure content renders -->
     <script>
@@ -68,68 +65,12 @@
       // Setup error handling
       window.addEventListener('error', function(e) {
         console.error('Caught global error:', e.message);
-        const errorRecovery = document.querySelector('.js-error-recovery');
-        if (errorRecovery) {
-          errorRecovery.style.display = 'block';
-          const errorDetails = document.getElementById('error-details');
-          if (errorDetails) {
-            errorDetails.textContent = e.message;
-          }
-        }
-      });
-      
-      // Ultra-fast check to clear loading message (5ms)
-      setTimeout(function() {
-        const root = document.getElementById('root');
-        if (root && root.innerHTML.includes('Loading')) {
-          console.log('Fast clearing of loading message');
-          root.innerHTML = '';
-        }
-      }, 5);
-      
-      // Show fallback after 3 seconds if app doesn't load
-      var appLoadTimeout = setTimeout(function() {
-        var root = document.getElementById('root');
-        var fallback = document.getElementById('app-fallback');
-        
-        if (root && (!root.firstElementChild || root.innerHTML.includes('Loading'))) {
-          console.log('App failed to load in time, showing fallback');
-          if (fallback) fallback.style.display = 'flex';
-          
-          // Force reload after 5 more seconds
-          setTimeout(function() {
-            window.location.reload();
-          }, 5000);
-        } else {
-          if (fallback) fallback.style.display = 'none';
-        }
-      }, 3000);
-      
-      // Clear timeout if app loads
-      window.addEventListener('load', function() {
-        var appContent = document.querySelector('#root > *:not(.loading)');
-        if (appContent) {
-          clearTimeout(appLoadTimeout);
-          var fallback = document.getElementById('app-fallback');
-          if (fallback) fallback.style.display = 'none';
-        }
       });
     </script>
   </head>
   <body>
-    <!-- Initial content that will be replaced when React mounts -->
+    <!-- Just the root, no initial content -->
     <div id="root"></div>
-    
-    <!-- Emergency fallback that shows if app doesn't load in 3 seconds -->
-    <div id="app-fallback" style="display: none;">
-      <div>
-        <h2>Ice Guardian Alert</h2>
-        <p>Loading application...</p>
-        <div style="margin: 20px auto; width: 40px; height: 40px; border: 3px solid #f3f3f3; border-top: 3px solid #3498db; border-radius: 50%; animation: spin 1s linear infinite;"></div>
-        <p>If the application doesn't load within a few seconds, please try refreshing the page.</p>
-        <button onclick="window.location.reload()" class="error-btn">Refresh Now</button>
-      </div>
-    </div>
     
     <!-- Error recovery UI - hidden by default -->
     <div class="js-error-recovery">
@@ -137,22 +78,9 @@
       <p>We encountered an issue while loading the application.</p>
       <p>Error: <span id="error-details">Unknown error</span></p>
       <button class="error-btn" onclick="window.location.reload()">Reload Application</button>
-      <button class="error-btn" onclick="localStorage.clear(); window.location.reload()">Clear Cache and Reload</button>
     </div>
     
     <script src="https://cdn.gpteng.co/gptengineer.js" type="module"></script>
     <script type="module" src="/src/main.tsx"></script>
-    
-    <!-- Inline script for critical rendering and recovery -->
-    <script>
-      // Force root visibility one final time with very short delay
-      setTimeout(function() {
-        const root = document.getElementById('root');
-        if (root) {
-          root.style.visibility = 'visible';
-          root.style.display = 'block';
-        }
-      }, 1);
-    </script>
   </body>
 </html>

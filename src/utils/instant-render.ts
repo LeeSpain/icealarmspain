@@ -24,16 +24,33 @@
     if (root) {
       root.style.cssText += 'visibility:visible!important;display:block!important;opacity:1!important;';
       
-      // Clear any loading messages in the root
-      if (root.innerHTML.includes('Loading')) {
+      // AGGRESSIVELY clear any loading messages in the root
+      if (root.innerHTML.includes('Loading') || 
+          root.innerHTML.includes('Ice Guardian Alert') ||
+          root.innerHTML.includes('Not found') ||
+          root.innerHTML.includes('application doesn')) {
         console.log('Clearing loading message from root element');
         root.innerHTML = '';
       }
     }
     
+    // Hide any loading elements by specific class
+    document.querySelectorAll('.loading, .loading-indicator, .loading-screen').forEach(el => {
+      if (el instanceof HTMLElement) {
+        el.style.display = 'none';
+      }
+    });
+    
     // Hide any "Not found" or error messages outside the React app
     document.querySelectorAll('body > *:not(#root):not(script)').forEach(el => {
       if (el instanceof HTMLElement && !el.id.includes('fallback') && !el.classList.contains('js-error-recovery')) {
+        el.style.display = 'none';
+      }
+    });
+    
+    // Hide any fallback content
+    document.querySelectorAll('#app-fallback').forEach(el => {
+      if (el instanceof HTMLElement) {
         el.style.display = 'none';
       }
     });
@@ -45,8 +62,6 @@
   // Try multiple ultra-fast timings
   setTimeout(showEverything, 0);
   setTimeout(showEverything, 1);
-  setTimeout(showEverything, 2);
-  setTimeout(showEverything, 5);
   
   // Try DOM ready event
   if (document.readyState !== 'loading') {

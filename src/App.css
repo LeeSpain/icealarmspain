@@ -6,10 +6,6 @@ html, body {
   font-family: 'SF Pro Display', 'Inter', system-ui, sans-serif;
   min-height: 100vh;
   width: 100%;
-  background-color: white !important;
-  color: black !important;
-  visibility: visible !important;
-  opacity: 1 !important;
 }
 
 body {
@@ -19,58 +15,18 @@ body {
 
 /* App container */
 .App {
-  display: flex !important;
-  flex-direction: column !important;
-  min-height: 100vh !important;
-  background-color: white !important;
-  color: black !important;
-  visibility: visible !important;
-  opacity: 1 !important;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
 }
 
 /* Main content area */
 main {
   flex: 1;
-  background-color: white;
-  color: black;
   padding-top: 4rem;
-  visibility: visible !important;
-  opacity: 1 !important;
 }
 
-/* Prevent loading flashes */
-body.loading {
-  overflow: hidden;
-}
-
-/* Debug panel */
-.debug-panel {
-  position: fixed;
-  bottom: 10px;
-  right: 10px;
-  background: rgba(0,0,0,0.8);
-  color: #00ff00;
-  padding: 10px;
-  border-radius: 4px;
-  font-family: monospace;
-  font-size: 12px;
-  z-index: 9999;
-  max-width: 300px;
-  max-height: 200px;
-  overflow: auto;
-}
-
-.debug-panel h4 {
-  margin: 0 0 5px 0;
-  color: white;
-}
-
-.debug-panel pre {
-  margin: 0;
-  white-space: pre-wrap;
-}
-
-/* Better visibility for error messages */
+/* Error message styling */
 .error-message {
   background-color: #ffebee;
   border: 1px solid #f44336;
@@ -78,32 +34,4 @@ body.loading {
   padding: 10px;
   border-radius: 4px;
   margin: 10px 0;
-}
-
-/* Ensure route content is visible */
-.route-content {
-  visibility: visible !important;
-  opacity: 1 !important;
-}
-
-/* Fallback content */
-.error-container {
-  max-width: 600px;
-  margin: 2rem auto;
-  padding: 2rem;
-  text-align: center;
-  background-color: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-}
-
-.error-container button {
-  background: #0070f3;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 4px;
-  cursor: pointer;
-  margin-top: 20px;
-  font-size: 16px;
 }
