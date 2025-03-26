@@ -58,31 +58,6 @@
         margin-top: 10px;
       }
     </style>
-    <script>
-      // Simplified immediate startup script that just ensures we'll always show something
-      window.addEventListener('DOMContentLoaded', function() {
-        // Auto hide the initial content after React mounts
-        setTimeout(function() {
-          var initialContent = document.getElementById('initial-content');
-          if (initialContent) {
-            initialContent.style.opacity = '0';
-            setTimeout(function() {
-              initialContent.style.display = 'none';
-            }, 300);
-          }
-        }, 1500);
-      });
-      
-      // Auto-reload if we detect any issues after 10 seconds
-      setTimeout(function() {
-        var root = document.getElementById('root');
-        var app = document.querySelector('.App');
-        if (!app && root) {
-          console.log('App not detected after timeout, refreshing');
-          window.location.reload();
-        }
-      }, 10000);
-    </script>
   </head>
   <body>
     <!-- Fallback content that will be hidden once React loads -->

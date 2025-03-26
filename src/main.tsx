@@ -17,16 +17,8 @@ if (!rootElement) {
     // Create root and render
     const root = ReactDOM.createRoot(rootElement);
     
-    // Standard rendering path
-    root.render(
-      import.meta.env.DEV ? (
-        <React.StrictMode>
-          <App />
-        </React.StrictMode>
-      ) : (
-        <App />
-      )
-    );
+    // Standard rendering path - removed strict mode for production
+    root.render(<App />);
     
     console.log('React mounted successfully');
     
@@ -69,6 +61,3 @@ if (!rootElement) {
     }
   }
 }
-
-// Expose a global flag for debugging
-window.appLoaded = true;

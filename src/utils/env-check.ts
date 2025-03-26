@@ -2,6 +2,7 @@
 /**
  * Environment variable verification
  * Helps debug production blank screens due to missing env vars
+ * Simplified version to prevent loops
  */
 
 export function checkEnvVariables() {
@@ -30,9 +31,6 @@ export function checkEnvVariables() {
     // Add visible error message to help debugging in production
     const root = document.getElementById('root');
     if (root) {
-      // Clear any existing content
-      root.innerHTML = '';
-      
       // Add error message
       const errorDiv = document.createElement('div');
       errorDiv.style.cssText = 'font-family: system-ui, sans-serif; padding: 20px; max-width: 800px; margin: 0 auto; line-height: 1.5';
