@@ -32,6 +32,7 @@ if (!rootElement) {
     // Set a flag to indicate React initialized
     if (typeof window !== 'undefined') {
       window.renderingStages = {
+        mainStarted: true, // Add the missing property
         rootCreated: true,
         appMounted: false,
         appRendered: false
