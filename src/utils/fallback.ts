@@ -6,7 +6,7 @@
 
 (() => {
   // Longer timeout to ensure app has time to render
-  const RENDER_TIMEOUT = 10000;
+  const RENDER_TIMEOUT = 3000;
   
   setTimeout(() => {
     const root = document.getElementById('root');

@@ -1,18 +1,21 @@
 
-import React from "react";
+import React, { useEffect } from "react";
 import { useLanguage } from "@/context/LanguageContext";
 import { useLocation } from "react-router-dom";
 import HeroHeader from "./hero/HeroHeader";
 import FeatureCards from "./hero/FeatureCards";
 import DashboardPreview from "./hero/DashboardPreview";
 import HeroBackground from "./hero/HeroBackground";
+import { debug } from "@/utils/debug-logger";
 
 const Hero: React.FC = () => {
   const { language } = useLanguage();
   const location = useLocation();
   
   // Debug the component rendering
-  console.log("Hero component rendering", { path: location.pathname });
+  useEffect(() => {
+    debug("Hero component mounted", { path: location.pathname });
+  }, [location.pathname]);
 
   return (
     <section 

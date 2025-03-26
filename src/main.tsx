@@ -3,6 +3,7 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App'
 import './styles/index.css'
+import './utils/instant-render.ts' // Force immediate rendering
 
 // Debug information for rendering issues
 console.log("⚡ Application starting - Main entry point");
@@ -15,18 +16,20 @@ if (!rootElement) {
   const newRoot = document.createElement('div');
   newRoot.id = 'root';
   document.body.appendChild(newRoot);
-  ReactDOM.createRoot(newRoot).render(<App />);
+  ReactDOM.createRoot(newRoot).render(
+    <React.StrictMode>
+      <App />
+    </React.StrictMode>
+  );
 } else {
   console.log("Root element found, rendering app...");
-  // Simple direct render, no StrictMode to simplify rendering process
-  ReactDOM.createRoot(rootElement).render(<App />);
+  // Render with StrictMode for better development experience
+  ReactDOM.createRoot(rootElement).render(
+    <React.StrictMode>
+      <App />
+    </React.StrictMode>
+  );
 }
 
-// Add a post-render check
-setTimeout(() => {
-  const app = document.querySelector('.App');
-  console.log("App element found after render:", !!app);
-  if (!app) {
-    console.error("App element not found after render! Something is wrong with the application initialization.");
-  }
-}, 1000);
+// Check if rendering was successful
+console.log("Main.tsx script completed");

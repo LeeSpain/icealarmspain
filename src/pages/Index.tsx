@@ -8,20 +8,24 @@ import { Helmet } from "react-helmet-async";
 import Layout from "@/components/layout/Layout";
 import SectionDivider from "@/components/layout/SectionDivider";
 import SectionWrapper from "@/components/layout/SectionWrapper";
+import { debug } from "@/utils/debug-logger";
 
 const Index: React.FC = () => {
   const { language } = useLanguage();
   
   // Enhanced debug logging
   useEffect(() => {
-    console.log("Index page mounted and rendering");
+    debug("Index page mounted and rendering");
+    
+    // Force visibility
+    document.body.style.opacity = '1';
+    document.body.style.visibility = 'visible';
     
     // Check if hero component is available
     setTimeout(() => {
       const heroElement = document.getElementById('home');
-      console.log("Hero element found:", !!heroElement);
+      debug("Hero element found:", { exists: !!heroElement });
     }, 100);
-    
   }, []);
   
   return (

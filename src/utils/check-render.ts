@@ -1,7 +1,6 @@
 
 /**
- * Simple render checking utility that forces visibility
- * of critical DOM elements
+ * Aggressive render checking utility
  */
 
 (function() {
@@ -9,7 +8,7 @@
     return;
   }
 
-  console.log('🔍 Running visibility enforcer');
+  console.log('🔍 Running visibility enforcer - aggressive version');
   
   // Force visibility of critical elements
   const forceVisibility = () => {
@@ -34,12 +33,29 @@
       app.style.opacity = '1';
       app.style.display = 'block';
     }
+    
+    // Force hero section to be visible if it exists
+    const hero = document.getElementById('home');
+    if (hero) {
+      hero.style.visibility = 'visible';
+      hero.style.opacity = '1';
+      hero.style.display = 'block';
+    }
+    
+    // Remove any stray loading indicators
+    document.querySelectorAll('.loading-indicator').forEach(el => {
+      if (el instanceof HTMLElement) {
+        el.style.display = 'none';
+      }
+    });
   };
   
-  // Apply immediately and after short delay
+  // Apply immediately and repeatedly
   forceVisibility();
   setTimeout(forceVisibility, 100);
   setTimeout(forceVisibility, 500);
+  setTimeout(forceVisibility, 1000);
+  setTimeout(forceVisibility, 2000);
   
   // Apply when DOM is ready
   if (document.readyState === 'loading') {
