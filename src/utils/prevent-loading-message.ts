@@ -10,20 +10,21 @@
   // Define our mutation observer to catch any loading messages
   const observer = new MutationObserver((mutations) => {
     mutations.forEach((mutation) => {
-      if (mutation.type === 'childList' && mutation.target.nodeName === 'DIV') {
+      if (mutation.type === 'childList' && mutation.target instanceof Element) {
         const target = mutation.target;
         
         // Check if this is the root element or if it contains loading text
-        if (target.id === 'root' || 
+        if ((target.id === 'root' || 
             (target instanceof HTMLElement && 
              (target.innerHTML.includes('Loading') || 
               target.innerHTML.includes('Ice Guardian Alert') ||
-              target.innerHTML.includes('Not found')))) {
+              target.innerHTML.includes('Not found'))))) {
           
           // If we find loading text in the root or we added a loading message, clear it
-          if (target.innerHTML.includes('Loading') || 
-              target.innerHTML.includes('Ice Guardian Alert') ||
-              target.innerHTML.includes('Not found')) {
+          if (target instanceof HTMLElement && 
+              (target.innerHTML.includes('Loading') || 
+               target.innerHTML.includes('Ice Guardian Alert') ||
+               target.innerHTML.includes('Not found'))) {
             console.log('Observer caught loading text, clearing it');
             target.innerHTML = '';
           }
