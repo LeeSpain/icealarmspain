@@ -60,8 +60,9 @@ const protectedRoutes = allRoutes.map(route => {
   return route;
 });
 
-// Combine the imported routes with our custom routes
+// Combine the imported routes with our custom routes, with allRoutes first to prioritize them
 export const routes = [
-  ...protectedRoutes,
-  ...customRoutes
+  ...allRoutes,
+  ...customRoutes,
+  ...protectedRoutes.filter(r => r.path !== "/") // Filter out any duplicate root routes
 ];

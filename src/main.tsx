@@ -3,6 +3,7 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App'
 import './styles/index.css'
+import './utils/check-render'  // Import the render check utility
 
 console.log("Starting application initialization");
 
@@ -23,7 +24,7 @@ if (!rootElement) {
     
     const root = ReactDOM.createRoot(rootElement);
     
-    // Disable StrictMode to prevent double-rendering in development
+    // Render the app synchronously
     root.render(<App />);
     
     console.log("App rendered successfully");

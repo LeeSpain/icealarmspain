@@ -1,4 +1,3 @@
-
 import React from 'react';
 import AboutUs from "../pages/AboutUs";
 import Contact from "../pages/Contact";
@@ -21,24 +20,13 @@ import GlucoseMonitorPage from "../pages/GlucoseMonitorPage";
 import InvestorPage from "../pages/InvestorPage";
 import HelpSupportPage from "../pages/HelpSupportPage";
 import Commercial from "../pages/Commercial";
+import Index from "../pages/Index";  // Ensure Index is imported
 
-// Landing page component
-const Landing = () => {
-  return (
-    <>
-      <Hero />
-      <DeviceShowcase />
-      <Pricing />
-      <ExpatInfo />
-      <Testimonials />
-    </>
-  );
-};
-
+// Landing page component removed and replaced with direct Index component
 export const mainRoutes: RouteConfig[] = [
   {
     path: "/",
-    element: <Layout><Landing /></Layout>
+    element: <Layout><Index /></Layout>  // Use Index component directly
   },
   {
     path: "/about",
