@@ -52,7 +52,7 @@
           </div>
         `;
       }
-    }, 5000);
+    }, 3000); // Increased timeout for more reliable detection
     
     // Set up observer to monitor DOM changes
     const observer = new MutationObserver((mutations) => {

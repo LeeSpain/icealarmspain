@@ -35,11 +35,14 @@ const Landing = () => {
   );
 };
 
-export const mainRoutes: RouteConfig[] = [
-  {
-    path: "/",
-    element: <Layout><Landing /></Layout>
-  },
+// Define home route first for priority
+const homeRoute: RouteConfig = {
+  path: "/",
+  element: <Layout><Landing /></Layout>
+};
+
+// Define other routes
+const otherRoutes: RouteConfig[] = [
   {
     path: "/about",
     element: <Layout><AboutUs /></Layout>
@@ -100,4 +103,10 @@ export const mainRoutes: RouteConfig[] = [
     path: "*",
     element: <Layout><NotFound /></Layout>
   }
+];
+
+// Export routes with home route first for proper priority
+export const mainRoutes: RouteConfig[] = [
+  homeRoute,
+  ...otherRoutes
 ];

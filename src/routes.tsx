@@ -60,9 +60,14 @@ const protectedRoutes = allRoutes.map(route => {
   return route;
 });
 
-// Combine the imported routes with our custom routes - ensure allRoutes come first for proper priority
+// Prioritize home route to prevent "Not Found" flash
+const homeRoute = allRoutes.find(route => route.path === "/");
+const otherMainRoutes = allRoutes.filter(route => route.path !== "/" && !protectedRoutes.find(pr => pr.path === route.path));
+
+// Combine the imported routes with our custom routes - ensure main route has highest priority
 export const routes = [
-  ...allRoutes.filter(route => !protectedRoutes.find(pr => pr.path === route.path)), // Include non-protected routes from allRoutes
-  ...protectedRoutes,
-  ...customRoutes
+  ...(homeRoute ? [homeRoute] : []), // Put home route first if it exists
+  ...otherMainRoutes,               // Then other main routes
+  ...protectedRoutes,               // Then protected routes
+  ...customRoutes                   // Then custom routes
 ];
