@@ -9,7 +9,7 @@ interface PricingHeroProps {
 
 const PricingHero: React.FC<PricingHeroProps> = ({ language }) => {
   return (
-    <section className="relative pt-32 pb-24 overflow-hidden bg-white">
+    <section className="relative pt-16 pb-24 overflow-hidden bg-white">
       <HeroBackground />
       
       <div className="container mx-auto px-4 md:px-6">
