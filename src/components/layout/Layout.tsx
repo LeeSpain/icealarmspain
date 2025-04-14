@@ -60,6 +60,8 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
   
   const headerContent = getHeaderContent();
   const isHomePage = location.pathname === "/" || location.pathname === "";
+  const isInvestorPage = location.pathname === "/investors";
+  const shouldShowVideo = isHomePage || isInvestorPage;
   
   // Add some basic error handling
   try {
@@ -76,7 +78,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
           {children}
         </main>
         <Footer />
-        {isHomePage && <VideoFrame />}
+        {shouldShowVideo && <VideoFrame page={isInvestorPage ? "investor" : "home"} />}
       </div>
     );
   } catch (error) {

@@ -3,16 +3,30 @@ import React, { useState } from "react";
 import { X } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
 
-const VideoFrame: React.FC = () => {
+interface VideoFrameProps {
+  page?: "home" | "investor";
+}
+
+const VideoFrame: React.FC<VideoFrameProps> = ({ page = "home" }) => {
   const [isVisible, setIsVisible] = useState(true);
   const { language } = useLanguage();
 
   if (!isVisible) return null;
 
-  // Choose video URL based on language
-  const videoUrl = language === 'es' 
-    ? "https://www.youtube.com/embed/EF8CHznxzUk?controls=1&rel=0&modestbranding=1"
-    : "https://www.youtube.com/embed/0UyaECF2LOQ?controls=1&rel=0&modestbranding=1";
+  // Choose video URL based on page and language
+  let videoUrl = "";
+  let videoTitle = "";
+  
+  if (page === "investor") {
+    videoUrl = "https://www.youtube.com/embed/hApIQx2LnQU?controls=1&rel=0&modestbranding=1";
+    videoTitle = "ICE Alarm Investor Presentation";
+  } else {
+    // Home page videos
+    videoUrl = language === 'es' 
+      ? "https://www.youtube.com/embed/EF8CHznxzUk?controls=1&rel=0&modestbranding=1"
+      : "https://www.youtube.com/embed/0UyaECF2LOQ?controls=1&rel=0&modestbranding=1";
+    videoTitle = "ICE Alarm Espana";
+  }
 
   return (
     <div className="fixed top-20 right-4 z-40 w-[350px] shadow-lg rounded-lg overflow-hidden border border-ice-200 bg-white">
@@ -30,7 +44,7 @@ const VideoFrame: React.FC = () => {
       <div className="relative aspect-video w-full">
         <iframe
           src={videoUrl}
-          title="ICE Guardian Alert Demo"
+          title={videoTitle}
           frameBorder="0"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
           allowFullScreen
