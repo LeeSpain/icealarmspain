@@ -12,7 +12,6 @@ const Hero: React.FC = () => {
   const { language } = useLanguage();
   const location = useLocation();
   
-  // Debug the component rendering
   useEffect(() => {
     debug("Hero component mounted", { path: location.pathname });
   }, [location.pathname]);
@@ -22,7 +21,6 @@ const Hero: React.FC = () => {
       id="home" 
       className="relative pt-24 pb-12 overflow-hidden bg-white"
     >
-      {/* Using our updated HeroBackground with reduced opacity */}
       <HeroBackground />
       
       <div className="container mx-auto px-4 md:px-6 relative z-10">
@@ -34,12 +32,10 @@ const Hero: React.FC = () => {
             });
           }} />
           
-          {/* Feature Cards Section */}
           <div className="py-8">
             <FeatureCards language={language} />
           </div>
           
-          {/* Dashboard Preview Section */}
           <div className="py-8">
             <DashboardPreview language={language} />
           </div>

@@ -15,7 +15,7 @@ const PricingHero: React.FC<PricingHeroProps> = ({ language }) => {
       <div className="container mx-auto px-4 md:px-6">
         <div className="max-w-5xl mx-auto">
           <div className="text-center space-y-6 animate-slide-down">
-            <div className="inline-flex items-center px-3 py-1.5 rounded-full bg-gradient-to-r from-ice-50/80 to-ice-100/80 border border-ice-200 text-ice-600 text-sm font-medium mb-6 shadow-sm backdrop-blur-sm">
+            <div className="inline-flex items-center px-3 py-1.5 rounded-full bg-ice-50 border border-ice-200 text-ice-600 text-sm font-medium mb-6 shadow-sm">
               <CreditCard size={16} className="mr-2" />
               <span className="relative">
                 {language === 'en' ? 'FLEXIBLE PRICING' : 'PRECIOS FLEXIBLES'}
@@ -24,14 +24,10 @@ const PricingHero: React.FC<PricingHeroProps> = ({ language }) => {
             </div>
             
             <div className="relative mb-12">
-              {/* Removed top gradient line */}
-              
-              <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mx-auto max-w-4xl relative">
-                <span className="relative z-10 text-gray-900 inline-block">
+              <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mx-auto max-w-4xl relative z-10 text-gray-900">
+                <span className="relative z-10 inline-block">
                   {language === 'en' ? "Choose Your Protection Plan" : "Elija Su Plan de Protección"}
                 </span>
-                
-                {/* Removed bottom decorative lines */}
               </h2>
             </div>
             
