@@ -15,7 +15,6 @@ const ProductsHero: React.FC = () => {
     e.preventDefault();
     e.stopPropagation();
     
-    // Use React Router for navigation with state flag to prevent redirect
     console.log("Products page: Navigating to /checkout");
     navigate("/checkout", { state: { fromCheckoutButton: true } });
   };
@@ -25,7 +24,6 @@ const ProductsHero: React.FC = () => {
       id="products-hero" 
       className="relative pt-24 pb-12 overflow-hidden bg-white"
     >
-      {/* Using the updated HeroBackground component */}
       <HeroBackground />
       
       <div className="container mx-auto px-4 md:px-6">
@@ -39,7 +37,6 @@ const ProductsHero: React.FC = () => {
               </span>
             </div>
             
-            {/* Enhanced headline with clean styling, no gradient background */}
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-4 relative z-10">
               <span className="block">
                 {language === 'en' 
@@ -73,3 +70,4 @@ const ProductsHero: React.FC = () => {
 };
 
 export default ProductsHero;
+
