@@ -21,15 +21,15 @@ const DashboardFooter: React.FC<DashboardFooterProps> = ({ language }) => {
   };
   
   return (
-    <div className="p-4 bg-gray-50 border-t border-gray-100 flex justify-center">
+    <div className="p-2 bg-gray-50 border-t border-gray-100 flex justify-center">
       <ButtonCustom 
-        size="lg" 
+        size="sm" 
         onClick={handleClick}
-        className="bg-ice-600 hover:bg-ice-700 text-white transition-colors"
+        className="bg-ice-600 hover:bg-ice-700 text-white transition-colors text-xs py-1 px-3 h-auto"
       >
         <span className="flex items-center">
           {language === 'en' ? "See Pricing Plans" : "Ver Planes de Precios"}
-          <ArrowRight className="ml-2 h-4 w-4" />
+          <ArrowRight className="ml-1 h-3 w-3" />
         </span>
       </ButtonCustom>
     </div>

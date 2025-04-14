@@ -13,8 +13,8 @@ const DashboardPreview: React.FC<DashboardPreviewProps> = ({ language }) => {
   const navigate = useNavigate();
   
   return (
-    <div className="mt-16 mb-8">
-      <div className="text-center mb-8">
+    <div className="mt-12 mb-8">
+      <div className="text-center mb-6">
         <h2 className="text-2xl font-bold text-gray-800">
           {language === 'en' ? "Member Dashboard Overview" : "Vista Previa del Panel de Miembro"}
         </h2>
@@ -22,17 +22,17 @@ const DashboardPreview: React.FC<DashboardPreviewProps> = ({ language }) => {
       
       <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-8 items-center">
         {/* Description Column */}
-        <div className="space-y-5 order-2 md:order-1">
+        <div className="space-y-4 order-2 md:order-1">
           <p className="text-base text-gray-600 leading-relaxed">
             {language === 'en'
-              ? "Experience our intuitive health monitoring system designed for simplicity and peace of mind."
-              : "Experimente nuestro sistema de monitoreo de salud intuitivo diseñado para simplicidad y tranquilidad."}
+              ? "Experience our streamlined health monitoring dashboard with essential real-time insights and device management."
+              : "Experimente nuestro panel de monitoreo de salud optimizado con información esencial en tiempo real y gestión de dispositivos."}
           </p>
           
-          <div className="space-y-4 mt-4">
+          <div className="space-y-4 mt-3">
             <div className="flex items-start">
               <div className="mt-1 mr-3 bg-ice-50 p-2 rounded-full">
-                <Activity className="h-5 w-5 text-ice-600" />
+                <Activity className="h-4 w-4 text-ice-600" />
               </div>
               <div>
                 <h3 className="font-medium text-gray-800">
@@ -48,7 +48,7 @@ const DashboardPreview: React.FC<DashboardPreviewProps> = ({ language }) => {
             
             <div className="flex items-start">
               <div className="mt-1 mr-3 bg-ice-50 p-2 rounded-full">
-                <Bell className="h-5 w-5 text-ice-600" />
+                <Bell className="h-4 w-4 text-ice-600" />
               </div>
               <div>
                 <h3 className="font-medium text-gray-800">
@@ -64,7 +64,7 @@ const DashboardPreview: React.FC<DashboardPreviewProps> = ({ language }) => {
             
             <div className="flex items-start">
               <div className="mt-1 mr-3 bg-ice-50 p-2 rounded-full">
-                <Shield className="h-5 w-5 text-ice-600" />
+                <Shield className="h-4 w-4 text-ice-600" />
               </div>
               <div>
                 <h3 className="font-medium text-gray-800">
@@ -79,7 +79,7 @@ const DashboardPreview: React.FC<DashboardPreviewProps> = ({ language }) => {
             </div>
           </div>
           
-          <div className="pt-4">
+          <div className="pt-3">
             <ButtonCustom 
               variant="outline" 
               size="sm" 
@@ -96,7 +96,7 @@ const DashboardPreview: React.FC<DashboardPreviewProps> = ({ language }) => {
         
         {/* Dashboard Preview Column */}
         <div className="order-1 md:order-2">
-          <div className="bg-white rounded-xl overflow-hidden shadow-md border border-gray-100 max-w-md mx-auto transform transition-all duration-300 hover:shadow-lg">
+          <div className="bg-white rounded-xl overflow-hidden shadow-md border border-gray-100 max-w-[340px] mx-auto transform transition-all duration-300 hover:shadow-lg">
             <DashboardPreviewComponent language={language} />
           </div>
         </div>
