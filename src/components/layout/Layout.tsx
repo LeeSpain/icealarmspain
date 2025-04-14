@@ -59,6 +59,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
   };
   
   const headerContent = getHeaderContent();
+  const isHomePage = location.pathname === "/" || location.pathname === "";
   
   // Add some basic error handling
   try {
@@ -75,7 +76,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
           {children}
         </main>
         <Footer />
-        <VideoFrame />
+        {isHomePage && <VideoFrame />}
       </div>
     );
   } catch (error) {
