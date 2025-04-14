@@ -70,4 +70,3 @@ const ProductsHero: React.FC = () => {
 };
 
 export default ProductsHero;
-
