@@ -9,14 +9,13 @@ interface JoinHeroProps {
 
 const JoinHero: React.FC<JoinHeroProps> = ({ language }) => {
   return (
-    <section id="join-hero" className="relative pt-24 pb-24 overflow-hidden bg-white">
-      {/* Using the updated HeroBackground component for consistent styling */}
+    <section id="join-hero" className="relative pt-16 pb-24 overflow-hidden bg-white">
       <HeroBackground />
       
       <div className="container mx-auto px-4 md:px-6">
         <div className="max-w-5xl mx-auto">
           <div className="text-center space-y-6 animate-slide-down">
-            <div className="inline-flex items-center px-3 py-1.5 rounded-full bg-gradient-to-r from-guardian-400/20 to-guardian-600/20 border border-guardian-400/30 text-guardian-600 text-sm font-medium mb-6 shadow-sm backdrop-blur-sm">
+            <div className="inline-flex items-center px-3 py-1.5 rounded-full bg-guardian-400/10 border border-guardian-400/30 text-guardian-600 text-sm font-medium mb-6 shadow-sm">
               <Shield size={16} className="mr-2" />
               <span className="relative">
                 {language === 'en' ? 'JOIN OUR SERVICE' : 'ÚNASE A NUESTRO SERVICIO'}
@@ -24,7 +23,7 @@ const JoinHero: React.FC<JoinHeroProps> = ({ language }) => {
               </span>
             </div>
             
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold bg-gradient-to-r from-gray-900 via-ice-900 to-guardian-800 bg-clip-text text-transparent mb-4">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-4">
               {language === 'en' 
                 ? 'Join ICE Alarm Today' 
                 : 'Únase a ICE Alarm Hoy'}
@@ -43,3 +42,4 @@ const JoinHero: React.FC<JoinHeroProps> = ({ language }) => {
 };
 
 export default JoinHero;
+
