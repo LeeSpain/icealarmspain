@@ -31,7 +31,7 @@ const ProductsHero: React.FC = () => {
       <div className="container mx-auto px-4 md:px-6">
         <div className="max-w-5xl mx-auto">
           <div className="text-center space-y-6 animate-slide-down">
-            <div className="inline-flex items-center px-3 py-1.5 rounded-full bg-gradient-to-r from-guardian-400/20 to-guardian-600/20 border border-guardian-400/30 text-guardian-600 text-sm font-medium mb-6 shadow-sm backdrop-blur-sm">
+            <div className="inline-flex items-center px-3 py-1.5 rounded-full bg-ice-50 border border-ice-200 text-ice-600 text-sm font-medium mb-6 shadow-sm">
               <Shield size={16} className="mr-2" />
               <span className="relative">
                 {language === 'en' ? 'SMART HEALTH DEVICES' : 'DISPOSITIVOS DE SALUD INTELIGENTES'}
@@ -39,8 +39,8 @@ const ProductsHero: React.FC = () => {
               </span>
             </div>
             
-            {/* Enhanced headline with professional styling */}
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold bg-gradient-to-r from-gray-900 via-ice-900 to-guardian-800 bg-clip-text text-transparent mb-4 relative z-10">
+            {/* Enhanced headline with clean styling, no gradient background */}
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-4 relative z-10">
               <span className="block">
                 {language === 'en' 
                   ? 'Smart Devices For Health & Safety' 
