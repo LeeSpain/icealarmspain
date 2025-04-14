@@ -20,7 +20,7 @@ const HeroHeader: React.FC<HeroHeaderProps> = ({ language, handleClick }) => {
         </span>
       </div>
       
-      <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold bg-gradient-to-r from-gray-900 via-ice-900 to-guardian-800 bg-clip-text text-transparent mb-4 relative z-10">
+      <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-4 relative z-10">
         ICE Alarm
         <span className="block">
           {language === 'en' 

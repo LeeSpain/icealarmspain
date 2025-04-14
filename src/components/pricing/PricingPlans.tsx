@@ -1,4 +1,3 @@
-
 import React, { useEffect } from "react";
 import PricingPlan from "./PricingPlan";
 import { Link } from "react-router-dom";
@@ -59,7 +58,8 @@ const PricingPlans: React.FC<PricingPlansProps> = ({ plans, language }) => {
           </div>
           
           <h2 className="text-3xl md:text-4xl font-bold leading-tight mx-auto max-w-4xl relative">
-            <span className="relative z-10 bg-gradient-to-r from-gray-900 via-ice-900 to-guardian-800 bg-clip-text text-transparent inline-block">
+            {/* Changed from background-clip-text to standard text rendering to fix the shading issue */}
+            <span className="relative z-10 text-gray-900 inline-block">
               {language === 'en' ? "Choose Your Protection Plan" : "Elija Su Plan de Protección"}
             </span>
           </h2>

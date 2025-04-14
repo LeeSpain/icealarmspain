@@ -24,17 +24,15 @@ const PricingHero: React.FC<PricingHeroProps> = ({ language }) => {
             </div>
             
             <div className="relative mb-12">
-              <div className="absolute -top-10 left-1/2 transform -translate-x-1/2 w-32 h-1 bg-gradient-to-r from-transparent via-ice-400 to-transparent rounded-full opacity-70"></div>
+              {/* Removed top gradient line */}
               
               <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mx-auto max-w-4xl relative">
-                <span className="relative z-10 bg-gradient-to-r from-gray-900 via-ice-900 to-guardian-800 bg-clip-text text-transparent inline-block">
+                <span className="relative z-10 text-gray-900 inline-block">
                   {language === 'en' ? "Choose Your Protection Plan" : "Elija Su Plan de Protección"}
                 </span>
                 
-                <span className="absolute -bottom-3 left-1/2 transform -translate-x-1/2 w-48 h-1 bg-gradient-to-r from-ice-400 to-guardian-600 rounded-full"></span>
+                {/* Removed bottom decorative lines */}
               </h2>
-              
-              <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 w-24 h-0.5 bg-gradient-to-r from-transparent via-guardian-300 to-transparent rounded-full opacity-60"></div>
             </div>
             
             <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto py-2 rounded-lg mt-6">
