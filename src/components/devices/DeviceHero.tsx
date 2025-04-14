@@ -13,7 +13,7 @@ const DeviceHero: React.FC<DeviceHeroProps> = ({ language }) => {
   return (
     <section 
       id="devices-hero" 
-      className="relative pt-24 pb-12 overflow-hidden bg-white"
+      className="relative pt-24 md:pt-24 pb-12 overflow-hidden bg-white"
     >
       {/* Using the shared HeroBackground component */}
       <HeroBackground />
