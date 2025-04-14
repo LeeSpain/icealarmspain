@@ -5,6 +5,7 @@ import Footer from "../Footer";
 import PageHeader from "../common/PageHeader";
 import { useLocation } from "react-router-dom";
 import { useLanguage } from "@/context/LanguageContext";
+import VideoFrame from "../VideoFrame";
 
 // Layout component to wrap content with Navbar, PageHeader, and Footer
 const Layout = ({ children }: { children: React.ReactNode }) => {
@@ -74,6 +75,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
           {children}
         </main>
         <Footer />
+        <VideoFrame />
       </div>
     );
   } catch (error) {
