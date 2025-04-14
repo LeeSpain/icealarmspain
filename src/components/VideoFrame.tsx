@@ -8,7 +8,7 @@ const VideoFrame: React.FC = () => {
   if (!isVisible) return null;
 
   return (
-    <div className="fixed top-10 right-4 z-40 w-[80%] max-w-[1600px] shadow-lg rounded-lg overflow-hidden border border-ice-200 bg-white">
+    <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-40 w-[90%] max-w-[800px] shadow-lg rounded-lg overflow-hidden border border-ice-200 bg-white">
       <div className="flex items-center justify-between bg-gradient-to-r from-ice-500 to-guardian-600 p-3">
         <div className="text-lg font-bold text-white">ICE Guardian Alert</div>
         <button 
@@ -16,7 +16,7 @@ const VideoFrame: React.FC = () => {
           className="text-white/80 hover:text-white transition-colors"
           aria-label="Close video"
         >
-          <X size={28} />
+          <X size={24} />
         </button>
       </div>
       
