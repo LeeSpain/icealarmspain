@@ -8,19 +8,19 @@ const VideoFrame: React.FC = () => {
   if (!isVisible) return null;
 
   return (
-    <div className="fixed top-20 right-4 z-40 max-w-[600px] shadow-lg rounded-lg overflow-hidden border border-ice-200 bg-white">
+    <div className="fixed top-20 right-4 z-40 max-w-[1200px] shadow-lg rounded-lg overflow-hidden border border-ice-200 bg-white">
       <div className="flex items-center justify-between bg-gradient-to-r from-ice-500 to-guardian-600 p-2">
-        <div className="text-sm font-medium text-white">ICE Guardian Alert</div>
+        <div className="text-md font-semibold text-white">ICE Guardian Alert</div>
         <button 
           onClick={() => setIsVisible(false)} 
           className="text-white/80 hover:text-white transition-colors"
           aria-label="Close video"
         >
-          <X size={20} />
+          <X size={24} />
         </button>
       </div>
       
-      <div className="relative aspect-video w-full" style={{ maxWidth: "600px" }}>
+      <div className="relative aspect-video w-full" style={{ maxWidth: "1200px" }}>
         <iframe
           src="https://www.youtube.com/embed/0UyaECF2LOQ?controls=1&rel=0&modestbranding=1"
           title="ICE Guardian Alert Demo"
