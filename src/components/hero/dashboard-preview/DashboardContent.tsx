@@ -10,8 +10,8 @@ interface DashboardContentProps {
 
 const DashboardContent: React.FC<DashboardContentProps> = ({ language }) => {
   return (
-    <div className="bg-white p-3">
-      <div className="space-y-2.5">
+    <div className="bg-white p-4">
+      <div className="space-y-4">
         <WelcomeCard language={language} />
         <HealthMetricsGrid language={language} />
         <StatusCards language={language} />
