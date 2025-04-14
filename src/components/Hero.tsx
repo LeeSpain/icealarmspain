@@ -22,6 +22,7 @@ const Hero: React.FC = () => {
       id="home" 
       className="relative pt-24 pb-12 overflow-hidden bg-white"
     >
+      {/* Using our updated HeroBackground with reduced opacity */}
       <HeroBackground />
       
       <div className="container mx-auto px-4 md:px-6 relative z-10">
