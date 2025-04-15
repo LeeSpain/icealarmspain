@@ -4,6 +4,7 @@ import SectionRenderer from './SectionRenderer';
 import { AdminDashboardContentProps } from './AdminDashboardContent.d';
 import ActivityManager from './ActivityManager';
 import DashboardMetrics from '../DashboardMetrics';
+import { Card } from '@/components/ui/card';
 
 const AdminDashboardContent: React.FC<AdminDashboardContentProps> = ({ 
   activeSection,
@@ -21,21 +22,25 @@ const AdminDashboardContent: React.FC<AdminDashboardContentProps> = ({
     <div className="w-full">
       <div className="grid grid-cols-1 xl:grid-cols-4 gap-6">
         <div className="xl:col-span-3">
-          {activeSection === 'dashboard' ? (
-            <DashboardMetrics data={dashboardData} />
-          ) : (
-            <SectionRenderer 
-              activeSection={activeSection} 
-              onAction={handleComponentAction}
-            />
-          )}
+          <Card className="border shadow-sm overflow-hidden">
+            {activeSection === 'dashboard' ? (
+              <DashboardMetrics data={dashboardData} />
+            ) : (
+              <SectionRenderer 
+                activeSection={activeSection} 
+                onAction={handleComponentAction}
+              />
+            )}
+          </Card>
         </div>
         
         <div className="hidden xl:block">
-          <ActivityManager 
-            activities={dashboardData?.recentActivities || []}
-            onActivityAdded={addActivity}
-          />
+          <Card className="border shadow-sm overflow-hidden">
+            <ActivityManager 
+              activities={dashboardData?.recentActivities || []}
+              onActivityAdded={addActivity}
+            />
+          </Card>
         </div>
       </div>
     </div>

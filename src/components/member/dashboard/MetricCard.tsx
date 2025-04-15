@@ -1,7 +1,7 @@
 
 import React from "react";
-import { Activity, AlertTriangle, Bell, Check, ArrowUp, ArrowDown } from "lucide-react";
-import { Card } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
+import { TrendingUp, TrendingDown, Minus } from "lucide-react";
 
 interface MetricCardProps {
   title: string;
@@ -11,49 +11,76 @@ interface MetricCardProps {
   description?: string;
   trend?: string;
   trendDirection?: "up" | "down" | "neutral";
+  className?: string;
 }
 
-export const MetricCard: React.FC<MetricCardProps> = ({ 
-  title, 
-  value, 
-  icon, 
+export const MetricCard: React.FC<MetricCardProps> = ({
+  title,
+  value,
+  icon,
   status = "normal",
   description,
   trend,
-  trendDirection = "neutral"
+  trendDirection = "neutral",
+  className,
 }) => {
-  const statusColors = {
-    normal: "bg-green-50 text-green-600",
-    warning: "bg-amber-50 text-amber-600",
-    alert: "bg-red-50 text-red-600",
-    success: "bg-green-50 text-green-600"
+  const getStatusColor = () => {
+    switch (status) {
+      case "alert":
+        return "text-red-600 bg-red-50";
+      case "warning":
+        return "text-yellow-600 bg-yellow-50";
+      case "success":
+        return "text-emerald-600 bg-emerald-50";
+      default:
+        return "text-gray-600 bg-gray-50";
+    }
+  };
+  
+  const getTrendIcon = () => {
+    switch (trendDirection) {
+      case "up":
+        return <TrendingUp className="h-3.5 w-3.5 text-emerald-600 ml-1" />;
+      case "down":
+        return <TrendingDown className="h-3.5 w-3.5 text-red-600 ml-1" />;
+      default:
+        return <Minus className="h-3.5 w-3.5 text-gray-400 ml-1" />;
+    }
+  };
+  
+  const getTrendColor = () => {
+    switch (trendDirection) {
+      case "up":
+        return "text-emerald-600";
+      case "down":
+        return "text-red-600";
+      default:
+        return "text-gray-500";
+    }
   };
   
   return (
-    <Card>
-      <div className="p-5">
-        <div className="flex justify-between items-center pb-2">
-          <div className="text-sm font-medium text-gray-700">{title}</div>
-          <div className={`p-2 rounded-full ${status === 'normal' || status === 'success' ? 'bg-ice-50 text-ice-600' : status === 'warning' ? 'bg-amber-50 text-amber-600' : 'bg-red-50 text-red-600'}`}>
-            {icon}
-          </div>
+    <Card className={`overflow-hidden border shadow-sm ${className}`}>
+      <CardContent className="p-5">
+        <div className="flex items-center justify-between mb-2">
+          <div className="text-sm font-medium text-gray-800">{title}</div>
+          <div className={`p-1.5 rounded-md ${getStatusColor()}`}>{icon}</div>
         </div>
-        <div className="text-2xl font-bold">{value}</div>
-        {description && (
-          <div className={`mt-2 text-xs ${statusColors[status]}`}>
-            {status === "normal" || status === "success" ? <Check size={12} className="inline mr-1" /> : null}
-            {status === "warning" || status === "alert" ? <AlertTriangle size={12} className="inline mr-1" /> : null}
-            <span>{description}</span>
-          </div>
-        )}
+        
+        <div className="flex flex-col">
+          <span className="text-xl font-bold tracking-tight text-gray-900">{value}</span>
+          {description && (
+            <span className="text-xs text-gray-500 mt-1">{description}</span>
+          )}
+        </div>
+        
         {trend && (
-          <div className={`mt-2 text-xs inline-flex items-center ${trendDirection === "up" ? "text-green-600" : trendDirection === "down" ? "text-red-600" : "text-gray-600"}`}>
-            {trendDirection === "up" && <ArrowUp size={12} className="mr-1" />}
-            {trendDirection === "down" && <ArrowDown size={12} className="mr-1" />}
+          <div className={`flex items-center mt-3 text-xs ${getTrendColor()}`}>
             <span>{trend}</span>
+            {getTrendIcon()}
           </div>
         )}
-      </div>
+      </CardContent>
     </Card>
   );
 };

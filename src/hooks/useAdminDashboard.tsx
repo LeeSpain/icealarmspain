@@ -20,7 +20,47 @@ export const useAdminDashboard = () => {
     monthlyGrowth: "0%",
     customerSatisfaction: "0%",
     revenueByProduct: [],
-    recentActivities: []
+    recentActivities: [],
+    userStats: {
+      total: 0,
+      active: 0,
+      new: 0
+    },
+    alertStats: {
+      urgent: 0,
+      warning: 0,
+      info: 0
+    },
+    deviceStats: {
+      active: 0,
+      offline: 0,
+      warning: 0
+    },
+    systemHealth: {
+      status: "0%",
+      issues: 0
+    },
+    financialStats: {
+      revenue: "€0",
+      growth: "0%",
+      forecast: "€0"
+    },
+    marketStats: {
+      share: "0%",
+      competitors: 0,
+      conversion: "0%"
+    },
+    notifications: {
+      unread: 0,
+      total: 0
+    },
+    quickStats: {
+      newMembers: 0,
+      tickets: 0,
+      activations: 0,
+      orders: 0,
+      sessions: 0
+    }
   });
 
   // Extract active section from URL
@@ -48,7 +88,7 @@ export const useAdminDashboard = () => {
     
     // Welcome notification
     toast({
-      title: "Welcome to Admin Dashboard",
+      title: "Welcome to Executive Dashboard",
       description: `${getTimeOfDay()}, Admin User!`, 
     });
   }, []);
@@ -80,7 +120,47 @@ export const useAdminDashboard = () => {
         recentActivities: [
           { id: 1, type: "System", description: "Dashboard initialized", time: "Just now" },
           { id: 2, type: "User", description: "Admin User logged in", time: "Just now" },
-        ]
+        ],
+        userStats: {
+          total: 523,
+          active: 496,
+          new: 27
+        },
+        alertStats: {
+          urgent: 3,
+          warning: 8,
+          info: 14
+        },
+        deviceStats: {
+          active: 342,
+          offline: 17,
+          warning: 25
+        },
+        systemHealth: {
+          status: "98%",
+          issues: 2
+        },
+        financialStats: {
+          revenue: "€24,850",
+          growth: "12%",
+          forecast: "€28,500"
+        },
+        marketStats: {
+          share: "28%",
+          competitors: 4,
+          conversion: "3.8%"
+        },
+        notifications: {
+          unread: 12,
+          total: 36
+        },
+        quickStats: {
+          newMembers: 24,
+          tickets: 18,
+          activations: 42,
+          orders: 7,
+          sessions: 156
+        }
       };
       
       console.log("Dashboard data loaded:", data);

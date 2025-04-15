@@ -7,7 +7,7 @@ import Sidebar from "@/components/admin/Sidebar";
 import AdminDashboardContent from "@/components/admin/dashboard/AdminDashboardContent";
 import AdminAIIntegration from "@/components/admin/dashboard/AdminAIIntegration";
 
-// Custom hook - simplified version
+// Custom hook
 import { useAdminDashboard } from "@/hooks/useAdminDashboard";
 
 interface AdminDashboardProps {
@@ -53,9 +53,9 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ initialSection }) => {
       const devUser = {
         uid: `dev-admin-${Date.now()}`,
         id: `dev-admin-${Date.now()}`,
-        email: `admin@example.com`,
-        name: 'Admin User',
-        displayName: 'Admin User',
+        email: `admin@icealarm.es`,
+        name: 'Executive Admin',
+        displayName: 'Executive Admin',
         role: 'admin',
         status: 'active',
         profileCompleted: true,
@@ -71,16 +71,16 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ initialSection }) => {
   }, []);
 
   return (
-    <div className="flex h-screen bg-ice-50/30">
+    <div className="flex h-screen bg-gray-50">
       <Sidebar 
         activeSection={activeSection}
         setActiveSection={handleSectionChange}
         collapsed={sidebarCollapsed}
         setCollapsed={setSidebarCollapsed}
         userData={{
-          name: 'Admin User',
-          displayName: 'Admin User',
-          email: 'admin@example.com',
+          name: 'Executive Admin',
+          displayName: 'Executive Admin',
+          email: 'admin@icealarm.es',
           role: 'admin'
         }}
       />
